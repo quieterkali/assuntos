@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Expedição Corpo Humano</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%A7%AC%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#150b2e; --bg2:#241147; --panel:#2e1657; --panel2:#3b1d6e;
+  --ink:#f5ecff; --muted:#c3aee6;
+  --magenta:#ff4d9d; --roxo:#a855f7; --ciano:#22d3ee; --verde:#34d399;
+  --ouro:#fbbf24; --vermelho:#fb7185; --laranja:#fb923c;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1100px 700px at 12% -8%, #4c1d95 0%, transparent 55%),
+    radial-gradient(900px 600px at 92% 8%, #831843 0%, transparent 52%),
+    radial-gradient(800px 800px at 50% 110%, #0e7490 0%, transparent 50%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px; line-height:1.5;
+  overflow-x:hidden;
+}
+#estrelas{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:16px 14px 60px}
+
+h1,h2,h3{margin:0 0 10px;line-height:1.15}
+h1{font-size:clamp(28px,7vw,46px)}
+h2{font-size:clamp(22px,5vw,32px)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;font-weight:bold;
+  background:linear-gradient(135deg,var(--magenta),var(--roxo));color:#fff;
+  box-shadow:0 6px 0 #7e1d54, 0 12px 24px rgba(0,0,0,.35);
+  transition:transform .08s, box-shadow .08s; font-size:1.05em;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #7e1d54,0 6px 14px rgba(0,0,0,.35)}
+.btn.sec{background:linear-gradient(135deg,#4b2a80,#35205c);box-shadow:0 6px 0 #241141,0 10px 20px rgba(0,0,0,.3)}
+.btn.ciano{background:linear-gradient(135deg,var(--ciano),#3b82f6);box-shadow:0 6px 0 #155e75,0 12px 24px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ---------- HUD ---------- */
+.hud{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:rgba(46,22,87,.82);border:2px solid #5b2ea8;border-radius:var(--r);
+  padding:10px 14px;margin-bottom:14px;backdrop-filter:blur(6px);
+}
+.hud .nome{font-weight:bold;color:var(--ouro)}
+.chip{
+  background:#1c0f38;border:2px solid #5b2ea8;border-radius:999px;
+  padding:4px 13px;font-size:.9em;font-weight:bold;white-space:nowrap
+}
+.chip.pts{color:var(--ouro);border-color:#8a6a13}
+.chip.vida{color:var(--vermelho);border-color:#8a2740}
+.hud .espaco{flex:1}
+
+/* ---------- cartões ---------- */
+.card{
+  background:linear-gradient(160deg,rgba(59,29,110,.9),rgba(30,15,58,.92));
+  border:2px solid #5b2ea8;border-radius:var(--r);padding:20px;margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35)
+}
+.card.destaque{border-color:var(--ouro);box-shadow:0 0 0 3px rgba(251,191,36,.18),0 10px 30px rgba(0,0,0,.4)}
+
+/* ---------- mapa de missões ---------- */
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.missao{
+  position:relative;text-align:left;width:100%;
+  background:linear-gradient(160deg,#41217a,#2a1352);
+  border:2px solid #6d3bc4;border-radius:var(--r);padding:16px 16px 14px;
+  color:var(--ink);transition:transform .12s,border-color .12s;
+}
+.missao:not(.trancada):hover{transform:translateY(-4px);border-color:var(--magenta)}
+.missao.trancada{opacity:.5;filter:grayscale(.6);cursor:not-allowed}
+.missao.feita{border-color:var(--verde)}
+.missao .num{
+  position:absolute;top:-12px;left:14px;background:var(--magenta);color:#fff;
+  width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  font-weight:bold;box-shadow:0 3px 0 #7e1d54
+}
+.missao.feita .num{background:var(--verde);box-shadow:0 3px 0 #0f6b4a}
+.missao .ico{font-size:34px;line-height:1;margin:6px 0 6px}
+.missao .tit{font-weight:bold;font-size:1.08em;margin-bottom:3px}
+.missao .sub{font-size:.85em;color:var(--muted)}
+.missao .estrelas{margin-top:8px;font-size:1.05em;letter-spacing:2px}
+
+/* ---------- corpo / fase 1 ---------- */
+.arena{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.corpo-box{flex:1 1 260px;min-width:250px;display:grid;place-items:center}
+.corpo-svg{width:100%;max-width:300px;height:auto;display:block}
+.slot{cursor:pointer;transition:opacity .2s}
+.slot .halo{fill:rgba(255,255,255,.12);stroke:rgba(255,255,255,.45);stroke-width:2;stroke-dasharray:6 5}
+.slot.ativo .halo{fill:rgba(34,211,238,.3);stroke:var(--ciano);stroke-width:3;animation:pulsa 1s infinite}
+.slot.ok .halo{fill:rgba(52,211,153,.28);stroke:var(--verde);stroke-dasharray:none}
+@keyframes pulsa{0%,100%{opacity:1}50%{opacity:.45}}
+.bandeja{flex:1 1 260px;min-width:250px}
+.orgaos{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.org{
+  background:#1f1140;border:2px solid #5b2ea8;border-radius:14px;padding:10px 6px 8px;
+  text-align:center;transition:transform .1s,border-color .1s;color:var(--ink)
+}
+.org:hover{transform:translateY(-3px)}
+.org.sel{border-color:var(--ciano);background:#123043;transform:translateY(-3px);box-shadow:0 0 0 3px rgba(34,211,238,.25)}
+.org.usado{opacity:.25;pointer-events:none;filter:grayscale(1)}
+.org svg{width:46px;height:46px;display:block;margin:0 auto 4px}
+.org .nm{font-size:.82em;font-weight:bold;line-height:1.2}
+
+/* ---------- quiz ---------- */
+.pergunta{font-size:1.14em;font-weight:bold;margin-bottom:14px}
+.opcoes{display:grid;gap:10px}
+.op{
+  text-align:left;background:#33195f;border:2px solid #5b2ea8;border-radius:14px;
+  padding:13px 16px;color:var(--ink);transition:border-color .1s,background .1s,transform .1s;
+  display:flex;gap:10px;align-items:flex-start
+}
+.op:not(:disabled):hover{border-color:var(--magenta);transform:translateX(3px)}
+.op .letra{
+  flex:0 0 26px;height:26px;border-radius:8px;background:#5b2ea8;color:#fff;
+  display:grid;place-items:center;font-weight:bold;font-size:.85em
+}
+.op.certa{border-color:var(--verde);background:#124b39}
+.op.certa .letra{background:var(--verde);color:#04231a}
+.op.errada{border-color:var(--vermelho);background:#4b1524}
+.op.errada .letra{background:var(--vermelho);color:#3d0a16}
+.op:disabled{cursor:default}
+
+.feedback{margin-top:14px;border-radius:14px;padding:14px 16px;border-left:6px solid;display:none}
+.feedback.show{display:block;animation:sobe .25s}
+.feedback.bom{background:rgba(52,211,153,.14);border-color:var(--verde)}
+.feedback.ruim{background:rgba(251,113,133,.14);border-color:var(--vermelho)}
+.feedback .tt{font-weight:bold;margin-bottom:5px;font-size:1.05em}
+@keyframes sobe{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.progresso{height:9px;background:#1c0f38;border-radius:99px;overflow:hidden;margin-bottom:16px}
+.progresso i{display:block;height:100%;background:linear-gradient(90deg,var(--ciano),var(--magenta));transition:width .3s}
+
+/* ---------- fase músculo ---------- */
+.musculo-cena{display:flex;gap:20px;flex-wrap:wrap;align-items:center;justify-content:center}
+.braco-svg{width:230px;height:230px;flex:0 0 auto}
+.comando{
+  font-size:clamp(24px,6vw,38px);font-weight:bold;text-align:center;
+  padding:16px 10px;border-radius:16px;background:#1c0f38;border:3px solid var(--ciano);
+  min-width:230px
+}
+.comando small{display:block;font-size:.4em;font-weight:normal;color:var(--muted);margin-top:6px}
+
+/* ---------- canvas fase pele ---------- */
+#peleCanvas{
+  width:100%;max-width:560px;aspect-ratio:4/5;display:block;margin:0 auto;
+  border-radius:var(--r);border:3px solid #5b2ea8;background:#0b1220;touch-action:none;cursor:crosshair
+}
+
+/* ---------- diversos ---------- */
+.centro{text-align:center}
+.mini{font-size:.88em;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{background:#1c0f38;border:1px solid #5b2ea8;border-radius:999px;padding:3px 11px;font-size:.8em;color:var(--muted)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.esconde{display:none!important}
+
+/* colinha */
+.colinha{position:fixed;inset:0;background:rgba(10,4,24,.94);z-index:50;overflow-y:auto;padding:20px 14px 60px;display:none}
+.colinha.aberta{display:block}
+.colinha .in{max-width:760px;margin:0 auto}
+.colinha h3{color:var(--ouro);margin-top:22px;border-bottom:2px solid #5b2ea8;padding-bottom:6px}
+.colinha ul{padding-left:20px}
+.colinha li{margin-bottom:7px}
+.colinha b{color:var(--ciano)}
+.fechar{position:sticky;top:0;float:right;background:var(--magenta);color:#fff;border-radius:999px;
+  width:42px;height:42px;font-size:22px;font-weight:bold;box-shadow:0 4px 0 #7e1d54;z-index:2}
+
+/* diploma */
+.diploma{
+  background:linear-gradient(160deg,#fff9ed,#ffeccd);color:#3b1d2b;border-radius:20px;
+  padding:28px 22px;text-align:center;border:8px double #b45309;box-shadow:0 20px 50px rgba(0,0,0,.5)
+}
+.diploma h2{color:#9a3412;font-size:clamp(24px,6vw,36px)}
+.diploma .nome{
+  font-size:clamp(26px,7vw,42px);font-weight:bold;color:#be185d;
+  border-bottom:3px solid #b45309;display:inline-block;padding:4px 22px;margin:10px 0 14px
+}
+.diploma .selo{font-size:56px}
+.fila-estrelas{
+  font-size:clamp(15px,4.4vw,24px); line-height:1.7; letter-spacing:1px;
+  overflow-wrap:anywhere; word-break:break-word; max-width:100%; margin:12px 0
+}
+
+/* toast de pontos */
+.toast{
+  position:fixed;left:50%;top:80px;transform:translateX(-50%);
+  background:var(--verde);color:#04231a;font-weight:bold;padding:10px 22px;border-radius:999px;
+  z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transition:opacity .25s,top .25s;pointer-events:none
+}
+.toast.show{opacity:1;top:100px}
+.toast.mau{background:var(--vermelho);color:#3d0a16}
+
+@media(max-width:520px){
+  body{font-size:16px}
+  .card{padding:16px 14px}
+  .wrap{padding:12px 10px 50px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="estrelas"></canvas>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<div class="colinha" id="colinha">
+  <div class="in">
+    <button class="fechar" onclick="fecharColinha()">×</button>
+    <h2 style="color:var(--ouro)">📖 Colinha da Maflany</h2>
+    <p class="mini">Tudo que cai na prova, num lugar só. Pode abrir a qualquer hora do jogo.</p>
+
+    <h3>Órgãos internos</h3>
+    <ul>
+      <li><b>Cérebro</b> — coordena os outros órgãos. Permite pensar, falar, se mover e ter sentimentos.</li>
+      <li><b>Coração</b> — bombeia o sangue pelos vasos sanguíneos. Tem o tamanho de uma mão fechada.</li>
+      <li><b>Pulmões</b> — participam da respiração. O oxigênio do ar passa para o sangue.</li>
+      <li><b>Rins</b> — filtram o sangue, tirando o que faz mal. Isso vira parte da urina.</li>
+      <li><b>Estômago e intestinos</b> — a comida é mastigada na boca, engolida, passa pelo estômago e é digerida nos intestinos. O que não é absorvido vira fezes.</li>
+    </ul>
+
+    <h3>Esqueleto e músculos</h3>
+    <ul>
+      <li>Ossos são órgãos <b>duros e resistentes</b>. O conjunto deles é o <b>esqueleto</b>.</li>
+      <li>O esqueleto faz 3 coisas: <b>sustenta</b> o corpo, <b>protege</b> os órgãos internos e <b>possibilita a locomoção</b>.</li>
+      <li>Um adulto tem <b>206 ossos</b>.</li>
+      <li>Músculos movem os ossos e fazem as <b>expressões faciais</b>.</li>
+      <li><b>Contrair</b> = o músculo fica mais curto. <b>Relaxar</b> = volta ao tamanho inicial.</li>
+    </ul>
+
+    <h3>Exames — como ver por dentro</h3>
+    <ul>
+      <li><b>Radiografia (raio X)</b> → mostra os <b>ossos</b>. Serve para ver se um osso quebrou.</li>
+      <li><b>Ultrassonografia</b> → mostra o que o raio X não mostra, como o <b>bebê na barriga</b>.</li>
+      <li><b>Auscultação</b> → não mostra imagem, deixa <b>escutar</b> os sons do coração e dos pulmões. Aparelho: <b>estetoscópio</b>.</li>
+    </ul>
+
+    <h3>A pele</h3>
+    <ul>
+      <li>É o <b>maior</b> órgão do corpo e é um órgão <b>externo</b>.</li>
+      <li>Funções: barreira contra <b>microrganismos</b>, proteção contra <b>raios ultravioleta</b>, manter a <b>temperatura</b> e o sentido do <b>tato</b>.</li>
+      <li>Pelo tato sentimos <b>frio, calor</b> e a <b>textura</b> (liso ou áspero).</li>
+      <li><b>Melanina</b>: substância ligada à cor da pele, dos olhos e dos cabelos. Quanto mais escura a pele, <b>mais melanina</b>.</li>
+      <li><b>FPS</b> = fator de proteção solar. Quanto <b>maior o número, maior a proteção</b>. Passar várias vezes ao dia e sempre ao sair da água ou suar muito.</li>
+      <li>Corte profundo pode deixar uma marca chamada <b>cicatriz</b>.</li>
+    </ul>
+
+    <h3>Anexos da pele</h3>
+    <ul>
+      <li><b>Queratina</b> — dá resistência a cabelos, pelos e unhas.</li>
+      <li><b>Só os mamíferos têm pelos.</b> Não temos pelos nos <b>lábios</b>, nas <b>palmas das mãos</b> e nas <b>plantas dos pés</b>.</li>
+      <li><b>Glândulas</b> — umas evitam o ressecamento da pele, outras produzem o <b>suor</b>.</li>
+      <li>O <b>suor resfria o corpo</b> e sai pelos <b>poros</b>, pequenas aberturas na pele.</li>
+    </ul>
+
+    <div class="centro" style="margin-top:26px">
+      <button class="btn" onclick="fecharColinha()">Voltar ao jogo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const JOGADORA = "Maflany";
+const S = {
+  pontos: 0,
+  missoes: [false,false,false,false,false,false],
+  estrelas: [0,0,0,0,0,0],
+  cena: "inicio"
+};
+
+const MISSOES = [
+  {ico:"🫀", tit:"Sala dos Órgãos",     sub:"Coloque cada órgão no lugar certo"},
+  {ico:"🦴", tit:"Fábrica do Movimento",sub:"Ossos e músculos em ação"},
+  {ico:"🔬", tit:"Laboratório de Exames",sub:"Raio X, ultrassom ou estetoscópio?"},
+  {ico:"🛡️", tit:"Escudo de Pele",      sub:"Defenda a pele! (jogo de ação)"},
+  {ico:"💧", tit:"Segredos da Pele",    sub:"Queratina, pelos, suor e poros"},
+  {ico:"🎓", tit:"Prova de Doutorado",  sub:"O desafio final de tudo"}
+];
+
+/* ============================================================
+   SOM (Web Audio, sem arquivos externos)
+   ============================================================ */
+let AC = null;
+function ac(){ if(!AC){ try{AC = new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function bip(freq, dur, tipo, vol){
+  const c = ac(); if(!c) return;
+  if(c.state === "suspended") c.resume();
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = tipo || "sine"; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol||0.13, c.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(); o.stop(c.currentTime + dur);
+}
+const somAcerto = ()=>{ bip(660,.09,"triangle"); setTimeout(()=>bip(880,.14,"triangle"),90); };
+const somErro   = ()=>{ bip(200,.18,"sawtooth",.09); };
+const somClique = ()=>{ bip(520,.05,"square",.05); };
+const somVitoria= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>bip(f,.2,"triangle"),i*110)); };
+const somPop    = ()=>{ bip(880,.06,"sine",.07); };
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+function embaralha(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+let toastT = null;
+function toast(txt, mau){
+  const t = $("#toast");
+  t.textContent = txt;
+  t.className = "toast show" + (mau ? " mau" : "");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ t.className = "toast" + (mau?" mau":""); }, 1500);
+}
+function ganha(p){ S.pontos += p; toast("+" + p + " pontos!"); }
+
+function estrelasTxt(n){ return "⭐".repeat(n) + "☆".repeat(3-n); }
+function estrelasPor(acertos, total){
+  const pct = total ? acertos/total : 0;
+  if(pct >= 0.99) return 3;
+  if(pct >= 0.7)  return 2;
+  if(pct >= 0.4)  return 1;
+  return 0;
+}
+
+function hud(titulo){
+  return `<div class="hud">
+    <span class="nome">👩‍🔬 ${JOGADORA}</span>
+    <span class="chip pts">⭐ ${S.pontos} pts</span>
+    <span class="espaco"></span>
+    <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
+    <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
+  </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
+}
+
+function abrirColinha(){ somClique(); $("#colinha").classList.add("aberta"); }
+function fecharColinha(){ somClique(); $("#colinha").classList.remove("aberta"); }
+window.abrirColinha = abrirColinha; window.fecharColinha = fecharColinha;
+
+/* ============================================================
+   FUNDO DE ESTRELAS
+   ============================================================ */
+(function fundo(){
+  const cv = $("#estrelas"), cx = cv.getContext("2d");
+  let est = [];
+  function dim(){
+    cv.width = innerWidth; cv.height = innerHeight;
+    est = [];
+    const n = Math.min(120, Math.floor(innerWidth*innerHeight/12000));
+    for(let i=0;i<n;i++) est.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      r:Math.random()*1.7+.4, a:Math.random(), v:Math.random()*.02+.004
+    });
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    for(const e of est){
+      e.a += e.v; const o = .25 + Math.abs(Math.sin(e.a))*.65;
+      cx.globalAlpha = o; cx.fillStyle = "#fff";
+      cx.beginPath(); cx.arc(e.x,e.y,e.r,0,7); cx.fill();
+    }
+    cx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  addEventListener("resize", dim); dim(); loop();
+})();
+
+/* ============================================================
+   SVGs DOS ÓRGÃOS
+   ============================================================ */
+const SVG = {
+  cerebro:`<svg viewBox="0 0 64 64"><path d="M22 12c-6 0-9 4-9 8 0 2 1 3 1 3-3 1-4 4-4 6 0 3 2 5 4 6 0 4 3 7 7 7 2 0 3-1 3-1v6h4V12h-6z" fill="#f9a8d4" stroke="#be185d" stroke-width="2" stroke-linejoin="round"/><path d="M42 12c6 0 9 4 9 8 0 2-1 3-1 3 3 1 4 4 4 6 0 3-2 5-4 6 0 4-3 7-7 7-2 0-3-1-3-1v6h-4V12h6z" fill="#f9a8d4" stroke="#be185d" stroke-width="2" stroke-linejoin="round"/><path d="M22 20c3 1 4 3 4 5M42 20c-3 1-4 3-4 5M20 32c3 0 5 2 6 4M44 32c-3 0-5 2-6 4" stroke="#be185d" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`,
+  coracao:`<svg viewBox="0 0 64 64"><path d="M32 54S10 39 10 25c0-7 5-12 11-12 5 0 9 3 11 7 2-4 6-7 11-7 6 0 11 5 11 12 0 14-22 29-22 29z" fill="#fb7185" stroke="#9f1239" stroke-width="2.5" stroke-linejoin="round"/><path d="M26 16c0-4 2-7 2-9M38 16c1-4 3-6 5-7" stroke="#9f1239" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M24 30l4-6 4 10 4-8 4 4" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  pulmoes:`<svg viewBox="0 0 64 64"><path d="M32 8v20" stroke="#a5b4fc" stroke-width="4" stroke-linecap="round"/><path d="M32 22c-4 0-6 2-8 2" stroke="#a5b4fc" stroke-width="3.4" stroke-linecap="round"/><path d="M32 22c4 0 6 2 8 2" stroke="#a5b4fc" stroke-width="3.4" stroke-linecap="round"/><path d="M24 24c-7 2-11 10-11 20 0 8 3 12 8 12 4 0 6-3 6-8V26c0-2-1-2-3-2z" fill="#c7d2fe" stroke="#4338ca" stroke-width="2.2" stroke-linejoin="round"/><path d="M40 24c7 2 11 10 11 20 0 8-3 12-8 12-4 0-6-3-6-8V26c0-2 1-2 3-2z" fill="#c7d2fe" stroke="#4338ca" stroke-width="2.2" stroke-linejoin="round"/></svg>`,
+  rins:`<svg viewBox="0 0 64 64"><path d="M24 14c5 0 8 6 8 16s-3 18-8 18c-6 0-10-8-10-17s4-17 10-17z" fill="#c084fc" stroke="#6b21a8" stroke-width="2.4"/><path d="M40 14c-5 0-8 6-8 16s3 18 8 18c6 0 10-8 10-17s-4-17-10-17z" fill="#c084fc" stroke="#6b21a8" stroke-width="2.4"/><path d="M27 30c-3 0-5 1-6 3M37 30c3 0 5 1 6 3" stroke="#6b21a8" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`,
+  estomago:`<svg viewBox="0 0 64 64"><path d="M26 8v10c0 3-8 5-8 16 0 12 8 20 17 20 8 0 13-5 13-11 0-5-3-8-7-9" fill="#fdba74" stroke="#c2410c" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/><path d="M26 18c4 2 12 2 15 6" stroke="#c2410c" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+  intestinos:`<svg viewBox="0 0 64 64"><path d="M16 12h32v10H22v8h24v10H24v10h26" fill="none" stroke="#fca5a5" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 12h32v10H22v8h24v10H24v10h26" fill="none" stroke="#b91c1c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+};
+
+/* ============================================================
+   ROTEADOR
+   ============================================================ */
+function irMapa(){ somClique(); S.cena="mapa"; render(); }
+window.irMapa = irMapa;
+function abrirMissao(i){
+  if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a missão anterior primeiro!", true); return; }
+  somClique(); S.cena = "m"+i; render();
+}
+window.abrirMissao = abrirMissao;
+
+function concluiMissao(i, acertos, total, bonus){
+  S.missoes[i] = true;
+  const est = estrelasPor(acertos, total);
+  S.estrelas[i] = Math.max(S.estrelas[i], est);
+  const pts = acertos*10 + est*25 + (bonus||0);
+  S.pontos += pts;
+  somVitoria();
+  const tudoFeito = S.missoes.every(Boolean);
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:64px">${est===3?"🏆":est===2?"🎉":"👏"}</div>
+      <h2>Missão ${i+1} concluída!</h2>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${estrelasTxt(est)}</div>
+      <p>Você acertou <b>${acertos} de ${total}</b> e ganhou <b>${pts} pontos</b>.</p>
+      ${est<3?`<p class="mini">Dica: dá para refazer a missão e tentar as 3 estrelas! ⭐⭐⭐</p>`:``}
+      <div class="acoes">
+        ${tudoFeito
+          ? `<button class="btn" onclick="verDiploma()">🎓 Ver meu diploma!</button>`
+          : (i<5 ? `<button class="btn ciano" onclick="abrirMissao(${i+1})">Próxima missão →</button>` : ``)}
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+        <button class="btn sec" onclick="abrirMissao(${i})">🔁 Refazer</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+
+function render(){
+  scrollTo(0,0);
+  switch(S.cena){
+    case "inicio": telaInicio(); break;
+    case "mapa":   telaMapa();   break;
+    case "m0": faseOrgaos();   break;
+    case "m1": faseMusculos(); break;
+    case "m2": faseExames();   break;
+    case "m3": fasePele();     break;
+    case "m4": faseAnexos();   break;
+    case "m5": faseFinal();    break;
+    case "diploma": telaDiploma(); break;
+  }
+}
+
+/* ============================================================
+   TELA INICIAL
+   ============================================================ */
+function telaInicio(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--ouro)">
+      <div style="font-size:70px;line-height:1">🧬</div>
+      <h1 style="background:linear-gradient(90deg,var(--ciano),var(--magenta),var(--ouro));-webkit-background-clip:text;background-clip:text;color:transparent">
+        EXPEDIÇÃO<br>CORPO HUMANO
+      </h1>
+      <p style="font-size:1.15em">Uma aventura científica de <b style="color:var(--ouro)">${JOGADORA}</b></p>
+      <p class="mini">Capítulo 9 · Ciências · 3º ano</p>
+      <div class="card" style="text-align:left;background:rgba(28,15,56,.75);margin-top:18px">
+        <p><b>🎯 Sua missão, doutora:</b></p>
+        <p>Você acaba de ser aceita na Academia de Ciências do Corpo Humano. Para virar
+        <b>Doutora do Corpo Humano</b>, precisa completar <b>6 missões</b> — dos órgãos
+        lá no fundo até a pele que cobre tudo.</p>
+        <p class="mini">Cada missão vale estrelas ⭐. Errar não é problema: toda vez que
+        você erra, o jogo te explica o porquê. É assim que cientista aprende.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn" onclick="comecar()">🚀 Começar a expedição</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Ver a colinha</button>
+      </div>
+    </div>`;
+}
+function comecar(){ ac(); somVitoria(); S.cena="mapa"; render(); }
+window.comecar = comecar;
+
+/* ============================================================
+   MAPA
+   ============================================================ */
+function telaMapa(){
+  const feitas = S.missoes.filter(Boolean).length;
+  app.innerHTML = hud() + `
+    <div class="card">
+      <h2>🗺️ Mapa da Expedição</h2>
+      <p class="mini">${feitas} de 6 missões completas · ${S.pontos} pontos</p>
+      <div class="progresso"><i style="width:${feitas/6*100}%"></i></div>
+      <div class="missoes">
+        ${MISSOES.map((m,i)=>{
+          const trancada = i>0 && !S.missoes[i-1];
+          return `<button class="missao ${trancada?"trancada":""} ${S.missoes[i]?"feita":""}"
+                    onclick="abrirMissao(${i})" ${trancada?"disabled":""}>
+            <span class="num">${S.missoes[i]?"✓":i+1}</span>
+            <div class="ico">${trancada?"🔒":m.ico}</div>
+            <div class="tit">${m.tit}</div>
+            <div class="sub">${trancada?"Complete a missão anterior":m.sub}</div>
+            ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
+          </button>`;
+        }).join("")}
+      </div>
+    </div>
+    ${feitas===6?`<div class="card destaque centro">
+      <div style="font-size:56px">🎓</div>
+      <h2>Você completou tudo!</h2>
+      <button class="btn" onclick="verDiploma()">Ver meu diploma</button>
+    </div>`:``}`;
+}
+function verDiploma(){ somVitoria(); S.cena="diploma"; render(); }
+window.verDiploma = verDiploma;
+
+/* ============================================================
+   MISSÃO 1 — ÓRGÃOS NO LUGAR
+   ============================================================ */
+const ORGAOS = [
+  {id:"cerebro",  nm:"Cérebro",  svg:SVG.cerebro,
+   fn:"Coordena o funcionamento dos outros órgãos. Permite pensar, falar, se mover e ter sentimentos.",
+   cx:150, cy:50, r:27},
+  {id:"pulmoes",  nm:"Pulmões",  svg:SVG.pulmoes,
+   fn:"Participam da respiração. O oxigênio do ar que entra vai para os pulmões e passa para o sangue.",
+   cx:132, cy:126, r:21},
+  {id:"coracao",  nm:"Coração",  svg:SVG.coracao,
+   fn:"Bombeia o sangue para circular pelo corpo dentro dos vasos sanguíneos. É do tamanho de uma mão fechada.",
+   cx:172, cy:130, r:17},
+  {id:"estomago", nm:"Estômago", svg:SVG.estomago,
+   fn:"Depois de mastigado e engolido, o alimento passa por aqui antes de seguir para os intestinos.",
+   cx:134, cy:176, r:20},
+  {id:"rins",     nm:"Rins",     svg:SVG.rins,
+   fn:"Filtram o sangue, retirando dele as substâncias que fazem mal. Essas substâncias viram parte da urina.",
+   cx:176, cy:176, r:18},
+  {id:"intestinos",nm:"Intestinos",svg:SVG.intestinos,
+   fn:"É onde o alimento é digerido. O que o corpo não absorve se transforma em fezes.",
+   cx:150, cy:224, r:23}
+];
+
+let f1 = null;
+function faseOrgaos(){
+  f1 = { sel:null, postos:{}, erros:0, acertos:0 };
+  desenhaF1();
+}
+function desenhaF1(){
+  const restantes = ORGAOS.filter(o=>!f1.postos[o.id]);
+  app.innerHTML = hud("🫀 Missão 1 · Sala dos Órgãos") + `
+    <div class="card">
+      <p><b>Como jogar:</b> toque num órgão na lista e depois toque no <b>lugar certo</b> dele
+      dentro do corpo. Os círculos pontilhados são os lugares vazios.</p>
+      <div class="progresso"><i style="width:${(6-restantes.length)/6*100}%"></i></div>
+      <div class="arena">
+        <div class="corpo-box">${corpoSVG()}</div>
+        <div class="bandeja">
+          <p style="margin:0 0 8px"><b>Órgãos para colocar (${restantes.length}):</b></p>
+          <div class="orgaos">
+            ${ORGAOS.map(o=>`
+              <button class="org ${f1.postos[o.id]?"usado":""} ${f1.sel===o.id?"sel":""}"
+                onclick="selOrg('${o.id}')" ${f1.postos[o.id]?"disabled":""}>
+                ${o.svg}<div class="nm">${o.nm}</div>
+              </button>`).join("")}
+          </div>
+          <div class="feedback" id="fb1"></div>
+        </div>
+      </div>
+    </div>`;
+}
+function corpoSVG(){
+  return `<svg class="corpo-svg" viewBox="0 0 300 340">
+    <g fill="#7c3aed" opacity=".32">
+      <ellipse cx="150" cy="50" rx="33" ry="39"/>
+      <rect x="140" y="84" width="20" height="16"/>
+      <path d="M106 100h88c8 0 14 6 14 14v122c0 8-6 14-14 14h-88c-8 0-14-6-14-14V114c0-8 6-14 14-14z"/>
+      <rect x="112" y="248" width="30" height="78" rx="14"/>
+      <rect x="158" y="248" width="30" height="78" rx="14"/>
+      <rect x="76" y="112" width="18" height="96" rx="9"/>
+      <rect x="206" y="112" width="18" height="96" rx="9"/>
+    </g>
+    ${ORGAOS.map(o=>{
+      const p = f1.postos[o.id];
+      return `<g class="slot ${p?"ok":(f1.sel?"ativo":"")}" onclick="porOrg('${o.id}')">
+        <circle class="halo" cx="${o.cx}" cy="${o.cy}" r="${o.r}"/>
+        ${p?`<g transform="translate(${o.cx-o.r*.8},${o.cy-o.r*.8}) scale(${o.r*1.6/64})">${o.svg.replace(/<svg[^>]*>/,"").replace("</svg>","")}</g>`:``}
+      </g>`;
+    }).join("")}
+  </svg>`;
+}
+function selOrg(id){
+  somClique();
+  f1.sel = (f1.sel===id) ? null : id;
+  desenhaF1();
+}
+window.selOrg = selOrg;
+function porOrg(slotId){
+  if(!f1.sel){ toast("Escolha um órgão primeiro!", true); somErro(); return; }
+  if(f1.postos[slotId]) return;
+  const org = ORGAOS.find(o=>o.id===f1.sel);
+  const fb = ()=>$("#fb1");
+  if(f1.sel === slotId){
+    f1.postos[slotId] = true; f1.acertos++; f1.sel = null;
+    somAcerto(); ganha(10);
+    desenhaF1();
+    fb().className = "feedback bom show";
+    fb().innerHTML = `<div class="tt">✅ Isso! ${org.nm} no lugar certo.</div>${org.fn}`;
+    if(Object.keys(f1.postos).length === 6){
+      setTimeout(quizF1, 900);
+    }
+  } else {
+    const certo = ORGAOS.find(o=>o.id===slotId);
+    f1.erros++; somErro();
+    desenhaF1();
+    fb().className = "feedback ruim show";
+    fb().innerHTML = `<div class="tt">❌ Aí não é o lugar do ${org.nm.toLowerCase()}.</div>
+      Esse espaço é de outro órgão. Lembre: o <b>${org.nm.toLowerCase()}</b> ${dicaLugar(org.id)}`;
+  }
+}
+window.porOrg = porOrg;
+function dicaLugar(id){
+  return {
+    cerebro:"fica dentro da cabeça, protegido pelos ossos do crânio.",
+    pulmoes:"fica no peito, um de cada lado, e enche de ar quando você respira.",
+    coracao:"fica no peito, um pouquinho para o lado esquerdo, entre os pulmões.",
+    estomago:"fica na parte de cima da barriga — é para lá que a comida engolida vai.",
+    rins:"fica mais atrás, nas costas, na altura da cintura.",
+    intestinos:"fica na parte de baixo da barriga, todo enroladinho."
+  }[id];
+}
+
+const QUIZ_F1 = [
+  {p:"Qual órgão <b>coordena o funcionamento</b> dos outros e permite que a gente pense, fale e tenha sentimentos?",
+   o:["O coração","O cérebro","O estômago","Os rins"], c:1,
+   e:"O <b>cérebro</b> é o chefe do corpo. Ele coordena os outros órgãos e permite pensar, falar, se mover e ter sentimentos."},
+  {p:"O que os <b>rins</b> fazem?",
+   o:["Bombeiam o sangue","Digerem a comida","Filtram o sangue, tirando o que faz mal","Levam oxigênio para o ar"], c:2,
+   e:"Os <b>rins filtram o sangue</b>: retiram dele as substâncias que fazem mal ao corpo. Essas substâncias passam a fazer parte da <b>urina</b>."},
+  {p:"O ar que entra no corpo vai para os pulmões. O que acontece lá?",
+   o:["O oxigênio é transferido para o sangue","O ar vira comida","O ar é filtrado e vira urina","O ar esquenta o coração"], c:0,
+   e:"Nos <b>pulmões</b>, o gás <b>oxigênio</b> que estava no ar é transferido para o <b>sangue</b>. É por isso que a gente precisa respirar."},
+  {p:"Qual é, mais ou menos, o <b>tamanho do coração</b>?",
+   o:["O tamanho de um grão de arroz","O tamanho de uma bola de futebol","O tamanho de uma mão fechada","O tamanho da cabeça"], c:2,
+   e:"O coração tem, aproximadamente, o tamanho de uma <b>mão fechada</b>. Feche a sua mão e olhe: é esse o tamanho do seu!"},
+  {p:"O alimento que o corpo <b>não absorve</b> se transforma em quê?",
+   o:["Urina","Suor","Sangue","Fezes"], c:3,
+   e:"O que não é absorvido pelo corpo nos intestinos se transforma em <b>fezes</b>, que são eliminadas. (A <b>urina</b> vem dos <b>rins</b>, é outra coisa!)"}
+];
+function quizF1(){ quizGenerico(0, "🫀 Missão 1 · Prova dos Órgãos", QUIZ_F1, f1.acertos, 6); }
+
+/* ============================================================
+   QUIZ GENÉRICO (usado por várias missões)
+   ============================================================ */
+let Q = null;
+/* Embaralha as ALTERNATIVAS de cada pergunta a cada partida, para que a resposta
+   certa não caia sempre na mesma letra — senão dá para acertar por padrão, sem estudar. */
+function embaralhaOpcoes(perguntas){
+  return perguntas.map(q=>{
+    const ordem = embaralha(q.o.map((_,i)=>i));
+    return { ...q, o: ordem.map(i=>q.o[i]), c: ordem.indexOf(q.c) };
+  });
+}
+function quizGenerico(missaoIdx, titulo, perguntas, acertosIniciais, totalInicial){
+  Q = { i:0, ac:acertosIniciais||0, tot:(totalInicial||0)+perguntas.length,
+        lista:embaralhaOpcoes(perguntas), missao:missaoIdx, titulo:titulo, respondida:false };
+  desenhaQuiz();
+}
+function desenhaQuiz(){
+  const q = Q.lista[Q.i];
+  app.innerHTML = hud(Q.titulo) + `
+    <div class="card">
+      <p class="mini">Pergunta ${Q.i+1} de ${Q.lista.length}</p>
+      <div class="progresso"><i style="width:${Q.i/Q.lista.length*100}%"></i></div>
+      <div class="pergunta">${q.p}</div>
+      <div class="opcoes" id="ops">
+        ${q.o.map((t,k)=>`<button class="op" onclick="respQuiz(${k})">
+          <span class="letra">${"ABCD"[k]}</span><span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fbq"></div>
+      <div class="acoes esconde" id="proxBox">
+        <button class="btn" onclick="proxQuiz()" id="btnProx">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respQuiz(k){
+  if(Q.respondida) return;
+  Q.respondida = true;
+  const q = Q.lista[Q.i];
+  const ops = document.querySelectorAll("#ops .op");
+  ops.forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===q.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbq");
+  if(k===q.c){
+    Q.ac++; somAcerto(); ganha(10);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ Correto!</div>${q.e}`;
+  } else {
+    somErro();
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Quase! A resposta certa é <b>${q.o[q.c]}</b>.</div>${q.e}`;
+  }
+  $("#proxBox").classList.remove("esconde");
+  $("#btnProx").textContent = (Q.i === Q.lista.length-1) ? "Terminar missão 🏁" : "Continuar →";
+  $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respQuiz = respQuiz;
+function proxQuiz(){
+  somClique();
+  Q.i++; Q.respondida = false;
+  if(Q.i >= Q.lista.length){ concluiMissao(Q.missao, Q.ac, Q.tot); return; }
+  desenhaQuiz();
+}
+window.proxQuiz = proxQuiz;
+
+/* ============================================================
+   MISSÃO 2 — ESQUELETO E MÚSCULOS
+   ============================================================ */
+let f2 = null;
+function faseMusculos(){
+  f2 = { passo:0, alvo:8, esperado:"contrair", acertos:0, erros:0 };
+  desenhaF2();
+}
+function desenhaF2(){
+  const contraido = f2.esperado === "relaxar"; // se espera relaxar, é porque está contraído
+  app.innerHTML = hud("🦴 Missão 2 · Fábrica do Movimento") + `
+    <div class="card">
+      <p><b>Experiência do livro:</b> quando o músculo <b>contrai</b>, ele fica <b>mais curto</b>
+      e puxa o osso — o braço dobra. Quando <b>relaxa</b>, volta ao tamanho inicial e o braço estica.</p>
+      <p class="mini">Faça o braço se mexer ${f2.alvo} vezes seguindo o comando. Movimentos: <b>${f2.passo}/${f2.alvo}</b></p>
+      <div class="progresso"><i style="width:${f2.passo/f2.alvo*100}%"></i></div>
+      <div class="musculo-cena">
+        ${bracoSVG(contraido)}
+        <div>
+          <div class="comando">
+            ${f2.esperado==="contrair" ? "CONTRAIR 💪" : "RELAXAR 🖐️"}
+            <small>${f2.esperado==="contrair" ? "o músculo fica MAIS CURTO e dobra o braço" : "o músculo VOLTA ao tamanho inicial e estica o braço"}</small>
+          </div>
+          <div class="acoes">
+            <button class="btn" onclick="agirMusc('contrair')">💪 CONTRAIR</button>
+            <button class="btn ciano" onclick="agirMusc('relaxar')">🖐️ RELAXAR</button>
+          </div>
+        </div>
+      </div>
+      <div class="feedback" id="fb2"></div>
+    </div>`;
+}
+function bracoSVG(dobrado){
+  return `<svg class="braco-svg" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="92" fill="rgba(124,58,237,.16)"/>
+    <!-- ombro -->
+    <circle cx="60" cy="60" r="15" fill="#f9a8d4" stroke="#be185d" stroke-width="3"/>
+    <!-- braço (úmero) -->
+    <rect x="52" y="70" width="17" height="62" rx="8" fill="#fbcfe8" stroke="#be185d" stroke-width="3"/>
+    <!-- antebraço -->
+    ${dobrado
+      ? `<rect x="52" y="128" width="17" height="60" rx="8" fill="#fbcfe8" stroke="#be185d" stroke-width="3" transform="rotate(-125 60 132)"/>
+         <circle cx="118" cy="80" r="12" fill="#f9a8d4" stroke="#be185d" stroke-width="3"/>`
+      : `<rect x="52" y="128" width="17" height="60" rx="8" fill="#fbcfe8" stroke="#be185d" stroke-width="3"/>
+         <circle cx="60" cy="192" r="12" fill="#f9a8d4" stroke="#be185d" stroke-width="3"/>`}
+    <!-- músculo bíceps -->
+    ${dobrado
+      ? `<ellipse cx="76" cy="92" rx="21" ry="17" fill="#ef4444" stroke="#991b1b" stroke-width="3"/>
+         <text x="76" y="97" font-size="11" text-anchor="middle" fill="#fff" font-weight="bold">CURTO</text>`
+      : `<ellipse cx="76" cy="100" rx="12" ry="29" fill="#f87171" stroke="#991b1b" stroke-width="3"/>
+         <text x="76" y="104" font-size="9" text-anchor="middle" fill="#fff" font-weight="bold">LONGO</text>`}
+    <text x="100" y="24" font-size="13" text-anchor="middle" fill="#f5ecff" font-weight="bold">
+      ${dobrado ? "músculo CONTRAÍDO" : "músculo RELAXADO"}
+    </text>
+  </svg>`;
+}
+function agirMusc(acao){
+  const fb = ()=>$("#fb2");
+  if(acao === f2.esperado){
+    f2.passo++; f2.acertos++;
+    somPop(); ganha(5);
+    f2.esperado = (f2.esperado==="contrair") ? "relaxar" : "contrair";
+    if(f2.passo >= f2.alvo){
+      somVitoria();
+      setTimeout(()=>quizGenerico(1, "🦴 Missão 2 · Prova dos Ossos", QUIZ_F2, f2.acertos, f2.alvo), 500);
+      return;
+    }
+    desenhaF2();
+    fb().className = "feedback bom show";
+    fb().innerHTML = f2.esperado==="relaxar"
+      ? `<div class="tt">💪 Contraiu!</div>O músculo ficou <b>mais curto</b> e puxou o osso do antebraço — por isso o braço dobrou.`
+      : `<div class="tt">🖐️ Relaxou!</div>O músculo <b>voltou ao tamanho inicial</b> e o braço esticou de novo.`;
+  } else {
+    f2.erros++; somErro();
+    desenhaF2();
+    fb().className = "feedback ruim show";
+    fb().innerHTML = `<div class="tt">❌ Ainda não!</div>O comando pede para <b>${f2.esperado.toUpperCase()}</b>.
+      Lembre: <b>contrair</b> = o músculo fica mais curto. <b>Relaxar</b> = volta ao tamanho inicial.`;
+  }
+}
+window.agirMusc = agirMusc;
+
+const QUIZ_F2 = [
+  {p:"Quantos ossos tem, <b>em geral</b>, o corpo de um adulto?",
+   o:["106 ossos","206 ossos","306 ossos","1.000 ossos"], c:1,
+   e:"Em geral, o corpo humano de um <b>adulto</b> tem <b>206 ossos</b>. Curiosidade: um bebê nasce com entre 275 e 300 ossos, e vários vão se juntando conforme ele cresce!"},
+  {p:"Como se chama o <b>conjunto de todos os ossos</b> do corpo?",
+   o:["Músculo","Órgão","Esqueleto","Crânio"], c:2,
+   e:"O conjunto de ossos é chamado <b>esqueleto</b>."},
+  {p:"Quais são os <b>três trabalhos</b> do esqueleto?",
+   o:["Respirar, comer e dormir",
+      "Sustentar o corpo, proteger os órgãos internos e possibilitar a locomoção",
+      "Filtrar o sangue, bombear e digerir",
+      "Sentir frio, calor e textura"], c:1,
+   e:"O esqueleto <b>sustenta</b> o corpo, <b>protege</b> os órgãos internos e <b>possibilita a locomoção</b>. Essa pergunta cai muito na prova — decore os três!"},
+  {p:"Quando um músculo <b>contrai</b>, o que acontece com ele?",
+   o:["Fica mais curto","Fica mais comprido","Vira osso","Desaparece"], c:0,
+   e:"Contrair = ficar <b>mais curto</b>. Relaxar = voltar ao <b>tamanho inicial</b>. Ao contrair ou relaxar, o músculo move o osso ao qual está ligado."},
+  {p:"Além de mexer o corpo, os músculos permitem outra coisa importante. Qual?",
+   o:["As expressões faciais, como sorrir e chorar","Filtrar o sangue","Guardar a urina","Deixar a pele escura"], c:0,
+   e:"Os músculos permitem as <b>expressões faciais</b>! Quando você sorri ou fica triste, são os músculos do rosto que fazem isso — por ordem do <b>cérebro</b>."},
+  {p:"Os ossos são órgãos de que jeito?",
+   o:["Moles e elásticos","Duros e resistentes","Líquidos","Feitos de ar"], c:1,
+   e:"Os ossos são órgãos <b>duros e resistentes</b>. É por isso que conseguem sustentar o corpo e proteger o que está dentro."}
+];
+
+/* ============================================================
+   MISSÃO 3 — EXAMES
+   ============================================================ */
+const CASOS = [
+  {t:"Pedro caiu da bicicleta. O braço dele está doendo muito e ele acha que <b>quebrou um osso</b>.",
+   c:0, e:"A <b>radiografia (raio X)</b> mostra os <b>ossos</b>. É justamente o exame usado para saber se um osso está quebrado depois de uma queda."},
+  {t:"A tia da Maflany está grávida e quer <b>ver o bebê</b> que está dentro da barriga dela.",
+   c:1, e:"A <b>ultrassonografia</b> mostra partes internas que <b>não aparecem</b> na radiografia — como o bebê dentro da barriga da mãe."},
+  {t:"A médica quer <b>escutar os sons</b> que o coração e os pulmões estão fazendo.",
+   c:2, e:"Isso é a <b>auscultação</b>: escutar os sons produzidos pelo coração, pelos pulmões e por outros órgãos internos. O aparelho é o <b>estetoscópio</b>."},
+  {t:"O médico precisa ver a <b>coluna vertebral e as costelas</b> na região do peito.",
+   c:0, e:"A <b>radiografia</b> do peito mostra a região dos pulmões, a <b>coluna vertebral</b> e as <b>costelas</b> — igualzinho à foto do livro."},
+  {t:"Qual desses exames <b>NÃO mostra imagem</b> nenhuma do corpo?",
+   c:2, e:"A <b>auscultação</b> não mostra imagens: ela permite <b>ouvir</b> o que está acontecendo lá dentro. Raio X e ultrassonografia geram imagens."},
+  {t:"O aparelho é colocado no <b>peito e nas costas</b> do paciente durante o exame.",
+   c:2, e:"O <b>estetoscópio</b> é colocado no peito e nas costas do paciente na hora do exame, para auscultar."}
+];
+const APARELHOS = [
+  {nm:"Radiografia (raio X)", ico:"🦴"},
+  {nm:"Ultrassonografia",     ico:"👶"},
+  {nm:"Auscultação (estetoscópio)", ico:"🩺"}
+];
+let f3 = null;
+function faseExames(){ f3 = {i:0, ac:0, resp:false}; desenhaF3(); }
+function desenhaF3(){
+  const c = CASOS[f3.i];
+  app.innerHTML = hud("🔬 Missão 3 · Laboratório de Exames") + `
+    <div class="card">
+      <p class="mini">Caso ${f3.i+1} de ${CASOS.length} · Qual exame resolve?</p>
+      <div class="progresso"><i style="width:${f3.i/CASOS.length*100}%"></i></div>
+      <div class="card" style="background:rgba(28,15,56,.8);border-color:var(--ciano)">
+        <div style="font-size:34px">🧑‍⚕️</div>
+        <div class="pergunta" style="margin:0">${c.t}</div>
+      </div>
+      <div class="opcoes" id="ops3">
+        ${APARELHOS.map((a,k)=>`<button class="op" onclick="respExame(${k})">
+          <span class="letra">${a.ico}</span><span><b>${a.nm}</b></span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fb3"></div>
+      <div class="acoes esconde" id="prox3">
+        <button class="btn" onclick="proxExame()" id="btn3">Próximo caso →</button>
+      </div>
+    </div>`;
+}
+function respExame(k){
+  if(f3.resp) return; f3.resp = true;
+  const c = CASOS[f3.i];
+  document.querySelectorAll("#ops3 .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===c.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fb3");
+  if(k===c.c){
+    f3.ac++; somAcerto(); ganha(10);
+    fb.className="feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ Diagnóstico certo, doutora!</div>${c.e}`;
+  } else {
+    somErro();
+    fb.className="feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Esse não. O certo é <b>${APARELHOS[c.c].nm}</b>.</div>${c.e}`;
+  }
+  $("#prox3").classList.remove("esconde");
+  $("#btn3").textContent = (f3.i===CASOS.length-1) ? "Terminar missão 🏁" : "Próximo caso →";
+  $("#btn3").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respExame = respExame;
+function proxExame(){
+  somClique(); f3.i++; f3.resp=false;
+  if(f3.i>=CASOS.length){ concluiMissao(2, f3.ac, CASOS.length); return; }
+  desenhaF3();
+}
+window.proxExame = proxExame;
+
+/* ============================================================
+   MISSÃO 4 — ESCUDO DE PELE (ação em canvas)
+   ============================================================ */
+let f4 = null, rafPele = null;
+function fasePele(){
+  app.innerHTML = hud("🛡️ Missão 4 · Escudo de Pele") + `
+    <div class="card">
+      <p><b>A pele é a barreira de proteção do corpo!</b> Ela protege contra os
+      <b>microrganismos</b> que causam doenças e contra os <b>raios ultravioleta</b> do Sol.</p>
+      <p><b>Como jogar:</b> as ameaças caem do céu. <b>Toque em cada uma</b> antes que ela
+      chegue na pele lá embaixo. Se 5 ameaças passarem, a missão acaba.</p>
+      <p class="mini">☀️ raio ultravioleta · 🦠 microrganismo · 🧴 protetor solar (bônus!)</p>
+      <div class="acoes"><button class="btn" onclick="iniciarPele()">▶️ Começar!</button></div>
+    </div>`;
+}
+function iniciarPele(){
+  ac(); somClique();
+  app.innerHTML = hud("🛡️ Missão 4 · Escudo de Pele") + `
+    <div class="card">
+      <div class="hud" style="margin:0 0 12px">
+        <span class="chip pts" id="p4">Bloqueadas: 0</span>
+        <span class="chip vida" id="v4">❤️❤️❤️❤️❤️</span>
+        <span class="espaco"></span>
+        <span class="chip" id="t4">⏱️ 40s</span>
+      </div>
+      <canvas id="peleCanvas"></canvas>
+      <div class="feedback bom show" id="fb4" style="margin-top:12px">
+        <div class="tt">🛡️ Escudo ativo!</div>Toque nas ameaças para bloquear.
+      </div>
+    </div>`;
+  const cv = $("#peleCanvas");
+  const W = 400, H = 500;
+  cv.width = W; cv.height = H;
+  const cx = cv.getContext("2d");
+
+  f4 = { itens:[], bloq:0, vidas:5, t:40, fim:false, ultimo:0, spawn:0.6, msg:"", msgT:0 };
+
+  const TIPOS = [
+    {k:"uv",  em:"☀️", cor:"#fbbf24", nome:"raio ultravioleta",
+     msg:"☀️ Raio ultravioleta bloqueado! O protetor solar e o chapéu ajudam a pele nessa missão."},
+    {k:"uv",  em:"☀️", cor:"#fbbf24", nome:"raio ultravioleta",
+     msg:"☀️ Bloqueado! Quanto MAIOR o número do FPS, maior a proteção contra os raios ultravioleta."},
+    {k:"mic", em:"🦠", cor:"#34d399", nome:"microrganismo",
+     msg:"🦠 Microrganismo barrado! A pele é uma barreira contra os microrganismos que causam doenças."},
+    {k:"mic", em:"🦠", cor:"#34d399", nome:"microrganismo",
+     msg:"🦠 Barrado! Cortes e arranhões abrem buracos nessa barreira — por isso é preciso cuidado."},
+    {k:"bon", em:"🧴", cor:"#22d3ee", nome:"protetor solar",
+     msg:"🧴 Protetor solar! Deve ser passado várias vezes ao dia e sempre ao sair da água ou suar muito."}
+  ];
+
+  function nasce(){
+    const t = TIPOS[Math.floor(Math.random()*TIPOS.length)];
+    f4.itens.push({
+      ...t, x: 32 + Math.random()*(W-64), y: -30,
+      v: 0.42 + Math.random()*0.4 + (40-f4.t)*0.006, r: 24
+    });
+  }
+  function toca(px, py){
+    for(let i=f4.itens.length-1;i>=0;i--){
+      const it = f4.itens[i];
+      if(Math.hypot(px-it.x, py-it.y) < it.r+14){
+        f4.itens.splice(i,1);
+        if(it.k==="bon"){ f4.bloq++; S.pontos += 15; somVitoria(); }
+        else { f4.bloq++; S.pontos += 8; somPop(); }
+        f4.msg = it.msg; f4.msgT = 2.2;
+        $("#p4").textContent = "Bloqueadas: " + f4.bloq;
+        const fb = $("#fb4");
+        if(fb){ fb.className="feedback bom show"; fb.innerHTML = `<div class="tt">✅ +${it.k==="bon"?15:8} pontos</div>${it.msg}`; }
+        return;
+      }
+    }
+  }
+  function pos(ev){
+    const r = cv.getBoundingClientRect();
+    const p = ev.touches ? ev.touches[0] : ev;
+    return { x:(p.clientX-r.left)*(W/r.width), y:(p.clientY-r.top)*(H/r.height) };
+  }
+  cv.onmousedown = e => { const p = pos(e); toca(p.x,p.y); };
+  cv.ontouchstart = e => { e.preventDefault(); const p = pos(e); toca(p.x,p.y); };
+
+  let ultimo = performance.now();
+  function loop(now){
+    const dt = Math.min(0.05,(now-ultimo)/1000); ultimo = now;
+    if(f4.fim) return;
+
+    f4.t -= dt;
+    if(f4.t <= 0){ terminaPele(); return; }
+    $("#t4").textContent = "⏱️ " + Math.ceil(f4.t) + "s";
+
+    f4.spawn -= dt;
+    if(f4.spawn <= 0){ nasce(); f4.spawn = Math.max(0.95, 1.8 - (40-f4.t)*0.021); }
+
+    // fundo
+    cx.fillStyle = "#0b1220"; cx.fillRect(0,0,W,H);
+    // sol
+    cx.fillStyle = "rgba(251,191,36,.16)"; cx.beginPath(); cx.arc(W-46,44,44,0,7); cx.fill();
+    cx.font = "34px serif"; cx.textAlign="center"; cx.fillText("☀️", W-46, 56);
+
+    // pele (chão)
+    const gy = H-78;
+    const g = cx.createLinearGradient(0,gy,0,H);
+    g.addColorStop(0,"#f9a8d4"); g.addColorStop(1,"#9d174d");
+    cx.fillStyle = g; cx.fillRect(0,gy,W,H-gy);
+    cx.fillStyle = "rgba(255,255,255,.25)";
+    for(let i=0;i<W;i+=26){ cx.beginPath(); cx.arc(i+13, gy+16, 3.2, 0, 7); cx.fill(); } // poros
+    cx.fillStyle = "#fff"; cx.font = "bold 15px sans-serif";
+    cx.fillText("A SUA PELE", W/2, gy+44);
+    cx.font = "11px sans-serif"; cx.fillStyle="rgba(255,255,255,.75)";
+    cx.fillText("barreira de proteção do corpo", W/2, gy+62);
+
+    // itens
+    for(let i=f4.itens.length-1;i>=0;i--){
+      const it = f4.itens[i];
+      it.y += it.v*dt*130;
+      cx.globalAlpha = .28; cx.fillStyle = it.cor;
+      cx.beginPath(); cx.arc(it.x, it.y, it.r, 0, 7); cx.fill(); cx.globalAlpha = 1;
+      cx.font = "30px serif"; cx.textAlign = "center";
+      cx.fillText(it.em, it.x, it.y+11);
+      if(it.y > gy){
+        f4.itens.splice(i,1);
+        if(it.k !== "bon"){
+          f4.vidas--; somErro();
+          $("#v4").textContent = "❤️".repeat(Math.max(0,f4.vidas)) + "🖤".repeat(5-Math.max(0,f4.vidas));
+          const fb = $("#fb4");
+          if(fb){ fb.className="feedback ruim show";
+            fb.innerHTML = `<div class="tt">⚠️ Um ${it.nome} passou!</div>Fique de olho — toque nele antes de chegar na pele.`; }
+          if(f4.vidas <= 0){ terminaPele(); return; }
+        }
+      }
+    }
+    rafPele = requestAnimationFrame(loop);
+  }
+  rafPele = requestAnimationFrame(loop);
+}
+window.iniciarPele = iniciarPele;
+
+function terminaPele(){
+  f4.fim = true;
+  if(rafPele) cancelAnimationFrame(rafPele);
+  S.pontos += f4.bloq * 2; // bônus de destreza — não conta para as estrelas
+  somVitoria();
+  app.innerHTML = hud("🛡️ Missão 4 · Escudo de Pele") + `
+    <div class="card centro">
+      <div style="font-size:56px">${f4.vidas>0?"🛡️":"😅"}</div>
+      <h2>${f4.vidas>0?"Pele protegida!":"A pele levou uns furos..."}</h2>
+      <p>Você bloqueou <b>${f4.bloq}</b> ameaças e ficou com <b>${Math.max(0,f4.vidas)}</b> corações.</p>
+      <p class="mini">Este mini-jogo vale <b>pontos</b>, mas as <b>⭐ estrelas</b> da missão vêm
+      da prova a seguir — o que importa é o que você aprendeu, não a rapidez do dedo.</p>
+      <div class="feedback bom show" style="text-align:left">
+        <div class="tt">🧠 O que você acabou de treinar</div>
+        A pele é uma <b>barreira de proteção</b> contra os <b>microrganismos que causam doenças</b>
+        e contra os <b>raios ultravioleta</b> do Sol. Mas ela não dá conta sozinha quando o Sol é
+        muito forte: por isso usamos <b>protetor solar</b> (quanto maior o <b>FPS</b>, maior a
+        proteção) e <b>chapéu ou boné</b>.
+      </div>
+      <div class="acoes">
+        <button class="btn" onclick="quizPele()">Continuar para a prova →</button>
+        <button class="btn sec" onclick="iniciarPele()">🔁 Jogar de novo</button>
+      </div>
+    </div>`;
+}
+function quizPele(){ somClique(); quizGenerico(3, "🛡️ Missão 4 · Prova da Pele", QUIZ_F4, 0, 0); }
+window.quizPele = quizPele;
+
+const QUIZ_F4 = [
+  {p:"Qual é o <b>maior órgão</b> do corpo humano?",
+   o:["O cérebro","O coração","A pele","O intestino"], c:2,
+   e:"A <b>pele</b> é o maior órgão do corpo humano. E ela é diferente dos outros: é um <b>órgão externo</b>, porque envolve o corpo todo."},
+  {p:"A pele é um órgão interno ou externo?",
+   o:["Interno, porque fica dentro","Externo, porque envolve o corpo","Os dois ao mesmo tempo","Nenhum dos dois"], c:1,
+   e:"A pele é um <b>órgão externo</b>: diferente do cérebro ou do coração, ela fica exposta e <b>envolve</b> o corpo."},
+  {p:"Sobre o <b>FPS</b> do protetor solar, o que é verdade?",
+   o:["Quanto MAIOR o número, MAIOR a proteção","Quanto MAIOR o número, MENOR a proteção","O número não quer dizer nada","FPS é a marca do protetor"], c:0,
+   e:"FPS quer dizer <b>fator de proteção solar</b>. Quanto <b>maior</b> esse número, <b>maior</b> a proteção contra os raios ultravioleta."},
+  {p:"Quando devemos passar protetor solar de novo?",
+   o:["Só uma vez por semana","Só à noite","Ao sair da água ou quando transpirar muito","Nunca, uma vez basta"], c:2,
+   e:"Os protetores devem ser aplicados <b>várias vezes ao dia</b> e <b>sempre que a pessoa sair da água ou transpirar muito</b>."},
+  {p:"O que é a <b>melanina</b>?",
+   o:["Um osso do braço","Uma substância da pele ligada à cor da pele, dos olhos e dos cabelos","Um tipo de músculo","Um microrganismo"], c:1,
+   e:"A <b>melanina</b> é uma substância da pele. A cor da pele, dos olhos e dos cabelos está relacionada à <b>quantidade de melanina</b>. Quanto mais escura a pele, mais melanina ela tem."},
+  {p:"Pelo <b>tato</b>, a pele consegue perceber:",
+   o:["Cores e sons","Frio, calor e a textura (liso ou áspero)","Cheiros e sabores","O que a gente está pensando"], c:1,
+   e:"Pelo tato percebemos sensações de <b>frio</b> e <b>calor</b>, e identificamos a <b>textura</b> de um objeto — se ele é liso ou áspero. É assim que se lê o <b>braile</b>."},
+  {p:"Como se chama a marca que um corte profundo pode deixar na pele?",
+   o:["Poro","Cicatriz","Glândula","Melanina"], c:1,
+   e:"Cortes profundos podem deixar uma marca na pele chamada <b>cicatriz</b>. Por isso: nunca mexa em objetos cortantes ou quentes sem um adulto!"}
+];
+
+/* ============================================================
+   MISSÃO 5 — ANEXOS DA PELE
+   ============================================================ */
+const QUIZ_F5 = [
+  {p:"Cabelos, pelos e unhas são formados por uma substância que dá resistência a eles. Qual?",
+   o:["Melanina","Queratina","Oxigênio","Queratose"], c:1,
+   e:"É a <b>queratina</b>! Ela dá <b>resistência</b> a cabelos, pelos e unhas. (Cuidado para não confundir com <b>melanina</b>, que é a da cor da pele.)"},
+  {p:"Quais animais têm pelos?",
+   o:["Todos os animais","Só as aves","Somente os mamíferos","Só os peixes"], c:2,
+   e:"<b>Somente os animais mamíferos têm pelos.</b> Então: se um bicho tem pelo, ele é mamífero! Cachorro, gato, macaco, baleia e você."},
+  {p:"Em quais partes do corpo humano <b>NÃO</b> existem pelos?",
+   o:["Nos braços e nas pernas","Nos lábios, nas palmas das mãos e nas plantas dos pés","Na cabeça","Nas costas"], c:1,
+   e:"Os pelos estão em quase toda a superfície do corpo, <b>exceto</b> nos <b>lábios</b>, nas <b>palmas das mãos</b> e nas <b>plantas dos pés</b>. Olhe a sua mão: nada de pelo ali!"},
+  {p:"O <b>suor</b> serve para quê?",
+   o:["Esquentar o corpo","Resfriar o corpo","Alimentar o corpo","Deixar a pele mais escura"], c:1,
+   e:"O suor é um líquido que <b>resfria o corpo</b>. Quando ele evapora da pele, leva o calor embora — é o ar-condicionado natural do corpo!"},
+  {p:"Por onde o suor sai do corpo?",
+   o:["Pelos poros","Pelas unhas","Pelos ossos","Pela boca"], c:0,
+   e:"O suor sai através dos <b>poros</b>: pequenas aberturas que existem na superfície da pele."},
+  {p:"O que as <b>glândulas</b> da pele produzem?",
+   o:["Só ossos","Suor e substâncias que evitam o ressecamento da pele","Sangue","Melanina apenas"], c:1,
+   e:"Na pele existem <b>glândulas</b>: algumas produzem substâncias que <b>evitam o ressecamento</b> da pele, e outras produzem o <b>suor</b>."},
+  {p:"Onde ficam as <b>raízes</b> dos cabelos, dos pelos e das unhas?",
+   o:["Na superfície da pele, à vista","Em camadas mais profundas da pele","Dentro do coração","Nos ossos"], c:1,
+   e:"A parte que a gente vê da pele é só a <b>superfície</b>. As raízes dos cabelos, pelos e unhas ficam em <b>camadas mais profundas</b>, que não ficam expostas."},
+  {p:"Para que servem as <b>unhas</b>, segundo o livro?",
+   o:["Para respirar","Para dar firmeza à ponta dos dedos e permitir coçar o corpo","Para filtrar o sangue","Para produzir suor"], c:1,
+   e:"As unhas dão <b>firmeza à ponta dos dedos</b> e permitem <b>coçar</b> o corpo, por exemplo."}
+];
+function faseAnexos(){ quizGenerico(4, "💧 Missão 5 · Segredos da Pele", QUIZ_F5, 0, 0); }
+
+/* ============================================================
+   MISSÃO 6 — PROVA DE DOUTORADO
+   ============================================================ */
+const QUIZ_FINAL = [
+  {p:"Um <b>órgão externo</b> é aquele que:",
+   o:["Fica dentro do corpo","Fica exposto, envolvendo o corpo","Só existe nos animais","Não tem função"], c:1,
+   e:"Órgãos <b>externos</b> ficam expostos — o exemplo do livro é a <b>pele</b>. Já cérebro, coração, pulmões, rins, estômago e intestinos são <b>internos</b>."},
+  {p:"O sangue circula pelo corpo dentro de quê?",
+   o:["Dos ossos","Dos vasos sanguíneos","Dos poros","Dos músculos"], c:1,
+   e:"O <b>coração</b> bombeia o sangue para que ele circule pelo corpo dentro dos <b>vasos sanguíneos</b>."},
+  {p:"Qual é o caminho <b>correto</b> do alimento?",
+   o:["Boca → pulmões → rins","Boca → estômago → intestinos","Boca → coração → bexiga","Nariz → estômago → pele"], c:1,
+   e:"O alimento é mastigado na <b>boca</b>, engolido, passa pelo <b>estômago</b> e segue pelos <b>intestinos</b>, onde é digerido. O que não é absorvido vira <b>fezes</b>."},
+  {p:"Quando você <b>corre muito</b>, o corpo se aquece e libera suor. Por que isso é bom?",
+   o:["Porque o suor esquenta ainda mais","Porque o suor resfria o corpo","Porque o suor alimenta os músculos","Porque o suor protege dos raios UV"], c:1,
+   e:"O suor <b>resfria o corpo</b>. Ao evaporar da pele, ele leva o calor embora e ajuda a baixar a temperatura."},
+  {p:"Um menino está chorando. Que órgãos da face produziram essa expressão, e que órgão está ligado aos sentimentos?",
+   o:["Os ossos / o estômago","Os músculos / o cérebro","A pele / o coração","Os pulmões / os rins"], c:1,
+   e:"As expressões faciais são produzidas pelos <b>músculos</b> da face. E o órgão relacionado a <b>ter sentimentos</b> é o <b>cérebro</b>. (Cai na p. 131!)"},
+  {p:"Você quer saber se um osso quebrou depois de uma queda. Qual exame?",
+   o:["Ultrassonografia","Auscultação","Radiografia (raio X)","Nenhum, é só olhar"], c:2,
+   e:"A <b>radiografia (raio X)</b> permite ver os <b>ossos</b> — é o exame usado para saber se algum osso está quebrado."},
+  {p:"Por que existem pessoas com tons de pele diferentes?",
+   o:["Por causa da quantidade de melanina","Por causa da quantidade de queratina","Por causa do número de ossos","Por causa do tamanho do coração"], c:0,
+   e:"Por causa da quantidade de <b>melanina</b>. Quanto mais escura a pele, mais melanina ela tem. Todas as pessoas são diferentes — e é importante conviver bem com essas diferenças."},
+  {p:"Complete: <b>a pele atua como ______ do corpo contra ______ que causam doenças.</b>",
+   o:["alimento / vitaminas","proteção (barreira) / microrganismos","suor / poros","osso / músculos"], c:1,
+   e:"A pele atua como <b>proteção (barreira)</b> do corpo contra os <b>microrganismos</b> que causam doenças. Essa é exatamente a frase da página 125!"},
+  {p:"Um músculo que <b>relaxa</b>:",
+   o:["Fica mais curto","Volta ao tamanho inicial","Vira osso","Produz suor"], c:1,
+   e:"Relaxar = <b>voltar ao tamanho inicial</b>. Contrair = ficar <b>mais curto</b>. É esse vai e vem que move os ossos."},
+  {p:"O que a auscultação com o estetoscópio permite?",
+   o:["Ver a imagem dos ossos","Ver o bebê na barriga","Escutar os sons do coração e dos pulmões","Medir a melanina da pele"], c:2,
+   e:"A <b>auscultação</b> não mostra imagem: ela permite <b>escutar</b> os sons produzidos pelo coração, pelos pulmões e por outros órgãos internos."},
+  {p:"Qual afirmação sobre o esqueleto está <b>ERRADA</b>?",
+   o:["Sustenta o corpo","Protege os órgãos internos","Possibilita a locomoção","Filtra o sangue e produz urina"], c:3,
+   e:"Quem <b>filtra o sangue</b> e produz a urina são os <b>rins</b>, não o esqueleto! O esqueleto sustenta, protege e possibilita a locomoção."},
+  {p:"Se um bicho tem <b>pelos</b>, o que dá para afirmar sobre ele?",
+   o:["É uma ave","É um mamífero","É um peixe","É um réptil"], c:1,
+   e:"<b>Somente os mamíferos têm pelos.</b> Então pelo = mamífero, sempre."}
+];
+function faseFinal(){
+  app.innerHTML = hud("🎓 Missão 6 · Prova de Doutorado") + `
+    <div class="card centro destaque">
+      <div style="font-size:60px">🎓</div>
+      <h2>A prova final, Dra. ${JOGADORA}</h2>
+      <p>São <b>${QUIZ_FINAL.length} perguntas</b> misturando <b>tudo</b> o que você aprendeu
+      nas 5 missões: órgãos, ossos, músculos, exames, pele e anexos da pele.</p>
+      <p class="mini">Estas são as perguntas com mais cara de prova de verdade. Se errar,
+      o jogo explica — e você pode refazer quantas vezes quiser.</p>
+      <div class="acoes">
+        <button class="btn" onclick="comecarFinal()">Estou pronta! 🚀</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Revisar a colinha antes</button>
+      </div>
+    </div>`;
+}
+function comecarFinal(){ somClique(); quizGenerico(5, "🎓 Prova de Doutorado", embaralha(QUIZ_FINAL), 0, 0); }
+window.comecarFinal = comecarFinal;
+
+/* ============================================================
+   DIPLOMA
+   ============================================================ */
+function telaDiploma(){
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  app.innerHTML = hud() + `
+    <div class="diploma">
+      <div class="selo">🏅</div>
+      <h2>DIPLOMA DE DOUTORA<br>DO CORPO HUMANO</h2>
+      <p>A Academia de Ciências concede este diploma a</p>
+      <div class="nome">${JOGADORA} Traoré</div>
+      <p>por ter completado as <b>6 missões</b> da Expedição Corpo Humano,
+      dominando os órgãos internos, o esqueleto, os músculos, os exames médicos,
+      a pele e seus anexos.</p>
+      <p class="fila-estrelas">${"⭐".repeat(totalEstrelas)}</p>
+      <p><b>${totalEstrelas} de 18 estrelas</b> · <b>${S.pontos} pontos</b></p>
+      <p style="margin-top:18px;font-style:italic">Capítulo 9 · Ciências · 3º ano<br>
+      <small>Aprender Juntos — SM Educação</small></p>
+    </div>
+    <div class="acoes">
+      <button class="btn" onclick="irMapa()">🗺️ Voltar ao mapa</button>
+      <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      <button class="btn ciano" onclick="window.print()">🖨️ Imprimir diploma</button>
+    </div>
+    ${totalEstrelas<18?`<div class="card centro">
+      <p class="mini">Faltam <b>${18-totalEstrelas}</b> estrelas para a nota máxima.
+      Dá para refazer qualquer missão pelo mapa!</p></div>`:`
+    <div class="card destaque centro"><div style="font-size:50px">👑</div>
+      <p><b>PERFEIÇÃO!</b> Você tirou todas as 18 estrelas. Isso é nota 10 com louvor!</p></div>`}`;
+}
+
+/* ============================================================
+   INÍCIO
+   ============================================================ */
+render();
+</script>
+</body>
+</html>

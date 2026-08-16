@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Ciências da Maflany</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%A7%AC%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#150b2e; --ink:#f5ecff; --muted:#c3aee6;
+  --magenta:#ff4d9d; --roxo:#a855f7; --ciano:#22d3ee; --verde:#34d399; --ouro:#fbbf24;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1100px 700px at 12% -8%, #4c1d95 0%, transparent 55%),
+    radial-gradient(900px 600px at 92% 8%, #831843 0%, transparent 52%),
+    radial-gradient(800px 800px at 50% 110%, #0e7490 0%, transparent 50%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px;line-height:1.55;overflow-x:hidden;
+}
+#estrelas{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:26px 16px 70px}
+h1{font-size:clamp(30px,7.5vw,52px);line-height:1.08;margin:0 0 8px;text-wrap:balance;
+  background:linear-gradient(90deg,var(--ciano),var(--magenta),var(--ouro));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(20px,4.5vw,26px);margin:0 0 12px}
+.mini{color:var(--muted);font-size:.92em}
+.card{
+  background:linear-gradient(160deg,rgba(59,29,110,.9),rgba(30,15,58,.92));
+  border:2px solid #5b2ea8;border-radius:var(--r);padding:22px;margin-bottom:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35)
+}
+.hero{text-align:center;border-color:var(--ouro)}
+.hero .emoji{font-size:64px;line-height:1}
+.assuntos{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:6px}
+.assunto{
+  display:block;text-decoration:none;color:var(--ink);position:relative;
+  background:linear-gradient(160deg,#41217a,#2a1352);
+  border:2px solid #6d3bc4;border-radius:var(--r);padding:20px;
+  transition:transform .14s,border-color .14s,box-shadow .14s
+}
+.assunto:hover,.assunto:focus-visible{transform:translateY(-5px);border-color:var(--magenta);
+  box-shadow:0 14px 34px rgba(0,0,0,.4);outline:none}
+.assunto:focus-visible{box-shadow:0 0 0 3px var(--ciano)}
+.assunto .ico{font-size:40px;line-height:1;margin-bottom:8px}
+.assunto .tit{font-weight:bold;font-size:1.18em;margin-bottom:4px}
+.assunto .cap{color:var(--muted);font-size:.86em;margin-bottom:10px}
+.assunto .cta{color:var(--ciano);font-weight:bold;font-size:.94em}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 0}
+.tag{background:#1c0f38;border:1px solid #5b2ea8;border-radius:999px;padding:3px 11px;font-size:.78em;color:var(--muted)}
+.links{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.links a{color:var(--ciano);font-size:.88em}
+ul{padding-left:20px;margin:8px 0}
+li{margin-bottom:7px}
+b{color:var(--ciano)}
+.vazio{border-style:dashed;opacity:.65;text-align:center}
+footer{text-align:center;color:var(--muted);font-size:.85em;margin-top:26px}
+@media(max-width:520px){.wrap{padding:18px 12px 56px}.card{padding:18px 15px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="estrelas"></canvas>
+<div class="wrap">
+
+  <div class="card hero">
+    <div class="emoji">🧬</div>
+    <h1>Ciências da Maflany</h1>
+    <p class="mini">3º ano · Aprender Juntos — SM Educação</p>
+    <p style="margin-bottom:0">Escolha um assunto e comece a jogar. Cada jogo tem missões,
+    estrelas e uma colinha com tudo o que cai na prova.</p>
+  </div>
+
+  <div class="card">
+    <h2>📚 Assuntos</h2>
+    <div class="assuntos">
+
+      <a class="assunto" href="corpo-humano/">
+        <div class="ico">🫀</div>
+        <div class="tit">O Corpo Humano</div>
+        <div class="cap">Capítulo 9 · páginas 121 a 131</div>
+        <div class="tags">
+          <span class="tag">órgãos</span><span class="tag">esqueleto</span>
+          <span class="tag">músculos</span><span class="tag">exames</span><span class="tag">pele</span>
+        </div>
+        <p class="cta" style="margin:12px 0 0">▶ Jogar as 6 missões</p>
+      </a>
+
+      <div class="assunto vazio">
+        <div class="ico">➕</div>
+        <div class="tit">Próximo assunto</div>
+        <div class="cap">Ainda não começou</div>
+        <p class="mini" style="margin:12px 0 0">Quando chegar um capítulo novo,
+        ele aparece aqui.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>👨‍👧 Para o pai</h2>
+    <ul>
+      <li><b>Deixe ela errar.</b> O jogo explica o porquê a cada erro — é assim que ele ensina.</li>
+      <li><b>A colinha</b> (botão 📖) fica disponível o tempo todo. Consultar não é trapaça.</li>
+      <li><b>Refazer vale a pena:</b> as estrelas só sobem, nunca descem, e as alternativas
+      trocam de lugar a cada partida — não dá para decorar "é a letra B".</li>
+      <li>As <b>estrelas vêm do conhecimento</b>, não da rapidez do dedo: o mini-jogo de ação
+      vale pontos, mas a nota sai do quiz.</li>
+    </ul>
+    <div class="links">
+      <a href="corpo-humano/base-de-conhecimento.md">📄 Base de conhecimento (corpo humano)</a>
+      <a href="corpo-humano/revisao-de-precisao.md">✅ Revisão de precisão</a>
+    </div>
+  </div>
+
+  <footer>Feito para a Maflany 💜</footer>
+</div>
+
+<script>
+(function(){
+  const cv=document.getElementById("estrelas"),cx=cv.getContext("2d");
+  let est=[];
+  function dim(){
+    cv.width=innerWidth;cv.height=innerHeight;est=[];
+    const n=Math.min(110,Math.floor(innerWidth*innerHeight/13000));
+    for(let i=0;i<n;i++)est.push({x:Math.random()*cv.width,y:Math.random()*cv.height,
+      r:Math.random()*1.7+.4,a:Math.random(),v:Math.random()*.02+.004});
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    for(const e of est){e.a+=e.v;cx.globalAlpha=.25+Math.abs(Math.sin(e.a))*.65;
+      cx.fillStyle="#fff";cx.beginPath();cx.arc(e.x,e.y,e.r,0,7);cx.fill();}
+    cx.globalAlpha=1;requestAnimationFrame(loop);
+  }
+  addEventListener("resize",dim);dim();loop();
+})();
+</script>
+</body>
+</html>
