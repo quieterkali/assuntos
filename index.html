@@ -31,6 +31,10 @@ h1{font-size:clamp(30px,7.5vw,52px);line-height:1.08;margin:0 0 8px;text-wrap:ba
   background:linear-gradient(90deg,var(--ciano),var(--magenta),var(--ouro));
   -webkit-background-clip:text;background-clip:text;color:transparent}
 h2{font-size:clamp(20px,4.5vw,26px);margin:0 0 12px}
+h3.ano{font-size:.92em;font-weight:bold;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ouro);margin:20px 0 10px;display:flex;align-items:center;gap:10px}
+h3.ano::after{content:"";flex:1;height:1px;background:#5b2ea8}
+h3.ano:first-of-type{margin-top:8px}
 .mini{color:var(--muted);font-size:.92em}
 .card{
   background:linear-gradient(160deg,rgba(59,29,110,.9),rgba(30,15,58,.92));
@@ -73,20 +77,20 @@ footer{text-align:center;color:var(--muted);font-size:.85em;margin-top:26px}
   <div class="card hero">
     <div class="emoji">🎮</div>
     <h1>Jogos de Estudo</h1>
-    <p class="mini">Ciências · 3º ano &nbsp;·&nbsp; História · 6º ano</p>
+    <p class="mini">Um jogo por assunto, organizado por matéria e ano</p>
     <p style="margin-bottom:0">Escolha um assunto e comece a jogar. Cada jogo tem missões,
     estrelas e uma colinha com tudo o que cai na prova.</p>
   </div>
 
   <div class="card">
-    <h2>🧬 Ciências · 3º ano</h2>
-    <p class="mini" style="margin-top:-6px">Aprender Juntos — SM Educação</p>
+    <h2>🧬 Ciências</h2>
+    <h3 class="ano">3º ano</h3>
     <div class="assuntos">
 
-      <a class="assunto" href="corpo-humano/">
+      <a class="assunto" href="ciencias/3-ano/corpo-humano/">
         <div class="ico">🫀</div>
         <div class="tit">O Corpo Humano</div>
-        <div class="cap">Capítulo 9 · páginas 121 a 131</div>
+        <div class="cap">Cap. 9, p. 121–131 · Aprender Juntos (SM)</div>
         <div class="tags">
           <span class="tag">órgãos</span><span class="tag">esqueleto</span>
           <span class="tag">músculos</span><span class="tag">exames</span><span class="tag">pele</span>
@@ -98,11 +102,11 @@ footer{text-align:center;color:var(--muted);font-size:.85em;margin-top:26px}
   </div>
 
   <div class="card">
-    <h2>🏺 História · 6º ano</h2>
-    <p class="mini" style="margin-top:-6px">O jogo pergunta o nome antes de começar</p>
+    <h2>🏺 História</h2>
+    <h3 class="ano">6º ano</h3>
     <div class="assuntos">
 
-      <a class="assunto" href="civilizacoes-antigas/">
+      <a class="assunto" href="historia/6-ano/civilizacoes-antigas/">
         <div class="ico">🏺</div>
         <div class="tit">Rios do Tempo</div>
         <div class="cap">Civilizações antigas · Mesopotâmia e Egito</div>
@@ -113,15 +117,13 @@ footer{text-align:center;color:var(--muted);font-size:.85em;margin-top:26px}
         <p class="cta" style="margin:12px 0 0">▶ Jogar as 6 missões</p>
       </a>
 
-      <div class="assunto vazio">
-        <div class="ico">➕</div>
-        <div class="tit">Próximo assunto</div>
-        <div class="cap">Ainda não começou</div>
-        <p class="mini" style="margin:12px 0 0">Quando chegar um capítulo novo,
-        ele aparece aqui.</p>
-      </div>
-
     </div>
+  </div>
+
+  <div class="card vazio" style="border-style:dashed;opacity:.7;text-align:center">
+    <div style="font-size:34px;line-height:1">➕</div>
+    <p class="mini" style="margin:6px 0 0">Matéria nova, ano novo ou assunto novo:
+    tudo entra aqui, cada um na sua pasta.</p>
   </div>
 
   <div class="card">
@@ -136,9 +138,9 @@ footer{text-align:center;color:var(--muted);font-size:.85em;margin-top:26px}
       <li>O <b>progresso fica salvo no navegador</b>: dá para fechar e continuar outro dia.</li>
     </ul>
     <div class="links">
-      <a href="corpo-humano/base-de-conhecimento.md">📄 Base de conhecimento (corpo humano)</a>
-      <a href="corpo-humano/revisao-de-precisao.md">✅ Revisão de precisão (corpo humano)</a>
-      <a href="civilizacoes-antigas/base-de-conhecimento.md">📄 Base de conhecimento (civilizações antigas)</a>
+      <a href="ciencias/3-ano/corpo-humano/base-de-conhecimento.md">📄 Base de conhecimento (corpo humano)</a>
+      <a href="ciencias/3-ano/corpo-humano/revisao-de-precisao.md">✅ Revisão de precisão (corpo humano)</a>
+      <a href="historia/6-ano/civilizacoes-antigas/base-de-conhecimento.md">📄 Base de conhecimento (civilizações antigas)</a>
     </div>
   </div>
 

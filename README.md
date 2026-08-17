@@ -1,19 +1,42 @@
-# Jogos de Estudo
+# Assuntos
 
-Jogos de estudo feitos por matéria e por capítulo. Um arquivo HTML por assunto: sem rede,
-sem dependências, funciona no celular e no computador.
+Jogos de estudo, um por assunto, organizados por **matéria** e **ano**. Cada jogo é um único
+arquivo HTML: sem rede, sem dependências, funciona no celular e no computador.
 
-**▶ Portal:** https://quieterkali.github.io/ciencias-maflany/
+**▶ Portal:** https://quieterkali.github.io/assuntos/
 
 ## Assuntos
 
-| Matéria | Assunto | Base | Jogar |
-|---|---|---|---|
-| Ciências · 3º ano | O Corpo Humano | Cap. 9, p. 121–131 (fotos do livro) | [6 missões](https://quieterkali.github.io/ciencias-maflany/corpo-humano/) |
-| História · 6º ano | Rios do Tempo — Mesopotâmia e Egito | currículo padrão (BNCC EF06HI06–09) | [6 missões](https://quieterkali.github.io/ciencias-maflany/civilizacoes-antigas/) |
+| Matéria | Ano | Assunto | Base do conteúdo | Jogar |
+|---|---|---|---|---|
+| Ciências | 3º | O Corpo Humano | Cap. 9, p. 121–131 (fotos do livro) | [6 missões](https://quieterkali.github.io/assuntos/ciencias/3-ano/corpo-humano/) |
+| História | 6º | Rios do Tempo — Mesopotâmia e Egito | currículo padrão (BNCC EF06HI06–09) | [6 missões](https://quieterkali.github.io/assuntos/historia/6-ano/civilizacoes-antigas/) |
 
 > O jogo de História **pergunta o nome antes de começar** e personaliza tudo com ele — incluindo
 > a concordância (arqueólogo/arqueóloga) e o diploma final.
+
+## Estrutura
+
+```
+/                                    portal: índice por matéria e ano
+/<matéria>/<ano>-ano/<assunto>/
+    index.html                       o jogo (6 missões)
+    base-de-conhecimento.md          o conteúdo, na linguagem da idade
+    revisao-de-precisao.md           a prova de que confere com o livro
+```
+
+Como está hoje:
+
+```
+/ciencias/3-ano/corpo-humano/
+/historia/6-ano/civilizacoes-antigas/
+```
+
+**O ano é pasta, não etiqueta.** Em fevereiro o 3º ano vira 4º: com o ano na pasta, o material
+antigo continua acessível e o novo entra ao lado, sem colidir. O mesmo assunto pode voltar num
+ano mais adiantado, com outra profundidade, sem sobrescrever nada.
+
+Assunto novo = pasta nova + um cartão no portal.
 
 ## Como cada assunto é construído
 
@@ -21,7 +44,7 @@ Sempre os mesmos quatro passos, nessa ordem — quando há fotos do livro. Sem e
 o **currículo padrão do ano** (BNCC), e o passo 3 fica pendente até as fotos chegarem:
 
 1. **Fotos das páginas** do capítulo → a fonte da verdade.
-2. **`base-de-conhecimento.md`** — o capítulo reescrito em linguagem de 9 anos, sem inventar
+2. **`base-de-conhecimento.md`** — o capítulo reescrito na linguagem da idade, sem inventar
    nada que não esteja no livro.
 3. **`revisao-de-precisao.md`** — a prova de que o conteúdo confere. Separa duas coisas que
    falham de formas diferentes: *fidelidade ao livro* (a base diz o mesmo que a página?) e
@@ -38,9 +61,11 @@ Estes foram decididos depois de testar e encontrar o problema, não a priori:
 - **As alternativas embaralham a cada partida.** Sem isso a resposta certa concentra numa letra
   só, e ela aprende o padrão em vez do conteúdo.
 - **Errar sempre explica o porquê.** O erro é o momento de ensino, não a punição.
-- **A colinha fica aberta o tempo todo.** Consultar não é trapaça.
+- **A colinha fica aberta o tempo todo.** Consultar não é trapaça — e onde há cronômetro, abrir
+  a colinha o pausa.
 - **Alvos de toque generosos e nunca sobrepostos** — dedo de criança, tela de celular.
 - **Refazer só melhora.** As estrelas nunca descem.
+- **Quem joga tem nome.** Nada de constante fixa no código: o jogo pergunta e personaliza.
 
 ## Privacidade
 
@@ -48,17 +73,8 @@ As páginas estão marcadas com `noindex, nofollow`, então o site **não aparec
 — o link funciona para quem o tem, mas não é descoberto pelo Google. Para reverter, remova a
 linha `<meta name="robots" ...>` dos arquivos `index.html`.
 
-## Estrutura
+## Histórico
 
-```
-/                          portal com a lista de assuntos
-/corpo-humano/             Ciências · 3º ano
-    index.html             o jogo (6 missões)
-    base-de-conhecimento.md
-    revisao-de-precisao.md
-/civilizacoes-antigas/     História · 6º ano
-    index.html             o jogo (6 missões)
-    base-de-conhecimento.md
-```
-
-Cada assunto novo entra como uma pasta nova, e ganha um cartão no portal.
+Este repositório se chamava `ciencias-maflany` e tinha os assuntos soltos na raiz. Foi renomeado
+para `assuntos` ao passar a abrigar mais de uma matéria. O GitHub redireciona os endereços
+antigos, mas o oficial agora é o `assuntos`.
