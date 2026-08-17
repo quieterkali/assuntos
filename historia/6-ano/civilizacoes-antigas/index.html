@@ -193,6 +193,36 @@ button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
 .acoes-nilo{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .acoes-nilo .btn{padding:12px 14px;font-size:.95em}
 
+/* ---------- aula (slides antes da missão) ---------- */
+.aula{
+  background:linear-gradient(165deg,#f6e7c4,#e8d0a2);color:#3d2a12;
+  border:3px solid #a9803c;border-radius:var(--r);padding:24px 22px 20px;margin-bottom:14px;
+  box-shadow:0 14px 40px rgba(0,0,0,.5)
+}
+.aula b{color:#8a4b1c}
+.aula .guia{
+  display:flex;gap:10px;align-items:center;font-size:.86em;color:#6b543a;
+  border-bottom:2px dashed #c3a165;padding-bottom:10px;margin-bottom:16px
+}
+.aula .guia .gato{font-size:30px;line-height:1}
+.aula .ico{font-size:60px;line-height:1;text-align:center;margin-bottom:6px}
+.aula h2{color:#8a4b1c;text-align:center;font-size:clamp(21px,5.2vw,30px)}
+.aula p{font-size:1.05em;margin:0 0 12px}
+.aula .chave{
+  background:#fffaef;border-left:6px solid var(--ouro);border-radius:10px;
+  padding:12px 14px;margin-top:14px;font-size:1.02em
+}
+.aula .chave .rot{display:block;font-weight:bold;color:#8a4b1c;font-size:.82em;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.aula .lista{margin:10px 0 0;padding-left:20px}
+.aula .lista li{margin-bottom:6px}
+.pontos{display:flex;gap:7px;justify-content:center;margin:18px 0 4px}
+.pontos i{width:9px;height:9px;border-radius:50%;background:#c3a165;display:block}
+.pontos i.aqui{background:#8a4b1c;transform:scale(1.35)}
+.pontos i.vista{background:#8a4b1c;opacity:.45}
+.btn.papiro{background:linear-gradient(135deg,#8a4b1c,#a9803c);color:#fff8e8;box-shadow:0 6px 0 #5c3110,0 10px 20px rgba(0,0,0,.35)}
+.btn.papiro.fraco{background:linear-gradient(135deg,#c3a165,#a9803c);box-shadow:0 6px 0 #6d5322,0 10px 20px rgba(0,0,0,.3)}
+
 /* ---------- diversos ---------- */
 .centro{text-align:center}
 .mini{font-size:.88em;color:var(--muted)}
@@ -366,6 +396,7 @@ const S = {
   pontos: 0,
   missoes: [false,false,false,false,false,false],
   estrelas: [0,0,0,0,0,0],
+  aulas:    [false,false,false,false,false,false],
   cena: "nome"
 };
 
@@ -393,7 +424,8 @@ const DRA    = () => g("Dra.","Dr.");
 function salvar(){
   try{
     localStorage.setItem(CHAVE, JSON.stringify({
-      nome:S.nome, genero:S.genero, pontos:S.pontos, missoes:S.missoes, estrelas:S.estrelas
+      nome:S.nome, genero:S.genero, pontos:S.pontos, missoes:S.missoes, estrelas:S.estrelas,
+      aulas:S.aulas
     }));
   }catch(e){/* navegador sem localStorage: o jogo funciona igual, só não guarda */}
 }
@@ -405,6 +437,7 @@ function carregar(){
       S.pontos = d.pontos|0;
       if(Array.isArray(d.missoes) && d.missoes.length===6) S.missoes = d.missoes.map(Boolean);
       if(Array.isArray(d.estrelas) && d.estrelas.length===6) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(3,n|0)));
+      if(Array.isArray(d.aulas) && d.aulas.length===6) S.aulas = d.aulas.map(Boolean);
       return true;
     }
   }catch(e){}
@@ -464,6 +497,7 @@ function hud(titulo){
     <span class="nome">🔎 ${NOME()}</span>
     <span class="chip pts">⭐ ${S.pontos} pts</span>
     <span class="espaco"></span>
+    ${/^m[0-5]$/.test(S.cena) ? `<button class="chip" onclick="reverAula(${S.cena[1]})" style="cursor:pointer">📚 Aula</button>` : ``}
     <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
     <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
   </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
@@ -509,6 +543,7 @@ window.irMapa = irMapa;
 
 function abrirMissao(i){
   if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a missão anterior primeiro, " + NOME() + "!", true); return; }
+  if(!S.aulas[i]){ abrirAula(i); return; }   /* aula primeiro, na estreia da missão */
   somClique(); pararNilo(); S.cena = "m"+i; render();
 }
 window.abrirMissao = abrirMissao;
@@ -554,6 +589,9 @@ function render(){
     case "m4": fasePiramide(); break;
     case "m5": faseFinal();    break;
     case "diploma": telaDiploma(); break;
+    default:
+      if(/^a[0-5]$/.test(S.cena)){ telaAula(+S.cena[1]); }
+      break;
   }
 }
 
@@ -644,6 +682,9 @@ function telaInicio(){
         cidades, as primeiras leis e a primeira escrita.</p>
         <p>Só que os registros se perderam. <b>${NOME()}</b>, você precisa recuperá-los em
         <b>6 missões</b> — e no fim vai receber o <b>Diploma de ${g("Doutora","Doutor")} em Civilizações Antigas</b>.</p>
+        <p><b>📚 Você nunca entra numa missão sem saber nada:</b> cada uma começa com uma
+        <b>aula curta</b> da Basté, a gata do tempo, contando só o que você precisa para
+        se dar bem ali.</p>
         <p class="mini">⭐ Cada missão vale até 3 estrelas. <b>Errar faz parte:</b> toda vez que você erra,
         o jogo explica o porquê. É exatamente assim que arqueólogo de verdade descobre as coisas.</p>
       </div>
@@ -680,6 +721,7 @@ function telaMapa(){
             <div class="ico">${trancada?"🔒":m.ico}</div>
             <div class="tit">${m.tit}</div>
             <div class="sub">${trancada?"Complete a missão anterior":m.sub}</div>
+            ${(!trancada && !S.aulas[i])?`<div class="tags" style="margin-top:8px"><span class="tag" style="border-color:#a9803c;color:var(--ouro)">📚 começa com uma aula</span></div>`:``}
             ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
           </button>`;
         }).join("")}
@@ -701,9 +743,346 @@ window.verDiploma = verDiploma;
 function zerar(){
   if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
   S.pontos = 0; S.missoes = [false,false,false,false,false,false]; S.estrelas = [0,0,0,0,0,0];
+  S.aulas = [false,false,false,false,false,false];
   salvar(); somClique(); render();
 }
 window.zerar = zerar;
+
+/* ============================================================
+   AULAS — a explicação vem ANTES da missão, não só depois do erro
+   Cada slide: um conceito só, uma frase-chave, nada de parede de texto.
+   {ico, tit, txt, chave} · o último slide de cada aula é o "o que vai cair".
+   ============================================================ */
+const AULAS = [
+  /* ---- 1 · mapa ---- */
+  [
+    {ico:"🌍", tit:"Onde tudo começou",
+     txt:`Há <b>5.000 anos</b>, quase toda a humanidade ainda vivia caçando e mudando de lugar.
+       Aí, em <b>dois cantos do mundo</b>, apareceram as primeiras cidades de verdade — com muros,
+       templos, mercados e milhares de pessoas morando juntas.
+       <p>Os dois cantos tinham a mesma cara: um <b>vale de rio</b> no meio de um <b>deserto</b>.</p>`,
+     chave:`Cidade antiga não nasce em qualquer lugar. Nasce onde tem <b>rio</b>.`},
+    {ico:"💧", tit:"Por que justo perto do rio?",
+     txt:`Uma vez por ano o rio <b>transbordava</b> e cobria as margens. Quando a água voltava para o
+       leito, deixava para trás uma lama escura: o <b>lodo</b>, cheio de nutrientes.
+       <p>Terra adubada de graça, todo ano. Um passo para o lado, longe do rio, e era areia:
+       não nascia nada.</p>`,
+     chave:`Cheia → lodo → terra fértil → comida → cidade. Essa é a corrente inteira.`},
+    {ico:"🗺️", tit:"Os dois endereços",
+     txt:`<ul class="lista">
+       <li><b>Mesopotâmia</b> — entre os rios <b>Tigre</b> e <b>Eufrates</b>. Hoje é quase todo
+         <b>Iraque</b>, na <b>Ásia</b>.</li>
+       <li><b>Egito</b> — nas margens do rio <b>Nilo</b>, no nordeste da <b>África</b>.</li>
+       </ul>
+       <p>Os dois terminam em água grande: o Tigre e o Eufrates no <b>Golfo Pérsico</b>,
+       o Nilo no <b>Mar Mediterrâneo</b>.</p>`,
+     chave:`Mesopotâmia = Ásia = Iraque. Egito = África = Egito mesmo.`},
+    {ico:"🔤", tit:"O nome já entrega a resposta",
+     txt:`<b>Mesopotâmia</b> é uma palavra grega colada de dois pedaços:
+       <p style="font-size:1.25em;text-align:center;margin:14px 0"><b>meso</b> (meio) +
+       <b>potamos</b> (rio)</p>
+       Ou seja: <b>terra no meio dos rios</b> — a terra espremida entre o Tigre e o Eufrates.`,
+     chave:`Se cair "o que significa Mesopotâmia?", a resposta é <b>terra entre rios</b>.`},
+    {ico:"🌙", tit:"O Crescente Fértil",
+     txt:`Ligando a Mesopotâmia até o Egito existe uma faixa de terra boa em forma de <b>arco</b>,
+       cercada de deserto dos dois lados. Olhando no mapa, parece uma <b>lua crescente</b> —
+       e foi assim que ela ganhou o nome.
+       <p>Foi nessa faixa que a humanidade começou a plantar em vez de só caçar.</p>`,
+     chave:`<b>Crescente Fértil</b> = a faixa fértil em arco, da Mesopotâmia ao Egito.`},
+    {ico:"✅", tit:"O que vai cair na missão",
+     txt:`<ul class="lista">
+       <li>O significado de <b>Mesopotâmia</b> e quais são <b>os dois rios</b>.</li>
+       <li>Por que as cidades nasceram <b>perto dos rios</b>.</li>
+       <li>O que é o <b>Crescente Fértil</b>.</li>
+       <li>Em que <b>país de hoje</b> fica a Mesopotâmia, e onde o <b>Nilo deságua</b>.</li>
+       </ul>`,
+     chave:`Na missão você vai montar o mapa com as próprias mãos. Errar lá é de graça.`}
+  ],
+  /* ---- 2 · escrita ---- */
+  [
+    {ico:"🧮", tit:"Um problema muito chato",
+     txt:`Imagine o templo da cidade de <b>Uruk</b>: centenas de famílias entregam sacos de grão,
+       bois e jarras de óleo ali todo mês.
+       <p>Agora tente <b>guardar tudo isso de cabeça</b>. Quem entregou? Quanto? Quando?
+       Não tem jeito — a memória não dá conta, e a briga é certa.</p>`,
+     chave:`A escrita não nasceu para contar histórias. Nasceu para <b>não perder a conta</b>.`},
+    {ico:"🖊️", tit:"A solução: barro mole",
+     txt:`Alguém teve a ideia: pegar uma placa de <b>argila mole</b> e apertar marcas nela com uma
+       varinha de junco, o <b>estilete</b>. Depois era só deixar secar ao sol — e virava pedra.
+       <p>No começo eram <b>desenhinhos</b> da própria coisa (um boi virava uma cabeça de boi).
+       Com o tempo, os desenhos foram virando marcas rápidas e abstratas.</p>`,
+     chave:`Argila + estilete = Mesopotâmia. (<b>Papiro</b> é o Egito — não troque!)`},
+    {ico:"𒀭", tit:"Por que \"cuneiforme\"?",
+     txt:`A ponta do estilete era <b>triangular</b>. Apertada no barro, ela deixava uma marquinha
+       em forma de cunha — aquele triângulo que aperta e prende as coisas.
+       <p><b>Cunha</b> em latim é <i>cuneus</i>. Daí: escrita <b>cuneiforme</b>, "em forma de cunha".</p>`,
+     chave:`<i>Cuneus</i> = cunha. O nome da escrita descreve o <b>formato do sinal</b>.`},
+    {ico:"📚", tit:"O escriba mandava mais que soldado",
+     txt:`Aprender aquilo levava anos, e quase ninguém sabia. Quem sabia era o <b>escriba</b> —
+       e ele controlava os contratos, os impostos, os estoques e as ordens do rei.
+       <p>Não pagava imposto, não ia para a guerra, comia bem. Era o emprego dos sonhos
+       do mundo antigo.</p>`,
+     chave:`Saber ler e escrever era <b>poder</b>, não só cultura.`},
+    {ico:"🕰️", tit:"O maior divisor da História",
+     txt:`Historiador estuda o passado a partir do que sobrou. Antes da escrita, só restam ossos,
+       ferramentas e pinturas — chamamos esse período de <b>Pré-História</b>.
+       <p>A partir do momento em que existem <b>documentos escritos</b>, começa a
+       <b>História</b>. E esse momento é justamente a escrita cuneiforme, por volta de
+       <b>3200 a.C.</b></p>`,
+     chave:`Invenção da escrita = fim da <b>Pré-História</b>, início da <b>História</b>.`},
+    {ico:"✅", tit:"O que vai cair na missão",
+     txt:`<ul class="lista">
+       <li><b>Quem</b> inventou (sumérios) e <b>quando</b> (~3200 a.C.).</li>
+       <li><b>Em que</b> escreviam (argila) e <b>com o quê</b> (estilete de junco).</li>
+       <li>Por que se chama <b>cuneiforme</b>.</li>
+       <li>Para que servia no começo (<b>contas</b>) e o que ela marca (<b>fim da Pré-História</b>).</li>
+       </ul>`,
+     chave:`Na missão você vira escriba e grava os sinais. A tábua de estudo fica à vista o tempo todo.`}
+  ],
+  /* ---- 3 · Hamurabi ---- */
+  [
+    {ico:"🤜", tit:"Antes da lei escrita",
+     txt:`Pense numa cidade onde as regras <b>só existem na cabeça do chefe</b>. Hoje ele castiga
+       o roubo com uma multa; amanhã, de mau humor, com a morte.
+       <p>Sem regra escrita, quem tem mais força ou mais amigos sempre ganha. Ninguém consegue
+       nem saber se está fazendo algo errado.</p>`,
+     chave:`O problema não era a falta de castigo. Era a falta de <b>regra igual e conhecida</b>.`},
+    {ico:"🗿", tit:"Hamurabi manda gravar na pedra",
+     txt:`Por volta de <b>1750 a.C.</b>, <b>Hamurabi</b>, rei da <b>Babilônia</b>, mandou escrever
+       cerca de <b>282 leis</b> numa <b>estela</b>: um bloco de pedra de mais de dois metros.
+       <p>E mandou plantar essa pedra <b>em praça pública</b>, à vista de todo mundo. De propósito:
+       assim ninguém podia alegar "eu não sabia da lei".</p>`,
+     chave:`É um dos <b>conjuntos de leis escritas mais antigos</b> do mundo.`},
+    {ico:"👁️", tit:"Olho por olho",
+     txt:`A ideia central do Código é a <b>Lei de Talião</b>: o castigo tem que ser <b>do mesmo
+       tamanho</b> do estrago.
+       <p style="font-size:1.15em;text-align:center;margin:14px 0"><b>"Olho por olho,
+       dente por dente"</b></p>
+       Quebrou o osso de alguém? Quebram o seu. Parece brutal — e é —, mas era um limite:
+       impedia que um tapa virasse uma vingança sem fim.`,
+     chave:`<b>Lei de Talião</b> = castigo igual ao dano.`},
+    {ico:"⚠️", tit:"A parte que mais cai na prova",
+     txt:`O Código <b>não tratava todo mundo igual</b>. A pena mudava conforme a <b>classe social</b>:
+       <ul class="lista">
+       <li>Arrancou o olho de um <b>homem livre</b>? Arrancam o seu.</li>
+       <li>Arrancou o olho de um <b>escravo</b>? Só paga <b>prata ao dono</b> dele.</li>
+       </ul>
+       <p>O escravo era tratado como <b>propriedade</b>, não como pessoa.</p>`,
+     chave:`Lei escrita ≠ lei justa. O Código era <b>desigual de propósito</b>.`},
+    {ico:"🤔", tit:"Por que estudar leis tão cruéis",
+     txt:`Não é para achar bonito. É para <b>medir a distância</b>: hoje ninguém aceitaria arrancar
+       o olho de alguém como pena, e ninguém aceitaria uma lei que vale menos para pobre.
+       <p>Você só enxerga o quanto o mundo mudou quando vê de onde ele partiu — e o que
+       ainda falta mudar.</p>`,
+     chave:`Estudar História é comparar o "era assim" com o "é assim".`},
+    {ico:"✅", tit:"O que vai cair na missão",
+     txt:`<ul class="lista">
+       <li>Hamurabi era rei de onde (<b>Babilônia</b>) e quando (<b>~1750 a.C.</b>).</li>
+       <li>Quantas leis (<b>cerca de 282</b>) e onde foram gravadas (<b>estela</b>, em praça pública).</li>
+       <li>O nome do princípio "olho por olho" (<b>Lei de Talião</b>).</li>
+       <li>Se a lei valia igual para todos (<b>não</b>).</li>
+       </ul>`,
+     chave:`Na missão, quem julga é você: 6 casos de verdade, tirados do Código.`}
+  ],
+  /* ---- 4 · Nilo ---- */
+  [
+    {ico:"🌅", tit:"\"O Egito é uma dádiva do Nilo\"",
+     txt:`Quem disse isso foi <b>Heródoto</b>, um historiador grego que visitou o Egito e ficou
+       impressionado. <b>Dádiva</b> quer dizer <b>presente</b>.
+       <p>Ele não estava sendo poético: tira o Nilo daquele mapa e sobra <b>deserto do Saara</b>
+       de ponta a ponta. Toda a civilização egípcia cabia numa faixa verde estreitinha
+       às margens do rio.</p>`,
+     chave:`Sem Nilo não há Egito. A frase é de <b>Heródoto</b>.`},
+    {ico:"⬆️", tit:"O rio que sobe no mapa",
+     txt:`O Nilo corre <b>do sul para o norte</b> e deságua no <b>Mediterrâneo</b>, se abrindo
+       em vários braços — o <b>delta</b>.
+       <p>Por isso os nomes parecem trocados:</p>
+       <ul class="lista">
+       <li><b>Alto Egito</b> = <b>SUL</b> (onde o rio nasce, a parte de cima do curso)</li>
+       <li><b>Baixo Egito</b> = <b>NORTE</b> (onde o rio termina, no delta)</li>
+       </ul>`,
+     chave:`Não siga o mapa, siga o <b>rio</b>: "alto" é onde ele nasce.`},
+    {ico:"🔁", tit:"Um ano com três estações",
+     txt:`O ano egípcio não tinha as quatro estações que a gente aprende. Tinha <b>três</b>,
+       e todas eram definidas pelo rio:
+       <ul class="lista">
+       <li>🌊 <b>Cheia</b> (akhet) — o rio transborda e cobre os campos de lodo.</li>
+       <li>🌱 <b>Semeadura</b> (peret) — a água baixa e deixa a terra preta e macia. Planta-se.</li>
+       <li>🌾 <b>Colheita</b> (shemu) — sol forte, nada de chuva, trigo maduro. Colhe-se.</li>
+       </ul>`,
+     chave:`Cheia → semeadura → colheita. Nessa ordem, sempre.`},
+    {ico:"📐", tit:"Matemáticos por necessidade",
+     txt:`Tem um detalhe chato na cheia: a água <b>apaga as divisas</b> dos terrenos. Todo ano,
+       quando ela baixava, ninguém sabia mais onde terminava a terra de um e começava a do outro.
+       <p>Resultado: eles tiveram que aprender a <b>medir terra</b> — e muito bem. É daí que vem
+       a <b>geometria</b> egípcia. A palavra quer dizer, literalmente, <i>medida da terra</i>.</p>`,
+     chave:`A geometria egípcia nasceu de um problema prático: <b>remarcar os terrenos</b>.`},
+    {ico:"🏛️", tit:"O trigo vira poder",
+     txt:`A colheita não ficava com quem plantou. Boa parte ia para os <b>celeiros do faraó</b>.
+       <p>Nos anos em que a cheia vinha fraca e a colheita falhava, era o faraó quem abria o
+       estoque e distribuía comida. Isso salvava vidas — e deixava todo mundo <b>dependente
+       dele</b>.</p>`,
+     chave:`Quem controla a comida guardada controla as pessoas.`},
+    {ico:"✅", tit:"O que vai cair na missão",
+     txt:`<ul class="lista">
+       <li>Quem disse a frase da <b>dádiva</b> e o que o rio deixava (<b>lodo</b>).</li>
+       <li>A <b>direção</b> do Nilo e onde ficam o <b>Alto</b> e o <b>Baixo</b> Egito.</li>
+       <li>As <b>três estações</b> e o que se faz em cada uma.</li>
+       <li>Por que os egípcios criaram a <b>geometria</b>.</li>
+       </ul>`,
+     chave:`A missão é um jogo com tempo: você comanda a aldeia por 3 anos. Se travar, abra a colinha — o relógio para.`}
+  ],
+  /* ---- 5 · pirâmide social ---- */
+  [
+    {ico:"👑", tit:"Um rei que era deus",
+     txt:`O <b>faraó</b> não era só o chefe do governo. Os egípcios acreditavam que ele era um
+       <b>deus vivo</b> caminhando na Terra, filho do deus Sol, <b>Rá</b>.
+       <p>Ele era dono de todas as terras, chefe do exército e chefe da religião ao mesmo tempo.
+       Desobedecer ao faraó não era crime: era <b>pecado</b>.</p>`,
+     chave:`Governo em que o chefe é (ou fala por) um deus se chama <b>teocracia</b>.`},
+    {ico:"🔺", tit:"Por que desenhamos uma pirâmide",
+     txt:`A sociedade egípcia é sempre desenhada como uma pirâmide, e o formato não é enfeite:
+       ele mostra <b>quantas pessoas</b> tinha em cada nível.
+       <p>No bico, <b>uma</b> pessoa. Na base, <b>milhões</b>. Quanto mais poder, menos gente —
+       e quem carregava o peso de tudo era justamente quem tinha menos direitos.</p>`,
+     chave:`Do topo para a base: faraó → sacerdotes e nobres → escribas e soldados →
+       artesãos e comerciantes → camponeses → escravos.`},
+    {ico:"🐈", tit:"Um deus para cada coisa",
+     txt:`Os egípcios eram <b>politeístas</b> — acreditavam em muitos deuses, quase sempre com
+       corpo de gente e cabeça de bicho:
+       <ul class="lista">
+       <li><b>Rá</b> — o Sol, o mais poderoso</li>
+       <li><b>Osíris</b> — o mundo dos mortos · <b>Ísis</b>, sua esposa</li>
+       <li><b>Hórus</b> — cabeça de falcão, a realeza</li>
+       <li><b>Anúbis</b> — cabeça de chacal, a mumificação</li>
+       <li><b>Thoth</b> — a escrita e o conhecimento</li>
+       </ul>
+       <p>E sim: havia uma <b>deusa gata</b>, a <b>Bastet</b>. Gato no Egito era sagrado de verdade.
+       (Adivinha de quem eu sou parente. 😼)</p>`,
+     chave:`<b>Anúbis</b> = chacal = múmia. Essa dupla cai direto.`},
+    {ico:"⚱️", tit:"Múmias e pirâmides",
+     txt:`Para os egípcios a vida <b>continuava</b> depois da morte — mas a alma precisava
+       reencontrar o próprio corpo. Se o corpo apodrecesse, acabava.
+       <p>Daí a <b>mumificação</b>: tirar o que apodrece, secar com sal, envolver em faixas.
+       E daí também as <b>pirâmides</b>: elas não são palácios nem templos, são
+       <b>túmulos de faraós</b>, cheios do que ele precisaria do outro lado.</p>`,
+     chave:`Pirâmide = <b>túmulo</b>. As três famosas ficam em <b>Gizé</b>.`},
+    {ico:"🔤", tit:"A escrita que ninguém conseguia ler",
+     txt:`A escrita sagrada do Egito são os <b>hieróglifos</b> — centenas de figurinhas.
+       Por <b>mais de mil anos</b> ninguém no mundo sabia lê-los: o conhecimento simplesmente
+       se perdeu.
+       <p>Até aparecer a <b>Pedra de Roseta</b>, com o mesmo texto escrito em três formas.
+       Comparando as três, o francês <b>Champollion</b> destravou tudo em <b>1822</b>.</p>`,
+     chave:`Hieróglifos = Egito. Cuneiforme = Mesopotâmia. Nunca troque os dois.`},
+    {ico:"✅", tit:"O que vai cair na missão",
+     txt:`<ul class="lista">
+       <li>O que o faraó era considerado (<b>deus vivo</b>) e o nome disso (<b>teocracia</b>).</li>
+       <li>A <b>ordem</b> dos grupos sociais e quem era a <b>maioria</b> (camponeses).</li>
+       <li>Para que serviam as <b>pirâmides</b> e por que existia a <b>mumificação</b>.</li>
+       <li><b>Anúbis</b>, os <b>hieróglifos</b> e a <b>Pedra de Roseta</b>.</li>
+       </ul>`,
+     chave:`Na missão você monta a pirâmide inteira, degrau por degrau.`}
+  ],
+  /* ---- 6 · revisão final ---- */
+  [
+    {ico:"🎓", tit:"Antes da prova final",
+     txt:`Você já passou pelas cinco missões. A prova final mistura <b>tudo</b> — e as perguntas
+       têm cara de prova de verdade.
+       <p>Então esta aula não é matéria nova. É a lista das <b>armadilhas</b> em que quase todo
+       mundo cai. Passe os olhos com calma.</p>`,
+     chave:`Quase todo erro de prova neste assunto vem de <b>trocar Mesopotâmia com Egito</b>.`},
+    {ico:"↔️", tit:"Armadilha 1 — trocar as duas escritas",
+     txt:`<ul class="lista">
+       <li><b>Cuneiforme</b> → Mesopotâmia → escrita em <b>argila</b>, com estilete</li>
+       <li><b>Hieróglifos</b> → Egito → escrita em <b>papiro</b> e em pedra</li>
+       </ul>
+       <p>Truque: <b>cu</b>neiforme e <b>Cu</b>rdistão/Iraque ficam do mesmo lado do mapa;
+       <b>hieró</b>glifo tem cara de <b>hie</b>rático, coisa de sacerdote egípcio.</p>`,
+     chave:`Argila = Mesopotâmia. Papiro = Egito.`},
+    {ico:"🏗️", tit:"Armadilha 2 — trocar as construções",
+     txt:`<ul class="lista">
+       <li><b>Zigurate</b> → Mesopotâmia → é um <b>templo</b> em degraus, para os deuses</li>
+       <li><b>Pirâmide</b> → Egito → é um <b>túmulo</b>, para o faraó morto</li>
+       </ul>
+       <p>As duas são grandonas e pontudas, mas servem para coisas opostas:
+       uma é para <b>rezar</b>, a outra é para <b>enterrar</b>.</p>`,
+     chave:`Zigurate = templo. Pirâmide = túmulo.`},
+    {ico:"🧭", tit:"Armadilha 3 — o Egito de cabeça para baixo",
+     txt:`<b>Alto Egito</b> fica ao <b>SUL</b>. <b>Baixo Egito</b> fica ao <b>NORTE</b>.
+       <p>Parece errado porque no mapa o norte fica em cima. Mas o nome segue o <b>rio</b>,
+       não o papel: o Nilo <b>nasce no sul</b> e corre para o norte, então a parte "alta"
+       do rio é a do sul.</p>`,
+     chave:`Siga a água, não o mapa.`},
+    {ico:"⏳", tit:"Armadilha 4 — o tempo que anda para trás",
+     txt:`Antes de Cristo, os números <b>diminuem</b> conforme o tempo passa:
+       <p style="text-align:center;font-size:1.1em;margin:12px 0">
+       3200 a.C. → 1750 a.C. → 30 a.C. → <b>hoje</b></p>
+       Ou seja: <b>3200 a.C. é mais antigo</b> que 1750 a.C., mesmo o número sendo maior.
+       A escrita (3200 a.C.) veio bem <b>antes</b> de Hamurabi (1750 a.C.).`,
+     chave:`Número maior em a.C. = <b>mais antigo</b>.`},
+    {ico:"✅", tit:"Última conferida",
+     txt:`<ul class="lista">
+       <li>Mesopotâmia = <b>Ásia</b>, hoje <b>Iraque</b>. Egito = <b>África</b>.</li>
+       <li>Roda, arado e escrita cuneiforme = <b>Mesopotâmia</b>. Papiro = <b>Egito</b>.</li>
+       <li><b>Lei de Talião</b> = olho por olho, e <b>desigual</b> conforme a classe.</li>
+       <li>Os dois povos: <b>politeístas</b>, dependiam das <b>cheias</b>, sociedade <b>desigual</b>.</li>
+       </ul>
+       <p>Pode abrir a <b>colinha</b> no meio da prova. Sério: pode.</p>`,
+     chave:`Você já sabe tudo isso. Agora é só não cair nas pegadinhas.`}
+  ]
+];
+
+let A = null;
+function abrirAula(i, revendo){
+  somClique(); pararNilo();
+  A = { missao:i, slide:0, revendo:!!revendo };
+  S.cena = "a"+i;
+  render();
+}
+window.abrirAula = abrirAula;
+function reverAula(i){ abrirAula(i, true); }
+window.reverAula = reverAula;
+
+function telaAula(i){
+  const slides = AULAS[i], s = slides[A.slide], ultimo = A.slide === slides.length-1;
+  const m = MISSOES[i];
+  app.innerHTML = hud() + `
+    <h2 style="text-align:center">${m.ico} Aula ${i+1} · ${m.tit}</h2>
+    <div class="aula">
+      <div class="guia">
+        <span class="gato">😺</span>
+        <span>Sou a <b>Basté</b>, gata do tempo e sua guia.
+        ${A.slide===0 ? `Antes de te soltar na missão, ${NOME()}, deixa eu te contar o essencial.`
+                      : `Continuando, ${NOME()}…`}</span>
+      </div>
+      <div class="ico">${s.ico}</div>
+      <h2>${s.tit}</h2>
+      ${s.txt.trim().startsWith("<") ? s.txt : `<p>${s.txt}</p>`}
+      ${s.chave ? `<div class="chave"><span class="rot">🔑 Grave isso</span>${s.chave}</div>` : ``}
+      <div class="pontos">
+        ${slides.map((_,k)=>`<i class="${k===A.slide?"aqui":(k<A.slide?"vista":"")}"></i>`).join("")}
+      </div>
+    </div>
+    <div class="acoes">
+      ${A.slide>0 ? `<button class="btn papiro fraco" onclick="aulaVolta()">← Voltar</button>` : ``}
+      ${ultimo
+        ? `<button class="btn" onclick="aulaFim()">🚀 Começar a missão ${i+1}</button>`
+        : `<button class="btn papiro" onclick="aulaProx()">Próximo →</button>`}
+    </div>
+    <p class="centro mini" style="margin-top:14px">
+      ${ultimo ? `` : `<button class="chip" onclick="aulaFim()">Pular a aula e ir direto para a missão →</button>`}
+    </p>`;
+}
+function aulaProx(){ somClique(); A.slide++; telaAula(A.missao); scrollTo(0,0); }
+window.aulaProx = aulaProx;
+function aulaVolta(){ somClique(); A.slide--; telaAula(A.missao); scrollTo(0,0); }
+window.aulaVolta = aulaVolta;
+function aulaFim(){
+  somClique();
+  S.aulas[A.missao] = true; salvar();
+  S.cena = "m"+A.missao; render();
+}
+window.aulaFim = aulaFim;
 
 /* ============================================================
    QUIZ GENÉRICO (usado por várias missões)
