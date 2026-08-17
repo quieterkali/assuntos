@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Expedição Corpo Humano</title>
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%A7%AC%3C/text%3E%3C/svg%3E">
 <style>
 :root{
@@ -159,6 +158,42 @@ button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
   border-radius:var(--r);border:3px solid #5b2ea8;background:#0b1220;touch-action:none;cursor:crosshair
 }
 
+/* ---------- aula (slides antes da missão) ---------- */
+.aula{
+  background:linear-gradient(165deg,#faf3ff,#ecdcff);color:#2c1247;
+  border:3px solid #a855f7;border-radius:var(--r);padding:24px 22px 20px;margin-bottom:14px;
+  box-shadow:0 14px 40px rgba(0,0,0,.45)
+}
+.aula b{color:#7e22ce}
+.aula .guia{
+  display:flex;gap:10px;align-items:center;font-size:.86em;color:#5b3f7a;
+  border-bottom:2px dashed #c9a6f0;padding-bottom:10px;margin-bottom:16px
+}
+.aula .guia .bicho{font-size:30px;line-height:1}
+.aula .ico{font-size:60px;line-height:1;text-align:center;margin-bottom:6px}
+.aula h2{color:#7e22ce;text-align:center;font-size:clamp(21px,5.2vw,30px)}
+.aula p{font-size:1.06em;margin:0 0 12px}
+.aula .chave{
+  background:#fff;border-left:6px solid var(--magenta);border-radius:10px;
+  padding:12px 14px;margin-top:14px;font-size:1.03em
+}
+.aula .chave .rot{display:block;font-weight:bold;color:#be185d;font-size:.82em;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.aula .lista{margin:10px 0 0;padding-left:20px}
+.aula .lista li{margin-bottom:6px}
+.pontos{display:flex;gap:7px;justify-content:center;margin:18px 0 4px}
+.pontos i{width:9px;height:9px;border-radius:50%;background:#c9a6f0;display:block}
+.pontos i.aqui{background:#7e22ce;transform:scale(1.35)}
+.pontos i.vista{background:#7e22ce;opacity:.45}
+.btn.aula{background:linear-gradient(135deg,#7e22ce,#a855f7);color:#fff;box-shadow:0 6px 0 #4c1191,0 10px 20px rgba(0,0,0,.35)}
+.btn.aula.fraco{background:linear-gradient(135deg,#a78bd8,#8b6cc0);box-shadow:0 6px 0 #543a78,0 10px 20px rgba(0,0,0,.3)}
+.campo{
+  width:100%;max-width:340px;padding:14px 18px;border-radius:14px;border:3px solid var(--ouro);
+  background:#1c0f38;color:var(--ink);font-size:1.15em;font-family:inherit;text-align:center;
+  margin:6px 0 4px
+}
+.campo:focus{outline:none;border-color:var(--ciano);box-shadow:0 0 0 4px rgba(34,211,238,.2)}
+
 /* ---------- diversos ---------- */
 .centro{text-align:center}
 .mini{font-size:.88em;color:var(--muted)}
@@ -219,7 +254,7 @@ button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
 <div class="colinha" id="colinha">
   <div class="in">
     <button class="fechar" onclick="fecharColinha()">×</button>
-    <h2 style="color:var(--ouro)">📖 Colinha da Maflany</h2>
+    <h2 style="color:var(--ouro)">📖 Colinha</h2>
     <p class="mini">Tudo que cai na prova, num lugar só. Pode abrir a qualquer hora do jogo.</p>
 
     <h3>Órgãos internos</h3>
@@ -277,13 +312,47 @@ button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
 /* ============================================================
    ESTADO
    ============================================================ */
-const JOGADORA = "Maflany";
+const CHAVE = "expedicaoCorpo.v1";
 const S = {
+  nome: "",
+  genero: "f",          // "f" = cientista/doutora, "m" = cientista/doutor
   pontos: 0,
   missoes: [false,false,false,false,false,false],
   estrelas: [0,0,0,0,0,0],
-  cena: "inicio"
+  aulas:    [false,false,false,false,false,false],
+  cena: "nome"
 };
+
+function esc(x){
+  return String(x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+/* g(feminino, masculino) — a forma certa para quem está jogando */
+function g(fem, masc){ return S.genero === "f" ? fem : masc; }
+const JOGADORA = () => esc(S.nome);
+const DRA = () => g("Dra.","Dr.");
+
+function salvar(){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify({
+      nome:S.nome, genero:S.genero, pontos:S.pontos,
+      missoes:S.missoes, estrelas:S.estrelas, aulas:S.aulas
+    }));
+  }catch(e){/* navegador sem localStorage: o jogo roda igual, só não guarda */}
+}
+function carregar(){
+  try{
+    const d = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if(d && d.nome){
+      S.nome = d.nome; S.genero = d.genero === "m" ? "m" : "f";
+      S.pontos = d.pontos|0;
+      if(Array.isArray(d.missoes)  && d.missoes.length===6)  S.missoes  = d.missoes.map(Boolean);
+      if(Array.isArray(d.estrelas) && d.estrelas.length===6) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(3,n|0)));
+      if(Array.isArray(d.aulas)    && d.aulas.length===6)    S.aulas    = d.aulas.map(Boolean);
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
 
 const MISSOES = [
   {ico:"🫀", tit:"Sala dos Órgãos",     sub:"Coloque cada órgão no lugar certo"},
@@ -343,9 +412,10 @@ function estrelasPor(acertos, total){
 
 function hud(titulo){
   return `<div class="hud">
-    <span class="nome">👩‍🔬 ${JOGADORA}</span>
+    <span class="nome">${g("👩‍🔬","👨‍🔬")} ${JOGADORA()}</span>
     <span class="chip pts">⭐ ${S.pontos} pts</span>
     <span class="espaco"></span>
+    ${/^m[0-5]$/.test(S.cena) ? `<button class="chip" onclick="reverAula(${S.cena[1]})" style="cursor:pointer">📚 Aula</button>` : ``}
     <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
     <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
   </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
@@ -402,6 +472,7 @@ function irMapa(){ somClique(); S.cena="mapa"; render(); }
 window.irMapa = irMapa;
 function abrirMissao(i){
   if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a missão anterior primeiro!", true); return; }
+  if(!S.aulas[i]){ abrirAula(i); return; }   /* aula primeiro, na estreia da missão */
   somClique(); S.cena = "m"+i; render();
 }
 window.abrirMissao = abrirMissao;
@@ -412,12 +483,13 @@ function concluiMissao(i, acertos, total, bonus){
   S.estrelas[i] = Math.max(S.estrelas[i], est);
   const pts = acertos*10 + est*25 + (bonus||0);
   S.pontos += pts;
+  salvar();
   somVitoria();
   const tudoFeito = S.missoes.every(Boolean);
   app.innerHTML = hud() + `
     <div class="card destaque centro">
       <div style="font-size:64px">${est===3?"🏆":est===2?"🎉":"👏"}</div>
-      <h2>Missão ${i+1} concluída!</h2>
+      <h2>Missão ${i+1} concluída, ${JOGADORA()}!</h2>
       <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${estrelasTxt(est)}</div>
       <p>Você acertou <b>${acertos} de ${total}</b> e ganhou <b>${pts} pontos</b>.</p>
       ${est<3?`<p class="mini">Dica: dá para refazer a missão e tentar as 3 estrelas! ⭐⭐⭐</p>`:``}
@@ -435,6 +507,7 @@ function concluiMissao(i, acertos, total, bonus){
 function render(){
   scrollTo(0,0);
   switch(S.cena){
+    case "nome":   telaNome();   break;
     case "inicio": telaInicio(); break;
     case "mapa":   telaMapa();   break;
     case "m0": faseOrgaos();   break;
@@ -444,8 +517,376 @@ function render(){
     case "m4": faseAnexos();   break;
     case "m5": faseFinal();    break;
     case "diploma": telaDiploma(); break;
+    default:
+      if(/^a[0-5]$/.test(S.cena)){ telaAula(+S.cena[1]); }
+      break;
   }
 }
+
+/* ============================================================
+   TELA DO NOME — nada de nome fixo no código
+   ============================================================ */
+function telaNome(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--ouro)">
+      <div style="font-size:70px;line-height:1">🧬</div>
+      <h1 style="background:linear-gradient(90deg,var(--ciano),var(--magenta),var(--ouro));-webkit-background-clip:text;background-clip:text;color:transparent">
+        EXPEDIÇÃO<br>CORPO HUMANO
+      </h1>
+      <p class="mini">Capítulo 9 · Ciências · 3º ano</p>
+      <div class="card" style="text-align:left;background:rgba(28,15,56,.78);margin-top:18px">
+        <p><b>🔬 A Academia de Ciências está te esperando.</b></p>
+        <p>Só falta uma coisa para o seu crachá ficar pronto: <b>o seu nome</b>.</p>
+      </div>
+      <input class="campo" id="nomeInput" type="text" maxlength="18" autocomplete="off"
+             placeholder="Digite seu nome" onkeydown="if(event.key==='Enter')pedeGenero()">
+      <p class="mini" id="avisoNome" style="min-height:20px"></p>
+      <p style="margin-top:6px"><b>Como você quer ser chamado(a) na Academia?</b></p>
+      <div class="acoes">
+        <button class="btn" onclick="definir('f')">🔬 Sou cientista (doutora)</button>
+        <button class="btn ciano" onclick="definir('m')">🔬 Sou cientista (doutor)</button>
+      </div>
+    </div>`;
+  const inp = $("#nomeInput");
+  if(inp){ inp.value = S.nome; setTimeout(()=>inp.focus(), 120); }
+}
+function definir(gen){
+  const inp = $("#nomeInput");
+  let v = (inp ? inp.value : "").trim().replace(/\s+/g," ");
+  if(v.length < 2){
+    somErro();
+    $("#avisoNome").innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`;
+    if(inp) inp.focus();
+    return;
+  }
+  v = v.split(" ").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" ");
+  S.nome = v;
+  if(gen === "f" || gen === "m") S.genero = gen;
+  ac(); somVitoria(); salvar();
+  S.cena = "inicio"; render();
+}
+window.definir = definir;
+/* Enter não escolhe o tratamento sozinho — quem decide é a criança */
+function pedeGenero(){
+  const inp = $("#nomeInput"), aviso = $("#avisoNome");
+  if((inp ? inp.value : "").trim().length < 2){
+    somErro(); aviso.innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`; return;
+  }
+  somClique();
+  aviso.innerHTML = `<span style="color:var(--ouro)">Agora toque num dos dois botões aí embaixo 👇</span>`;
+}
+window.pedeGenero = pedeGenero;
+function trocarNome(){ somClique(); S.cena = "nome"; render(); }
+window.trocarNome = trocarNome;
+function zerar(){
+  if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
+  S.pontos = 0; S.missoes = [false,false,false,false,false,false];
+  S.estrelas = [0,0,0,0,0,0]; S.aulas = [false,false,false,false,false,false];
+  salvar(); somClique(); render();
+}
+window.zerar = zerar;
+
+/* ============================================================
+   AULAS — a explicação vem ANTES da missão, não só depois do erro.
+   Todo o conteúdo sai de base-de-conhecimento.md, que foi conferido
+   contra as fotos do livro (ver revisao-de-precisao.md).
+   ============================================================ */
+const AULAS = [
+  /* ---- 1 · órgãos ---- */
+  [
+    {ico:"🧍", tit:"O que é um órgão",
+     txt:`Seu corpo é feito de partes, e <b>cada parte tem um trabalho</b>. As partes mais
+       importantes se chamam <b>órgãos</b>.
+       <p>Tem órgão <b>interno</b>, que fica escondido dentro de você (cérebro, coração,
+       pulmões, rins, estômago, intestinos). E tem órgão <b>externo</b>, que fica do lado
+       de fora: a <b>pele</b>.</p>`,
+     chave:`Órgão = parte do corpo com um trabalho para fazer.`},
+    {ico:"🧠", tit:"O cérebro é o chefe",
+     txt:`O cérebro <b>coordena</b> o funcionamento de todos os outros órgãos — é ele que manda.
+       <p>E é graças a ele que você consegue <b>pensar, falar, se mover e ter sentimentos</b>.
+       Fica dentro da cabeça, protegido pelos ossos.</p>`,
+     chave:`Pensar, falar, se mover, sentir: tudo isso é <b>cérebro</b>.`},
+    {ico:"🫀", tit:"O coração é a bomba",
+     txt:`O coração <b>bombeia o sangue</b> para ele circular pelo corpo inteiro, dentro de
+       tubinhos chamados <b>vasos sanguíneos</b>.
+       <p>Feche a sua mão: o seu coração tem mais ou menos <b>esse tamanho</b>. E ele bate
+       <b>mais de 100 mil vezes por dia</b> sozinho, sem você mandar.</p>`,
+     chave:`Coração bombeia · o sangue corre nos <b>vasos sanguíneos</b>.`},
+    {ico:"🫁", tit:"Pulmões e rins",
+     txt:`<b>Pulmões:</b> o ar que você puxa pelo nariz chega neles. Lá dentro, o gás
+       <b>oxigênio</b> passa do ar para o <b>sangue</b>. São dois, um de cada lado do peito.
+       <p><b>Rins:</b> eles <b>filtram o sangue</b>, tirando dele o que faz mal ao corpo.
+       Isso vira parte da <b>urina</b> (o xixi).</p>`,
+     chave:`Pulmão trabalha com <b>ar</b>. Rim trabalha com <b>filtro</b>.`},
+    {ico:"🍽️", tit:"A viagem da comida",
+     txt:`<ul class="lista">
+       <li>1. o alimento é <b>mastigado na boca</b></li>
+       <li>2. você <b>engole</b>, e ele passa pelo <b>estômago</b></li>
+       <li>3. segue pelos <b>intestinos</b>, onde é <b>digerido</b></li>
+       <li>4. o que o corpo <b>não absorve</b> vira <b>fezes</b> (o cocô)</li>
+       </ul>`,
+     chave:`Boca → estômago → intestinos. Nessa ordem.`},
+    {ico:"✅", tit:"O que vai cair na missão",
+     txt:`<ul class="lista">
+       <li>O trabalho de cada órgão: cérebro, coração, pulmões, rins, estômago e intestinos.</li>
+       <li>A diferença entre órgão <b>interno</b> e <b>externo</b>.</li>
+       <li>O caminho da comida e o nome dos <b>vasos sanguíneos</b>.</li>
+       </ul>`,
+     chave:`Na missão você vai colocar cada órgão no lugar certo do corpo.`}
+  ],
+  /* ---- 2 · esqueleto e músculos ---- */
+  [
+    {ico:"🦴", tit:"Os ossos",
+     txt:`Os ossos também são <b>órgãos</b> — só que <b>duros e resistentes</b>.
+       <p>O conjunto de todos os ossos do corpo tem um nome: <b>esqueleto</b>.</p>`,
+     chave:`Esqueleto = todos os ossos juntos.`},
+    {ico:"🏠", tit:"Os três trabalhos do esqueleto",
+     txt:`<ul class="lista">
+       <li><b>Sustenta</b> o corpo — é a estrutura, como as vigas de uma casa.</li>
+       <li><b>Protege</b> os órgãos internos — o crânio protege o cérebro, as costelas
+         protegem o coração e os pulmões.</li>
+       <li><b>Possibilita a locomoção</b> — andar, correr, pular.</li>
+       </ul>
+       <p>Um <b>adulto</b> tem <b>206 ossos</b>.</p>`,
+     chave:`Sustenta · protege · possibilita a locomoção. São esses três.`},
+    {ico:"👶", tit:"Uma curiosidade sobre você",
+     txt:`Um <b>bebê nasce com 275 a 300 ossos</b>! Conforme cresce, muitos vão se
+       <b>juntando</b> uns aos outros, até sobrarem 206.
+       <p>Ou seja: <b>você tem mais ossos hoje</b> do que vai ter quando crescer.</p>
+       <p>O <b>menor</b> osso do corpo fica dentro do ouvido, mede uns 3 milímetros e se
+       chama <b>estribo</b>. (Agora você sabe de onde veio o meu nome. 😄) O <b>maior</b>
+       é o <b>fêmur</b>, o osso da coxa.</p>`,
+     chave:`Adulto: <b>206</b> ossos. Bebê: entre <b>275 e 300</b>.`},
+    {ico:"💪", tit:"Os músculos",
+     txt:`Os músculos também são órgãos, e são eles que fazem o corpo <b>se mover</b> —
+       tanto por fora quanto os órgãos lá de dentro.
+       <p>E são os músculos que fazem as <b>expressões do rosto</b>: sorrir, chorar,
+       franzir a testa.</p>`,
+     chave:`Cara de alegria ou de tristeza? Quem faz são os <b>músculos</b>.`},
+    {ico:"🔄", tit:"O segredo do movimento",
+     txt:`Alguns músculos estão <b>ligados aos ossos</b> e podem fazer duas coisas:
+       <ul class="lista">
+       <li><b>Contrair</b> → o músculo fica <b>mais curto</b></li>
+       <li><b>Relaxar</b> → o músculo <b>volta ao tamanho inicial</b></li>
+       </ul>
+       <p>Ao contrair e relaxar, ele <b>puxa o osso</b> — e o corpo se move. Faça o teste do
+       livro: dobre o braço devagar segurando ele com a outra mão. Sente endurecer?
+       É o músculo contraindo.</p>`,
+     chave:`Contrair = <b>mais curto</b>. Relaxar = <b>volta ao normal</b>.`},
+    {ico:"✅", tit:"O que vai cair na missão",
+     txt:`<ul class="lista">
+       <li>Os <b>três</b> trabalhos do esqueleto e os <b>206</b> ossos.</li>
+       <li>O que os músculos movem e as <b>expressões faciais</b>.</li>
+       <li>A diferença entre <b>contrair</b> e <b>relaxar</b>.</li>
+       </ul>`,
+     chave:`Na missão você vai mandar o braço contrair e relaxar. Preste atenção no comando!`}
+  ],
+  /* ---- 3 · exames ---- */
+  [
+    {ico:"🔎", tit:"Ver por dentro sem abrir",
+     txt:`Com <b>equipamentos especiais</b>, o médico consegue observar como estão os seus
+       órgãos internos <b>sem precisar abrir</b> o seu corpo.
+       <p>Nesta missão você vai escolher o exame certo para cada caso. São três.</p>`,
+     chave:`Cada exame serve para uma coisa diferente. Não dá para trocar.`},
+    {ico:"🦴", tit:"Radiografia (raio X)",
+     txt:`Mostra os <b>ossos</b> — e também alguns órgãos internos, como os pulmões.
+       <p>É o exame de quem <b>caiu</b> e precisa saber se quebrou algum osso.</p>`,
+     chave:`Osso quebrado? <b>Raio X</b>.`},
+    {ico:"👶", tit:"Ultrassonografia",
+     txt:`Mostra partes internas que <b>não aparecem</b> na radiografia.
+       <p>É o exame usado para ver o <b>bebê dentro da barriga da mãe</b>.</p>`,
+     chave:`Bebê na barriga? <b>Ultrassonografia</b>.`},
+    {ico:"👂", tit:"Ausculta",
+     txt:`Esse é diferente dos outros dois: ele <b>não mostra imagem nenhuma</b>. Ele deixa
+       o médico <b>escutar</b> os sons de dentro do corpo — do <b>coração</b>, dos
+       <b>pulmões</b> e de outros órgãos.
+       <p>O aparelho se chama <b>estetoscópio</b>, e é encostado no <b>peito e nas costas</b>.</p>`,
+     chave:`Escutar? <b>Ausculta</b>, com o <b>estetoscópio</b>.`},
+    {ico:"✅", tit:"O que vai cair na missão",
+     txt:`<ul class="lista">
+       <li>Qual exame mostra <b>osso</b>, qual mostra <b>bebê</b> e qual só deixa <b>escutar</b>.</li>
+       <li>O nome do aparelho da ausculta (<b>estetoscópio</b>).</li>
+       </ul>`,
+     chave:`Ossos → raio X · bebê → ultrassom · escutar → ausculta.`}
+  ],
+  /* ---- 4 · pele ---- */
+  [
+    {ico:"🛡️", tit:"A pele é campeã",
+     txt:`A pele é o <b>MAIOR órgão</b> do corpo humano — e é diferente de todos os outros
+       que você viu até aqui: ela é um órgão <b>externo</b>, porque <b>envolve</b> o corpo
+       inteiro.`,
+     chave:`Maior órgão do corpo = a <b>pele</b>. E é <b>externo</b>.`},
+    {ico:"🧫", tit:"As quatro funções da pele",
+     txt:`<ul class="lista">
+       <li>É uma <b>barreira de proteção</b> contra os <b>microrganismos</b> que causam doenças.</li>
+       <li>Protege contra os <b>raios ultravioleta</b>, que vêm do Sol.</li>
+       <li><b>Mantém a temperatura</b> do corpo.</li>
+       <li>É o órgão do <b>tato</b>.</li>
+       </ul>`,
+     chave:`Proteger dos micróbios · proteger do Sol · manter a temperatura · sentir.`},
+    {ico:"✋", tit:"O tato",
+     txt:`Pelo tato você sente <b>frio</b> e <b>calor</b>, e também a <b>textura</b> das coisas:
+       se são <b>lisas</b> ou <b>ásperas</b>.
+       <p>É com o tato que pessoas cegas leem o <b>braile</b>, uma escrita feita de pontinhos
+       em relevo.</p>`,
+     chave:`Tato = frio, calor e textura (liso ou áspero).`},
+    {ico:"🎨", tit:"Melanina, a cor da gente",
+     txt:`Na pele existe uma substância chamada <b>melanina</b>. É ela que dá a cor da
+       <b>pele</b>, dos <b>olhos</b> e dos <b>cabelos</b>.
+       <p><b>Quanto mais escura a pele, mais melanina ela tem.</b> Todos os tons de pele são
+       bonitos e saudáveis do mesmo jeito.</p>`,
+     chave:`Cor da pele = quantidade de <b>melanina</b>.`},
+    {ico:"☀️", tit:"Sol, protetor e FPS",
+     txt:`No Sol, o corpo produz <b>mais melanina</b> e a pele fica bronzeada. <b>Mas</b> se
+       o Sol for muito forte, essa melanina <b>não dá conta</b> de proteger sozinha.
+       <p>Por isso: <b>protetor solar</b> e <b>chapéu ou boné</b>. O número do protetor é o
+       <b>FPS</b> — <b>quanto maior o número, maior a proteção</b>. E tem que passar
+       <b>várias vezes ao dia</b>, sempre que sair da água ou suar muito.</p>
+       <p>E cuidado com cortes: um corte fundo pode deixar uma marca chamada <b>cicatriz</b>.</p>`,
+     chave:`<b>FPS maior = protege mais.</b> Passar de novo ao sair da água.`},
+    {ico:"✅", tit:"O que vai cair na missão",
+     txt:`<ul class="lista">
+       <li>A pele é o <b>maior</b> órgão e é <b>externo</b>.</li>
+       <li>As <b>4 funções</b> e o que o <b>tato</b> sente.</li>
+       <li><b>Melanina</b>, <b>FPS</b> e <b>cicatriz</b>.</li>
+       </ul>`,
+     chave:`A missão é um jogo de ação: defenda a pele dos inimigos certos!`}
+  ],
+  /* ---- 5 · anexos da pele ---- */
+  [
+    {ico:"🔬", tit:"Por baixo do que a gente vê",
+     txt:`A parte da pele que você enxerga é só a <b>superfície</b> dela. Existem
+       <b>camadas mais profundas</b>, que ficam escondidas.
+       <p>É lá embaixo, nessas camadas, que estão as <b>raízes</b> dos cabelos, dos pelos
+       e das unhas.</p>`,
+     chave:`Raiz de cabelo, pelo e unha fica nas <b>camadas profundas</b>.`},
+    {ico:"💅", tit:"Queratina",
+     txt:`<b>Cabelos, pelos e unhas</b> são feitos de uma substância chamada
+       <b>queratina</b>, que dá <b>resistência</b> a eles.
+       <p>E para que servem as unhas? Elas dão <b>firmeza à ponta dos dedos</b> e permitem
+       <b>coçar</b> o corpo.</p>`,
+     chave:`Cabelo, pelo e unha = <b>queratina</b>.`},
+    {ico:"🐶", tit:"Pelos são coisa de mamífero",
+     txt:`<b>Somente os animais mamíferos têm pelos.</b> Viu pelo? É mamífero, sempre.
+       <p>Os nossos são mais finos e curtos que os de muitos outros mamíferos, e cobrem quase
+       todo o corpo — <b>menos</b> em três lugares: os <b>lábios</b>, as <b>palmas das mãos</b>
+       e as <b>plantas dos pés</b>.</p>`,
+     chave:`Sem pelo: lábios, palmas das mãos e plantas dos pés.`},
+    {ico:"💧", tit:"Glândulas, suor e poros",
+     txt:`Na pele existem as <b>glândulas</b>. Umas produzem substâncias que <b>evitam o
+       ressecamento</b> da pele. Outras produzem o <b>suor</b>.
+       <p>O suor <b>resfria o corpo</b> e sai pelos <b>poros</b>, que são pequenas aberturas
+       na pele. Por isso, quando você corre muito e esquenta, começa a suar: é o
+       ar-condicionado natural do corpo.</p>`,
+     chave:`O suor <b>resfria</b> o corpo e sai pelos <b>poros</b>.`},
+    {ico:"✅", tit:"O que vai cair na missão",
+     txt:`<ul class="lista">
+       <li><b>Queratina</b> e para que servem as unhas.</li>
+       <li>Só <b>mamífero</b> tem pelo, e os três lugares sem pelo.</li>
+       <li>O que fazem as <b>glândulas</b>, o <b>suor</b> e os <b>poros</b>.</li>
+       </ul>`,
+     chave:`Estamos quase no diploma. Falta só a prova final!`}
+  ],
+  /* ---- 6 · revisão ---- */
+  [
+    {ico:"🎓", tit:"Antes da prova final",
+     txt:`Você já passou pelas cinco missões, {NOME}. A prova final mistura
+       <b>tudo</b>: órgãos, ossos, músculos, exames, pele e anexos.
+       <p>Esta aula não tem matéria nova. É só uma revisão rápida das coisas em que
+       todo mundo escorrega.</p>`,
+     chave:`Se travar no meio da prova, pode abrir a colinha. Sério: pode.`},
+    {ico:"🧠", tit:"Quem faz o quê",
+     txt:`<ul class="lista">
+       <li><b>Cérebro</b> — coordena tudo e cuida dos <b>sentimentos</b></li>
+       <li><b>Coração</b> — bombeia o sangue</li>
+       <li><b>Pulmões</b> — passam o <b>oxigênio</b> para o sangue</li>
+       <li><b>Rins</b> — <b>filtram</b> o sangue e fazem a urina</li>
+       <li><b>Músculos</b> — movem os ossos e fazem as <b>expressões do rosto</b></li>
+       </ul>`,
+     chave:`Cuidado: quem filtra o sangue é o <b>rim</b>, não o esqueleto.`},
+    {ico:"🔀", tit:"Não troque os exames",
+     txt:`<ul class="lista">
+       <li><b>Raio X</b> → mostra <b>ossos</b></li>
+       <li><b>Ultrassonografia</b> → mostra o <b>bebê</b> na barriga</li>
+       <li><b>Ausculta</b> → <b>não mostra nada</b>, só deixa <b>escutar</b></li>
+       </ul>`,
+     chave:`Imagem de osso, imagem de bebê, ou só som. Um para cada.`},
+    {ico:"🔄", tit:"Contrair e relaxar",
+     txt:`Essa dupla cai quase sempre, e é fácil trocar:
+       <p style="text-align:center;font-size:1.1em;margin:12px 0">
+       <b>Contrair</b> = ficar mais <b>curto</b><br>
+       <b>Relaxar</b> = <b>voltar</b> ao tamanho inicial</p>`,
+     chave:`Curto é contrair. Voltar ao normal é relaxar.`},
+    {ico:"🛡️", tit:"A pele, de novo",
+     txt:`<ul class="lista">
+       <li>É o <b>maior</b> órgão e o único <b>externo</b> do capítulo</li>
+       <li><b>Melanina</b> = cor da pele, dos olhos e do cabelo</li>
+       <li><b>FPS</b> maior = protege <b>mais</b></li>
+       <li>O <b>suor resfria</b> e sai pelos <b>poros</b></li>
+       <li>Só <b>mamífero</b> tem pelo</li>
+       </ul>`,
+     chave:`Pele: proteger, manter a temperatura e sentir.`},
+    {ico:"✅", tit:"Pode ir!",
+     txt:`São 12 perguntas com cara de prova de verdade. Se errar, o jogo explica — e você
+       pode refazer quantas vezes quiser.
+       <p>As estrelas <b>só sobem</b>, nunca descem. Então não tem como piorar.</p>`,
+     chave:`Você estudou tudo isso. Agora é só ir com calma e ler até o fim.`}
+  ]
+];
+
+let A = null;
+/* {NOME} nos textos das aulas vira o nome de quem está jogando, na hora de desenhar */
+function nomear(txt){ return String(txt).replace(/\{NOME\}/g, JOGADORA()); }
+function abrirAula(i, revendo){
+  somClique();
+  A = { missao:i, slide:0, revendo:!!revendo };
+  S.cena = "a"+i;
+  render();
+}
+window.abrirAula = abrirAula;
+function reverAula(i){ abrirAula(i, true); }
+window.reverAula = reverAula;
+
+function telaAula(i){
+  const slides = AULAS[i], s = slides[A.slide], ultimo = A.slide === slides.length-1;
+  const m = MISSOES[i];
+  app.innerHTML = hud() + `
+    <h2 style="text-align:center">${m.ico} Aula ${i+1} · ${m.tit}</h2>
+    <div class="aula">
+      <div class="guia">
+        <span class="bicho">🦴</span>
+        <span>Sou o <b>Estribo</b>, o esqueleto mais simpático da Academia.
+        ${A.slide===0 ? `Antes de você entrar na missão, ${JOGADORA()}, deixa eu te contar o principal.`
+                      : `Continuando, ${JOGADORA()}…`}</span>
+      </div>
+      <div class="ico">${s.ico}</div>
+      <h2>${nomear(s.tit)}</h2>
+      ${s.txt.trim().startsWith("<") ? nomear(s.txt) : `<p>${nomear(s.txt)}</p>`}
+      ${s.chave ? `<div class="chave"><span class="rot">🔑 Grave isso</span>${nomear(s.chave)}</div>` : ``}
+      <div class="pontos">
+        ${slides.map((_,k)=>`<i class="${k===A.slide?"aqui":(k<A.slide?"vista":"")}"></i>`).join("")}
+      </div>
+    </div>
+    <div class="acoes">
+      ${A.slide>0 ? `<button class="btn aula fraco" onclick="aulaVolta()">← Voltar</button>` : ``}
+      ${ultimo
+        ? `<button class="btn" onclick="aulaFim()">🚀 Começar a missão ${i+1}</button>`
+        : `<button class="btn aula" onclick="aulaProx()">Próximo →</button>`}
+    </div>
+    <p class="centro mini" style="margin-top:14px">
+      ${ultimo ? `` : `<button class="chip" onclick="aulaFim()" style="cursor:pointer">Pular a aula e ir direto para a missão →</button>`}
+    </p>`;
+}
+function aulaProx(){ somClique(); A.slide++; telaAula(A.missao); scrollTo(0,0); }
+window.aulaProx = aulaProx;
+function aulaVolta(){ somClique(); A.slide--; telaAula(A.missao); scrollTo(0,0); }
+window.aulaVolta = aulaVolta;
+function aulaFim(){
+  somClique();
+  S.aulas[A.missao] = true; salvar();
+  S.cena = "m"+A.missao; render();
+}
+window.aulaFim = aulaFim;
 
 /* ============================================================
    TELA INICIAL
@@ -457,13 +898,15 @@ function telaInicio(){
       <h1 style="background:linear-gradient(90deg,var(--ciano),var(--magenta),var(--ouro));-webkit-background-clip:text;background-clip:text;color:transparent">
         EXPEDIÇÃO<br>CORPO HUMANO
       </h1>
-      <p style="font-size:1.15em">Uma aventura científica de <b style="color:var(--ouro)">${JOGADORA}</b></p>
+      <p style="font-size:1.15em">Uma aventura científica de <b style="color:var(--ouro)">${JOGADORA()}</b></p>
       <p class="mini">Capítulo 9 · Ciências · 3º ano</p>
       <div class="card" style="text-align:left;background:rgba(28,15,56,.75);margin-top:18px">
-        <p><b>🎯 Sua missão, doutora:</b></p>
-        <p>Você acaba de ser aceita na Academia de Ciências do Corpo Humano. Para virar
-        <b>Doutora do Corpo Humano</b>, precisa completar <b>6 missões</b> — dos órgãos
-        lá no fundo até a pele que cobre tudo.</p>
+        <p><b>🎯 Sua missão, ${g("doutora","doutor")}:</b></p>
+        <p>Você acaba de ser ${g("aceita","aceito")} na Academia de Ciências do Corpo Humano.
+        Para virar <b>${g("Doutora","Doutor")} do Corpo Humano</b>, precisa completar
+        <b>6 missões</b> — dos órgãos lá no fundo até a pele que cobre tudo.</p>
+        <p><b>📚 Você não entra em nenhuma missão sem saber nada:</b> cada uma começa com
+        uma <b>aula rapidinha</b> do Estribo, um esqueleto muito simpático.</p>
         <p class="mini">Cada missão vale estrelas ⭐. Errar não é problema: toda vez que
         você erra, o jogo te explica o porquê. É assim que cientista aprende.</p>
       </div>
@@ -471,6 +914,9 @@ function telaInicio(){
         <button class="btn" onclick="comecar()">🚀 Começar a expedição</button>
         <button class="btn sec" onclick="abrirColinha()">📖 Ver a colinha</button>
       </div>
+      <p class="mini" style="margin-top:14px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Não sou ${JOGADORA()}, trocar nome</button>
+      </p>
     </div>`;
 }
 function comecar(){ ac(); somVitoria(); S.cena="mapa"; render(); }
@@ -483,8 +929,8 @@ function telaMapa(){
   const feitas = S.missoes.filter(Boolean).length;
   app.innerHTML = hud() + `
     <div class="card">
-      <h2>🗺️ Mapa da Expedição</h2>
-      <p class="mini">${feitas} de 6 missões completas · ${S.pontos} pontos</p>
+      <h2>🗺️ Mapa da Expedição de ${JOGADORA()}</h2>
+      <p class="mini">${feitas} de 6 missões completas · ${S.estrelas.reduce((a,b)=>a+b,0)} de 18 estrelas · ${S.pontos} pontos</p>
       <div class="progresso"><i style="width:${feitas/6*100}%"></i></div>
       <div class="missoes">
         ${MISSOES.map((m,i)=>{
@@ -495,10 +941,15 @@ function telaMapa(){
             <div class="ico">${trancada?"🔒":m.ico}</div>
             <div class="tit">${m.tit}</div>
             <div class="sub">${trancada?"Complete a missão anterior":m.sub}</div>
+            ${(!trancada && !S.aulas[i])?`<div class="tags" style="margin-top:8px"><span class="tag" style="border-color:var(--ouro);color:var(--ouro)">📚 começa com uma aula</span></div>`:``}
             ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
           </button>`;
         }).join("")}
       </div>
+      <p class="mini centro" style="margin-top:16px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Trocar nome</button>
+        <button class="chip" onclick="zerar()" style="cursor:pointer">🔄 Começar tudo de novo</button>
+      </p>
     </div>
     ${feitas===6?`<div class="card destaque centro">
       <div style="font-size:56px">🎓</div>
@@ -820,7 +1271,7 @@ const QUIZ_F2 = [
 const CASOS = [
   {t:"Pedro caiu da bicicleta. O braço dele está doendo muito e ele acha que <b>quebrou um osso</b>.",
    c:0, e:"A <b>radiografia (raio X)</b> mostra os <b>ossos</b>. É justamente o exame usado para saber se um osso está quebrado depois de uma queda."},
-  {t:"A tia da Maflany está grávida e quer <b>ver o bebê</b> que está dentro da barriga dela.",
+  {t:"A tia da {NOME} está grávida e quer <b>ver o bebê</b> que está dentro da barriga dela.",
    c:1, e:"A <b>ultrassonografia</b> mostra partes internas que <b>não aparecem</b> na radiografia — como o bebê dentro da barriga da mãe."},
   {t:"A médica quer <b>escutar os sons</b> que o coração e os pulmões estão fazendo.",
    c:2, e:"Isso é a <b>auscultação</b>: escutar os sons produzidos pelo coração, pelos pulmões e por outros órgãos internos. O aparelho é o <b>estetoscópio</b>."},
@@ -846,7 +1297,7 @@ function desenhaF3(){
       <div class="progresso"><i style="width:${f3.i/CASOS.length*100}%"></i></div>
       <div class="card" style="background:rgba(28,15,56,.8);border-color:var(--ciano)">
         <div style="font-size:34px">🧑‍⚕️</div>
-        <div class="pergunta" style="margin:0">${c.t}</div>
+        <div class="pergunta" style="margin:0">${nomear(c.t)}</div>
       </div>
       <div class="opcoes" id="ops3">
         ${APARELHOS.map((a,k)=>`<button class="op" onclick="respExame(${k})">
@@ -870,7 +1321,7 @@ function respExame(k){
   if(k===c.c){
     f3.ac++; somAcerto(); ganha(10);
     fb.className="feedback bom show";
-    fb.innerHTML = `<div class="tt">✅ Diagnóstico certo, doutora!</div>${c.e}`;
+    fb.innerHTML = `<div class="tt">✅ Diagnóstico certo, ${g("doutora","doutor")} ${JOGADORA()}!</div>${c.e}`;
   } else {
     somErro();
     fb.className="feedback ruim show";
@@ -1152,13 +1603,13 @@ function faseFinal(){
   app.innerHTML = hud("🎓 Missão 6 · Prova de Doutorado") + `
     <div class="card centro destaque">
       <div style="font-size:60px">🎓</div>
-      <h2>A prova final, Dra. ${JOGADORA}</h2>
+      <h2>A prova final, ${DRA()} ${JOGADORA()}</h2>
       <p>São <b>${QUIZ_FINAL.length} perguntas</b> misturando <b>tudo</b> o que você aprendeu
       nas 5 missões: órgãos, ossos, músculos, exames, pele e anexos da pele.</p>
       <p class="mini">Estas são as perguntas com mais cara de prova de verdade. Se errar,
       o jogo explica — e você pode refazer quantas vezes quiser.</p>
       <div class="acoes">
-        <button class="btn" onclick="comecarFinal()">Estou pronta! 🚀</button>
+        <button class="btn" onclick="comecarFinal()">${g("Estou pronta","Estou pronto")}! 🚀</button>
         <button class="btn sec" onclick="abrirColinha()">📖 Revisar a colinha antes</button>
       </div>
     </div>`;
@@ -1174,9 +1625,9 @@ function telaDiploma(){
   app.innerHTML = hud() + `
     <div class="diploma">
       <div class="selo">🏅</div>
-      <h2>DIPLOMA DE DOUTORA<br>DO CORPO HUMANO</h2>
+      <h2>DIPLOMA DE ${g("DOUTORA","DOUTOR")}<br>DO CORPO HUMANO</h2>
       <p>A Academia de Ciências concede este diploma a</p>
-      <div class="nome">${JOGADORA} Traoré</div>
+      <div class="nome">${JOGADORA()}</div>
       <p>por ter completado as <b>6 missões</b> da Expedição Corpo Humano,
       dominando os órgãos internos, o esqueleto, os músculos, os exames médicos,
       a pele e seus anexos.</p>
@@ -1200,6 +1651,11 @@ function telaDiploma(){
 /* ============================================================
    INÍCIO
    ============================================================ */
+if(carregar()){
+  S.cena = S.missoes.some(Boolean) ? "mapa" : "inicio";
+} else {
+  S.cena = "nome";
+}
 render();
 </script>
 </body>
