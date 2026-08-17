@@ -1,19 +1,24 @@
-# Ciências da Maflany
+# Jogos de Estudo
 
-Jogos de estudo para a Maflany (9 anos), do livro **Aprender Juntos — Ciências, 3º ano**
-(SM Educação). Um jogo por capítulo, feito a partir das fotos das páginas do livro dela.
+Jogos de estudo feitos por matéria e por capítulo. Um arquivo HTML por assunto: sem rede,
+sem dependências, funciona no celular e no computador.
 
 **▶ Portal:** https://quieterkali.github.io/ciencias-maflany/
 
 ## Assuntos
 
-| Assunto | Capítulo | Páginas | Jogar |
+| Matéria | Assunto | Base | Jogar |
 |---|---|---|---|
-| O Corpo Humano | Cap. 9 | 121–127, 130–131 | [6 missões](https://quieterkali.github.io/ciencias-maflany/corpo-humano/) |
+| Ciências · 3º ano | O Corpo Humano | Cap. 9, p. 121–131 (fotos do livro) | [6 missões](https://quieterkali.github.io/ciencias-maflany/corpo-humano/) |
+| História · 6º ano | Rios do Tempo — Mesopotâmia e Egito | currículo padrão (BNCC EF06HI06–09) | [6 missões](https://quieterkali.github.io/ciencias-maflany/civilizacoes-antigas/) |
+
+> O jogo de História **pergunta o nome antes de começar** e personaliza tudo com ele — incluindo
+> a concordância (arqueólogo/arqueóloga) e o diploma final.
 
 ## Como cada assunto é construído
 
-Sempre os mesmos quatro passos, nessa ordem:
+Sempre os mesmos quatro passos, nessa ordem — quando há fotos do livro. Sem elas, o passo 1 vira
+o **currículo padrão do ano** (BNCC), e o passo 3 fica pendente até as fotos chegarem:
 
 1. **Fotos das páginas** do capítulo → a fonte da verdade.
 2. **`base-de-conhecimento.md`** — o capítulo reescrito em linguagem de 9 anos, sem inventar
@@ -46,11 +51,14 @@ linha `<meta name="robots" ...>` dos arquivos `index.html`.
 ## Estrutura
 
 ```
-/                        portal com a lista de assuntos
-/corpo-humano/
-    index.html           o jogo (6 missões)
+/                          portal com a lista de assuntos
+/corpo-humano/             Ciências · 3º ano
+    index.html             o jogo (6 missões)
     base-de-conhecimento.md
     revisao-de-precisao.md
+/civilizacoes-antigas/     História · 6º ano
+    index.html             o jogo (6 missões)
+    base-de-conhecimento.md
 ```
 
 Cada assunto novo entra como uma pasta nova, e ganha um cartão no portal.

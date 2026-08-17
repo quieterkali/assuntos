@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Rios do Tempo — Mesopotâmia e Egito</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%8F%BA%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0d1526; --bg2:#152540; --panel:#1b2f52; --panel2:#26436f;
+  --ink:#f8f0dd; --muted:#c0b294;
+  --ouro:#f4c430; --lapis:#3f7fe0; --turquesa:#2ec4b6; --verde:#5bbd6a;
+  --terracota:#e07a5f; --vermelho:#e8657a; --areia:#d9b57a;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1100px 700px at 15% -10%, #1d3a6b 0%, transparent 55%),
+    radial-gradient(900px 600px at 90% 5%, #4a2f10 0%, transparent 52%),
+    radial-gradient(900px 700px at 50% 112%, #7a5320 0%, transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px; line-height:1.5;
+  overflow-x:hidden;
+}
+#estrelas{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:16px 14px 60px}
+
+h1,h2,h3{margin:0 0 10px;line-height:1.15}
+h1{font-size:clamp(28px,7vw,46px)}
+h2{font-size:clamp(22px,5vw,32px)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;font-weight:bold;
+  background:linear-gradient(135deg,var(--ouro),var(--terracota));color:#2a1806;
+  box-shadow:0 6px 0 #8a5a12, 0 12px 24px rgba(0,0,0,.4);
+  transition:transform .08s, box-shadow .08s; font-size:1.05em;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #8a5a12,0 6px 14px rgba(0,0,0,.35)}
+.btn.sec{background:linear-gradient(135deg,#2c4a7a,#1c3153);color:var(--ink);box-shadow:0 6px 0 #12233d,0 10px 20px rgba(0,0,0,.3)}
+.btn.ciano{background:linear-gradient(135deg,var(--turquesa),var(--lapis));color:#04211e;box-shadow:0 6px 0 #14625a,0 12px 24px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ---------- HUD ---------- */
+.hud{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:rgba(27,47,82,.85);border:2px solid #33598f;border-radius:var(--r);
+  padding:10px 14px;margin-bottom:14px;backdrop-filter:blur(6px);
+}
+.hud .nome{font-weight:bold;color:var(--ouro)}
+.chip{
+  background:#101d33;border:2px solid #33598f;border-radius:999px;
+  padding:4px 13px;font-size:.9em;font-weight:bold;white-space:nowrap;color:var(--ink)
+}
+.chip.pts{color:var(--ouro);border-color:#8a6a13}
+.hud .espaco{flex:1}
+
+/* ---------- cartões ---------- */
+.card{
+  background:linear-gradient(160deg,rgba(38,67,111,.92),rgba(16,29,50,.94));
+  border:2px solid #33598f;border-radius:var(--r);padding:20px;margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4)
+}
+.card.destaque{border-color:var(--ouro);box-shadow:0 0 0 3px rgba(244,196,48,.18),0 10px 30px rgba(0,0,0,.45)}
+.card.papiro{
+  background:linear-gradient(160deg,#f3e2bd,#e6cd9c);color:#3d2a12;border-color:#a9803c;
+}
+.card.papiro b{color:#8a4b1c}
+.card.papiro .mini{color:#6b543a}
+
+/* ---------- mapa de missões ---------- */
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.missao{
+  position:relative;text-align:left;width:100%;
+  background:linear-gradient(160deg,#2b4a7d,#152a4a);
+  border:2px solid #3d6cad;border-radius:var(--r);padding:16px 16px 14px;
+  color:var(--ink);transition:transform .12s,border-color .12s;
+}
+.missao:not(.trancada):hover{transform:translateY(-4px);border-color:var(--ouro)}
+.missao.trancada{opacity:.5;filter:grayscale(.6);cursor:not-allowed}
+.missao.feita{border-color:var(--verde)}
+.missao .num{
+  position:absolute;top:-12px;left:14px;background:var(--ouro);color:#2a1806;
+  width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  font-weight:bold;box-shadow:0 3px 0 #8a5a12
+}
+.missao.feita .num{background:var(--verde);color:#04231a;box-shadow:0 3px 0 #1c6b3a}
+.missao .ico{font-size:34px;line-height:1;margin:6px 0 6px}
+.missao .tit{font-weight:bold;font-size:1.08em;margin-bottom:3px}
+.missao .sub{font-size:.85em;color:var(--muted)}
+.missao .estrelas{margin-top:8px;font-size:1.05em;letter-spacing:2px}
+
+/* ---------- arena genérica (mapa / pirâmide) ---------- */
+.arena{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.cena-box{flex:1 1 300px;min-width:280px;display:grid;place-items:center}
+.cena-svg{width:100%;max-width:420px;height:auto;display:block}
+.bandeja{flex:1 1 250px;min-width:240px}
+.pecas{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:9px}
+.peca{
+  background:#152a4a;border:2px solid #33598f;border-radius:14px;padding:10px 8px;
+  text-align:center;transition:transform .1s,border-color .1s;color:var(--ink);
+  font-size:.86em;font-weight:bold;line-height:1.25
+}
+.peca:hover{transform:translateY(-3px)}
+.peca.sel{border-color:var(--ouro);background:#3d2f10;transform:translateY(-3px);box-shadow:0 0 0 3px rgba(244,196,48,.28)}
+.peca.usado{opacity:.25;pointer-events:none;filter:grayscale(1)}
+.peca .em{display:block;font-size:22px;margin-bottom:3px}
+
+.slot{cursor:pointer;transition:opacity .2s}
+.slot .halo{fill:rgba(255,255,255,.10);stroke:rgba(255,255,255,.5);stroke-width:2;stroke-dasharray:6 5}
+.slot.ativo .halo{fill:rgba(46,196,182,.30);stroke:var(--turquesa);stroke-width:3;animation:pulsa 1s infinite}
+.slot.ok .halo{fill:rgba(91,189,106,.30);stroke:var(--verde);stroke-dasharray:none}
+@keyframes pulsa{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* ---------- pirâmide social ---------- */
+.faixa{cursor:pointer}
+.faixa .fundo{fill:#caa159;stroke:#7d5a20;stroke-width:2}
+.faixa.ativo .fundo{fill:#2ec4b6;stroke:#0f766e;stroke-width:3}
+.faixa.ok .fundo{fill:#e9c877;stroke:#8a6a13;stroke-width:2}
+.faixa text{pointer-events:none}
+
+/* ---------- quiz ---------- */
+.pergunta{font-size:1.14em;font-weight:bold;margin-bottom:14px}
+.opcoes{display:grid;gap:10px}
+.op{
+  text-align:left;background:#1d3457;border:2px solid #33598f;border-radius:14px;
+  padding:13px 16px;color:var(--ink);transition:border-color .1s,background .1s,transform .1s;
+  display:flex;gap:10px;align-items:flex-start
+}
+.op:not(:disabled):hover{border-color:var(--ouro);transform:translateX(3px)}
+.op .letra{
+  flex:0 0 26px;height:26px;border-radius:8px;background:#33598f;color:#fff;
+  display:grid;place-items:center;font-weight:bold;font-size:.85em
+}
+.op.certa{border-color:var(--verde);background:#12452f}
+.op.certa .letra{background:var(--verde);color:#04231a}
+.op.errada{border-color:var(--vermelho);background:#4b1524}
+.op.errada .letra{background:var(--vermelho);color:#3d0a16}
+.op:disabled{cursor:default}
+
+.feedback{margin-top:14px;border-radius:14px;padding:14px 16px;border-left:6px solid;display:none}
+.feedback.show{display:block;animation:sobe .25s}
+.feedback.bom{background:rgba(91,189,106,.15);border-color:var(--verde)}
+.feedback.ruim{background:rgba(232,101,122,.15);border-color:var(--vermelho)}
+.feedback .tt{font-weight:bold;margin-bottom:5px;font-size:1.05em}
+@keyframes sobe{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.progresso{height:9px;background:#101d33;border-radius:99px;overflow:hidden;margin-bottom:16px}
+.progresso i{display:block;height:100%;background:linear-gradient(90deg,var(--turquesa),var(--ouro));transition:width .3s}
+
+/* ---------- tábua de argila (missão 2) ---------- */
+.tabua{
+  background:linear-gradient(160deg,#c9a877,#a8834f);border:6px solid #7d5a20;
+  border-radius:14px;padding:14px;color:#2e1f0c;margin-bottom:14px
+}
+.tabua h3{color:#4a2f0c;margin-bottom:8px;font-size:1em}
+.sinais{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.sinal{
+  background:#e3c894;border:2px solid #7d5a20;border-radius:10px;padding:8px 4px 6px;
+  text-align:center;color:#2e1f0c;font-weight:bold;font-size:.8em;transition:transform .1s
+}
+.sinal svg{width:44px;height:44px;display:block;margin:0 auto 3px}
+.sinal.jogavel:hover{transform:translateY(-3px);border-color:#2ec4b6}
+.sinal.certa{background:#9fe0ac;border-color:#166534}
+.sinal.errada{background:#f1a3af;border-color:#9f1239}
+.sinal:disabled{cursor:default}
+
+/* ---------- estela de Hamurabi (missão 3) ---------- */
+.estela{
+  background:linear-gradient(170deg,#4b5563,#2b3340);border:4px solid #9ca3af;
+  border-radius:80px 80px 14px 14px;padding:22px 20px 18px;text-align:center;
+  margin-bottom:14px;color:#f3f4f6
+}
+.estela .caso{font-size:1.08em;line-height:1.55}
+.estela .lei{color:var(--ouro);font-weight:bold;letter-spacing:1px;font-size:.85em;margin-bottom:8px}
+
+/* ---------- cena do Nilo (missão 4) ---------- */
+.nilo-svg{width:100%;max-width:520px;height:auto;display:block;margin:0 auto;
+  border-radius:var(--r);border:3px solid #33598f;background:#0a1420}
+.estacao{
+  font-size:clamp(20px,5.2vw,30px);font-weight:bold;text-align:center;
+  padding:12px 10px;border-radius:16px;background:#101d33;border:3px solid var(--turquesa);
+  margin:12px 0
+}
+.estacao small{display:block;font-size:.45em;font-weight:normal;color:var(--muted);margin-top:6px;line-height:1.4}
+.acoes-nilo{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.acoes-nilo .btn{padding:12px 14px;font-size:.95em}
+
+/* ---------- diversos ---------- */
+.centro{text-align:center}
+.mini{font-size:.88em;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{background:#101d33;border:1px solid #33598f;border-radius:999px;padding:3px 11px;font-size:.8em;color:var(--muted)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.esconde{display:none!important}
+.campo{
+  width:100%;max-width:340px;padding:14px 18px;border-radius:14px;border:3px solid var(--ouro);
+  background:#101d33;color:var(--ink);font-size:1.15em;font-family:inherit;text-align:center;
+  margin:6px 0 4px
+}
+.campo:focus{outline:none;border-color:var(--turquesa);box-shadow:0 0 0 4px rgba(46,196,182,.2)}
+
+/* colinha */
+.colinha{position:fixed;inset:0;background:rgba(5,10,20,.96);z-index:50;overflow-y:auto;padding:20px 14px 60px;display:none}
+.colinha.aberta{display:block}
+.colinha .in{max-width:760px;margin:0 auto}
+.colinha h3{color:var(--ouro);margin-top:22px;border-bottom:2px solid #33598f;padding-bottom:6px}
+.colinha ul{padding-left:20px}
+.colinha li{margin-bottom:7px}
+.colinha b{color:var(--turquesa)}
+.fechar{position:sticky;top:0;float:right;background:var(--ouro);color:#2a1806;border-radius:999px;
+  width:42px;height:42px;font-size:22px;font-weight:bold;box-shadow:0 4px 0 #8a5a12;z-index:2}
+.linha-tempo{border-left:3px solid var(--ouro);padding-left:14px;margin:10px 0}
+.linha-tempo div{margin-bottom:8px}
+.linha-tempo b{color:var(--ouro)}
+
+/* diploma */
+.diploma{
+  background:linear-gradient(160deg,#fdf3dc,#f0dcae);color:#3b2a12;border-radius:20px;
+  padding:28px 22px;text-align:center;border:8px double #a9803c;box-shadow:0 20px 50px rgba(0,0,0,.55)
+}
+.diploma h2{color:#8a4b1c;font-size:clamp(24px,6vw,36px)}
+.diploma .nome{
+  font-size:clamp(24px,6.4vw,40px);font-weight:bold;color:#9a3412;
+  border-bottom:3px solid #a9803c;display:inline-block;padding:4px 22px;margin:10px 0 14px;
+  overflow-wrap:anywhere;max-width:100%
+}
+.diploma .selo{font-size:56px}
+.fila-estrelas{
+  font-size:clamp(15px,4.4vw,24px); line-height:1.7; letter-spacing:1px;
+  overflow-wrap:anywhere; word-break:break-word; max-width:100%; margin:12px 0
+}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;top:80px;transform:translateX(-50%);
+  background:var(--verde);color:#04231a;font-weight:bold;padding:10px 22px;border-radius:999px;
+  z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transition:opacity .25s,top .25s;pointer-events:none;
+  max-width:90vw;text-align:center
+}
+.toast.show{opacity:1;top:100px}
+.toast.mau{background:var(--vermelho);color:#3d0a16}
+
+@media(max-width:520px){
+  body{font-size:16px}
+  .card{padding:16px 14px}
+  .wrap{padding:12px 10px 50px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  body{background:#fff}
+  #estrelas,.hud,.acoes,.card:not(.diploma){display:none!important}
+}
+</style>
+</head>
+<body>
+<canvas id="estrelas"></canvas>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<div class="colinha" id="colinha">
+  <div class="in">
+    <button class="fechar" onclick="fecharColinha()">×</button>
+    <h2 style="color:var(--ouro)">📖 Colinha do Tempo</h2>
+    <p class="mini">Tudo que cai na prova, num lugar só. Pode abrir a qualquer hora do jogo — isso não é trapaça, é o que todo arqueólogo faz.</p>
+
+    <h3>🕰️ Linha do tempo (a.C. = antes de Cristo, conta ao contrário!)</h3>
+    <div class="linha-tempo">
+      <div><b>~4000 a.C.</b> — Sumérios fundam as primeiras cidades-Estado na Mesopotâmia (Ur, Uruk).</div>
+      <div><b>~3200 a.C.</b> — Invenção da <b>escrita cuneiforme</b>. Fim da Pré-História, começo da História.</div>
+      <div><b>~3200 a.C.</b> — <b>Menés</b> unifica o Alto e o Baixo Egito.</div>
+      <div><b>~2560 a.C.</b> — Construção da <b>Grande Pirâmide de Quéops</b>, em Gizé.</div>
+      <div><b>~1750 a.C.</b> — <b>Hamurabi</b> publica seu Código de leis na Babilônia.</div>
+      <div><b>~1250 a.C.</b> — <b>Ramsés II</b> governa o Egito no Novo Império.</div>
+      <div><b>30 a.C.</b> — O Egito é conquistado por Roma. Fim do Egito dos faraós.</div>
+    </div>
+
+    <h3>🌊 Mesopotâmia — a terra entre rios</h3>
+    <ul>
+      <li><b>Mesopotâmia</b> vem do grego: <i>meso</i> = meio + <i>potamos</i> = rio → <b>"terra entre rios"</b>.</li>
+      <li>Os dois rios são o <b>Tigre</b> e o <b>Eufrates</b>. Hoje essa região fica principalmente no <b>Iraque</b>.</li>
+      <li>A faixa de terra fértil em forma de arco, da Mesopotâmia até o Egito, é o <b>Crescente Fértil</b>.</li>
+      <li>As <b>cheias</b> dos rios deixavam a terra fértil. Para controlar a água, construíram <b>canais de irrigação e diques</b> — e isso exigiu muita gente trabalhando junto.</li>
+      <li>Povos que dominaram a região, em ordem: <b>sumérios → acádios → babilônios → assírios → caldeus</b>.</li>
+      <li>Os <b>sumérios</b> criaram as primeiras <b>cidades-Estado</b>: cada cidade tinha o próprio governo, exército e deus protetor.</li>
+      <li><b>Zigurate</b> = o templo em forma de pirâmide de degraus, no centro da cidade.</li>
+      <li>Eram <b>politeístas</b> (acreditavam em vários deuses).</li>
+      <li>Invenções mesopotâmicas: a <b>escrita</b>, a <b>roda</b>, o <b>arado</b>, o calendário lunar e o sistema de contar de <b>60 em 60</b> — é por isso que a hora tem 60 minutos e o círculo tem 360°.</li>
+    </ul>
+
+    <h3>𒀭 A escrita cuneiforme</h3>
+    <ul>
+      <li>Inventada pelos <b>sumérios</b>, por volta de <b>3200 a.C.</b> — a escrita mais antiga que se conhece.</li>
+      <li>Escreviam em <b>tábuas de argila mole</b> com um <b>estilete de junco</b> (uma varinha de ponta triangular).</li>
+      <li><b>Cuneiforme</b> vem do latim <i>cuneus</i> = <b>cunha</b>, porque os sinais parecem pequenas cunhas ou pregos.</li>
+      <li>Ela nasceu para uma tarefa bem prática: <b>fazer contas</b> — quantos sacos de grãos, quantos bois, quanto de imposto o templo recebeu.</li>
+      <li>Quem escrevia era o <b>escriba</b>. Pouquíssimas pessoas sabiam ler, então era uma profissão de <b>muito prestígio</b>.</li>
+      <li>A invenção da escrita marca o <b>fim da Pré-História</b> e o <b>início da História</b>.</li>
+    </ul>
+
+    <h3>⚖️ O Código de Hamurabi</h3>
+    <ul>
+      <li><b>Hamurabi</b> foi rei da <b>Babilônia</b>, por volta de <b>1750 a.C.</b></li>
+      <li>Ele mandou gravar cerca de <b>282 leis</b> numa <b>estela</b> (um grande bloco de pedra) exposta em praça pública — assim ninguém podia dizer "eu não sabia da lei".</li>
+      <li>É um dos <b>conjuntos de leis escritas mais antigos</b> do mundo.</li>
+      <li>Princípio famoso: a <b>Lei de Talião</b> — <b>"olho por olho, dente por dente"</b>. O castigo era igual ao dano causado.</li>
+      <li><b>Muito importante:</b> a lei <b>não era igual para todos</b>. A pena mudava conforme a classe social — machucar um homem livre e machucar um escravo tinham castigos completamente diferentes.</li>
+    </ul>
+
+    <h3>🌅 Egito — a dádiva do Nilo</h3>
+    <ul>
+      <li>O historiador grego <b>Heródoto</b> escreveu: <b>"O Egito é uma dádiva do Nilo"</b> — sem o rio, ali seria só deserto.</li>
+      <li>O <b>Nilo corre do sul para o norte</b> e deságua no <b>Mar Mediterrâneo</b>, formando um <b>delta</b> (a foz em forma de leque).</li>
+      <li>Por isso o <b>Alto Egito</b> fica ao <b>SUL</b> e o <b>Baixo Egito</b> ao <b>NORTE</b> — parece invertido, mas "alto" é onde o rio nasce.</li>
+      <li>Todo ano o Nilo transbordava e deixava nas margens o <b>lodo (limo) fértil</b>, ótimo para plantar.</li>
+      <li>As <b>3 estações</b> do calendário egípcio: <b>cheia</b> (akhet) → <b>semeadura</b> (peret) → <b>colheita</b> (shemu).</li>
+      <li>Como as cheias apagavam as divisas dos terrenos, eles tiveram de medir tudo de novo todo ano — foi assim que desenvolveram a <b>geometria</b>.</li>
+      <li>Por volta de <b>3200 a.C.</b>, <b>Menés</b> uniu o Alto e o Baixo Egito e virou o primeiro faraó.</li>
+    </ul>
+
+    <h3>🔺 Faraós, pirâmides e múmias</h3>
+    <ul>
+      <li>O <b>faraó</b> era considerado um <b>deus vivo</b> na Terra — por isso o governo era uma <b>teocracia</b> (governo em nome dos deuses).</li>
+      <li>A <b>sociedade era desigual</b>, em forma de pirâmide:<br>
+        1. Faraó · 2. Sacerdotes e nobres · 3. Escribas e soldados · 4. Artesãos e comerciantes ·
+        5. <b>Camponeses</b> (a maioria do povo) · 6. Escravos.</li>
+      <li>Os egípcios eram <b>politeístas</b>: <b>Rá</b> (o Sol), <b>Osíris</b> (a vida após a morte), <b>Ísis</b>, <b>Hórus</b>, <b>Anúbis</b> (cabeça de chacal, ligado à mumificação), <b>Thoth</b> (a escrita).</li>
+      <li>Eles acreditavam na <b>vida após a morte</b>. Por isso <b>mumificavam</b> o corpo: a alma precisaria dele de volta.</li>
+      <li>As <b>pirâmides</b> eram <b>túmulos de faraós</b>. As mais famosas ficam em <b>Gizé</b>: Quéops, Quéfren e Miquerinos.</li>
+      <li>A escrita sagrada egípcia são os <b>hieróglifos</b>. Ficaram indecifráveis por séculos até <b>Champollion</b>, em 1822, conseguir lê-los graças à <b>Pedra de Roseta</b>.</li>
+    </ul>
+
+    <h3>🔎 O que Mesopotâmia e Egito têm em comum</h3>
+    <ul>
+      <li>Nasceram às margens de <b>grandes rios</b>, em regiões cercadas de deserto.</li>
+      <li>Dependiam das <b>cheias</b> e da <b>agricultura irrigada</b>.</li>
+      <li>Eram <b>politeístas</b> e tinham governos ligados à religião.</li>
+      <li>Cada uma inventou sua <b>escrita</b> (cuneiforme e hieróglifos).</li>
+      <li>Tinham <b>sociedades muito desiguais</b>, com escravidão.</li>
+      <li>Construíram <b>obras gigantes</b>: zigurates lá, pirâmides aqui.</li>
+    </ul>
+
+    <div class="centro" style="margin-top:26px">
+      <button class="btn" onclick="fecharColinha()">Voltar ao jogo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const CHAVE = "riosDoTempo.v1";
+const S = {
+  nome: "",
+  genero: "f",          // "f" = arqueóloga, "m" = arqueólogo
+  pontos: 0,
+  missoes: [false,false,false,false,false,false],
+  estrelas: [0,0,0,0,0,0],
+  cena: "nome"
+};
+
+const MISSOES = [
+  {ico:"🗺️", tit:"O Mapa do Mundo Antigo", sub:"Onde tudo começou: rios, mares e desertos"},
+  {ico:"𒀭",  tit:"A Invenção da Escrita",   sub:"Vire escriba e decifre o cuneiforme"},
+  {ico:"⚖️", tit:"Tribunal de Hamurabi",    sub:"Julgue casos de 3.800 anos atrás"},
+  {ico:"🌊", tit:"O Ano do Nilo",           sub:"Cheia, semeadura e colheita (ação!)"},
+  {ico:"🔺", tit:"A Pirâmide do Egito",     sub:"Monte a sociedade, do faraó à base"},
+  {ico:"🎓", tit:"Prova do Arqueólogo",     sub:"O desafio final de tudo"}
+];
+
+/* ============================================================
+   PERSONALIZAÇÃO
+   ============================================================ */
+function esc(t){
+  return String(t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+/* g(feminino, masculino) — devolve a forma certa para quem está jogando */
+function g(fem, masc){ return S.genero === "f" ? fem : masc; }
+const NOME  = () => esc(S.nome);
+const TITULO = () => g("Arqueóloga","Arqueólogo");
+const DRA    = () => g("Dra.","Dr.");
+
+function salvar(){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify({
+      nome:S.nome, genero:S.genero, pontos:S.pontos, missoes:S.missoes, estrelas:S.estrelas
+    }));
+  }catch(e){/* navegador sem localStorage: o jogo funciona igual, só não guarda */}
+}
+function carregar(){
+  try{
+    const d = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if(d && d.nome){
+      S.nome = d.nome; S.genero = d.genero === "m" ? "m" : "f";
+      S.pontos = d.pontos|0;
+      if(Array.isArray(d.missoes) && d.missoes.length===6) S.missoes = d.missoes.map(Boolean);
+      if(Array.isArray(d.estrelas) && d.estrelas.length===6) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(3,n|0)));
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+/* ============================================================
+   SOM (Web Audio, sem arquivos externos)
+   ============================================================ */
+let AC = null;
+function ac(){ if(!AC){ try{AC = new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function bip(freq, dur, tipo, vol){
+  const c = ac(); if(!c) return;
+  if(c.state === "suspended") c.resume();
+  const o = c.createOscillator(), gn = c.createGain();
+  o.type = tipo || "sine"; o.frequency.value = freq;
+  gn.gain.setValueAtTime(vol||0.13, c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  o.connect(gn); gn.connect(c.destination);
+  o.start(); o.stop(c.currentTime + dur);
+}
+const somAcerto = ()=>{ bip(660,.09,"triangle"); setTimeout(()=>bip(880,.14,"triangle"),90); };
+const somErro   = ()=>{ bip(200,.18,"sawtooth",.09); };
+const somClique = ()=>{ bip(520,.05,"square",.05); };
+const somVitoria= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>bip(f,.2,"triangle"),i*110)); };
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+function embaralha(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+let toastT = null;
+function toast(txt, mau){
+  const t = $("#toast");
+  t.innerHTML = txt;
+  t.className = "toast show" + (mau ? " mau" : "");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ t.className = "toast" + (mau?" mau":""); }, 1600);
+}
+function ganha(p){ S.pontos += p; toast("+" + p + " pontos!"); }
+
+function estrelasTxt(n){ return "⭐".repeat(n) + "☆".repeat(3-n); }
+function estrelasPor(acertos, total){
+  const pct = total ? acertos/total : 0;
+  if(pct >= 0.99) return 3;
+  if(pct >= 0.7)  return 2;
+  if(pct >= 0.4)  return 1;
+  return 0;
+}
+const ELOGIOS = ["Isso, {n}!","Boa, {n}!","Mandou bem, {n}!","{n} arrasou!","Exatamente, {n}!"];
+function elogio(){ return ELOGIOS[Math.floor(Math.random()*ELOGIOS.length)].replace("{n}", NOME()); }
+
+function hud(titulo){
+  return `<div class="hud">
+    <span class="nome">🔎 ${NOME()}</span>
+    <span class="chip pts">⭐ ${S.pontos} pts</span>
+    <span class="espaco"></span>
+    <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
+    <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
+  </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
+}
+
+function abrirColinha(){ somClique(); $("#colinha").classList.add("aberta"); }
+function fecharColinha(){ somClique(); $("#colinha").classList.remove("aberta"); }
+window.abrirColinha = abrirColinha; window.fecharColinha = fecharColinha;
+
+/* ============================================================
+   FUNDO — CÉU DO DESERTO
+   ============================================================ */
+(function fundo(){
+  const cv = $("#estrelas"), cx = cv.getContext("2d");
+  let est = [];
+  function dim(){
+    cv.width = innerWidth; cv.height = innerHeight;
+    est = [];
+    const n = Math.min(120, Math.floor(innerWidth*innerHeight/12000));
+    for(let i=0;i<n;i++) est.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      r:Math.random()*1.7+.4, a:Math.random(), v:Math.random()*.02+.004
+    });
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    for(const e of est){
+      e.a += e.v; const o = .25 + Math.abs(Math.sin(e.a))*.6;
+      cx.globalAlpha = o; cx.fillStyle = "#ffe9b8";
+      cx.beginPath(); cx.arc(e.x,e.y,e.r,0,7); cx.fill();
+    }
+    cx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  addEventListener("resize", dim); dim(); loop();
+})();
+
+/* ============================================================
+   ROTEADOR
+   ============================================================ */
+function irMapa(){ somClique(); pararNilo(); S.cena="mapa"; render(); }
+window.irMapa = irMapa;
+
+function abrirMissao(i){
+  if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a missão anterior primeiro, " + NOME() + "!", true); return; }
+  somClique(); pararNilo(); S.cena = "m"+i; render();
+}
+window.abrirMissao = abrirMissao;
+
+function concluiMissao(i, acertos, total, bonus){
+  S.missoes[i] = true;
+  const est = estrelasPor(acertos, total);
+  S.estrelas[i] = Math.max(S.estrelas[i], est);
+  const pts = acertos*10 + est*25 + (bonus||0);
+  S.pontos += pts;
+  salvar();
+  somVitoria();
+  const tudoFeito = S.missoes.every(Boolean);
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:64px">${est===3?"🏆":est===2?"🎉":"👏"}</div>
+      <h2>Missão ${i+1} concluída, ${NOME()}!</h2>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${estrelasTxt(est)}</div>
+      <p>Você acertou <b>${acertos} de ${total}</b> e ganhou <b>${pts} pontos</b>.</p>
+      ${est<3?`<p class="mini">Dica: dá para refazer a missão e tentar as 3 estrelas! ⭐⭐⭐<br>
+        As estrelas só sobem, nunca descem — refazer nunca é ruim.</p>`:``}
+      <div class="acoes">
+        ${tudoFeito
+          ? `<button class="btn" onclick="verDiploma()">🎓 Ver meu diploma!</button>`
+          : (i<5 ? `<button class="btn ciano" onclick="abrirMissao(${i+1})">Próxima missão →</button>` : ``)}
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+        <button class="btn sec" onclick="abrirMissao(${i})">🔁 Refazer</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+
+function render(){
+  scrollTo(0,0);
+  switch(S.cena){
+    case "nome":   telaNome();   break;
+    case "inicio": telaInicio(); break;
+    case "mapa":   telaMapa();   break;
+    case "m0": faseMapa();     break;
+    case "m1": faseEscrita();  break;
+    case "m2": faseTribunal(); break;
+    case "m3": faseNilo();     break;
+    case "m4": fasePiramide(); break;
+    case "m5": faseFinal();    break;
+    case "diploma": telaDiploma(); break;
+  }
+}
+
+/* ============================================================
+   TELA 1 — O NOME (personalização)
+   ============================================================ */
+function telaNome(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--ouro)">
+      <div style="font-size:70px;line-height:1">🏺</div>
+      <h1 style="background:linear-gradient(90deg,var(--turquesa),var(--ouro),var(--terracota));-webkit-background-clip:text;background-clip:text;color:transparent">
+        RIOS DO TEMPO
+      </h1>
+      <p style="font-size:1.1em">Uma expedição à Mesopotâmia e ao Egito Antigo</p>
+      <p class="mini">História · 6º ano · Civilizações Antigas</p>
+
+      <div class="card" style="text-align:left;background:rgba(16,29,50,.8);margin-top:18px">
+        <p><b>🔎 A máquina do tempo está pronta.</b></p>
+        <p>Mas ela só liga com o nome de quem vai viajar. Antes de partir para
+        <b>5.000 anos atrás</b>, me diga: como você se chama?</p>
+      </div>
+
+      <input class="campo" id="nomeInput" type="text" maxlength="18" autocomplete="off"
+             placeholder="Digite seu nome" onkeydown="if(event.key==='Enter')pedeGenero()">
+      <p class="mini" id="avisoNome" style="min-height:20px"></p>
+
+      <p style="margin-top:6px"><b>E como você quer ser chamado(a) na expedição?</b></p>
+      <div class="acoes">
+        <button class="btn" onclick="definir('f')">🔎 Sou Arqueóloga</button>
+        <button class="btn ciano" onclick="definir('m')">🔎 Sou Arqueólogo</button>
+      </div>
+    </div>`;
+  const inp = $("#nomeInput");
+  if(inp){ inp.value = S.nome; setTimeout(()=>inp.focus(), 120); }
+}
+
+function definir(gen){
+  const inp = $("#nomeInput");
+  let v = (inp ? inp.value : "").trim().replace(/\s+/g," ");
+  if(v.length < 2){
+    somErro();
+    $("#avisoNome").innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`;
+    if(inp) inp.focus();
+    return;
+  }
+  v = v.split(" ").map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(" ");
+  S.nome = v;
+  if(gen === "f" || gen === "m") S.genero = gen;
+  ac(); somVitoria(); salvar();
+  S.cena = "inicio"; render();
+}
+window.definir = definir;
+
+/* Enter no campo do nome NÃO escolhe o tratamento sozinho — a criança precisa decidir. */
+function pedeGenero(){
+  const inp = $("#nomeInput");
+  const v = (inp ? inp.value : "").trim();
+  const aviso = $("#avisoNome");
+  if(v.length < 2){ somErro(); aviso.innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`; return; }
+  somClique();
+  aviso.innerHTML = `<span style="color:var(--ouro)">Agora toque num dos dois botões aí embaixo 👇</span>`;
+}
+window.pedeGenero = pedeGenero;
+
+function trocarNome(){
+  somClique();
+  S.cena = "nome"; render();
+}
+window.trocarNome = trocarNome;
+
+/* ============================================================
+   TELA 2 — A MISSÃO
+   ============================================================ */
+function telaInicio(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--ouro)">
+      <div style="font-size:66px;line-height:1">🧭</div>
+      <h1 style="background:linear-gradient(90deg,var(--turquesa),var(--ouro),var(--terracota));-webkit-background-clip:text;background-clip:text;color:transparent">
+        BEM-VIND${g("A","O")},<br>${NOME()}!
+      </h1>
+      <p style="font-size:1.12em">Você agora é <b style="color:var(--ouro)">${TITULO()} ${NOME()}</b>,
+      da Sociedade dos Rios do Tempo.</p>
+
+      <div class="card" style="text-align:left;background:rgba(16,29,50,.8);margin-top:18px">
+        <p><b>🎯 Sua missão, ${TITULO().toLowerCase()}:</b></p>
+        <p>Há 5.000 anos, dois lugares do mundo mudaram tudo: a <b>Mesopotâmia</b>, entre os rios
+        Tigre e Eufrates, e o <b>Egito</b>, às margens do Nilo. Foi ali que nasceram as primeiras
+        cidades, as primeiras leis e a primeira escrita.</p>
+        <p>Só que os registros se perderam. <b>${NOME()}</b>, você precisa recuperá-los em
+        <b>6 missões</b> — e no fim vai receber o <b>Diploma de ${g("Doutora","Doutor")} em Civilizações Antigas</b>.</p>
+        <p class="mini">⭐ Cada missão vale até 3 estrelas. <b>Errar faz parte:</b> toda vez que você erra,
+        o jogo explica o porquê. É exatamente assim que arqueólogo de verdade descobre as coisas.</p>
+      </div>
+
+      <div class="acoes">
+        <button class="btn" onclick="comecar()">🚀 Ligar a máquina do tempo</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Ver a colinha</button>
+      </div>
+      <p class="mini" style="margin-top:14px">
+        <button class="chip" onclick="trocarNome()">✏️ Não sou ${NOME()}, trocar nome</button>
+      </p>
+    </div>`;
+}
+function comecar(){ ac(); somVitoria(); S.cena="mapa"; render(); }
+window.comecar = comecar;
+
+/* ============================================================
+   MAPA DE MISSÕES
+   ============================================================ */
+function telaMapa(){
+  const feitas = S.missoes.filter(Boolean).length;
+  const estrelasTotal = S.estrelas.reduce((a,b)=>a+b,0);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <h2>🗺️ Expedição de ${TITULO().toLowerCase()} ${NOME()}</h2>
+      <p class="mini">${feitas} de 6 missões completas · ${estrelasTotal} de 18 estrelas · ${S.pontos} pontos</p>
+      <div class="progresso"><i style="width:${feitas/6*100}%"></i></div>
+      <div class="missoes">
+        ${MISSOES.map((m,i)=>{
+          const trancada = i>0 && !S.missoes[i-1];
+          return `<button class="missao ${trancada?"trancada":""} ${S.missoes[i]?"feita":""}"
+                    onclick="abrirMissao(${i})" ${trancada?"disabled":""}>
+            <span class="num">${S.missoes[i]?"✓":i+1}</span>
+            <div class="ico">${trancada?"🔒":m.ico}</div>
+            <div class="tit">${m.tit}</div>
+            <div class="sub">${trancada?"Complete a missão anterior":m.sub}</div>
+            ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
+          </button>`;
+        }).join("")}
+      </div>
+      <p class="mini centro" style="margin-top:16px">
+        <button class="chip" onclick="trocarNome()">✏️ Trocar nome</button>
+        <button class="chip" onclick="zerar()">🔄 Começar tudo de novo</button>
+      </p>
+    </div>
+    ${feitas===6?`<div class="card destaque centro">
+      <div style="font-size:56px">🎓</div>
+      <h2>Você completou tudo, ${NOME()}!</h2>
+      <button class="btn" onclick="verDiploma()">Ver meu diploma</button>
+    </div>`:``}`;
+}
+function verDiploma(){ somVitoria(); S.cena="diploma"; render(); }
+window.verDiploma = verDiploma;
+
+function zerar(){
+  if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
+  S.pontos = 0; S.missoes = [false,false,false,false,false,false]; S.estrelas = [0,0,0,0,0,0];
+  salvar(); somClique(); render();
+}
+window.zerar = zerar;
+
+/* ============================================================
+   QUIZ GENÉRICO (usado por várias missões)
+   ============================================================ */
+let Q = null;
+/* Embaralha as ALTERNATIVAS de cada pergunta a cada partida, para que a resposta
+   certa não caia sempre na mesma letra — senão dá para acertar por padrão, sem estudar. */
+function embaralhaOpcoes(perguntas){
+  return perguntas.map(q=>{
+    const ordem = embaralha(q.o.map((_,i)=>i));
+    return { ...q, o: ordem.map(i=>q.o[i]), c: ordem.indexOf(q.c) };
+  });
+}
+function quizGenerico(missaoIdx, titulo, perguntas, acertosIniciais, totalInicial){
+  Q = { i:0, ac:acertosIniciais||0, tot:(totalInicial||0)+perguntas.length,
+        lista:embaralhaOpcoes(perguntas), missao:missaoIdx, titulo:titulo, respondida:false };
+  desenhaQuiz();
+}
+function desenhaQuiz(){
+  const q = Q.lista[Q.i];
+  app.innerHTML = hud(Q.titulo) + `
+    <div class="card">
+      <p class="mini">Pergunta ${Q.i+1} de ${Q.lista.length}</p>
+      <div class="progresso"><i style="width:${Q.i/Q.lista.length*100}%"></i></div>
+      <div class="pergunta">${q.p}</div>
+      <div class="opcoes" id="ops">
+        ${q.o.map((t,k)=>`<button class="op" onclick="respQuiz(${k})">
+          <span class="letra">${"ABCD"[k]}</span><span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fbq"></div>
+      <div class="acoes esconde" id="proxBox">
+        <button class="btn" onclick="proxQuiz()" id="btnProx">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respQuiz(k){
+  if(Q.respondida) return;
+  Q.respondida = true;
+  const q = Q.lista[Q.i];
+  const ops = document.querySelectorAll("#ops .op");
+  ops.forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===q.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbq");
+  if(k===q.c){
+    Q.ac++; somAcerto(); ganha(10);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${q.e}`;
+  } else {
+    somErro();
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Quase, ${NOME()}! A resposta certa é <b>${q.o[q.c]}</b>.</div>${q.e}`;
+  }
+  $("#proxBox").classList.remove("esconde");
+  $("#btnProx").textContent = (Q.i === Q.lista.length-1) ? "Terminar missão 🏁" : "Continuar →";
+  $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respQuiz = respQuiz;
+function proxQuiz(){
+  somClique();
+  Q.i++; Q.respondida = false;
+  if(Q.i >= Q.lista.length){ concluiMissao(Q.missao, Q.ac, Q.tot); return; }
+  desenhaQuiz();
+}
+window.proxQuiz = proxQuiz;
+
+/* ============================================================
+   MISSÃO 1 — O MAPA DO MUNDO ANTIGO
+   ============================================================ */
+const LUGARES = [
+  {id:"mediterraneo", nm:"Mar Mediterrâneo", em:"🌊", cx:58,  cy:48,  r:24,
+   fn:"É o mar onde o rio Nilo deságua, no norte do Egito. Foi por ele que egípcios, gregos e fenícios navegavam e comerciavam."},
+  {id:"delta", nm:"Delta do Nilo", em:"🔻", cx:88, cy:108, r:20,
+   fn:"O <b>delta</b> é a foz do Nilo, aberta em vários braços como um leque. Essa parte, ao NORTE, é o <b>Baixo Egito</b>."},
+  {id:"nilo", nm:"Rio Nilo", em:"🛶", cx:95, cy:215, r:22,
+   fn:"O <b>Nilo</b> corre do SUL para o NORTE. É a razão de o Egito existir: sem ele, ali seria só deserto. Essa parte do sul é o <b>Alto Egito</b>."},
+  {id:"deserto", nm:"Deserto", em:"🏜️", cx:180, cy:190, r:26,
+   fn:"O deserto cercava as duas civilizações. Ele protegia contra invasores, mas também impedia a agricultura — por isso todo mundo vivia grudado nos rios."},
+  {id:"eufrates", nm:"Rio Eufrates", em:"💧", cx:235, cy:95, r:22,
+   fn:"O <b>Eufrates</b> é o rio do lado oeste (esquerdo) da Mesopotâmia. Junto com o Tigre, ele fazia as cheias que fertilizavam a terra."},
+  {id:"tigre", nm:"Rio Tigre", em:"💧", cx:335, cy:105, r:22,
+   fn:"O <b>Tigre</b> é o rio do lado leste (direito). O nome Mesopotâmia só existe por causa dele e do Eufrates."},
+  {id:"mesopotamia", nm:"Mesopotâmia", em:"🏛️", cx:285, cy:150, r:24,
+   fn:"<b>Mesopotâmia</b> = \"terra entre rios\" em grego. É essa faixa espremida entre o Tigre e o Eufrates, onde hoje fica o <b>Iraque</b>."},
+  {id:"golfo", nm:"Golfo Pérsico", em:"⚓", cx:330, cy:258, r:24,
+   fn:"É onde o Tigre e o Eufrates terminam. Perto dali ficavam as cidades sumérias mais antigas, como <b>Ur</b> e <b>Uruk</b>."}
+];
+
+let f1 = null;
+function faseMapa(){
+  f1 = { colocados:{}, sel:null, acertos:0, erros:0, ordem:embaralha(LUGARES) };
+  desenhaF1();
+}
+function desenhaF1(){
+  const feitos = Object.keys(f1.colocados).length;
+  app.innerHTML = hud("🗺️ Missão 1 · O Mapa do Mundo Antigo") + `
+    <div class="card">
+      <p>Tudo começou em dois vales de rio, ${NOME()}. <b>Escolha um nome na lista</b> e depois
+      <b>toque no círculo certo do mapa</b>.</p>
+      <p class="mini">Colocados: <b>${feitos}/${LUGARES.length}</b>${f1.sel?` · Segurando: <b style="color:var(--ouro)">${f1.sel.nm}</b> — agora toque no mapa`:``}</p>
+      <div class="progresso"><i style="width:${feitos/LUGARES.length*100}%"></i></div>
+      <div class="arena">
+        <div class="cena-box">${mapaSVG()}</div>
+        <div class="bandeja">
+          <div class="pecas">
+            ${f1.ordem.map(l=>`<button class="peca ${f1.sel&&f1.sel.id===l.id?"sel":""} ${f1.colocados[l.id]?"usado":""}"
+              onclick="selLugar('${l.id}')"><span class="em">${l.em}</span>${l.nm}</button>`).join("")}
+          </div>
+        </div>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>`;
+}
+function mapaSVG(){
+  return `<svg class="cena-svg" viewBox="0 0 400 300" role="img" aria-label="Mapa do Oriente Próximo antigo">
+    <rect x="0" y="0" width="400" height="300" fill="#e9d3a3"/>
+    <!-- mares -->
+    <path d="M0 0 H130 L120 60 Q80 95 30 100 L0 96 Z" fill="#2f6fd0"/>
+    <path d="M290 300 H400 V215 Q350 225 320 250 Q305 275 290 300 Z" fill="#2f6fd0"/>
+    <path d="M355 0 H400 V70 Q375 45 355 0 Z" fill="#8fb9e8" opacity=".55"/>
+    <!-- deserto (pontilhado) -->
+    <g fill="#d5b478">
+      ${(()=>{let s="";for(let i=0;i<70;i++){const x=40+((i*97)%330),y=110+((i*131)%170);s+=`<circle cx="${x}" cy="${y}" r="2.2"/>`;}return s;})()}
+    </g>
+    <!-- rio Nilo + delta -->
+    <path d="M92 300 L96 250 L88 200 L92 150 L84 120" stroke="#2f6fd0" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M84 120 L64 92 M84 120 L82 88 M84 120 L104 94" stroke="#2f6fd0" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <!-- rio Eufrates -->
+    <path d="M212 22 Q234 80 246 120 Q268 172 306 232" stroke="#2f6fd0" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- rio Tigre -->
+    <path d="M300 18 Q318 70 328 122 Q338 178 330 234" stroke="#2f6fd0" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- faixa fértil entre os rios -->
+    <path d="M250 60 Q272 130 300 205 L322 200 Q296 126 276 56 Z" fill="#8fbf6a" opacity=".55"/>
+    <!-- faixa fértil do Nilo -->
+    <path d="M78 300 L82 200 L74 120 L102 118 L108 200 L106 300 Z" fill="#8fbf6a" opacity=".55"/>
+    <!-- slots -->
+    ${LUGARES.map(l=>{
+      const posto = f1.colocados[l.id];
+      const ativo = f1.sel && !posto;
+      return `<g class="slot ${posto?"ok":""} ${ativo?"ativo":""}" onclick="porLugar('${l.id}')">
+        <circle class="halo" cx="${l.cx}" cy="${l.cy}" r="${l.r}"/>
+        ${posto
+          ? `<text x="${l.cx}" y="${l.cy-2}" text-anchor="middle" font-size="17">${l.em}</text>
+             <text x="${l.cx}" y="${l.cy+13}" text-anchor="middle" font-size="8.5" font-weight="bold" fill="#12310f">${l.nm}</text>`
+          : `<text x="${l.cx}" y="${l.cy+6}" text-anchor="middle" font-size="19" font-weight="bold" fill="#5a4520">?</text>`}
+      </g>`;
+    }).join("")}
+  </svg>`;
+}
+function selLugar(id){
+  if(f1.colocados[id]) return;
+  somClique();
+  f1.sel = LUGARES.find(l=>l.id===id);
+  desenhaF1();
+}
+window.selLugar = selLugar;
+function porLugar(slotId){
+  if(!f1.sel){ toast("Escolha primeiro um nome na lista 👉", true); somErro(); return; }
+  if(f1.colocados[slotId]) return;
+  const escolhido = f1.sel, alvo = LUGARES.find(l=>l.id===slotId);
+  if(escolhido.id === slotId){
+    f1.acertos++; f1.colocados[slotId] = true; f1.sel = null;
+    somAcerto(); ganha(10);
+    desenhaF1();
+    const fb = $("#fb1");
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()} — ${alvo.nm}</div>${alvo.fn}`;
+    if(Object.keys(f1.colocados).length === LUGARES.length){
+      setTimeout(()=>{
+        somVitoria();
+        app.innerHTML = hud("🗺️ Missão 1 · O Mapa do Mundo Antigo") + `
+          <div class="card destaque centro">
+            <div style="font-size:60px">🗺️</div>
+            <h2>Mapa reconstruído!</h2>
+            <p>${NOME()}, você localizou os <b>${LUGARES.length} lugares</b> com <b>${f1.erros}</b> ${f1.erros===1?"erro":"erros"}.</p>
+            <p class="mini">Agora vem a parte de prova: <b>6 perguntas</b> sobre geografia dessas civilizações.</p>
+            <div class="acoes">
+              <button class="btn" onclick="quizF1()">Ir para as perguntas →</button>
+              <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+            </div>
+          </div>`;
+        scrollTo(0,0);
+      }, 1400);
+    }
+  } else {
+    f1.erros++; somErro();
+    const fb = $("#fb1");
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Aí não é o ${escolhido.nm}.</div>${dicaLugar(escolhido.id)}`;
+    fb.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+}
+window.porLugar = porLugar;
+function dicaLugar(id){
+  const d = {
+    mediterraneo:"Procure o <b>mar azul no alto, à esquerda</b> — é o mar do norte do Egito.",
+    delta:"O delta fica <b>onde o Nilo se abre em vários braços</b>, logo antes do mar.",
+    nilo:"Siga a <b>faixa verde comprida à esquerda</b>, que sobe de baixo para cima.",
+    deserto:"É a área <b>pontilhada, seca, no meio do mapa</b> — entre o Egito e a Mesopotâmia.",
+    eufrates:"Dos dois rios da direita, o Eufrates é o <b>da esquerda</b> (mais a oeste).",
+    tigre:"Dos dois rios da direita, o Tigre é o <b>da direita</b> (mais a leste).",
+    mesopotamia:"É a faixa verde <b>espremida ENTRE os dois rios</b> da direita.",
+    golfo:"É o mar azul <b>lá embaixo, no canto direito</b>, onde os dois rios terminam."
+  };
+  return d[id] || "";
+}
+
+const QUIZ_F1 = [
+  {p:"O que significa a palavra <b>Mesopotâmia</b>?",
+   o:["Terra entre rios","Terra do sol","Cidade dos deuses","Terra do trigo"], c:0,
+   e:"Vem do grego: <i>meso</i> = meio + <i>potamos</i> = rio. <b>Terra entre rios</b> — entre o Tigre e o Eufrates."},
+  {p:"Quais são os dois rios da Mesopotâmia?",
+   o:["Nilo e Amazonas","Tigre e Eufrates","Ganges e Indo","Jordão e Danúbio"], c:1,
+   e:"<b>Tigre</b> e <b>Eufrates</b>. Eles nascem nas montanhas da Turquia e terminam no Golfo Pérsico."},
+  {p:"Por que as primeiras cidades nasceram justamente às margens dos rios?",
+   o:["Porque o rio protegia contra o frio","Porque as cheias deixavam a terra fértil e havia água para beber, irrigar e transportar","Porque não havia peixes no mar","Porque os rios eram sagrados e ninguém podia morar longe"], c:1,
+   e:"As <b>cheias</b> deixavam <b>lodo fértil</b> na margem, ótimo para plantar. E o rio ainda servia de estrada e de água para irrigar. Sem rio, só deserto."},
+  {p:"Como se chama a faixa de terra fértil em forma de arco que vai da Mesopotâmia até o Egito?",
+   o:["Crescente Fértil","Vale dos Reis","Meia-lua Dourada","Planície do Nilo"], c:0,
+   e:"<b>Crescente Fértil</b> — o formato no mapa lembra uma lua crescente. Foi ali que a agricultura começou."},
+  {p:"A antiga Mesopotâmia fica, hoje, principalmente em qual país?",
+   o:["Egito","Grécia","Iraque","Índia"], c:2,
+   e:"No <b>Iraque</b> (com pedaços na Síria e na Turquia). O Egito antigo, esse sim, fica no Egito de hoje."},
+  {p:"O rio Nilo deságua em qual mar?",
+   o:["Mar Vermelho","Mar Mediterrâneo","Golfo Pérsico","Mar Negro"], c:1,
+   e:"No <b>Mar Mediterrâneo</b>, ao norte, formando o <b>delta</b>. E lembre: o Nilo corre do <b>sul para o norte</b>."}
+];
+function quizF1(){ somClique(); quizGenerico(0, "🗺️ Missão 1 · Prova do Mapa", QUIZ_F1, f1.acertos, LUGARES.length); }
+window.quizF1 = quizF1;
+
+/* ============================================================
+   MISSÃO 2 — A INVENÇÃO DA ESCRITA (cuneiforme)
+   ============================================================ */
+const SINAIS = {
+  cevada:`<svg viewBox="0 0 64 64"><path d="M32 58V22" stroke="#3d2a12" stroke-width="4" stroke-linecap="round"/><g fill="#3d2a12"><path d="M32 20l-9 6 9 5 9-5z"/><path d="M32 30l-9 6 9 5 9-5z"/><path d="M32 40l-9 6 9 5 9-5z"/></g></svg>`,
+  boi:`<svg viewBox="0 0 64 64"><path d="M18 20C12 14 10 24 14 28" stroke="#3d2a12" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M46 20c6-6 8 4 4 8" stroke="#3d2a12" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M32 22 14 30l6 20h24l6-20z" fill="none" stroke="#3d2a12" stroke-width="4" stroke-linejoin="round"/><circle cx="25" cy="36" r="2.6" fill="#3d2a12"/><circle cx="39" cy="36" r="2.6" fill="#3d2a12"/></svg>`,
+  agua:`<svg viewBox="0 0 64 64"><g stroke="#3d2a12" stroke-width="5" fill="none" stroke-linecap="round"><path d="M8 22q8-8 16 0t16 0 16 0"/><path d="M8 36q8-8 16 0t16 0 16 0"/><path d="M8 50q8-8 16 0t16 0 16 0"/></g></svg>`,
+  sol:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="12" fill="none" stroke="#3d2a12" stroke-width="4"/><g stroke="#3d2a12" stroke-width="4" stroke-linecap="round"><path d="M32 6v8M32 50v8M6 32h8M50 32h8M14 14l6 6M44 44l6 6M50 14l-6 6M20 44l-6 6"/></g></svg>`,
+  casa:`<svg viewBox="0 0 64 64"><path d="M12 28 32 12l20 16" fill="none" stroke="#3d2a12" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M17 28v24h30V28" fill="none" stroke="#3d2a12" stroke-width="4.5" stroke-linejoin="round"/><rect x="27" y="38" width="10" height="14" fill="none" stroke="#3d2a12" stroke-width="3.5"/></svg>`,
+  peixe:`<svg viewBox="0 0 64 64"><path d="M8 32c8-12 26-12 36 0-10 12-28 12-36 0z" fill="none" stroke="#3d2a12" stroke-width="4" stroke-linejoin="round"/><path d="M44 32l12-10v20z" fill="none" stroke="#3d2a12" stroke-width="4" stroke-linejoin="round"/><circle cx="19" cy="30" r="2.6" fill="#3d2a12"/></svg>`
+};
+const GLOSSARIO = [
+  {id:"cevada", nm:"CEVADA / grão"},
+  {id:"boi",    nm:"BOI / gado"},
+  {id:"agua",   nm:"ÁGUA"},
+  {id:"sol",    nm:"SOL / dia"},
+  {id:"casa",   nm:"CASA"},
+  {id:"peixe",  nm:"PEIXE"}
+];
+const TAREFAS_ESCRIBA = [
+  {alvo:"cevada", txt:"O templo de Uruk recebeu <b>12 sacos de cevada</b> como imposto. Que sinal você grava na tábua?",
+   e:"A escrita nasceu justamente assim: para <b>anotar contas</b>. As primeiras tábuas de argila do mundo são listas de <b>grãos, animais e impostos</b> do templo — não são poesias!"},
+  {alvo:"boi", txt:"O rebanho do templo tem <b>40 bois</b>. Registre o animal.",
+   e:"Os primeiros sinais eram <b>pictogramas</b>: pequenos desenhos da coisa. Com o tempo o desenho foi virando um conjunto de <b>cunhas</b> — daí o nome <b>cuneiforme</b>."},
+  {alvo:"agua", txt:"O escriba precisa anotar que o <b>canal de irrigação está cheio</b>. Que sinal representa isso?",
+   e:"Controlar a <b>água</b> era questão de vida ou morte na Mesopotâmia. Canais e diques exigiam muita gente organizada — e é justamente por isso que surgiram governos e cidades."},
+  {alvo:"sol", txt:"Faltam <b>5 dias</b> para a festa do deus da cidade. Como marcar os dias?",
+   e:"O sinal do <b>sol</b> servia para <b>dia</b>. Os mesopotâmicos criaram um calendário observando o céu — e o costume de contar <b>de 60 em 60</b>, que é por que a hora tem 60 minutos até hoje."},
+  {alvo:"casa", txt:"Uma família de Ur comprou uma <b>casa</b> nova, e o contrato precisa ser registrado.",
+   e:"Contratos de compra e venda em argila são <b>documentos históricos</b>: é por eles que sabemos como aquela gente vivia. Isso é o que um historiador chama de <b>fonte escrita</b>."},
+  {alvo:"peixe", txt:"Os pescadores trouxeram <b>200 peixes</b> do rio Eufrates.",
+   e:"Depois de escrita, a tábua de argila era <b>secada ao sol</b> ou assada no forno e virava pedra. É por isso que sobreviveram <b>milhares</b> delas até hoje — muito mais que papel."}
+];
+
+let f2 = null;
+function faseEscrita(){
+  f2 = { i:0, ac:0, respondida:false, ordem:embaralha(GLOSSARIO) };
+  desenhaF2();
+}
+function desenhaF2(){
+  const t = TAREFAS_ESCRIBA[f2.i];
+  app.innerHTML = hud("𒀭 Missão 2 · A Invenção da Escrita") + `
+    <div class="card">
+      <p class="mini">Tábua ${f2.i+1} de ${TAREFAS_ESCRIBA.length} · acertos: <b>${f2.ac}</b></p>
+      <div class="progresso"><i style="width:${f2.i/TAREFAS_ESCRIBA.length*100}%"></i></div>
+      <p>Você é <b>${g("a escriba","o escriba")} ${NOME()}</b>, na cidade suméria de <b>Uruk</b>, há 5.200 anos.
+      Sua argila está mole e o estilete na mão.</p>
+
+      <div class="tabua">
+        <h3>📋 Tábua de estudo — pode consultar sempre</h3>
+        <div class="sinais">
+          ${GLOSSARIO.map(s=>`<div class="sinal">${SINAIS[s.id]}${s.nm}</div>`).join("")}
+        </div>
+      </div>
+
+      <div class="pergunta">${t.txt}</div>
+      <div class="sinais" id="sinaisJogo">
+        ${f2.ordem.map(s=>`<button class="sinal jogavel" onclick="respSinal('${s.id}')">${SINAIS[s.id]}<span style="opacity:.35">?</span></button>`).join("")}
+      </div>
+      <p class="mini" style="margin-top:8px">Dica: compare com a tábua de estudo aí em cima. 👆</p>
+      <div class="feedback" id="fb2"></div>
+      <div class="acoes esconde" id="prox2">
+        <button class="btn" onclick="proxSinal()" id="btnProx2">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respSinal(id){
+  if(f2.respondida) return;
+  f2.respondida = true;
+  const t = TAREFAS_ESCRIBA[f2.i];
+  const certo = GLOSSARIO.find(s=>s.id===t.alvo);
+  document.querySelectorAll("#sinaisJogo .sinal").forEach((b,idx)=>{
+    b.disabled = true;
+    const sid = f2.ordem[idx].id;
+    if(sid === t.alvo) b.classList.add("certa");
+    else if(sid === id) b.classList.add("errada");
+  });
+  const fb = $("#fb2");
+  if(id === t.alvo){
+    f2.ac++; somAcerto(); ganha(10);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${t.e}`;
+  } else {
+    somErro();
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Esse não. O sinal certo era <b>${certo.nm}</b> (o que ficou verde).</div>${t.e}`;
+  }
+  $("#prox2").classList.remove("esconde");
+  $("#btnProx2").textContent = (f2.i === TAREFAS_ESCRIBA.length-1) ? "Ir para as perguntas →" : "Próxima tábua →";
+  $("#btnProx2").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respSinal = respSinal;
+function proxSinal(){
+  somClique();
+  f2.i++; f2.respondida = false;
+  if(f2.i >= TAREFAS_ESCRIBA.length){ quizGenerico(1, "𒀭 Missão 2 · Prova do Escriba", QUIZ_F2, f2.ac, TAREFAS_ESCRIBA.length); return; }
+  f2.ordem = embaralha(GLOSSARIO);
+  desenhaF2();
+}
+window.proxSinal = proxSinal;
+
+const QUIZ_F2 = [
+  {p:"Qual povo inventou a <b>escrita cuneiforme</b>?",
+   o:["Os egípcios","Os sumérios","Os gregos","Os romanos"], c:1,
+   e:"Os <b>sumérios</b>, na Mesopotâmia, por volta de <b>3200 a.C.</b> É a escrita mais antiga que se conhece."},
+  {p:"Em que material os mesopotâmicos escreviam?",
+   o:["Papiro","Pergaminho de couro","Tábuas de argila mole","Folhas de papel"], c:2,
+   e:"<b>Tábuas de argila mole</b>, marcadas com um <b>estilete de junco</b> de ponta triangular. Depois secavam e viravam pedra — por isso sobreviveram milhares delas. (Papiro é coisa do <b>Egito</b>!)"},
+  {p:"Por que a palavra é \"cunei<b>forme</b>\"?",
+   o:["Porque foi criada por um rei chamado Cunei","Porque os sinais têm forma de cunha (<i>cuneus</i>, em latim)","Porque era escrita em forma de círculo","Porque só os sacerdotes podiam ler"], c:1,
+   e:"<i>Cuneus</i> = <b>cunha</b> em latim. Os sinais parecem pequenas cunhas ou preguinhos, por causa do formato da ponta do estilete."},
+  {p:"Para que a escrita foi inventada, no começo?",
+   o:["Para escrever poesias de amor","Para registrar contas: grãos, animais e impostos","Para escrever cartas entre amigos","Para desenhar mapas do céu"], c:1,
+   e:"Puro trabalho de contabilidade: <b>quantos sacos de grão, quantos bois, quanto de imposto</b>. A literatura veio bem depois."},
+  {p:"O que a invenção da escrita significa para os historiadores?",
+   o:["O fim da Pré-História e o começo da História","O fim do Egito Antigo","O começo da Idade Média","Nada de especial"], c:0,
+   e:"É a divisão clássica: sem documentos escritos, chamamos de <b>Pré-História</b>; a partir da escrita, <b>História</b>. Por isso a escrita é um marco tão importante."},
+  {p:"Quem era o <b>escriba</b> na Mesopotâmia?",
+   o:["Um escravo que carregava argila","A pessoa que sabia ler e escrever — profissão de muito prestígio","Um soldado do exército","O sacerdote mais velho do templo"], c:1,
+   e:"Pouquíssima gente sabia ler. Quem sabia tinha <b>poder</b>: controlava contratos, impostos e registros. Ser escriba era ter um futuro garantido — no Egito também."}
+];
+
+/* ============================================================
+   MISSÃO 3 — TRIBUNAL DE HAMURABI
+   ============================================================ */
+const CASOS = [
+  {lei:"LEI 196", caso:"Numa briga, um <b>homem livre</b> arrancou o olho de <b>outro homem livre</b>. O que a lei manda fazer?",
+   o:["Ele paga uma multa em prata","Arrancarão o olho dele também","Ele é perdoado se pedir desculpas","Ele é expulso da cidade"], c:1,
+   e:"Esta é a famosa <b>Lei de Talião</b>: <b>\"olho por olho, dente por dente\"</b>. O castigo tinha que ser exatamente igual ao dano causado."},
+  {lei:"LEI 199", caso:"Agora o mesmo homem livre arrancou o olho de <b>um escravo</b>. E aí?",
+   o:["Arrancarão o olho dele igualmente","Ele pagará em prata a metade do valor do escravo ao dono","Ele será morto","Ele vira escravo no lugar da vítima"], c:1,
+   e:"Repare na <b>injustiça</b>: contra um homem livre, olho por olho; contra um escravo, só um <b>pagamento ao dono</b> — porque o escravo era tratado como propriedade. A lei <b>não era igual para todos</b>: dependia da classe social. Isso cai muito na prova!"},
+  {lei:"LEI 229", caso:"Um construtor fez uma casa mal feita. A casa desabou e <b>matou o dono</b>. Qual a pena?",
+   o:["Ele reconstrói a casa de graça","O construtor será morto","Ele paga uma multa alta","Ele nunca mais pode construir"], c:1,
+   e:"Pena de morte — a mesma lógica do talião: morte causada, morte recebida. Duro? Muito. Mas era a primeira vez que as regras estavam <b>escritas e iguais para todos os casos parecidos</b>, em vez de dependerem do humor do rei."},
+  {lei:"LEI 53", caso:"Um camponês não cuidou do <b>dique</b> do seu campo. A água escapou e <b>inundou a plantação do vizinho</b>.",
+   o:["Nada, foi a natureza","Ele deve repor o trigo que o vizinho perdeu","Ele será morto na hora","Ele perde as terras para o rei"], c:1,
+   e:"Ele <b>indeniza</b> — paga o trigo perdido. Existir uma lei só sobre diques mostra o quanto a <b>irrigação</b> era vital: quem descuidava do canal punha a comida de todo mundo em risco."},
+  {lei:"LEI 21", caso:"Um homem abriu um buraco na parede de uma casa para <b>roubar</b>.",
+   o:["Devolve o que roubou e paga o dobro","Será morto e enterrado diante do buraco que abriu","Leva 40 chibatadas","É expulso da Babilônia"], c:1,
+   e:"Pena de morte no próprio lugar do crime, para servir de <b>exemplo público</b>. As leis eram gravadas numa <b>estela</b> em praça pública exatamente para isso: todos veem, ninguém alega que não sabia."},
+  {lei:"LEI 1", caso:"Um homem <b>acusou outro de assassinato</b>, mas <b>não conseguiu provar</b> a acusação.",
+   o:["Não acontece nada com ele","O acusador será morto","Ele paga uma multa pequena","Os dois vão para a prisão"], c:1,
+   e:"Quem acusava sem provar sofria a pena do crime que inventou. Era um jeito duríssimo de evitar acusações falsas — e mostra que o Código já se preocupava com <b>provas</b>."}
+];
+
+let f3 = null;
+function faseTribunal(){
+  f3 = { i:0, ac:0, respondida:false, lista:embaralhaOpcoes(CASOS) };
+  desenhaF3();
+}
+function desenhaF3(){
+  const c = f3.lista[f3.i];
+  app.innerHTML = hud("⚖️ Missão 3 · Tribunal de Hamurabi") + `
+    <div class="card">
+      <p class="mini">Caso ${f3.i+1} de ${f3.lista.length} · acertos: <b>${f3.ac}</b></p>
+      <div class="progresso"><i style="width:${f3.i/f3.lista.length*100}%"></i></div>
+      <p>Babilônia, <b>1750 a.C.</b> ${NOME()}, você foi ${g("nomeada juíza","nomeado juiz")} pelo rei <b>Hamurabi</b>.
+      Diante de você está a <b>estela de pedra</b> com as 282 leis. Julgue segundo o Código.</p>
+
+      <div class="estela">
+        <div class="lei">📜 ${c.lei} DO CÓDIGO</div>
+        <div class="caso">${c.caso}</div>
+      </div>
+
+      <div class="opcoes" id="ops3">
+        ${c.o.map((t,k)=>`<button class="op" onclick="respCaso(${k})">
+          <span class="letra">${"ABCD"[k]}</span><span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fb3"></div>
+      <div class="acoes esconde" id="prox3">
+        <button class="btn" onclick="proxCaso()" id="btnProx3">Próximo caso →</button>
+      </div>
+      <p class="mini" style="margin-top:14px">⚠️ Estas leis têm <b>3.800 anos</b> e hoje seriam consideradas
+      cruéis e injustas. A gente estuda elas justamente para enxergar <b>o quanto mudou</b> — e o que ainda precisa mudar.</p>
+    </div>`;
+}
+function respCaso(k){
+  if(f3.respondida) return;
+  f3.respondida = true;
+  const c = f3.lista[f3.i];
+  document.querySelectorAll("#ops3 .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===c.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fb3");
+  if(k===c.c){
+    f3.ac++; somAcerto(); ganha(10);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">⚖️ Sentença correta, ${g("juíza","juiz")} ${NOME()}!</div>${c.e}`;
+  } else {
+    somErro();
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ O Código mandava outra coisa: <b>${c.o[c.c]}</b>.</div>${c.e}`;
+  }
+  $("#prox3").classList.remove("esconde");
+  $("#btnProx3").textContent = (f3.i === f3.lista.length-1) ? "Ir para as perguntas →" : "Próximo caso →";
+  $("#btnProx3").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respCaso = respCaso;
+function proxCaso(){
+  somClique();
+  f3.i++; f3.respondida = false;
+  if(f3.i >= f3.lista.length){ quizGenerico(2, "⚖️ Missão 3 · Prova do Código", QUIZ_F3, f3.ac, CASOS.length); return; }
+  desenhaF3();
+}
+window.proxCaso = proxCaso;
+
+const QUIZ_F3 = [
+  {p:"Hamurabi foi rei de qual cidade?",
+   o:["Babilônia","Tebas","Ur","Nínive"], c:0,
+   e:"Rei da <b>Babilônia</b>, por volta de <b>1750 a.C.</b> Ele unificou boa parte da Mesopotâmia sob seu governo."},
+  {p:"Quantas leis, mais ou menos, tinha o Código de Hamurabi?",
+   o:["Cerca de 10","Cerca de 282","Exatamente 1.000","Mais de 5.000"], c:1,
+   e:"Cerca de <b>282 leis</b>, tratando de roubo, casamento, salários, escravidão, agricultura e até de médicos."},
+  {p:"\"Olho por olho, dente por dente\" é o princípio conhecido como:",
+   o:["Lei de Talião","Lei do Deserto","Lei do Faraó","Lei de Uruk"], c:0,
+   e:"<b>Lei de Talião</b>: o castigo devia ser <b>igual ao dano</b> causado. É a ideia mais famosa do Código."},
+  {p:"O Código de Hamurabi tratava todas as pessoas <b>de forma igual</b>?",
+   o:["Sim, era a primeira lei totalmente justa da história","Não — a pena mudava conforme a classe social da pessoa","Sim, mas só para os homens","Não existiam classes sociais na Babilônia"], c:1,
+   e:"<b>Não.</b> Homem livre, funcionário do palácio e escravo recebiam penas diferentes pelo mesmo ato. A sociedade mesopotâmica era profundamente <b>desigual</b>."},
+  {p:"Onde as leis de Hamurabi foram gravadas?",
+   o:["Em tábuas escondidas no palácio","Numa estela (bloco de pedra) exposta em praça pública","Num papiro guardado no templo","Não foram escritas, eram passadas de boca em boca"], c:1,
+   e:"Numa <b>estela de pedra</b> com mais de 2 metros, à vista de todos. Assim ninguém podia dizer \"eu não sabia da lei\" — e o rei mostrava seu poder."}
+];
+
+/* ============================================================
+   MISSÃO 4 — O ANO DO NILO (minigame de ação)
+   ============================================================ */
+const ESTACOES = [
+  {id:"cheia",  nm:"CHEIA", eg:"Akhet", ico:"🌊", cor:"#3f7fe0",
+   desc:"O Nilo transborda e cobre os campos. A água traz o lodo fértil — mas pode arrastar tudo se os diques cederem.",
+   acao:"dique", certo:"Reforçar os diques agora protege as aldeias e faz a água depositar o <b>lodo</b> no lugar certo."},
+  {id:"semeadura", nm:"SEMEADURA", eg:"Peret", ico:"🌱", cor:"#5bbd6a",
+   desc:"A água baixou e deixou a terra preta, úmida e macia. É a hora de ouro do agricultor egípcio.",
+   acao:"plantar", certo:"Planta-se logo depois da cheia, na terra encharcada de <b>limo</b>. É por isso que o Egito colhia tanto."},
+  {id:"colheita", nm:"COLHEITA", eg:"Shemu", ico:"🌾", cor:"#f4c430",
+   desc:"O sol seca tudo, não chove nada e o trigo está dourado e maduro.",
+   acao:"colher", certo:"Colhe-se antes que a próxima cheia chegue. O grão ia para os <b>celeiros do faraó</b>, que redistribuía nos anos ruins."}
+];
+const ACOES_NILO = [
+  {id:"dique",   rot:"🧱 Reforçar os diques"},
+  {id:"plantar", rot:"🌱 Plantar as sementes"},
+  {id:"colher",  rot:"🌾 Colher o trigo"}
+];
+const DUR_ESTACAO = 8500; // ms por estação — tempo de ler o comando com calma
+
+let f4 = null, f4raf = null;
+function pararNilo(){ if(f4raf){ cancelAnimationFrame(f4raf); f4raf = null; } }
+
+function faseNilo(){
+  f4 = { fase:"intro", idx:0, t:0, ac:0, err:0, feito:false, total:9, ultimo:0 };
+  app.innerHTML = hud("🌊 Missão 4 · O Ano do Nilo") + `
+    <div class="card centro destaque">
+      <div style="font-size:60px">🌊</div>
+      <h2>Três anos no vale do Nilo</h2>
+      <p>${NOME()}, você vai comandar uma aldeia egípcia durante <b>3 anos</b>. O ano deles não tinha
+      4 estações como o nosso — tinha <b>3</b>, e todas dependiam do rio:</p>
+      <div class="card" style="text-align:left;background:rgba(16,29,50,.8)">
+        <p>🌊 <b>CHEIA</b> (Akhet) → o rio transborda. <b>Reforce os diques.</b></p>
+        <p>🌱 <b>SEMEADURA</b> (Peret) → a água baixa e deixa lodo. <b>Plante.</b></p>
+        <p>🌾 <b>COLHEITA</b> (Shemu) → tudo seca, o trigo amadurece. <b>Colha.</b></p>
+      </div>
+      <p class="mini">Cada estação dura poucos segundos. Faça <b>a ação certa</b> antes de a estação passar!
+      São 9 estações no total. Sem pressa demais: dá para refazer sempre.</p>
+      <div class="acoes">
+        <button class="btn" onclick="comecarNilo()">▶️ Começar os 3 anos</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      </div>
+    </div>`;
+}
+function comecarNilo(){
+  somClique(); ac();
+  f4 = { fase:"jogo", idx:0, t:0, ac:0, err:0, feito:false, total:9, ultimo:0 };
+  desenhaF4();
+  f4.ultimo = performance.now();
+  pararNilo();
+  f4raf = requestAnimationFrame(tickNilo);
+}
+window.comecarNilo = comecarNilo;
+
+function tickNilo(agora){
+  if(!f4 || f4.fase !== "jogo" || S.cena !== "m3"){ pararNilo(); return; }
+  const dt = Math.min(120, agora - f4.ultimo);
+  f4.ultimo = agora;
+  /* consultar a colinha no meio da estação não pode custar tempo */
+  if($("#colinha").classList.contains("aberta")){ f4raf = requestAnimationFrame(tickNilo); return; }
+  f4.t += dt;
+  if(f4.t >= DUR_ESTACAO){
+    const passou = estAtual();
+    f4.t = 0;
+    if(!f4.feito){
+      f4.err++;
+      /* estação perdida em branco: explica o que era para ter feito */
+      f4.fb = {tipo:"ruim", html:`<div class="tt">⏳ A estação ${passou.ico} ${passou.nm} passou!</div>
+        Nela o que se fazia era <b>${ACOES_NILO.find(a=>a.id===passou.acao).rot}</b>. ${passou.certo}`};
+    }
+    f4.idx++;
+    f4.feito = false;
+    if(f4.idx >= f4.total){ pararNilo(); fimNilo(); return; }
+    desenhaF4();
+  }
+  atualizaNilo();
+  f4raf = requestAnimationFrame(tickNilo);
+}
+
+function estAtual(){ return ESTACOES[f4.idx % 3]; }
+
+function desenhaF4(){
+  const e = estAtual();
+  const ano = Math.floor(f4.idx/3) + 1;
+  app.innerHTML = hud("🌊 Missão 4 · O Ano do Nilo") + `
+    <div class="card">
+      <p class="mini">Ano <b>${ano}</b> de 3 · estação <b>${(f4.idx%3)+1}</b> de 3 · acertos: <b>${f4.ac}/${f4.total}</b></p>
+      ${niloSVG()}
+      <div class="progresso" style="margin-top:12px"><i id="barraEst" style="width:0%"></i></div>
+      <div class="estacao" style="border-color:${e.cor}">
+        ${e.ico} ${e.nm} <span style="font-size:.5em;color:var(--muted)">(${e.eg})</span>
+        <small>${e.desc}</small>
+      </div>
+      <div class="acoes-nilo">
+        ${ACOES_NILO.map(a=>`<button class="btn ${a.id===e.acao?"":"sec"}" onclick="agirNilo('${a.id}')" id="ac-${a.id}">${a.rot}</button>`).join("")}
+      </div>
+      <div class="feedback ${f4.fb?f4.fb.tipo+" show":""}" id="fb4">${f4.fb?f4.fb.html:""}</div>
+    </div>`;
+  atualizaNilo();
+}
+
+function niloSVG(){
+  return `<svg class="nilo-svg" viewBox="0 0 400 220" role="img" aria-label="O vale do Nilo">
+    <defs><linearGradient id="ceu" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b3a63"/><stop offset="1" stop-color="#e0a45c"/></linearGradient></defs>
+    <rect x="0" y="0" width="400" height="130" fill="url(#ceu)"/>
+    <circle id="solNilo" cx="330" cy="40" r="20" fill="#ffd166"/>
+    <!-- pirâmides ao fundo -->
+    <path d="M250 130 L295 62 L340 130 Z" fill="#c99a55"/>
+    <path d="M320 130 L352 82 L384 130 Z" fill="#b9873f"/>
+    <!-- terra -->
+    <rect x="0" y="130" width="400" height="90" fill="#8b6c3f"/>
+    <!-- campos -->
+    <g id="campos">
+      <rect x="20" y="150" width="150" height="50" fill="#6b8f3c" rx="4"/>
+      <rect x="230" y="150" width="150" height="50" fill="#6b8f3c" rx="4"/>
+    </g>
+    <!-- trigo -->
+    <g id="trigo" opacity="0">
+      ${(()=>{let s="";for(let i=0;i<10;i++){const x=30+i*14;s+=`<path d="M${x} 198 v-24" stroke="#e8c65a" stroke-width="3"/><circle cx="${x}" cy="172" r="4" fill="#f4c430"/>`;}
+              for(let i=0;i<10;i++){const x=240+i*14;s+=`<path d="M${x} 198 v-24" stroke="#e8c65a" stroke-width="3"/><circle cx="${x}" cy="172" r="4" fill="#f4c430"/>`;}return s;})()}
+    </g>
+    <!-- rio -->
+    <rect id="rio" x="175" y="130" width="50" height="90" fill="#2f6fd0"/>
+    <!-- diques -->
+    <g id="diques" opacity="0">
+      <rect x="166" y="128" width="9" height="92" fill="#7a5c33"/>
+      <rect x="225" y="128" width="9" height="92" fill="#7a5c33"/>
+    </g>
+  </svg>`;
+}
+
+function atualizaNilo(){
+  if(!f4 || f4.fase !== "jogo") return;
+  const e = estAtual();
+  const p = Math.min(1, f4.t / DUR_ESTACAO);
+  const barra = document.getElementById("barraEst");
+  if(barra) barra.style.width = (p*100) + "%";
+  const rio = document.getElementById("rio");
+  const campos = document.getElementById("campos");
+  const trigo = document.getElementById("trigo");
+  const sol = document.getElementById("solNilo");
+  if(!rio) return;
+  if(e.id === "cheia"){
+    // a água se espalha para os lados
+    const larg = 50 + p*300;
+    rio.setAttribute("x", String(200 - larg/2));
+    rio.setAttribute("width", String(larg));
+    if(campos) campos.setAttribute("opacity", String(Math.max(.15, 1 - p)));
+    if(trigo) trigo.setAttribute("opacity","0");
+    if(sol) sol.setAttribute("fill","#c9d6e8");
+  } else if(e.id === "semeadura"){
+    rio.setAttribute("x","175"); rio.setAttribute("width","50");
+    if(campos){ campos.setAttribute("opacity","1"); campos.querySelectorAll("rect").forEach(r=>r.setAttribute("fill","#4a3a1f")); }
+    if(trigo) trigo.setAttribute("opacity","0");
+    if(sol) sol.setAttribute("fill","#ffd166");
+  } else {
+    rio.setAttribute("x","178"); rio.setAttribute("width","44");
+    if(campos){ campos.setAttribute("opacity","1"); campos.querySelectorAll("rect").forEach(r=>r.setAttribute("fill","#a8912f")); }
+    if(trigo) trigo.setAttribute("opacity", String(p));
+    if(sol) sol.setAttribute("fill","#ffb703");
+  }
+  const diq = document.getElementById("diques");
+  if(diq) diq.setAttribute("opacity", (f4.feito && e.id==="cheia") ? "1" : "0");
+}
+
+function agirNilo(acaoId){
+  if(!f4 || f4.fase !== "jogo") return;
+  const e = estAtual();
+  const fb = $("#fb4");
+  if(f4.feito){ toast("Essa estação você já resolveu! Espere a próxima.", true); return; }
+  if(acaoId === e.acao){
+    f4.ac++; f4.feito = true; somAcerto(); ganha(10);
+    f4.fb = {tipo:"bom", html:`<div class="tt">✅ ${elogio()} ${e.ico} ${e.nm}</div>${e.certo}`};
+    const b = document.getElementById("ac-"+acaoId); if(b) b.textContent = "✔ feito!";
+  } else {
+    f4.err++; somErro();
+    f4.fb = {tipo:"ruim", html:`<div class="tt">❌ Agora não!</div>Estamos na estação <b>${e.nm}</b>: ${e.desc}
+      <br>O que se faz agora é <b>${ACOES_NILO.find(a=>a.id===e.acao).rot}</b>.`};
+  }
+  fb.className = "feedback " + f4.fb.tipo + " show";
+  fb.innerHTML = f4.fb.html;
+}
+window.agirNilo = agirNilo;
+
+function fimNilo(){
+  f4.fase = "fim";
+  somVitoria();
+  app.innerHTML = hud("🌊 Missão 4 · O Ano do Nilo") + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">${f4.ac>=8?"🌾":f4.ac>=5?"🌱":"💧"}</div>
+      <h2>Três anos se passaram</h2>
+      <p>${NOME()}, você acertou <b>${f4.ac} de ${f4.total}</b> estações do ano egípcio.</p>
+      <p class="mini">Era exatamente esse ritmo — cheia, semeadura, colheita — que sustentava
+      todo o Egito. Por isso Heródoto disse que <b>"o Egito é uma dádiva do Nilo"</b>.</p>
+      <div class="acoes">
+        <button class="btn" onclick="quizNilo()">Ir para as perguntas →</button>
+        <button class="btn sec" onclick="comecarNilo()">🔁 Repetir os 3 anos</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+function quizNilo(){ somClique(); quizGenerico(3, "🌊 Missão 4 · Prova do Nilo", QUIZ_F4, f4.ac, 9); }
+window.quizNilo = quizNilo;
+
+const QUIZ_F4 = [
+  {p:"Quem escreveu a frase <b>\"O Egito é uma dádiva do Nilo\"</b>?",
+   o:["O faraó Ramsés II","O historiador grego Heródoto","O rei Hamurabi","O sacerdote Anúbis"], c:1,
+   e:"<b>Heródoto</b>, um historiador grego que visitou o Egito. Ele quis dizer: sem o rio, aquilo tudo seria deserto. \"Dádiva\" = presente."},
+  {p:"O que a cheia do Nilo deixava nas margens, e que era tão valioso?",
+   o:["Ouro","Lodo (limo) fértil","Sal","Pedras para construir"], c:1,
+   e:"O <b>lodo</b> ou <b>limo</b>: uma lama escura cheia de nutrientes que virava o melhor adubo do mundo antigo."},
+  {p:"Em que direção o rio Nilo corre?",
+   o:["Do sul para o norte","Do norte para o sul","Do leste para o oeste","Ele não corre, é um lago"], c:0,
+   e:"Do <b>sul para o norte</b>, desaguando no Mediterrâneo. É por isso que o <b>Baixo Egito</b> fica ao NORTE e o <b>Alto Egito</b> ao SUL — \"alto\" é a parte de cima do rio, onde ele nasce."},
+  {p:"O <b>Baixo Egito</b> ficava em que parte do país?",
+   o:["Ao norte, onde fica o delta","Ao sul, perto das cachoeiras","No meio do deserto","Do outro lado do Mar Vermelho"], c:0,
+   e:"Ao <b>norte</b>, onde o rio se abre no <b>delta</b>. Parece invertido, mas segue o curso do rio: quem desce o Nilo vai para o norte."},
+  {p:"Por que os egípcios ficaram tão bons em <b>geometria</b> e medidas?",
+   o:["Para construir barcos","Porque as cheias apagavam as divisas dos terrenos e eles precisavam medir tudo de novo","Para contar as estrelas","Porque o faraó gostava de matemática"], c:1,
+   e:"Toda cheia apagava os limites das terras. Todo ano era preciso <b>medir de novo</b> quem tinha qual pedaço — e assim nasceu a geometria egípcia. (\"Geometria\" quer dizer literalmente <b>medida da terra</b>.)"},
+  {p:"Quais eram as <b>três estações</b> do calendário egípcio?",
+   o:["Primavera, verão e outono","Cheia, semeadura e colheita","Chuva, sol e vento","Nascimento, vida e morte"], c:1,
+   e:"<b>Cheia</b> (akhet), <b>semeadura</b> (peret) e <b>colheita</b> (shemu). Todo o calendário deles girava em torno do comportamento do rio."},
+  {p:"O que o faraó fazia com o trigo guardado nos <b>celeiros</b>?",
+   o:["Vendia tudo para os gregos","Guardava para redistribuir nos anos de cheia fraca","Jogava no rio como oferenda","Dava só para os soldados"], c:1,
+   e:"Os celeiros eram uma espécie de <b>reserva do Estado</b>: nos anos em que a cheia era fraca e a colheita ruim, o estoque evitava a fome. Isso dava ainda mais poder ao faraó."}
+];
+
+/* ============================================================
+   MISSÃO 5 — A PIRÂMIDE SOCIAL DO EGITO
+   ============================================================ */
+const CAMADAS = [
+  {id:"farao", nm:"Faraó", em:"👑", l1:"FARAÓ",
+   fn:"No topo, sozinho: o <b>faraó</b> era considerado um <b>deus vivo</b>, filho do deus Rá. Dono de todas as terras, chefe do exército e da religião. Isso se chama <b>teocracia</b>."},
+  {id:"nobres", nm:"Sacerdotes e nobres", em:"🛐", l1:"SACERDOTES", l2:"E NOBRES",
+   fn:"Cuidavam dos templos e governavam as províncias em nome do faraó. Eram <b>pouquíssimos</b> e riquíssimos."},
+  {id:"escribas", nm:"Escribas e soldados", em:"✍️", l1:"ESCRIBAS", l2:"E SOLDADOS",
+   fn:"Os <b>escribas</b> sabiam ler os hieróglifos e anotavam impostos, colheitas e ordens. Era um dos melhores empregos do Egito."},
+  {id:"artesaos", nm:"Artesãos e comerciantes", em:"🏺", l1:"ARTESÃOS", l2:"E COMERCIANTES",
+   fn:"Faziam joias, móveis, cerâmica, estátuas — e trocavam mercadorias pelo Nilo. Viviam melhor que os camponeses, mas longe do luxo dos nobres."},
+  {id:"camponeses", nm:"Camponeses", em:"🌾", l1:"CAMPONESES", l2:"(a maioria do povo)",
+   fn:"A <b>imensa maioria</b> da população. Plantavam, colhiam, pagavam impostos altíssimos e ainda trabalhavam nas obras do faraó na época da cheia, quando não dava para plantar."},
+  {id:"escravos", nm:"Escravos", em:"⛓️", l1:"ESCRAVOS",
+   fn:"Na base: em geral <b>prisioneiros de guerra</b> e devedores. Não tinham direito nenhum. Toda a riqueza daquela sociedade se apoiava sobre eles e sobre os camponeses."}
+];
+/* geometria da pirâmide: ápice (180,20), base de (30,280) a (330,280), 6 faixas */
+function faixaPontos(i){
+  const topo = 20, base = 280, alt = (base-topo)/6, meiaBaseMax = 150;
+  const y0 = topo + i*alt, y1 = topo + (i+1)*alt;
+  const h0 = meiaBaseMax * (y0-topo)/(base-topo), h1 = meiaBaseMax * (y1-topo)/(base-topo);
+  return {y0, y1, h0, h1,
+    pts:`${180-h0},${y0} ${180+h0},${y0} ${180+h1},${y1} ${180-h1},${y1}`};
+}
+
+let f5 = null;
+function fasePiramide(){
+  f5 = { postos:{}, sel:null, acertos:0, erros:0, ordem:embaralha(CAMADAS) };
+  desenhaF5();
+}
+function desenhaF5(){
+  const feitos = Object.keys(f5.postos).length;
+  app.innerHTML = hud("🔺 Missão 5 · A Pirâmide do Egito") + `
+    <div class="card">
+      <p>A sociedade egípcia tinha forma de <b>pirâmide</b>: pouquíssimos no topo, com todo o poder,
+      e muita gente embaixo sustentando tudo. ${NOME()}, <b>monte a pirâmide</b> — escolha um grupo
+      e toque na faixa certa, do <b>topo</b> para a <b>base</b>.</p>
+      <p class="mini">Colocados: <b>${feitos}/6</b>${f5.sel?` · Segurando: <b style="color:var(--ouro)">${f5.sel.nm}</b>`:``}</p>
+      <div class="progresso"><i style="width:${feitos/6*100}%"></i></div>
+      <div class="arena">
+        <div class="cena-box">${piramideSVG()}</div>
+        <div class="bandeja">
+          <div class="pecas">
+            ${f5.ordem.map(c=>`<button class="peca ${f5.sel&&f5.sel.id===c.id?"sel":""} ${jaPosto(c.id)?"usado":""}"
+              onclick="selCamada('${c.id}')"><span class="em">${c.em}</span>${c.nm}</button>`).join("")}
+          </div>
+          <p class="mini" style="margin-top:10px">💡 Pense: quem mandava em todo mundo? E quem não tinha
+          direito nenhum? Comece pelos extremos.</p>
+        </div>
+      </div>
+      <div class="feedback" id="fb5"></div>
+    </div>`;
+}
+function piramideSVG(){
+  return `<svg class="cena-svg" viewBox="0 0 380 310" role="img" aria-label="Pirâmide social do Egito">
+    ${CAMADAS.map((c,i)=>{
+      const f = faixaPontos(i);
+      const posto = f5.postos[i];
+      const ativo = f5.sel && !posto;
+      const meio = (f.y0+f.y1)/2;
+      /* o 1º degrau é estreitíssimo: o rótulo desce para a parte mais larga da faixa */
+      const yTexto = i===0 ? f.y1 - 5 : meio;
+      const fonte  = i===0 ? 9 : 11;
+      let dentro;
+      if(posto){
+        const d = CAMADAS.find(x=>x.id===posto);
+        dentro = d.l2
+          ? `<text x="180" y="${meio-3}" text-anchor="middle" font-size="${fonte}" font-weight="bold" fill="#2e1f0c">${d.l1}</text>
+             <text x="180" y="${meio+10}" text-anchor="middle" font-size="${fonte}" font-weight="bold" fill="#2e1f0c">${d.l2}</text>`
+          : `<text x="180" y="${yTexto}" text-anchor="middle" font-size="${fonte}" font-weight="bold" fill="#2e1f0c">${d.l1}</text>`;
+      } else {
+        dentro = `<text x="180" y="${yTexto+(i===0?0:5)}" text-anchor="middle" font-size="${i===0?10:14}" font-weight="bold" fill="#5a4520">?</text>`;
+      }
+      return `<g class="faixa ${posto?"ok":""} ${ativo?"ativo":""}" onclick="porCamada(${i})">
+        <polygon class="fundo" points="${f.pts}"/>
+        ${dentro}
+      </g>
+      <text x="12" y="${meio+5}" font-size="13" font-weight="bold" fill="#c0b294">${i+1}º</text>`;
+    }).join("")}
+    <text x="190" y="303" text-anchor="middle" font-size="11" fill="#c0b294">⬆ topo = mais poder · base = mais gente ⬇</text>
+  </svg>`;
+}
+function jaPosto(id){ return Object.values(f5.postos).includes(id); }
+function selCamada(id){
+  if(jaPosto(id)) return;
+  somClique();
+  f5.sel = CAMADAS.find(c=>c.id===id);
+  desenhaF5();
+}
+window.selCamada = selCamada;
+function porCamada(i){
+  if(!f5.sel){ toast("Escolha primeiro um grupo social na lista 👉", true); somErro(); return; }
+  if(f5.postos[i]) return;
+  const esperado = CAMADAS[i];
+  const fb = () => $("#fb5");
+  if(f5.sel.id === esperado.id){
+    f5.acertos++; f5.postos[i] = esperado.id; f5.sel = null;
+    somAcerto(); ganha(10);
+    desenhaF5();
+    const e = fb();
+    e.className = "feedback bom show";
+    e.innerHTML = `<div class="tt">✅ ${elogio()} — ${esperado.em} ${esperado.nm}</div>${esperado.fn}`;
+    if(Object.keys(f5.postos).length === 6){
+      setTimeout(()=>{
+        somVitoria();
+        app.innerHTML = hud("🔺 Missão 5 · A Pirâmide do Egito") + `
+          <div class="card destaque centro">
+            <div style="font-size:60px">🔺</div>
+            <h2>Pirâmide montada!</h2>
+            <p>${NOME()}, você organizou a sociedade egípcia com <b>${f5.erros}</b> ${f5.erros===1?"erro":"erros"}.</p>
+            <p class="mini">Repare no formato: <b>quanto mais poder, menos gente</b>. E quem sustentava
+            tudo — camponeses e escravos — era justamente quem tinha menos direitos.</p>
+            <div class="acoes">
+              <button class="btn" onclick="quizPiramide()">Ir para as perguntas →</button>
+              <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+            </div>
+          </div>`;
+        scrollTo(0,0);
+      }, 1500);
+    }
+  } else {
+    f5.erros++; somErro();
+    const e = fb();
+    e.className = "feedback ruim show";
+    e.innerHTML = `<div class="tt">❌ ${f5.sel.nm} não fica no ${i+1}º degrau.</div>${dicaCamada(f5.sel.id)}`;
+    e.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+}
+window.porCamada = porCamada;
+function dicaCamada(id){
+  const d = {
+    farao:"Ele era considerado um <b>deus vivo</b> e mandava em absolutamente todos. Só pode ser o <b>1º</b>, o topo.",
+    nobres:"Vinham <b>logo abaixo do faraó</b>: cuidavam dos templos e governavam em nome dele.",
+    escribas:"Ficavam <b>no meio</b>: sabiam ler e escrever, serviam ao Estado, mas não mandavam no país.",
+    artesaos:"Trabalhavam com as mãos e com o comércio — <b>acima dos camponeses</b>, abaixo dos escribas.",
+    camponeses:"Eram a <b>maioria absoluta</b> da população. Ficam quase na base, logo acima dos escravos.",
+    escravos:"Não tinham direito nenhum. Era o degrau <b>mais baixo</b> de todos: o 6º."
+  };
+  return d[id] || "";
+}
+
+const QUIZ_F5 = [
+  {p:"O <b>faraó</b> era considerado o quê pelos egípcios?",
+   o:["Um general escolhido pelo povo","Um deus vivo na Terra","O sacerdote mais velho","Um rei estrangeiro"], c:1,
+   e:"Um <b>deus vivo</b>, filho de Rá. Governo religioso desse tipo se chama <b>teocracia</b>. Ele era dono das terras, chefe do exército e da religião."},
+  {p:"Quem formava a <b>maior parte</b> da população egípcia?",
+   o:["Os sacerdotes","Os escribas","Os camponeses","Os nobres"], c:2,
+   e:"Os <b>camponeses</b>. Plantavam, pagavam impostos pesados e ainda trabalhavam nas obras do faraó durante a cheia, quando não dava para cultivar."},
+  {p:"Para que serviam as <b>pirâmides</b>?",
+   o:["Eram túmulos de faraós","Eram palácios onde o faraó morava","Eram celeiros de trigo","Eram fortalezas contra invasores"], c:0,
+   e:"Eram <b>túmulos</b>. As três mais famosas ficam em <b>Gizé</b>: Quéops (a maior), Quéfren e Miquerinos."},
+  {p:"Por que os egípcios <b>mumificavam</b> os mortos?",
+   o:["Para evitar doenças na cidade","Porque acreditavam na vida após a morte e a alma precisaria do corpo","Porque era proibido enterrar no deserto","Para poder vender o corpo"], c:1,
+   e:"Eles acreditavam firmemente na <b>vida após a morte</b>. O corpo precisava ser conservado para que a alma o reconhecesse e voltasse a ele."},
+  {p:"Qual deus egípcio, de <b>cabeça de chacal</b>, estava ligado à mumificação?",
+   o:["Rá","Ísis","Anúbis","Hórus"], c:2,
+   e:"<b>Anúbis</b>. <b>Rá</b> era o deus Sol; <b>Osíris</b>, o do mundo dos mortos; <b>Ísis</b>, sua esposa; <b>Hórus</b>, o de cabeça de falcão."},
+  {p:"Como se chama a <b>escrita sagrada</b> dos egípcios?",
+   o:["Cuneiforme","Hieróglifos","Alfabeto","Demótico popular"], c:1,
+   e:"<b>Hieróglifos</b> — a palavra quer dizer \"escrita sagrada\". Cuneiforme é a da <b>Mesopotâmia</b>; não confunda!"},
+  {p:"Graças a que objeto os hieróglifos foram finalmente decifrados?",
+   o:["À Pedra de Roseta","Ao Livro dos Mortos","À estela de Hamurabi","À máscara de Tutancâmon"], c:0,
+   e:"À <b>Pedra de Roseta</b>, que trazia o mesmo texto em três escritas. O francês <b>Champollion</b> conseguiu decifrá-la em <b>1822</b> — 1.400 anos depois de ninguém mais saber ler hieróglifos."}
+];
+function quizPiramide(){ somClique(); quizGenerico(4, "🔺 Missão 5 · Prova do Egito", QUIZ_F5, f5.acertos, 6); }
+window.quizPiramide = quizPiramide;
+
+/* ============================================================
+   MISSÃO 6 — PROVA DO ARQUEÓLOGO
+   ============================================================ */
+const QUIZ_FINAL = [
+  {p:"Uma civilização nasceu entre o Tigre e o Eufrates; a outra, às margens do Nilo. O que as duas tinham <b>em comum</b>?",
+   o:["Dependiam das cheias dos rios para plantar","Eram monoteístas","Não tinham escrita","Ficavam na Europa"], c:0,
+   e:"Ambas dependiam das <b>cheias</b> e da <b>agricultura irrigada</b>, eram <b>politeístas</b>, tinham <b>escrita própria</b>, sociedades <b>muito desiguais</b> e construíram obras gigantes (zigurates e pirâmides)."},
+  {p:"Qual é a ordem correta dos povos que dominaram a Mesopotâmia?",
+   o:["Egípcios → gregos → romanos","Sumérios → acádios → babilônios → assírios → caldeus","Caldeus → sumérios → assírios","Assírios → egípcios → sumérios"], c:1,
+   e:"<b>Sumérios</b> (as primeiras cidades) → <b>acádios</b> → <b>babilônios</b> (Hamurabi) → <b>assírios</b> (exército temido) → <b>caldeus</b> (Nabucodonosor e os Jardins Suspensos)."},
+  {p:"O que era um <b>zigurate</b>?",
+   o:["Um túmulo de faraó","Um templo em degraus, no centro da cidade mesopotâmica","Um tipo de canal de irrigação","Um livro de leis"], c:1,
+   e:"Um <b>templo em degraus</b>, o prédio mais alto da cidade-Estado. Não confunda: <b>zigurate</b> = templo mesopotâmico; <b>pirâmide</b> = túmulo egípcio."},
+  {p:"A escrita <b>cuneiforme</b> e os <b>hieróglifos</b> são de onde, respectivamente?",
+   o:["Egito e Mesopotâmia","Mesopotâmia e Egito","Grécia e Roma","Os dois são do Egito"], c:1,
+   e:"<b>Cuneiforme = Mesopotâmia</b> (argila e estilete). <b>Hieróglifos = Egito</b> (pedra e papiro). Essa é a pegadinha mais comum da prova."},
+  {p:"O que significa dizer que o Egito era uma <b>teocracia</b>?",
+   o:["Que quem governava era o povo","Que o governante era considerado um deus, ou governava em nome dos deuses","Que não havia governo","Que os militares mandavam"], c:1,
+   e:"<i>Teo</i> = deus. O <b>faraó era um deus vivo</b>, então desobedecê-lo era desobedecer aos deuses. Religião e política eram a mesma coisa."},
+  {p:"O que a invenção da <b>escrita</b> marca, para os historiadores?",
+   o:["O fim da Pré-História e o início da História","A invenção da agricultura","O fim do Império Romano","O começo da Idade Moderna"], c:0,
+   e:"A escrita, por volta de <b>3200 a.C.</b>, é o marco que separa a <b>Pré-História</b> da <b>História</b> — a partir dali existem documentos escritos para estudar."},
+  {p:"\"Olho por olho, dente por dente\", do Código de Hamurabi, é a:",
+   o:["Lei do Faraó","Lei de Talião","Lei do Nilo","Lei dos Escribas"], c:1,
+   e:"<b>Lei de Talião</b>. E lembre da parte que mais cai na prova: a pena <b>mudava conforme a classe social</b> — a lei não era igual para todos."},
+  {p:"Por que os egípcios construíram as pirâmides?",
+   o:["Para armazenar trigo","Como túmulos dos faraós, ligados à crença na vida após a morte","Para observar as estrelas","Como fortalezas militares"], c:1,
+   e:"Eram <b>túmulos</b>. Como acreditavam na <b>vida após a morte</b>, o faraó era mumificado e enterrado com tudo o que precisaria na outra vida."},
+  {p:"Que país ocupa hoje a maior parte do território da antiga Mesopotâmia?",
+   o:["Egito","Irã","Iraque","Israel"], c:2,
+   e:"O <b>Iraque</b>, com partes na Síria e na Turquia. A Mesopotâmia fica no <b>Oriente Médio</b>, na Ásia; o Egito, no nordeste da <b>África</b>."},
+  {p:"O Nilo corre do sul para o norte. Por isso, o <b>Alto Egito</b> ficava:",
+   o:["Ao sul","Ao norte","A leste","No delta"], c:0,
+   e:"Ao <b>SUL</b> — onde o rio nasce, a parte \"de cima\" do curso. O <b>Baixo Egito</b> é o do <b>norte</b>, onde fica o delta. Parece invertido, mas segue o rio."},
+  {p:"Por que a irrigação exigiu que as pessoas se organizassem em <b>governos e cidades</b>?",
+   o:["Porque canais e diques só funcionam com muita gente trabalhando junto e alguém coordenando","Porque a água era proibida","Porque os rios eram pequenos demais","Porque ninguém sabia nadar"], c:0,
+   e:"Cavar canais, erguer diques e dividir a água exige <b>trabalho coletivo organizado</b>. Daí surgiram chefes, sacerdotes, impostos, escrita para anotar tudo — ou seja, o <b>Estado</b>."},
+  {p:"Qual dessas invenções <b>NÃO</b> veio da Mesopotâmia?",
+   o:["A roda","O arado","A escrita cuneiforme","O papiro"], c:3,
+   e:"O <b>papiro</b> é egípcio: uma planta que crescia às margens do Nilo e virava uma espécie de papel. Roda, arado e cuneiforme, sim, são mesopotâmicos."},
+  {p:"Um arqueólogo encontra uma <b>tábua de argila com cunhas</b> registrando 30 sacos de cevada. O que ele pode concluir?",
+   o:["É um documento egípcio sobre religião","É um registro mesopotâmico de contabilidade","É um mapa do Nilo","É um pedaço de pirâmide"], c:1,
+   e:"Argila + cunhas = <b>cuneiforme, Mesopotâmia</b>. E o conteúdo — sacos de cevada — é exatamente o tipo mais comum: <b>contabilidade</b> de templo."},
+  {p:"O que a expressão <b>Crescente Fértil</b> designa?",
+   o:["A lua nova adorada pelos sumérios","A faixa de terras férteis em forma de arco, da Mesopotâmia até o Egito","Uma cidade da Babilônia","O nome do delta do Nilo"], c:1,
+   e:"Uma faixa de terra fértil em forma de <b>meia-lua</b>, ligando a Mesopotâmia à costa do Mediterrâneo e ao Egito. Foi ali que a agricultura e as primeiras cidades nasceram."}
+];
+function faseFinal(){
+  app.innerHTML = hud("🎓 Missão 6 · Prova do Arqueólogo") + `
+    <div class="card centro destaque">
+      <div style="font-size:60px">🎓</div>
+      <h2>A prova final, ${DRA()} ${NOME()}</h2>
+      <p>São <b>${QUIZ_FINAL.length} perguntas</b> misturando <b>tudo</b>: geografia, escrita, leis,
+      o Nilo, os faraós e a sociedade egípcia.</p>
+      <p class="mini">Estas são as perguntas com mais cara de prova de verdade. Se errar,
+      o jogo explica — e você pode refazer quantas vezes quiser. As estrelas nunca descem.</p>
+      <div class="acoes">
+        <button class="btn" onclick="comecarFinal()">${g("Estou pronta","Estou pronto")}! 🚀</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Revisar a colinha antes</button>
+      </div>
+    </div>`;
+}
+function comecarFinal(){ somClique(); quizGenerico(5, "🎓 Prova do Arqueólogo", embaralha(QUIZ_FINAL), 0, 0); }
+window.comecarFinal = comecarFinal;
+
+/* ============================================================
+   DIPLOMA
+   ============================================================ */
+function telaDiploma(){
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  app.innerHTML = hud() + `
+    <div class="diploma">
+      <div class="selo">🏅</div>
+      <h2>DIPLOMA DE ${g("DOUTORA","DOUTOR")}<br>EM CIVILIZAÇÕES ANTIGAS</h2>
+      <p>A Sociedade dos Rios do Tempo concede este diploma a</p>
+      <div class="nome">${NOME()}</div>
+      <p>por ter completado as <b>6 missões</b> da expedição, dominando a geografia da
+      <b>Mesopotâmia</b> e do <b>Egito</b>, a escrita <b>cuneiforme</b>, o <b>Código de Hamurabi</b>,
+      o ciclo do <b>Nilo</b> e a <b>sociedade dos faraós</b>.</p>
+      <p class="fila-estrelas">${"⭐".repeat(totalEstrelas)}</p>
+      <p><b>${totalEstrelas} de 18 estrelas</b> · <b>${S.pontos} pontos</b></p>
+      <p style="margin-top:18px;font-style:italic">História · 6º ano · Civilizações Antigas:<br>
+      Mesopotâmia e Egito</p>
+    </div>
+    <div class="acoes">
+      <button class="btn" onclick="irMapa()">🗺️ Voltar ao mapa</button>
+      <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      <button class="btn ciano" onclick="window.print()">🖨️ Imprimir diploma</button>
+    </div>
+    ${totalEstrelas<18?`<div class="card centro">
+      <p class="mini">Faltam <b>${18-totalEstrelas}</b> estrelas para a nota máxima, ${NOME()}.
+      Dá para refazer qualquer missão pelo mapa — e as estrelas só sobem!</p></div>`:`
+    <div class="card destaque centro"><div style="font-size:50px">👑</div>
+      <p><b>PERFEIÇÃO, ${NOME()}!</b> Você tirou todas as <b>18 estrelas</b>. Isso é nota 10 com louvor.</p></div>`}`;
+}
+
+/* ============================================================
+   INÍCIO
+   ============================================================ */
+if(carregar()){
+  S.cena = S.missoes.some(Boolean) ? "mapa" : "inicio";
+} else {
+  S.cena = "nome";
+}
+render();
+</script>
+</body>
+</html>
