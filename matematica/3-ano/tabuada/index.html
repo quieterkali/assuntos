@@ -1635,14 +1635,24 @@ function faseTurbo(){
       </div>
     </div>`;
 }
-/* sorteia um fato, puxando para o que a criança errou */
-function sorteiaFato(){
+/* sorteia um fato, puxando para o que a criança errou — mas nunca repete o fato anterior */
+function umFato(){
   const dif = Object.keys(S.erros);
   if(dif.length && Math.random() < 0.55){
     const [a,b] = sorteio(dif).split("x").map(Number);
     return Math.random() < .5 ? [a,b] : [b,a];
   }
   return [Math.floor(Math.random()*10), Math.floor(Math.random()*10)];
+}
+/* 3×7 e 7×3 são o MESMO fato: travar só o par exibido deixaria o arcade alternando os dois */
+function mesmoFato(f, h){
+  return Math.min(f[0],f[1]) === Math.min(h[0],h[1])
+      && Math.max(f[0],f[1]) === Math.max(h[0],h[1]);
+}
+function sorteiaFato(anterior){
+  let f = umFato();
+  for(let t=0; t<8 && anterior && mesmoFato(f, anterior); t++) f = umFato();
+  return f;
 }
 function comecaArcade(){
   somClique(); ac();
@@ -1688,7 +1698,7 @@ function respArcade(v){
   if(v === certo){
     f5.ac++; f5.combo++; f5.melhorCombo = Math.max(f5.melhorCombo, f5.combo);
     marcaAcerto(a,b); somAcerto(); S.pontos += 5;
-    f5.fato = sorteiaFato();
+    f5.fato = sorteiaFato(f5.fato);
     desenhaArcade();
   } else {
     f5.err++; f5.combo = 0; marcaErro(a,b); somErro();
@@ -1709,7 +1719,7 @@ window.respArcade = respArcade;
 function seguirArcade(){
   if(!f5 || f5.fim) return;
   somClique();
-  f5.respondida = false; f5.fato = sorteiaFato();
+  f5.respondida = false; f5.fato = sorteiaFato(f5.fato);
   desenhaArcade();
 }
 window.seguirArcade = seguirArcade;
