@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Festa da Divisão</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%8E%82%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#1a0f2e; --bg2:#241540; --panel:#2f1c52; --panel2:#3d2568;
+  --ink:#fdf4ff; --muted:#c0a8de;
+  --doce:#fb5f8d; --limonada:#ffd166; --menta:#4ade80; --uva:#a78bfa;
+  --vermelho:#ff6b81; --bolo:#f6c177; --choco:#8b5a2b;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1000px 700px at 8% -10%, #6d28d9 0%, transparent 55%),
+    radial-gradient(900px 600px at 94% 2%, #9d174d 0%, transparent 52%),
+    radial-gradient(900px 700px at 50% 112%, #4c1d95 0%, transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px; line-height:1.5;
+  overflow-x:hidden;
+}
+#confete{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:16px 14px 60px}
+
+h1,h2,h3{margin:0 0 10px;line-height:1.15}
+h1{font-size:clamp(28px,7vw,46px)}
+h2{font-size:clamp(22px,5vw,32px)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;font-weight:bold;
+  background:linear-gradient(135deg,var(--doce),#d6336c);color:#fff;
+  box-shadow:0 6px 0 #86114a, 0 12px 24px rgba(0,0,0,.4);
+  transition:transform .08s, box-shadow .08s; font-size:1.05em;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #86114a,0 6px 14px rgba(0,0,0,.35)}
+.btn.sec{background:linear-gradient(135deg,#432a6b,#2a1846);color:var(--ink);box-shadow:0 6px 0 #1c0f31,0 10px 20px rgba(0,0,0,.3)}
+.btn.uva{background:linear-gradient(135deg,var(--uva),#7c3aed);color:#fff;box-shadow:0 6px 0 #4c1d95,0 12px 24px rgba(0,0,0,.35)}
+.btn.limao{background:linear-gradient(135deg,var(--limonada),#f59e0b);color:#41260a;box-shadow:0 6px 0 #92400e,0 12px 24px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ---------- HUD ---------- */
+.hud{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:rgba(47,28,82,.85);border:2px solid #5b3a91;border-radius:var(--r);
+  padding:10px 14px;margin-bottom:14px;backdrop-filter:blur(6px);
+}
+.hud .nome{font-weight:bold;color:var(--limonada)}
+.chip{
+  background:#1e1136;border:2px solid #5b3a91;border-radius:999px;
+  padding:4px 13px;font-size:.9em;font-weight:bold;white-space:nowrap;color:var(--ink)
+}
+.chip.pts{color:var(--limonada);border-color:#8a6a13}
+.hud .espaco{flex:1}
+
+/* ---------- cartões ---------- */
+.card{
+  background:linear-gradient(160deg,rgba(61,37,104,.92),rgba(26,15,46,.94));
+  border:2px solid #5b3a91;border-radius:var(--r);padding:20px;margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4)
+}
+.card.destaque{border-color:var(--limonada);box-shadow:0 0 0 3px rgba(255,209,102,.18),0 10px 30px rgba(0,0,0,.45)}
+
+/* ---------- mapa ---------- */
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.missao{
+  position:relative;text-align:left;width:100%;
+  background:linear-gradient(160deg,#452a75,#26163f);
+  border:2px solid #6d47ab;border-radius:var(--r);padding:16px 16px 14px;
+  color:var(--ink);transition:transform .12s,border-color .12s;
+}
+.missao:not(.trancada):hover{transform:translateY(-4px);border-color:var(--doce)}
+.missao.trancada{opacity:.5;filter:grayscale(.6);cursor:not-allowed}
+.missao.feita{border-color:var(--menta)}
+.missao .num{
+  position:absolute;top:-12px;left:14px;background:var(--doce);color:#fff;
+  width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  font-weight:bold;box-shadow:0 3px 0 #86114a
+}
+.missao.feita .num{background:var(--menta);color:#04231a;box-shadow:0 3px 0 #0f6b4a}
+.missao .ico{font-size:34px;line-height:1;margin:6px 0 6px}
+.missao .tit{font-weight:bold;font-size:1.08em;margin-bottom:3px}
+.missao .sub{font-size:.85em;color:var(--muted)}
+.missao .estrelas{margin-top:8px;font-size:1.05em;letter-spacing:2px}
+
+/* ---------- quiz ---------- */
+.pergunta{font-size:1.14em;font-weight:bold;margin-bottom:14px}
+.conta{
+  font-size:clamp(36px,10.5vw,60px);font-weight:bold;text-align:center;
+  letter-spacing:2px;margin:6px 0 16px;color:var(--limonada);
+  font-variant-numeric:tabular-nums
+}
+.opcoes{display:grid;gap:10px}
+.opcoes.grade{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+.op{
+  text-align:left;background:#33205a;border:2px solid #5b3a91;border-radius:14px;
+  padding:13px 16px;color:var(--ink);transition:border-color .1s,background .1s,transform .1s;
+  display:flex;gap:10px;align-items:center
+}
+.opcoes.grade .op{justify-content:center;font-size:1.5em;font-weight:bold;
+  font-variant-numeric:tabular-nums;padding:16px 10px}
+.op:not(:disabled):hover{border-color:var(--doce);transform:translateY(-2px)}
+.op .letra{
+  flex:0 0 26px;height:26px;border-radius:8px;background:#5b3a91;color:#fff;
+  display:grid;place-items:center;font-weight:bold;font-size:.85em
+}
+.op.certa{border-color:var(--menta);background:#12503a}
+.op.certa .letra{background:var(--menta);color:#04231a}
+.op.errada{border-color:var(--vermelho);background:#4b1524}
+.op.errada .letra{background:var(--vermelho);color:#3d0a16}
+.op:disabled{cursor:default}
+
+.feedback{margin-top:14px;border-radius:14px;padding:14px 16px;border-left:6px solid;display:none}
+.feedback.show{display:block;animation:sobe .25s}
+.feedback.bom{background:rgba(74,222,128,.15);border-color:var(--menta)}
+.feedback.ruim{background:rgba(255,107,129,.15);border-color:var(--vermelho)}
+.feedback .tt{font-weight:bold;margin-bottom:5px;font-size:1.05em}
+@keyframes sobe{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.progresso{height:9px;background:#1e1136;border-radius:99px;overflow:hidden;margin-bottom:16px}
+.progresso i{display:block;height:100%;background:linear-gradient(90deg,var(--uva),var(--doce));transition:width .3s}
+
+/* ---------- missão 1 e 5: pratos ---------- */
+.mesa{margin:14px 0}
+.pilha{
+  background:#4a2c12;border:3px solid #7a4a18;border-radius:14px;padding:10px 12px;
+  display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:52px;align-items:center
+}
+.pilha .vazia{color:var(--muted);font-size:.9em}
+.pratos{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.prato{
+  width:96px;min-height:76px;border-radius:50%/42%;
+  background:radial-gradient(circle at 38% 28%,#ffffff,#ded0ef);
+  border:3px solid #b39ad4;display:flex;flex-wrap:wrap;gap:5px;
+  align-content:center;justify-content:center;padding:12px 8px;
+  box-shadow:0 6px 14px rgba(0,0,0,.35);animation:entra .2s
+}
+@keyframes entra{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+.docinho{
+  width:21px;height:21px;border-radius:50%;flex:0 0 auto;
+  background:radial-gradient(circle at 34% 30%,#a9713d,var(--choco));
+  box-shadow:inset 0 -2px 0 rgba(0,0,0,.3);position:relative
+}
+.docinho::after{content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle at 30% 66%,#ffd166 1.4px,transparent 1.9px),
+             radial-gradient(circle at 68% 40%,#fb5f8d 1.4px,transparent 1.9px),
+             radial-gradient(circle at 58% 74%,#4ade80 1.2px,transparent 1.7px)}
+.rotulo{text-align:center;font-size:.85em;color:var(--muted);margin-bottom:4px}
+.formiga{
+  background:#2a1846;border:3px dashed var(--limonada);border-radius:14px;
+  padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:center;
+  margin-top:12px;flex-wrap:wrap
+}
+.formiga .bicho{font-size:30px;line-height:1}
+
+/* ---------- missão 3: sacolinhas ---------- */
+.sacos{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.saco{
+  width:82px;border-radius:10px 10px 16px 16px;padding:10px 8px 12px;
+  background:linear-gradient(160deg,#f472b6,#be185d);border:3px solid #fbcfe8;
+  display:flex;flex-wrap:wrap;gap:5px;justify-content:center;animation:entra .2s;
+  box-shadow:0 6px 14px rgba(0,0,0,.35)
+}
+.bala{width:17px;height:17px;border-radius:50%;flex:0 0 auto;
+  background:radial-gradient(circle at 35% 30%,#fff6b0,#f59e0b);
+  box-shadow:inset 0 -2px 0 rgba(0,0,0,.2)}
+.cadeia{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;font-weight:bold}
+.cadeia span{background:#1e1136;border:2px solid #5b3a91;border-radius:999px;padding:4px 12px;
+  font-variant-numeric:tabular-nums}
+.cadeia span.novo{border-color:var(--doce);color:var(--doce);animation:entra .25s}
+
+/* ---------- missão 2: triângulo ---------- */
+.triangulo{width:100%;max-width:380px;height:auto;display:block;margin:10px auto 4px}
+.triangulo .tn{font-size:42px;font-weight:bold;fill:var(--ink);text-anchor:middle;
+  font-family:"Trebuchet MS",sans-serif}
+.triangulo .tn.faltando{fill:var(--limonada)}
+.triangulo .tr{font-size:15px;fill:#c0a8de;text-anchor:middle;font-family:"Trebuchet MS",sans-serif}
+.familia{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.familia div{
+  background:#1e1136;border:2px solid #5b3a91;border-radius:12px;padding:10px 6px;
+  text-align:center;font-weight:bold;font-variant-numeric:tabular-nums;font-size:1.05em
+}
+.familia div.div{border-color:var(--menta);color:var(--menta)}
+
+/* ---------- missão 4: máquina de cortar ---------- */
+.maquina{
+  background:linear-gradient(160deg,#4a2c7a,#26163f);border:4px solid #6d47ab;
+  border-radius:20px;padding:18px 16px;text-align:center;margin:14px 0
+}
+.visor{
+  background:#150a26;border:3px solid var(--limonada);border-radius:14px;
+  font-size:clamp(30px,9vw,52px);font-weight:bold;color:var(--limonada);
+  padding:12px 10px;font-variant-numeric:tabular-nums;letter-spacing:2px
+}
+
+/* ---------- missão 6: arcade ---------- */
+.cronometro{
+  height:16px;background:#1e1136;border-radius:99px;overflow:hidden;margin:10px 0 4px;
+  border:2px solid #5b3a91
+}
+.cronometro i{display:block;height:100%;background:linear-gradient(90deg,var(--menta),var(--limonada),var(--vermelho));transition:width .2s linear}
+.placar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.placar span{background:#1e1136;border:2px solid #5b3a91;border-radius:999px;padding:4px 14px;font-weight:bold}
+.combo{color:var(--doce)}
+
+/* ---------- aula ---------- */
+.aula{
+  background:#fff7fb;
+  background-image:linear-gradient(rgba(190,24,93,.10) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(190,24,93,.10) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:#3a1024;border:3px solid #e0709e;border-radius:var(--r);
+  padding:24px 22px 20px;margin-bottom:14px;box-shadow:0 14px 40px rgba(0,0,0,.5)
+}
+.aula b{color:#a3155a}
+.aula .guia{
+  display:flex;gap:10px;align-items:center;font-size:.86em;color:#6b3350;
+  border-bottom:2px dashed #f0a8c4;padding-bottom:10px;margin-bottom:16px
+}
+.aula .guia .robo{font-size:30px;line-height:1}
+.aula .ico{font-size:60px;line-height:1;text-align:center;margin-bottom:6px}
+.aula h2{color:#a3155a;text-align:center;font-size:clamp(21px,5.2vw,30px)}
+.aula p{font-size:1.06em;margin:0 0 12px}
+.aula .chave{
+  background:#fff;border-left:6px solid #7c3aed;border-radius:10px;
+  padding:12px 14px;margin-top:14px;font-size:1.03em
+}
+.aula .chave .rot{display:block;font-weight:bold;color:#6d28d9;font-size:.82em;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.aula .lista{margin:10px 0 0;padding-left:20px}
+.aula .lista li{margin-bottom:6px}
+.aula .destaque{
+  text-align:center;font-size:clamp(20px,5.5vw,30px);font-weight:bold;color:#6d28d9;
+  background:#fff;border-radius:12px;padding:10px 8px;margin:12px 0;
+  font-variant-numeric:tabular-nums;overflow-wrap:anywhere
+}
+.pontos{display:flex;gap:7px;justify-content:center;margin:18px 0 4px}
+.pontos i{width:9px;height:9px;border-radius:50%;background:#f0a8c4;display:block}
+.pontos i.aqui{background:#a3155a;transform:scale(1.35)}
+.pontos i.vista{background:#a3155a;opacity:.45}
+.btn.aula{background:linear-gradient(135deg,#c2185b,#e0709e);color:#fff;box-shadow:0 6px 0 #7a0f3a,0 10px 20px rgba(0,0,0,.35)}
+.btn.aula.fraco{background:linear-gradient(135deg,#c99fb2,#a87f92);box-shadow:0 6px 0 #6b4a58,0 10px 20px rgba(0,0,0,.3)}
+
+/* ---------- diversos ---------- */
+.centro{text-align:center}
+.mini{font-size:.88em;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{background:#1e1136;border:1px solid #5b3a91;border-radius:999px;padding:3px 11px;font-size:.8em;color:var(--muted)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.esconde{display:none!important}
+.campo{
+  width:100%;max-width:340px;padding:14px 18px;border-radius:14px;border:3px solid var(--limonada);
+  background:#1e1136;color:var(--ink);font-size:1.15em;font-family:inherit;text-align:center;margin:6px 0 4px
+}
+.campo:focus{outline:none;border-color:var(--doce);box-shadow:0 0 0 4px rgba(251,95,141,.2)}
+
+/* colinha */
+.colinha{position:fixed;inset:0;background:rgba(14,7,25,.97);z-index:50;overflow-y:auto;padding:20px 14px 60px;display:none}
+.colinha.aberta{display:block}
+.colinha .in{max-width:760px;margin:0 auto}
+.colinha h3{color:var(--limonada);margin-top:22px;border-bottom:2px solid #5b3a91;padding-bottom:6px}
+.colinha ul,.colinha ol{padding-left:20px}
+.colinha li{margin-bottom:7px}
+.colinha b{color:var(--doce)}
+.fechar{position:sticky;top:0;float:right;background:var(--doce);color:#fff;border-radius:999px;
+  width:42px;height:42px;font-size:22px;font-weight:bold;box-shadow:0 4px 0 #86114a;z-index:2}
+.rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
+table.tab{border-collapse:collapse;margin:0 auto;font-variant-numeric:tabular-nums}
+table.tab th,table.tab td{border:1px solid #5b3a91;padding:5px 7px;text-align:center;font-size:.86em;min-width:32px}
+table.tab th{background:#33205a;color:var(--limonada);font-weight:bold}
+table.tab th.canto{background:#1e1136;color:var(--muted);font-size:.75em}
+table.tab td.diag{background:rgba(251,95,141,.18);font-weight:bold;color:var(--doce)}
+
+/* diploma */
+.diploma{
+  background:linear-gradient(160deg,#fffdf7,#ffeef5);color:#3a1024;border-radius:20px;
+  padding:28px 22px;text-align:center;border:8px double #e0709e;box-shadow:0 20px 50px rgba(0,0,0,.55)
+}
+.diploma h2{color:#a3155a;font-size:clamp(24px,6vw,36px)}
+.diploma .nome{
+  font-size:clamp(24px,6.4vw,40px);font-weight:bold;color:#6d28d9;
+  border-bottom:3px solid #e0709e;display:inline-block;padding:4px 22px;margin:10px 0 14px;
+  overflow-wrap:anywhere;max-width:100%
+}
+.diploma .selo{font-size:56px}
+.fila-estrelas{font-size:clamp(15px,4.4vw,24px);line-height:1.7;letter-spacing:1px;
+  overflow-wrap:anywhere;word-break:break-word;max-width:100%;margin:12px 0}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;top:80px;transform:translateX(-50%);
+  background:var(--menta);color:#04231a;font-weight:bold;padding:10px 22px;border-radius:999px;
+  z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transition:opacity .25s,top .25s;
+  pointer-events:none;max-width:90vw;text-align:center
+}
+.toast.show{opacity:1;top:100px}
+.toast.mau{background:var(--vermelho);color:#3d0a16}
+
+@media(max-width:520px){
+  body{font-size:16px}
+  .card{padding:16px 14px}
+  .wrap{padding:12px 10px 50px}
+  .prato{width:80px;min-height:66px;padding:10px 6px}
+  .docinho{width:18px;height:18px}
+  .saco{width:70px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{ body{background:#fff} #confete,.hud,.acoes,.card:not(.diploma){display:none!important} }
+</style>
+</head>
+<body>
+<canvas id="confete"></canvas>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<div class="colinha" id="colinha">
+  <div class="in">
+    <button class="fechar" onclick="fecharColinha()">×</button>
+    <h2 style="color:var(--limonada)">📖 Colinha da Divisão</h2>
+    <p class="mini">Tudo o que a festa ensina, num lugar só. Pode abrir a qualquer hora —
+    inclusive no meio do desafio, que o cronômetro para.</p>
+
+    <h3>🔑 A chave mestra</h3>
+    <p>Toda divisão é uma pergunta de <b>tabuada ao contrário</b>:</p>
+    <p style="text-align:center;font-size:1.15em"><b>42 ÷ 6 = ?</b> &nbsp;→&nbsp;
+    "<b>6 vezes quanto dá 42?</b>" &nbsp;→&nbsp; 6 × <b>7</b> = 42 &nbsp;→&nbsp; <b>42 ÷ 6 = 7</b></p>
+
+    <h3>🍰 As duas perguntas da divisão</h3>
+    <ul>
+      <li><b>Repartir:</b> 12 docinhos em <b>3 pratos</b> → quantos <b>em cada prato</b>? (12 ÷ 3 = 4)</li>
+      <li><b>Caber:</b> 12 docinhos em sacolinhas de <b>3</b> → <b>quantas sacolinhas</b>? (12 ÷ 3 = 4)</li>
+    </ul>
+    <p>A conta é a mesma. Muda só a pergunta que você fez.</p>
+
+    <h3>📝 O nome de cada peça</h3>
+    <p style="text-align:center;font-size:1.15em"><b>12</b> ÷ <b>3</b> = <b>4</b></p>
+    <ul>
+      <li><b>12</b> é o <b>dividendo</b> — o que vai ser repartido.</li>
+      <li><b>3</b> é o <b>divisor</b> — em quantas partes (ou de quanto em quanto).</li>
+      <li><b>4</b> é o <b>quociente</b> — quanto coube em cada parte.</li>
+      <li>O que sobra chama <b>resto</b>.</li>
+    </ul>
+
+    <h3>✂️ Os atalhos</h3>
+    <ul>
+      <li><b>÷ 2</b> — é a <b>metade</b>. 16 ÷ 2 = 8.</li>
+      <li><b>÷ 4</b> — é a <b>metade da metade</b>. 24 → 12 → <b>6</b>.</li>
+      <li><b>÷ 8</b> — corte ao meio <b>três vezes</b>. 40 → 20 → 10 → <b>5</b>.</li>
+      <li><b>÷ 10</b> — some o zero do fim. 70 ÷ 10 = <b>7</b>.</li>
+      <li><b>÷ 5</b> — pergunte "5 vezes quanto?". Ou: faça ÷ 10 e <b>dobre</b>. 40 ÷ 10 = 4 → <b>8</b>.</li>
+      <li><b>÷ 1</b> — não muda nada: 7 ÷ 1 = <b>7</b>.</li>
+      <li><b>o número por ele mesmo</b> — dá <b>1</b>: 8 ÷ 8 = 1.</li>
+      <li><b>0 ÷ qualquer número</b> — dá <b>0</b>: nada para repartir.</li>
+      <li><b>÷ 0</b> — <b>não existe</b>. É a única conta proibida da matemática.</li>
+    </ul>
+
+    <h3>🐜 O resto</h3>
+    <ul>
+      <li>Quando não dá para repartir tudo por igual, o que fica é o <b>resto</b>.</li>
+      <li><b>13 ÷ 4 = 3 e sobra 1.</b></li>
+      <li>O resto é <b>sempre menor que o divisor</b>. Se sobrou 4 ou mais com 4 pratos,
+          ainda cabe outra rodada.</li>
+      <li>Conferindo: <b>divisor × quociente + resto = dividendo</b> → 4 × 3 + 1 = 13 ✓</li>
+    </ul>
+
+    <h3>🧮 A grade da divisão</h3>
+    <p class="mini">Ache o <b>divisor</b> na coluna da esquerda, corra o dedo pela linha até achar o
+    <b>dividendo</b> — o <b>quociente</b> está lá em cima, no alto da coluna.</p>
+    <div class="rolagem" id="gradeColinha"></div>
+
+    <div class="centro" style="margin-top:26px">
+      <button class="btn" onclick="fecharColinha()">Voltar ao jogo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const CHAVE = "festaDivisao.v1";
+const S = {
+  nome: "",
+  genero: "f",
+  pontos: 0,
+  missoes: [false,false,false,false,false,false],
+  estrelas: [0,0,0,0,0,0],
+  aulas:    [false,false,false,false,false,false],
+  erros: {},          // "42/6" -> quantas vezes errou. Alimenta o arcade e a prova final.
+  cena: "nome"
+};
+
+const MISSOES = [
+  {ico:"🍰", tit:"Mesa dos Docinhos", sub:"O que dividir quer dizer · repartir igual"},
+  {ico:"🔑", tit:"A Chave Mestra",    sub:"Divisão é a tabuada ao contrário"},
+  {ico:"🎁", tit:"Sacolinhas",        sub:"A outra pergunta: quantos cabem?"},
+  {ico:"✂️", tit:"Máquina de Cortar", sub:"÷2, ÷4, ÷8 e as regras que nunca falham"},
+  {ico:"🐜", tit:"O Que Sobra",       sub:"O resto, o amigo mais faminto da festa"},
+  {ico:"🏆", tit:"Desafio da Festa",  sub:"Arcade + prova final"}
+];
+
+function esc(x){
+  return String(x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function g(fem, masc){ return S.genero === "f" ? fem : masc; }
+const NOME = () => esc(S.nome);
+
+function salvar(){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify({
+      nome:S.nome, genero:S.genero, pontos:S.pontos,
+      missoes:S.missoes, estrelas:S.estrelas, aulas:S.aulas, erros:S.erros
+    }));
+  }catch(e){/* sem localStorage o jogo roda igual, só não guarda */}
+}
+function carregar(){
+  try{
+    const d = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if(d && d.nome){
+      S.nome = d.nome; S.genero = d.genero === "m" ? "m" : "f";
+      S.pontos = d.pontos|0;
+      if(Array.isArray(d.missoes)  && d.missoes.length===6)  S.missoes  = d.missoes.map(Boolean);
+      if(Array.isArray(d.estrelas) && d.estrelas.length===6) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(3,n|0)));
+      if(Array.isArray(d.aulas)    && d.aulas.length===6)    S.aulas    = d.aulas.map(Boolean);
+      if(d.erros && typeof d.erros === "object") S.erros = d.erros;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+/* registro das divisões erradas — é o que personaliza o treino depois */
+function chaveFato(dd, dv){ return dd + "/" + dv; }
+function marcaErro(dd, dv){
+  const k = chaveFato(dd,dv);
+  S.erros[k] = (S.erros[k]||0) + 1;
+  salvar();
+}
+function marcaAcerto(dd, dv){
+  const k = chaveFato(dd,dv);
+  if(S.erros[k]){ S.erros[k]--; if(S.erros[k] <= 0) delete S.erros[k]; salvar(); }
+}
+function listaDificeis(n){
+  return Object.entries(S.erros).sort((x,y)=>y[1]-x[1]).slice(0, n||4).map(e=>e[0]);
+}
+
+/* ============================================================
+   SOM
+   ============================================================ */
+let AC = null;
+function ac(){ if(!AC){ try{AC = new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function bip(freq, dur, tipo, vol){
+  const c = ac(); if(!c) return;
+  if(c.state === "suspended") c.resume();
+  const o = c.createOscillator(), gn = c.createGain();
+  o.type = tipo || "sine"; o.frequency.value = freq;
+  gn.gain.setValueAtTime(vol||0.13, c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  o.connect(gn); gn.connect(c.destination);
+  o.start(); o.stop(c.currentTime + dur);
+}
+const somAcerto = ()=>{ bip(660,.09,"triangle"); setTimeout(()=>bip(880,.14,"triangle"),90); };
+const somErro   = ()=>{ bip(200,.18,"sawtooth",.09); };
+const somClique = ()=>{ bip(520,.05,"square",.05); };
+const somVitoria= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>bip(f,.2,"triangle"),i*110)); };
+const somPop    = ()=>{ bip(880,.06,"sine",.07); };
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+function embaralha(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function sorteio(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+let toastT = null;
+function toast(txt, mau){
+  const t = $("#toast");
+  t.innerHTML = txt;
+  t.className = "toast show" + (mau ? " mau" : "");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ t.className = "toast" + (mau?" mau":""); }, 1500);
+}
+function ganha(p){ S.pontos += p; toast("+" + p + " pontos!"); }
+
+function estrelasTxt(n){ return "⭐".repeat(n) + "☆".repeat(3-n); }
+function estrelasPor(acertos, total){
+  const pct = total ? acertos/total : 0;
+  if(pct >= 0.99) return 3;
+  if(pct >= 0.7)  return 2;
+  if(pct >= 0.4)  return 1;
+  return 0;
+}
+const ELOGIOS = ["Isso, {n}!","Boa, {n}!","Mandou bem, {n}!","{n} arrasou!","Exatamente, {n}!","Perfeito, {n}!"];
+function elogio(){ return sorteio(ELOGIOS).replace("{n}", NOME()); }
+
+function hud(titulo){
+  return `<div class="hud">
+    <span class="nome">🎂 ${NOME()}</span>
+    <span class="chip pts">⭐ ${S.pontos} pts</span>
+    <span class="espaco"></span>
+    ${/^m[0-5]$/.test(S.cena) ? `<button class="chip" onclick="reverAula(${S.cena[1]})" style="cursor:pointer">📚 Aula</button>` : ``}
+    <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
+    <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
+  </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
+}
+
+function abrirColinha(){ somClique(); $("#colinha").classList.add("aberta"); }
+function fecharColinha(){ somClique(); $("#colinha").classList.remove("aberta"); }
+window.abrirColinha = abrirColinha; window.fecharColinha = fecharColinha;
+
+/* grade da divisão: linha = divisor, coluna = quociente, célula = dividendo */
+(function montaGrade(){
+  let h = '<table class="tab"><tr><th class="canto">÷ ↓<br>quociente →</th>';
+  for(let q=0;q<=9;q++) h += `<th>${q}</th>`;
+  h += "</tr>";
+  for(let d=1;d<=9;d++){
+    h += `<tr><th>${d}</th>`;
+    for(let q=0;q<=9;q++) h += `<td class="${d===q?"diag":""}">${d*q}</td>`;
+    h += "</tr>";
+  }
+  h += "</table>";
+  document.getElementById("gradeColinha").innerHTML = h;
+})();
+
+/* ============================================================
+   FUNDO — confete de festa
+   ============================================================ */
+(function fundo(){
+  const cv = $("#confete"), cx = cv.getContext("2d");
+  const cores = ["#fb5f8d","#ffd166","#4ade80","#a78bfa","#f6c177"];
+  let pcs = [];
+  function dim(){
+    cv.width = innerWidth; cv.height = innerHeight;
+    pcs = [];
+    const n = Math.min(90, Math.floor(innerWidth*innerHeight/16000));
+    for(let i=0;i<n;i++) pcs.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      w:Math.random()*6+3, h:Math.random()*4+3,
+      cor:cores[Math.floor(Math.random()*cores.length)],
+      vy:Math.random()*.35+.12, ang:Math.random()*7, va:(Math.random()-.5)*.04,
+      alfa:Math.random()*.35+.25
+    });
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    for(const p of pcs){
+      p.y += p.vy; p.ang += p.va;
+      if(p.y > cv.height + 12){ p.y = -12; p.x = Math.random()*cv.width; }
+      cx.save();
+      cx.globalAlpha = p.alfa;
+      cx.translate(p.x, p.y); cx.rotate(p.ang);
+      cx.fillStyle = p.cor;
+      cx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      cx.restore();
+    }
+    cx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  addEventListener("resize", dim); dim(); loop();
+})();
+
+/* ============================================================
+   ROTEADOR
+   ============================================================ */
+function irMapa(){ somClique(); pararArcade(); S.cena="mapa"; render(); }
+window.irMapa = irMapa;
+
+function abrirMissao(i){
+  if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a missão anterior primeiro, " + NOME() + "!", true); return; }
+  pararArcade();
+  if(!S.aulas[i]){ abrirAula(i); return; }   /* a aula vem antes, na estreia da missão */
+  somClique(); S.cena = "m"+i; render();
+}
+window.abrirMissao = abrirMissao;
+
+function concluiMissao(i, acertos, total, bonus){
+  S.missoes[i] = true;
+  const est = estrelasPor(acertos, total);
+  S.estrelas[i] = Math.max(S.estrelas[i], est);
+  const pts = acertos*10 + est*25 + (bonus||0);
+  S.pontos += pts;
+  salvar();
+  somVitoria();
+  const tudoFeito = S.missoes.every(Boolean);
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:64px">${est===3?"🏆":est===2?"🎉":"👏"}</div>
+      <h2>Missão ${i+1} concluída, ${NOME()}!</h2>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${estrelasTxt(est)}</div>
+      <p>Você acertou <b>${acertos} de ${total}</b> e ganhou <b>${pts} pontos</b>.</p>
+      ${est<3?`<p class="mini">Dá para refazer e buscar as 3 estrelas ⭐⭐⭐ — elas só sobem, nunca descem.</p>`:``}
+      <div class="acoes">
+        ${tudoFeito
+          ? `<button class="btn" onclick="verDiploma()">🎓 Ver meu diploma!</button>`
+          : (i<5 ? `<button class="btn uva" onclick="abrirMissao(${i+1})">Próxima missão →</button>` : ``)}
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+        <button class="btn sec" onclick="abrirMissao(${i})">🔁 Refazer</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+
+function render(){
+  scrollTo(0,0);
+  switch(S.cena){
+    case "nome":   telaNome();   break;
+    case "inicio": telaInicio(); break;
+    case "mapa":   telaMapa();   break;
+    case "m0": faseDocinhos(); break;
+    case "m1": faseChave();    break;
+    case "m2": faseSacos();    break;
+    case "m3": faseCortar();   break;
+    case "m4": faseResto();    break;
+    case "m5": faseDesafio();  break;
+    case "diploma": telaDiploma(); break;
+    default:
+      if(/^a[0-5]$/.test(S.cena)){ telaAula(+S.cena[1]); }
+      break;
+  }
+}
+
+/* ============================================================
+   TELA DO NOME
+   ============================================================ */
+function telaNome(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--limonada)">
+      <div style="font-size:70px;line-height:1">🎂</div>
+      <h1 style="background:linear-gradient(90deg,var(--uva),var(--doce),var(--limonada));-webkit-background-clip:text;background-clip:text;color:transparent">
+        FESTA DA DIVISÃO
+      </h1>
+      <p style="font-size:1.1em">Aprenda a <b>dividir</b> repartindo docinhos de verdade</p>
+      <p class="mini">Matemática · 3º ano</p>
+      <div class="card" style="text-align:left;background:rgba(30,17,54,.8);margin-top:18px">
+        <p><b>🎈 A mesa está posta e os convidados estão chegando.</b></p>
+        <p>Só falta uma coisa: <b>como você se chama?</b></p>
+      </div>
+      <input class="campo" id="nomeInput" type="text" maxlength="18" autocomplete="off"
+             placeholder="Digite seu nome" onkeydown="if(event.key==='Enter')pedeGenero()">
+      <p class="mini" id="avisoNome" style="min-height:20px"></p>
+      <p style="margin-top:6px"><b>E como você quer ser chamado(a) na festa?</b></p>
+      <div class="acoes">
+        <button class="btn" onclick="definir('f')">🎈 Sou a dona da festa</button>
+        <button class="btn uva" onclick="definir('m')">🎈 Sou o dono da festa</button>
+      </div>
+    </div>`;
+  const inp = $("#nomeInput");
+  if(inp){ inp.value = S.nome; setTimeout(()=>inp.focus(), 120); }
+}
+function definir(gen){
+  const inp = $("#nomeInput");
+  let v = (inp ? inp.value : "").trim().replace(/\s+/g," ");
+  if(v.length < 2){
+    somErro();
+    $("#avisoNome").innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`;
+    if(inp) inp.focus();
+    return;
+  }
+  v = v.split(" ").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" ");
+  S.nome = v;
+  if(gen === "f" || gen === "m") S.genero = gen;
+  ac(); somVitoria(); salvar();
+  S.cena = "inicio"; render();
+}
+window.definir = definir;
+function pedeGenero(){
+  const inp = $("#nomeInput"), aviso = $("#avisoNome");
+  if((inp ? inp.value : "").trim().length < 2){
+    somErro(); aviso.innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`; return;
+  }
+  somClique();
+  aviso.innerHTML = `<span style="color:var(--limonada)">Agora toque num dos dois botões aí embaixo 👇</span>`;
+}
+window.pedeGenero = pedeGenero;
+function trocarNome(){ somClique(); S.cena = "nome"; render(); }
+window.trocarNome = trocarNome;
+function zerar(){
+  if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
+  S.pontos = 0; S.missoes = [false,false,false,false,false,false];
+  S.estrelas = [0,0,0,0,0,0]; S.aulas = [false,false,false,false,false,false]; S.erros = {};
+  salvar(); somClique(); render();
+}
+window.zerar = zerar;
+
+/* ============================================================
+   TELA INICIAL
+   ============================================================ */
+function telaInicio(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--limonada)">
+      <div style="font-size:66px;line-height:1">🐜</div>
+      <h1 style="background:linear-gradient(90deg,var(--uva),var(--doce),var(--limonada));-webkit-background-clip:text;background-clip:text;color:transparent">
+        OI, ${NOME()}!
+      </h1>
+      <p style="font-size:1.12em">Você é ${g("a dona","o dono")} da
+      <b style="color:var(--limonada)">Festa da Divisão</b>.</p>
+      <div class="card" style="text-align:left;background:rgba(30,17,54,.8);margin-top:18px">
+        <p><b>🎯 O combinado é este:</b></p>
+        <p>Dividir parece a conta mais difícil de todas. <b>Não é.</b> Dividir é só
+        <b>repartir igualzinho</b> — e existe uma <b>chave mestra</b> que abre quase todas
+        as divisões do mundo.</p>
+        <p><b>📚 Cada missão começa com uma aula rapidinha</b> do <b>Resto</b>, uma formiga que
+        aparece em toda festa. Ela explica primeiro, e só depois você põe a mão na massa.</p>
+        <p class="mini">⭐ Cada missão vale até 3 estrelas. Errar faz parte: o jogo mostra o porquê
+        e ainda <b>anota o que você errou</b>, para treinar isso de novo mais tarde.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn" onclick="comecar()">🎉 Começar a festa</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Ver a colinha</button>
+      </div>
+      <p class="mini" style="margin-top:14px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Não sou ${NOME()}, trocar nome</button>
+      </p>
+    </div>`;
+}
+function comecar(){ ac(); somVitoria(); S.cena="mapa"; render(); }
+window.comecar = comecar;
+
+/* ============================================================
+   MAPA
+   ============================================================ */
+function telaMapa(){
+  const feitas = S.missoes.filter(Boolean).length;
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const dif = listaDificeis(5);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <h2>🗺️ A festa ${g("da","do")} ${NOME()}</h2>
+      <p class="mini">${feitas} de 6 missões · ${totalEstrelas} de 18 estrelas · ${S.pontos} pontos</p>
+      <div class="progresso"><i style="width:${feitas/6*100}%"></i></div>
+      <div class="missoes">
+        ${MISSOES.map((m,i)=>{
+          const trancada = i>0 && !S.missoes[i-1];
+          return `<button class="missao ${trancada?"trancada":""} ${S.missoes[i]?"feita":""}"
+                    onclick="abrirMissao(${i})" ${trancada?"disabled":""}>
+            <span class="num">${S.missoes[i]?"✓":i+1}</span>
+            <div class="ico">${trancada?"🔒":m.ico}</div>
+            <div class="tit">${m.tit}</div>
+            <div class="sub">${trancada?"Complete a missão anterior":m.sub}</div>
+            ${(!trancada && !S.aulas[i])?`<div class="tags" style="margin-top:8px"><span class="tag" style="border-color:var(--limonada);color:var(--limonada)">📚 começa com uma aula</span></div>`:``}
+            ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
+          </button>`;
+        }).join("")}
+      </div>
+      <p class="mini centro" style="margin-top:16px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Trocar nome</button>
+        <button class="chip" onclick="zerar()" style="cursor:pointer">🔄 Começar tudo de novo</button>
+      </p>
+    </div>
+    ${dif.length?`<div class="card">
+      <h2>🎯 Suas divisões mais teimosas</h2>
+      <p class="mini">Estas são as que você mais errou. Elas voltam com mais frequência no
+      Desafio da Festa — é assim que a gente vira o jogo.</p>
+      <div class="tags">${dif.map(k=>{
+        const [dd,dv] = k.split("/").map(Number);
+        return `<span class="tag" style="border-color:var(--doce);color:var(--doce);font-size:1em">${dd} ÷ ${dv} = ${dd/dv}</span>`;
+      }).join("")}</div>
+    </div>`:``}
+    ${feitas===6?`<div class="card destaque centro">
+      <div style="font-size:56px">🎓</div>
+      <h2>Você completou tudo, ${NOME()}!</h2>
+      <button class="btn" onclick="verDiploma()">Ver meu diploma</button>
+    </div>`:``}`;
+}
+function verDiploma(){ somVitoria(); S.cena="diploma"; render(); }
+window.verDiploma = verDiploma;
+
+/* ============================================================
+   AULAS
+   ============================================================ */
+const AULAS = [
+  /* ---- 1 · o que é dividir ---- */
+  [
+    {ico:"🍰", tit:"Dividir é repartir por igual",
+     txt:`Chegaram <b>12 docinhos</b> na festa e tem <b>3 amigos</b> na mesa. Quantos docinhos
+       vão para cada um?
+       <div class="destaque">12 ÷ 3 = 4</div>
+       <p>Quatro para cada. E repare no mais importante: <b>todo mundo recebe a mesma quantidade</b>.
+       Se um ficasse com 5 e outro com 3, não seria divisão — seria confusão.</p>`,
+     chave:`Dividir é repartir em partes <b>iguais</b>. Ninguém pode ficar com mais.`},
+    {ico:"🤲", tit:"O jeito de repartir: uma rodada por vez",
+     txt:`Como saber quantos vão para cada um sem errar? Do jeito que se dá carta:
+       <ul class="lista">
+       <li>um para você, um para você, um para você… (isso é <b>uma rodada</b>)</li>
+       <li>e recomeça: mais um para cada</li>
+       <li>até a bandeja acabar</li>
+       </ul>
+       <p>No fim, é só olhar <b>quantos ficaram em cada prato</b>. Esse é o resultado.</p>`,
+     chave:`Dê <b>uma rodada por vez</b>, sempre para todos. Assim ninguém sai ganhando.`},
+    {ico:"📝", tit:"Cada número tem um nome",
+     txt:`Na conta <b>12 ÷ 3 = 4</b>:
+       <ul class="lista">
+       <li><b>12</b> é o <b>dividendo</b> — o que vai ser repartido</li>
+       <li><b>3</b> é o <b>divisor</b> — em quantas partes</li>
+       <li><b>4</b> é o <b>quociente</b> — quanto coube em cada parte</li>
+       </ul>
+       <p>São nomes de gente grande, mas a ideia é a mais simples do mundo: bandeja, pratos,
+       e quanto foi para cada prato.</p>`,
+     chave:`dividendo ÷ divisor = <b>quociente</b>.`},
+    {ico:"🔄", tit:"Dividir desmancha o que multiplicar juntou",
+     txt:`Olhe os mesmos números dos dois lados:
+       <div class="destaque">3 pratos × 4 docinhos = 12<br>12 docinhos ÷ 3 pratos = 4</div>
+       <p>Multiplicar <b>junta</b> grupos iguais. Dividir <b>desmancha</b> em grupos iguais.
+       Uma conta desfaz a outra, como abrir e fechar uma porta.</p>`,
+     chave:`Multiplicar junta grupos iguais. Dividir desmancha em grupos iguais.`},
+    {ico:"✅", tit:"O que vem na missão",
+     txt:`Você vai <b>repartir de verdade</b>: aperta o botão, cai um docinho em cada prato,
+       e você vê a bandeja esvaziando.
+       <p>Quando acabar, é só contar um prato — e me dizer o resultado.</p>`,
+     chave:`Se travar, reparta rodada por rodada e conte. É sempre permitido.`}
+  ],
+  /* ---- 2 · a chave mestra ---- */
+  [
+    {ico:"🔑", tit:"Toda divisão é uma pergunta de tabuada",
+     txt:`Esta é a ideia mais poderosa do jogo inteiro, {NOME}. Quando aparecer
+       <b>42 ÷ 6</b>, não tente "dividir". <b>Pergunte ao contrário:</b>
+       <div class="destaque">6 vezes quanto dá 42?</div>
+       <p>Você já sabe: 6 × <b>7</b> = 42. Então <b>42 ÷ 6 = 7</b>. Pronto.</p>`,
+     chave:`<b>÷ vira ×.</b> "O divisor vezes quanto dá o dividendo?"`},
+    {ico:"🔺", tit:"O triângulo da família",
+     txt:`Os números <b>6</b>, <b>7</b> e <b>42</b> moram juntos, como uma família. O maior
+       fica no topo, os dois pequenos na base. Dessa família saem <b>quatro contas</b>:
+       <div class="destaque">6 × 7 = 42 &nbsp;·&nbsp; 7 × 6 = 42<br>42 ÷ 6 = 7 &nbsp;·&nbsp; 42 ÷ 7 = 6</div>
+       <p>Quatro contas, três números. Aprendeu uma, ganhou as outras três.</p>`,
+     chave:`Uma família de fatos = 2 contas de vezes + 2 de dividir.`},
+    {ico:"🧠", tit:"Você já sabe dividir (e nem sabia)",
+     txt:`Se você aprendeu a tabuada do 0 ao 9, então <b>todas</b> essas divisões já estão
+       na sua cabeça. Elas só estavam guardadas de costas.
+       <p>Não é matéria nova. É a mesma matéria, olhada do outro lado.</p>`,
+     chave:`Sabe a tabuada? Então já sabe a divisão. Só falta virar a pergunta.`},
+    {ico:"📖", tit:"E se eu esquecer a tabuada?",
+     txt:`Sem drama: abra a <b>colinha</b> no botão 📖 e use a grade.
+       <ul class="lista">
+       <li>ache o <b>divisor</b> na coluna da esquerda</li>
+       <li>corra o dedo pela linha até achar o <b>dividendo</b></li>
+       <li>o <b>quociente</b> está no alto daquela coluna</li>
+       </ul>
+       <p>Consultar não é trapaça. Trapaça é chutar.</p>`,
+     chave:`A colinha fica aberta o tempo todo, até no meio do desafio.`},
+    {ico:"✅", tit:"O que vem na missão",
+     txt:`Você vai montar <b>triângulos de família</b>: eu mostro o topo e um dos pés,
+       e você descobre o pé que falta.
+       <p>Depois, cada triângulo abre as quatro contas da família.</p>`,
+     chave:`Pergunte sempre: "o divisor vezes quanto dá o de cima?"`}
+  ],
+  /* ---- 3 · quantos cabem ---- */
+  [
+    {ico:"🎁", tit:"A outra pergunta da divisão",
+     txt:`Agora é hora das lembrancinhas. Você tem <b>20 balas</b> e cada sacolinha leva
+       <b>5 balas</b>. A pergunta mudou: não é "quanto vai para cada um", é
+       <b>"quantas sacolinhas dá para encher?"</b>
+       <div class="destaque">20 ÷ 5 = 4 sacolinhas</div>`,
+     chave:`A mesma conta responde <b>duas perguntas diferentes</b>.`},
+    {ico:"🔀", tit:"As duas perguntas, lado a lado",
+     txt:`<ul class="lista">
+       <li><b>Repartir:</b> já sei em <b>quantas partes</b> (3 pratos) e quero saber
+       <b>quanto vai em cada</b>.</li>
+       <li><b>Caber:</b> já sei <b>quanto vai em cada</b> (5 por sacolinha) e quero saber
+       <b>quantas partes</b>.</li>
+       </ul>
+       <p>Nos dois casos a conta escrita é a mesma: <b>20 ÷ 5 = 4</b>. Muda só o que você
+       estava procurando.</p>`,
+     chave:`Não se assuste com o enunciado. Ache o todo e o tamanho do grupo.`},
+    {ico:"➖", tit:"Dividir também é tirar de novo e de novo",
+     txt:`Tem um terceiro jeito de enxergar, e ele ajuda muito quando a cabeça trava:
+       <div class="destaque">20 − 5 − 5 − 5 − 5 = 0</div>
+       <p>Tirei o 5 <b>quatro vezes</b> até zerar. Então <b>20 ÷ 5 = 4</b>. Contar quantas
+       vezes deu para tirar já é dividir.</p>`,
+     chave:`Quantas vezes dá para tirar o divisor até acabar? Esse é o quociente.`},
+    {ico:"✅", tit:"O que vem na missão",
+     txt:`Você vai <b>encher as sacolinhas</b> uma a uma e ver as balas sumindo da mesa.
+       <p>No fim, conta quantas sacolinhas ficaram prontas.</p>`,
+     chave:`Encheu tudo? Conte as sacolinhas. É a resposta da divisão.`}
+  ],
+  /* ---- 4 · atalhos e regras ---- */
+  [
+    {ico:"✂️", tit:"÷2 é a metade",
+     txt:`Dividir por <b>2</b> é cortar ao meio:
+       <div class="destaque">16 ÷ 2 = 8</div>
+       <p>Se você já sabe dobrar (8 + 8 = 16), você já sabe cortar ao meio. É o mesmo caminho,
+       andando de trás para frente.</p>`,
+     chave:`<b>÷2 = metade.</b> Dobrar e cortar ao meio são a mesma estrada.`},
+    {ico:"✂️", tit:"÷4 e ÷8: é só cortar mais vezes",
+     txt:`Como <b>4 = 2 × 2</b>, dividir por 4 é <b>cortar ao meio duas vezes</b>. E como
+       <b>8 = 2 × 2 × 2</b>, dividir por 8 é cortar <b>três vezes</b>:
+       <div class="destaque">40 ÷ 8 → 20 → 10 → 5</div>
+       <p>Nenhuma conta difícil. Só metades, uma atrás da outra.</p>`,
+     chave:`<b>÷4</b> = 2 cortes · <b>÷8</b> = 3 cortes.`},
+    {ico:"🔟", tit:"÷10 e ÷5, os mais rápidos",
+     txt:`Dividir por <b>10</b> é sumir com o zero do fim:
+       <div class="destaque">70 ÷ 10 = 7</div>
+       <p>E o <b>÷5</b>? Como 5 é metade de 10, cabe o <b>dobro</b> de vezes:</p>
+       <div class="destaque">40 ÷ 10 = 4 → dobro → 40 ÷ 5 = 8</div>`,
+     chave:`<b>÷10</b>: tire o zero. <b>÷5</b>: faça ÷10 e dobre.`},
+    {ico:"📏", tit:"Três regras que nunca falham",
+     txt:`<ul class="lista">
+       <li><b>7 ÷ 1 = 7</b> — dividir por 1 é não repartir nada: um prato só, tudo nele.</li>
+       <li><b>8 ÷ 8 = 1</b> — o número dividido por ele mesmo dá <b>1</b>: cada um leva um.</li>
+       <li><b>0 ÷ 6 = 0</b> — bandeja vazia: não tem nada para repartir.</li>
+       </ul>
+       <p>Essas três aparecem o tempo todo nas provas, e nunca mudam.</p>`,
+     chave:`÷1 = o próprio · ÷ ele mesmo = 1 · 0 ÷ qualquer = 0.`},
+    {ico:"🚫", tit:"A única conta proibida",
+     txt:`E dividir por <b>zero</b>? Tente imaginar: repartir 6 docinhos entre <b>0 pratos</b>.
+       <p>Não tem prato nenhum. Não dá para pôr em lugar algum, nem sobra explicação.
+       Por isso os matemáticos decidiram: <b>dividir por 0 não existe</b>.</p>
+       <div class="destaque">6 ÷ 0 → não dá!</div>`,
+     chave:`<b>÷ 0 é proibido.</b> É a única conta que a matemática não deixa fazer.`},
+    {ico:"✅", tit:"O que vem na missão",
+     txt:`Você vai operar a <b>Máquina de Cortar</b>: põe o número, aperta o botão, e ela
+       corta ao meio.
+       <p>Sua tarefa é descobrir <b>quantos cortes</b> cada pedido precisa. Depois vêm as
+       perguntas das regrinhas.</p>`,
+     chave:`÷2 → 1 corte · ÷4 → 2 cortes · ÷8 → 3 cortes.`}
+  ],
+  /* ---- 5 · o resto ---- */
+  [
+    {ico:"🐜", tit:"Oi de novo. Eu sou o Resto.",
+     txt:`Agora posso contar por que eu me chamo assim, {NOME}.
+       <p>Imagine <b>13 balas</b> para <b>4 amigos</b>. Você reparte: 3 para cada um — e aí
+       <b>sobra 1</b>. Essa que sobrou não dá para dividir sem quebrar.</p>
+       <div class="destaque">13 ÷ 4 = 3 e sobra 1</div>
+       <p>Essa balinha que sobra sou eu. Formiga só aparece na festa por causa do que sobra. 🐜</p>`,
+     chave:`Quando não dá para repartir tudo por igual, o que fica chama <b>resto</b>.`},
+    {ico:"🍬", tit:"Divisão exata e divisão com resto",
+     txt:`<ul class="lista">
+       <li><b>12 ÷ 4 = 3</b> — sobrou nada. Chama <b>divisão exata</b>.</li>
+       <li><b>13 ÷ 4 = 3 e sobra 1</b> — tem resto.</li>
+       </ul>
+       <p>As duas estão certas! Ter resto não é errar. É só a resposta completa ter
+       <b>duas partes</b>: quanto coube em cada e quanto sobrou.</p>`,
+     chave:`Resposta com resto tem <b>duas peças</b>: o quociente <b>e</b> o resto.`},
+    {ico:"📏", tit:"O resto é sempre menor que o divisor",
+     txt:`Esta regra vale ouro para conferir se você parou na hora certa.
+       <p>Se você tem <b>4 pratos</b> e sobraram <b>4 balas</b>, então ainda dá para dar
+       <b>mais uma rodada</b> — uma para cada prato! Só pare quando sobrar <b>menos</b> que
+       o número de pratos.</p>
+       <div class="destaque">resto &lt; divisor · sempre</div>`,
+     chave:`Sobrou tanto quanto o divisor ou mais? Você parou cedo demais.`},
+    {ico:"✔️", tit:"O truque de conferir",
+     txt:`Tem um jeito de saber se a sua resposta está certa <b>sem perguntar para ninguém</b>.
+       Multiplique de volta e some o resto:
+       <div class="destaque">4 × 3 + 1 = 13 ✓</div>
+       <p>Deu o número de onde você partiu? Está certo. Não deu? Tem algo errado.</p>`,
+     chave:`<b>divisor × quociente + resto = dividendo.</b>`},
+    {ico:"🚗", tit:"O resto na vida de verdade",
+     txt:`<b>13 pessoas</b> vão para a festa em carros de <b>4 lugares</b>. 13 ÷ 4 = 3 e sobra 1.
+       <p>Então 3 carros… e aquela 1 pessoa fica no meio da rua? Claro que não!
+       <b>Precisa de 4 carros.</b></p>
+       <p>Às vezes o resto manda a gente <b>arredondar para cima</b>. A conta é a mesma; quem
+       decide o que fazer com o que sobra é você.</p>`,
+     chave:`Pense no que sobra. Nem sempre o resto pode ser ignorado.`},
+    {ico:"✅", tit:"O que vem na missão",
+     txt:`Você vai repartir até <b>não dar mais</b>, e depois me dizer as duas peças da
+       resposta: quanto ficou em cada prato e quanto sobrou para mim.`,
+     chave:`Pare quando o que sobrou for <b>menor</b> que o número de pratos.`}
+  ],
+  /* ---- 6 · antes do desafio ---- */
+  [
+    {ico:"🏆", tit:"Chegou a hora, {NOME}",
+     txt:`Você aprendeu <b>todos</b> os truques da festa. Agora vem o <b>Desafio da Festa</b>:
+       primeiro um arcade contra o relógio, valendo pontos, e depois a <b>prova final</b>,
+       valendo as estrelas.
+       <p class="mini">O relógio nunca decide a sua nota. As estrelas vêm do que você
+       <b>sabe</b>, não da rapidez do dedo.</p>`,
+     chave:`Pode abrir a colinha no meio do desafio. O cronômetro para.`},
+    {ico:"🎯", tit:"Suas divisões teimosas",
+     txt:`{DIFICEIS}`,
+     chave:`Errar e voltar é exatamente como se aprende a dividir.`},
+    {ico:"🧰", tit:"A caixa de ferramentas inteira",
+     txt:`<ul class="lista">
+       <li><b>A chave mestra:</b> "o divisor vezes quanto dá o dividendo?"</li>
+       <li><b>÷2</b> = metade · <b>÷4</b> = 2 cortes · <b>÷8</b> = 3 cortes</li>
+       <li><b>÷10</b> = tire o zero · <b>÷5</b> = ÷10 e dobre</li>
+       <li><b>÷1</b> = o próprio número · <b>÷ ele mesmo</b> = 1 · <b>0 ÷ n</b> = 0</li>
+       <li><b>÷0</b> = proibido</li>
+       <li><b>Resto</b> menor que o divisor · conferir: divisor × quociente + resto</li>
+       </ul>`,
+     chave:`Nenhuma divisão do 3º ano fica fora dessa lista.`},
+    {ico:"✅", tit:"Só mais uma coisa",
+     txt:`Se travar numa conta, <b>não chute</b>: vire a pergunta. "Quanto vezes esse número
+       dá aquele?" E se ainda assim não vier, abra a colinha.
+       <p>Demorar um pouquinho e acertar vale muito mais do que responder rápido e errar.</p>`,
+     chave:`Pensar devagar é permitido. É o que matemático faz.`}
+  ]
+];
+
+let A = null;
+function nomear(txt){
+  return String(txt)
+    .replace(/\{NOME\}/g, NOME())
+    .replace(/\{DIFICEIS\}/g, textoDificeis());
+}
+function textoDificeis(){
+  const dif = listaDificeis(5);
+  if(!dif.length){
+    return `Até agora você <b>não errou nenhuma divisão</b> — ou ainda não treinou o suficiente
+      para o jogo saber. Vamos descobrir no desafio!`;
+  }
+  return `O jogo foi anotando o que você errou. Estas são as suas divisões mais teimosas —
+    dê uma olhada nelas antes de começar:
+    <div class="destaque">${dif.map(k=>{
+      const [dd,dv] = k.split("/").map(Number);
+      return `${dd} ÷ ${dv} = ${dd/dv}`;
+    }).join("<br>")}</div>
+    <p class="mini">Elas vão aparecer <b>mais vezes</b> no desafio, de propósito.</p>`;
+}
+
+function abrirAula(i, revendo){
+  somClique(); pararArcade();
+  A = { missao:i, slide:0, revendo:!!revendo };
+  S.cena = "a"+i;
+  render();
+}
+window.abrirAula = abrirAula;
+function reverAula(i){ abrirAula(i, true); }
+window.reverAula = reverAula;
+
+function telaAula(i){
+  const slides = AULAS[i], s = slides[A.slide], ultimo = A.slide === slides.length-1;
+  const m = MISSOES[i];
+  app.innerHTML = hud() + `
+    <h2 style="text-align:center">${m.ico} Aula ${i+1} · ${m.tit}</h2>
+    <div class="aula">
+      <div class="guia">
+        <span class="robo">🐜</span>
+        <span>Sou o <b>Resto</b>, a formiga que não perde uma festa.
+        ${A.slide===0 ? `Antes de você pôr a mão na massa, ${NOME()}, olha só.`
+                      : `Continuando, ${NOME()}…`}</span>
+      </div>
+      <div class="ico">${s.ico}</div>
+      <h2>${nomear(s.tit)}</h2>
+      ${s.txt.trim().startsWith("<") ? nomear(s.txt) : `<p>${nomear(s.txt)}</p>`}
+      ${s.chave ? `<div class="chave"><span class="rot">🔑 Grave isso</span>${nomear(s.chave)}</div>` : ``}
+      <div class="pontos">
+        ${slides.map((_,k)=>`<i class="${k===A.slide?"aqui":(k<A.slide?"vista":"")}"></i>`).join("")}
+      </div>
+    </div>
+    <div class="acoes">
+      ${A.slide>0 ? `<button class="btn aula fraco" onclick="aulaVolta()">← Voltar</button>` : ``}
+      ${ultimo
+        ? `<button class="btn" onclick="aulaFim()">🚀 Começar a missão ${i+1}</button>`
+        : `<button class="btn aula" onclick="aulaProx()">Próximo →</button>`}
+    </div>
+    <p class="centro mini" style="margin-top:14px">
+      ${ultimo ? `` : `<button class="chip" onclick="aulaFim()" style="cursor:pointer">Pular a aula e ir direto para a missão →</button>`}
+    </p>`;
+}
+function aulaProx(){ somClique(); A.slide++; telaAula(A.missao); scrollTo(0,0); }
+window.aulaProx = aulaProx;
+function aulaVolta(){ somClique(); A.slide--; telaAula(A.missao); scrollTo(0,0); }
+window.aulaVolta = aulaVolta;
+function aulaFim(){
+  somClique();
+  S.aulas[A.missao] = true; salvar();
+  S.cena = "m"+A.missao; render();
+}
+window.aulaFim = aulaFim;
+
+/* ============================================================
+   QUIZ GENÉRICO
+   ============================================================ */
+let Q = null;
+function embaralhaOpcoes(perguntas){
+  return perguntas.map(q=>{
+    const ordem = embaralha(q.o.map((_,i)=>i));
+    return { ...q, o: ordem.map(i=>q.o[i]), c: ordem.indexOf(q.c) };
+  });
+}
+function quizGenerico(missaoIdx, titulo, perguntas, acertosIniciais, totalInicial, grade){
+  Q = { i:0, ac:acertosIniciais||0, tot:(totalInicial||0)+perguntas.length,
+        lista:embaralhaOpcoes(perguntas), missao:missaoIdx, titulo:titulo,
+        respondida:false, grade:!!grade };
+  desenhaQuiz();
+}
+function desenhaQuiz(){
+  const q = Q.lista[Q.i];
+  app.innerHTML = hud(Q.titulo) + `
+    <div class="card">
+      <p class="mini">Pergunta ${Q.i+1} de ${Q.lista.length}</p>
+      <div class="progresso"><i style="width:${Q.i/Q.lista.length*100}%"></i></div>
+      ${q.conta ? `<div class="conta">${q.conta}</div>` : ``}
+      ${q.p ? `<div class="pergunta">${nomear(q.p)}</div>` : ``}
+      <div class="opcoes ${Q.grade||q.grade?"grade":""}" id="ops">
+        ${q.o.map((t,k)=>`<button class="op" onclick="respQuiz(${k})">
+          ${(Q.grade||q.grade)?``:`<span class="letra">${"ABCD"[k]}</span>`}<span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fbq"></div>
+      <div class="acoes esconde" id="proxBox">
+        <button class="btn" onclick="proxQuiz()" id="btnProx">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respQuiz(k){
+  if(Q.respondida) return;
+  Q.respondida = true;
+  const q = Q.lista[Q.i];
+  document.querySelectorAll("#ops .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===q.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbq");
+  if(k===q.c){
+    Q.ac++; somAcerto(); ganha(10);
+    if(q.fato) marcaAcerto(q.fato[0], q.fato[1]);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${q.e}`;
+  } else {
+    somErro();
+    if(q.fato) marcaErro(q.fato[0], q.fato[1]);
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Quase, ${NOME()}! A resposta certa é <b>${q.o[q.c]}</b>.</div>${q.e}`;
+  }
+  $("#proxBox").classList.remove("esconde");
+  $("#btnProx").textContent = (Q.i === Q.lista.length-1) ? "Terminar missão 🏁" : "Continuar →";
+  $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respQuiz = respQuiz;
+function proxQuiz(){
+  somClique();
+  Q.i++; Q.respondida = false;
+  if(Q.i >= Q.lista.length){ concluiMissao(Q.missao, Q.ac, Q.tot); return; }
+  desenhaQuiz();
+}
+window.proxQuiz = proxQuiz;
+
+/* alternativas plausíveis para uma divisão: erros que crianças de verdade cometem */
+function alternativas(dd, dv){
+  const certo = dd/dv;
+  const cand = new Set([certo]);
+  const chutes = [
+    certo+1, certo-1, dv, dd-dv, certo+2, certo-2,
+    certo*2, Math.floor(certo/2), dd/ (dv===1?2:1), certo+dv, certo+10
+  ];
+  for(const c of embaralha(chutes)){
+    if(Number.isInteger(c) && c >= 0 && c !== certo && cand.size < 4) cand.add(c);
+  }
+  let n = 2;
+  while(cand.size < 4){ if(certo+n !== certo) cand.add(certo + n); n++; }
+  return embaralha([...cand]);
+}
+function perguntaDiv(dd, dv, explica){
+  const opts = alternativas(dd,dv);
+  return {
+    conta: `${dd} ÷ ${dv} = ?`,
+    o: opts.map(String),
+    c: opts.indexOf(dd/dv),
+    fato: [dd,dv],
+    grade: true,
+    e: explica || dica(dd,dv)
+  };
+}
+/* a dica escolhe o atalho certo para cada conta — é a aula reaparecendo na hora do erro */
+function dica(dd, dv){
+  const q = dd/dv;
+  const chave = `A chave mestra: <b>${dv} × ? = ${dd}</b>. Como ${dv} × ${q} = ${dd},
+    então <b>${dd} ÷ ${dv} = ${q}</b>.`;
+  if(dd === 0) return `<b>0 dividido por qualquer número dá 0.</b> Bandeja vazia: não tem nada
+    para repartir. ${chave}`;
+  if(dv === 1) return `<b>Dividir por 1 não muda nada:</b> um prato só, tudo nele.
+    ${dd} ÷ 1 = <b>${dd}</b>.`;
+  if(dd === dv) return `<b>Todo número dividido por ele mesmo dá 1:</b> ${dv} pratos,
+    ${dd} docinhos — um para cada. ${dd} ÷ ${dv} = <b>1</b>.`;
+  if(dv === 2) return `<b>÷2 é a metade:</b> metade de ${dd} é <b>${q}</b>
+    (porque ${q} + ${q} = ${dd}).`;
+  if(dv === 4) return `<b>÷4 é cortar ao meio duas vezes:</b> ${dd} → ${dd/2} → <b>${q}</b>.`;
+  if(dv === 8) return `<b>÷8 é cortar ao meio três vezes:</b> ${dd} → ${dd/2} → ${dd/4} → <b>${q}</b>.`;
+  if(dv === 10) return `<b>÷10 é sumir com o zero do fim:</b> ${dd} ÷ 10 = <b>${q}</b>.`;
+  if(dv === 5) return `<b>÷5:</b> pergunte "5 vezes quanto dá ${dd}?" → 5 × ${q} = ${dd}.
+    (Repare que ${dd} termina em ${dd%10}, como todo resultado do ×5.)`;
+  if(dv === 3) return `${chave} Se quiser conferir: ${q} + ${q} + ${q} = ${dd}.`;
+  if(dv === 9) return `${chave} (E lembre: no ×9 os dois algarismos somam 9 — ${dd} tem
+    ${Math.floor(dd/10)} + ${dd%10} = ${Math.floor(dd/10)+dd%10}.)`;
+  return chave;
+}
+
+/* ============================================================
+   MISSÃO 1 — MESA DOS DOCINHOS (repartir)
+   ============================================================ */
+const PEDIDOS1 = [ [12,3], [10,2], [15,5], [8,4], [18,3] ];   /* [docinhos, pratos] — exatas */
+let f1 = null;
+function faseDocinhos(){
+  f1 = { i:0, rodadas:0, acertos:0, fase:"reparte" };
+  desenhaF1();
+}
+function desenhaF1(){
+  const [tot, pratos] = PEDIDOS1[f1.i];
+  const porPrato = f1.rodadas;
+  const sobra = tot - porPrato*pratos;
+  const acabou = sobra === 0;
+  app.innerHTML = hud("🍰 Missão 1 · Mesa dos Docinhos") + `
+    <div class="card">
+      <p class="mini">Mesa ${f1.i+1} de ${PEDIDOS1.length} · acertos: <b>${f1.acertos}</b></p>
+      <div class="progresso"><i style="width:${f1.i/PEDIDOS1.length*100}%"></i></div>
+      <p>🍰 <b>${tot} docinhos</b> na bandeja e <b>${pratos} amigos</b> na mesa.
+      Reparta <b>igualzinho</b>, ${NOME()}.</p>
+
+      <div class="mesa">
+        <div class="rotulo">bandeja — ainda faltam repartir <b>${sobra}</b></div>
+        <div class="pilha">${
+          sobra > 0 ? Array.from({length:sobra},()=>`<div class="docinho"></div>`).join("")
+                    : `<span class="vazia">bandeja vazia 🎉</span>`
+        }</div>
+        <div class="rotulo" style="margin-top:12px">pratos — <b>${porPrato}</b> em cada</div>
+        <div class="pratos">${
+          Array.from({length:pratos},()=>`<div class="prato">${
+            porPrato ? Array.from({length:porPrato},()=>`<div class="docinho"></div>`).join("")
+                     : ``
+          }</div>`).join("")
+        }</div>
+      </div>
+
+      ${acabou ? `` : `<div class="acoes">
+        <button class="btn" onclick="rodada()">🤲 Dar uma rodada (1 para cada)</button>
+        <button class="btn sec" onclick="resetRodada()">↺ Recomeçar</button>
+      </div>`}
+
+      ${acabou ? `
+      <div class="card" style="background:rgba(30,17,54,.8);margin-top:16px">
+        <p class="centro"><b>A bandeja acabou!</b> Agora olhe <b>um prato só</b> e me diga:</p>
+        <div class="conta">${tot} ÷ ${pratos} = ?</div>
+        <div class="opcoes grade" id="ops1">
+          ${alternativas(tot,pratos).map(v=>`<button class="op" onclick="respDocinho(${v})">${v}</button>`).join("")}
+        </div>
+      </div>` : ``}
+      <div class="feedback" id="fb1"></div>
+    </div>`;
+}
+function rodada(){
+  const [tot, pratos] = PEDIDOS1[f1.i];
+  const sobra = tot - f1.rodadas*pratos;
+  if(sobra < pratos) return;
+  f1.rodadas++; somPop();
+  desenhaF1();
+}
+window.rodada = rodada;
+function resetRodada(){ somClique(); f1.rodadas = 0; desenhaF1(); }
+window.resetRodada = resetRodada;
+function respDocinho(v){
+  const [tot, pratos] = PEDIDOS1[f1.i];
+  const certo = tot/pratos;
+  const fb = $("#fb1");
+  document.querySelectorAll("#ops1 .op").forEach(b=>{
+    b.disabled = true;
+    if(Number(b.textContent) === certo) b.classList.add("certa");
+    else if(Number(b.textContent) === v) b.classList.add("errada");
+  });
+  if(v === certo){
+    f1.acertos++; somAcerto(); ganha(10); marcaAcerto(tot,pratos);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>
+      Você deu <b>${certo} rodadas</b>, então cada prato ficou com <b>${certo}</b> docinhos:
+      <b>${tot} ÷ ${pratos} = ${certo}</b>. E conferindo do outro lado:
+      ${pratos} × ${certo} = ${tot}. ✓`;
+  } else {
+    somErro(); marcaErro(tot,pratos);
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Conte de novo um prato só, ${NOME()}.</div>
+      Cada prato ficou com <b>${certo}</b> docinhos. ${dica(tot,pratos)}`;
+  }
+  setTimeout(()=>{
+    f1.i++;
+    if(f1.i >= PEDIDOS1.length){ fimDocinhos(); return; }
+    f1.rodadas = 0; desenhaF1();
+  }, 2400);
+}
+window.respDocinho = respDocinho;
+function fimDocinhos(){
+  somVitoria();
+  app.innerHTML = hud("🍰 Missão 1 · Mesa dos Docinhos") + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">🍰</div>
+      <h2>Todas as mesas servidas!</h2>
+      <p>${NOME()}, você repartiu <b>${PEDIDOS1.length} bandejas</b> com as próprias mãos —
+      e ninguém reclamou de ter ganhado menos.</p>
+      <p class="mini">Agora vêm as perguntas sobre o que a divisão quer dizer.</p>
+      <div class="acoes">
+        <button class="btn" onclick="quizDocinhos()">Ir para as perguntas →</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+const QUIZ_M1 = [
+  {p:"Tem <b>15 balas</b> para repartir igualmente entre <b>5 crianças</b>. Qual conta resolve isso?",
+   o:["15 ÷ 5","15 × 5","15 + 5","15 − 5"], c:0,
+   e:"<b>15 ÷ 5 = 3</b>. Repartir igualmente é sempre uma <b>divisão</b>: cada criança leva 3 balas."},
+  {p:"O que <b>18 ÷ 6</b> quer dizer?",
+   o:["Repartir 18 em 6 partes iguais","Juntar 18 grupos de 6","Tirar 6 de 18","Somar 18 com 6"], c:0,
+   e:"<b>18 ÷ 6 = 3</b>: 18 repartido em 6 partes iguais dá 3 em cada parte."},
+  {p:"Na conta <b>20 ÷ 4 = 5</b>, quem é o <b>divisor</b>?",
+   o:["O 4","O 20","O 5","Não tem divisor"], c:0,
+   e:"O <b>divisor</b> é o 4 — em quantas partes vamos repartir. O 20 é o <b>dividendo</b> e o 5 é o <b>quociente</b>."},
+  {p:"Reparti 14 docinhos entre 2 amigos assim: 9 para um e 5 para o outro. Isso é dividir?",
+   o:["Não, porque as partes ficaram diferentes","Sim, porque usei os 14 docinhos","Sim, porque foram 2 amigos","Só se o primeiro devolver 1"], c:0,
+   e:"Dividir exige partes <b>iguais</b>. O certo é <b>14 ÷ 2 = 7</b> para cada um."},
+  ...[[12,3],[10,2],[16,4],[18,2]].map(([dd,dv])=>perguntaDiv(dd,dv)),
+  {p:"Se <b>4 pratos × 6 docinhos = 24</b>, quanto dá <b>24 ÷ 4</b>?",
+   o:["6","4","24","10"], c:0,
+   e:"<b>6</b>. A divisão desmancha exatamente o que a multiplicação juntou."}
+];
+function quizDocinhos(){ somClique(); quizGenerico(0, "🍰 Missão 1 · Prova da Mesa", QUIZ_M1, f1.acertos, PEDIDOS1.length); }
+window.quizDocinhos = quizDocinhos;
+
+/* ============================================================
+   MISSÃO 2 — A CHAVE MESTRA (família de fatos)
+   ============================================================ */
+/* [fator mostrado, fator escondido] — o topo do triângulo é o produto */
+const TRIOS = [ [6,7], [8,4], [5,9], [3,7], [8,6] ];
+let f2 = null;
+function faseChave(){
+  f2 = { i:0, acertos:0, resolvido:false };
+  desenhaF2();
+}
+function desenhaF2(){
+  const [vis, oculto] = TRIOS[f2.i];
+  const prod = vis*oculto;
+  app.innerHTML = hud("🔑 Missão 2 · A Chave Mestra") + `
+    <div class="card">
+      <p class="mini">Triângulo ${f2.i+1} de ${TRIOS.length} · acertos: <b>${f2.acertos}</b></p>
+      <div class="progresso"><i style="width:${f2.i/TRIOS.length*100}%"></i></div>
+      <p>No topo fica <b>o todo</b>. Embaixo, as duas partes que, multiplicadas, formam ele.
+      Qual número está faltando, ${NOME()}?</p>
+
+      <svg viewBox="0 0 340 240" class="triangulo" role="img" aria-label="triângulo da família de fatos">
+        <polygon points="170,16 16,222 324,222" fill="rgba(167,139,250,.12)"
+                 stroke="#a78bfa" stroke-width="4" stroke-linejoin="round"/>
+        <line x1="93" y1="120" x2="247" y2="120" stroke="#a78bfa" stroke-width="2" stroke-dasharray="7 7"/>
+        <text x="170" y="82" class="tn">${prod}</text>
+        <text x="170" y="106" class="tr">o todo</text>
+        <text x="95" y="198" class="tn">${vis}</text>
+        <text x="95" y="216" class="tr">parte</text>
+        <text x="245" y="198" class="tn faltando" id="alvoTri">?</text>
+        <text x="245" y="216" class="tr">parte</text>
+      </svg>
+
+      <p class="centro"><b>${vis} × ? = ${prod}</b> &nbsp;→&nbsp; ou seja, <b>${prod} ÷ ${vis} = ?</b></p>
+      <div class="opcoes grade" id="ops2">
+        ${alternativas(prod, vis).map(v=>`<button class="op" onclick="respTri(${v})">${v}</button>`).join("")}
+      </div>
+      <div class="feedback" id="fb2"></div>
+      <div class="acoes esconde" id="prox2">
+        <button class="btn" onclick="proxTri()" id="btnProx2">Próximo triângulo →</button>
+      </div>
+    </div>`;
+}
+function respTri(v){
+  if(f2.resolvido) return;
+  const [vis, oculto] = TRIOS[f2.i];
+  const prod = vis*oculto;
+  const fb = $("#fb2");
+  document.querySelectorAll("#ops2 .op").forEach(b=>{
+    b.disabled = true;
+    if(Number(b.textContent) === oculto) b.classList.add("certa");
+    else if(Number(b.textContent) === v) b.classList.add("errada");
+  });
+  f2.resolvido = true;
+  const alvo = document.getElementById("alvoTri");
+  if(alvo){ alvo.textContent = oculto; }
+  const familia = `<div class="familia">
+      <div>${vis} × ${oculto} = ${prod}</div>
+      <div>${oculto} × ${vis} = ${prod}</div>
+      <div class="div">${prod} ÷ ${vis} = ${oculto}</div>
+      <div class="div">${prod} ÷ ${oculto} = ${vis}</div>
+    </div>`;
+  if(v === oculto){
+    f2.acertos++; somAcerto(); ganha(10); marcaAcerto(prod, vis);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>
+      A família de <b>${vis}</b>, <b>${oculto}</b> e <b>${prod}</b> dá estas quatro contas:
+      ${familia}`;
+  } else {
+    somErro(); marcaErro(prod, vis);
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Era o <b>${oculto}</b>.</div>
+      ${dica(prod, vis)} A família inteira fica assim: ${familia}`;
+  }
+  $("#prox2").classList.remove("esconde");
+  $("#btnProx2").textContent = (f2.i === TRIOS.length-1) ? "Ir para as perguntas →" : "Próximo triângulo →";
+  $("#btnProx2").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respTri = respTri;
+function proxTri(){
+  somClique();
+  f2.i++;
+  if(f2.i >= TRIOS.length){
+    quizGenerico(1, "🔑 Missão 2 · Prova da Chave", QUIZ_M2, f2.acertos, TRIOS.length);
+    return;
+  }
+  f2.resolvido = false;
+  desenhaF2();
+}
+window.proxTri = proxTri;
+const QUIZ_M2 = [
+  {p:"Para descobrir <b>56 ÷ 7</b>, qual é a melhor pergunta a se fazer?",
+   o:["7 vezes quanto dá 56?","7 mais quanto dá 56?","56 vezes 7 dá quanto?","56 menos 7 dá quanto?"], c:0,
+   e:"<b>7 × 8 = 56</b>, então <b>56 ÷ 7 = 8</b>. Toda divisão é uma pergunta de tabuada virada do avesso."},
+  {p:"Se <b>9 × 6 = 54</b>, qual destas contas está <b>certa</b>?",
+   o:["54 ÷ 9 = 6","54 ÷ 6 = 54","54 ÷ 9 = 45","9 ÷ 54 = 6"], c:0,
+   e:"Da família 9, 6 e 54 saem: 9×6=54, 6×9=54, <b>54÷9=6</b> e 54÷6=9."},
+  ...[[42,6],[36,4],[45,5],[24,3],[63,7],[32,8]].map(([dd,dv])=>perguntaDiv(dd,dv)),
+  {p:"Quantas contas saem de uma família de três números (como 4, 8 e 32)?",
+   o:["Quatro: duas de vezes e duas de dividir","Duas","Uma só","Oito"], c:0,
+   e:"4×8=32, 8×4=32, 32÷4=8 e 32÷8=4. <b>Quatro contas, três números.</b>"}
+];
+
+/* ============================================================
+   MISSÃO 3 — SACOLINHAS (quantos cabem)
+   ============================================================ */
+const PEDIDOS3 = [ [20,5], [12,4], [18,6], [21,3], [16,8] ];   /* [balas, por sacolinha] */
+let f3 = null;
+function faseSacos(){
+  f3 = { i:0, sacos:0, acertos:0 };
+  desenhaF3();
+}
+function desenhaF3(){
+  const [tot, por] = PEDIDOS3[f3.i];
+  const sobra = tot - f3.sacos*por;
+  const acabou = sobra === 0;
+  app.innerHTML = hud("🎁 Missão 3 · Sacolinhas") + `
+    <div class="card">
+      <p class="mini">Lembrancinha ${f3.i+1} de ${PEDIDOS3.length} · acertos: <b>${f3.acertos}</b></p>
+      <div class="progresso"><i style="width:${f3.i/PEDIDOS3.length*100}%"></i></div>
+      <p>🎁 <b>${tot} balas</b> na mesa. Cada sacolinha leva <b>${por} balas</b>.
+      Quantas sacolinhas dá para encher?</p>
+
+      <div class="mesa">
+        <div class="rotulo">mesa — ainda tem <b>${sobra}</b> balas</div>
+        <div class="pilha">${
+          sobra > 0 ? Array.from({length:sobra},()=>`<div class="bala"></div>`).join("")
+                    : `<span class="vazia">acabaram as balas 🎉</span>`
+        }</div>
+        ${f3.sacos ? `<div class="rotulo" style="margin-top:12px">sacolinhas prontas: <b>${f3.sacos}</b></div>
+        <div class="sacos">${
+          Array.from({length:f3.sacos},()=>`<div class="saco">${
+            Array.from({length:por},()=>`<div class="bala"></div>`).join("")
+          }</div>`).join("")
+        }</div>` : ``}
+        ${f3.sacos ? `<div class="cadeia">
+          <span>${tot}</span>${Array.from({length:f3.sacos},(_,k)=>
+            `<span class="${k===f3.sacos-1?"novo":""}">− ${por}</span>`).join("")}
+          <span>= ${sobra}</span>
+        </div>` : ``}
+      </div>
+
+      ${acabou ? `` : `<div class="acoes">
+        <button class="btn" onclick="encher()">🎁 Encher uma sacolinha</button>
+        <button class="btn sec" onclick="resetSaco()">↺ Recomeçar</button>
+      </div>`}
+
+      ${acabou ? `
+      <div class="card" style="background:rgba(30,17,54,.8);margin-top:16px">
+        <p class="centro"><b>A mesa esvaziou!</b> Então, quantas sacolinhas ficaram prontas?</p>
+        <div class="conta">${tot} ÷ ${por} = ?</div>
+        <div class="opcoes grade" id="ops3">
+          ${alternativas(tot,por).map(v=>`<button class="op" onclick="respSaco(${v})">${v}</button>`).join("")}
+        </div>
+      </div>` : ``}
+      <div class="feedback" id="fb3"></div>
+    </div>`;
+}
+function encher(){
+  const [tot, por] = PEDIDOS3[f3.i];
+  if(tot - f3.sacos*por < por) return;
+  f3.sacos++; somPop();
+  desenhaF3();
+}
+window.encher = encher;
+function resetSaco(){ somClique(); f3.sacos = 0; desenhaF3(); }
+window.resetSaco = resetSaco;
+function respSaco(v){
+  const [tot, por] = PEDIDOS3[f3.i];
+  const certo = tot/por;
+  const fb = $("#fb3");
+  document.querySelectorAll("#ops3 .op").forEach(b=>{
+    b.disabled = true;
+    if(Number(b.textContent) === certo) b.classList.add("certa");
+    else if(Number(b.textContent) === v) b.classList.add("errada");
+  });
+  if(v === certo){
+    f3.acertos++; somAcerto(); ganha(10); marcaAcerto(tot,por);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>
+      Deu para tirar <b>${por}</b> da mesa <b>${certo} vezes</b> até zerar:
+      <b>${tot} ÷ ${por} = ${certo}</b> sacolinhas.`;
+  } else {
+    somErro(); marcaErro(tot,por);
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Conte as sacolinhas da mesa, ${NOME()}.</div>
+      Ficaram <b>${certo}</b>. ${dica(tot,por)}`;
+  }
+  setTimeout(()=>{
+    f3.i++;
+    if(f3.i >= PEDIDOS3.length){ fimSacos(); return; }
+    f3.sacos = 0; desenhaF3();
+  }, 2400);
+}
+window.respSaco = respSaco;
+function fimSacos(){
+  somVitoria();
+  app.innerHTML = hud("🎁 Missão 3 · Sacolinhas") + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">🎁</div>
+      <h2>Lembrancinhas prontas!</h2>
+      <p>${NOME()}, todo convidado vai levar a dele para casa.</p>
+      <p class="mini">Agora as perguntas — e preste atenção: algumas pedem "quantas partes",
+      outras pedem "quanto em cada". A conta é a mesma.</p>
+      <div class="acoes">
+        <button class="btn" onclick="quizSacos()">Ir para as perguntas →</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+const QUIZ_M3 = [
+  {p:"Tem <b>24 brigadeiros</b> e cada caixinha leva <b>4</b>. Quantas caixinhas dá para encher?",
+   o:["6","4","24","8"], c:0, fato:[24,4],
+   e:"<b>24 ÷ 4 = 6</b> caixinhas. Pergunte: 4 vezes quanto dá 24?"},
+  {p:"Tem <b>24 brigadeiros</b> para repartir igualmente entre <b>4 amigos</b>. Quantos para cada um?",
+   o:["6","4","24","8"], c:0, fato:[24,4],
+   e:"<b>24 ÷ 4 = 6</b> para cada um. Repare: <b>a mesma conta</b> da pergunta anterior, com sentido diferente."},
+  {p:"<b>30 − 6 − 6 − 6 − 6 − 6 = 0.</b> Que divisão isso mostra?",
+   o:["30 ÷ 6 = 5","30 ÷ 5 = 6","30 ÷ 6 = 6","6 ÷ 30 = 5"], c:0,
+   e:"Deu para tirar o 6 <b>cinco vezes</b> até zerar. Então <b>30 ÷ 6 = 5</b>."},
+  ...[[35,5],[28,7],[27,9],[40,8]].map(([dd,dv])=>perguntaDiv(dd,dv)),
+  {p:"Em qual destas situações você usaria uma divisão?",
+   o:["Guardar 45 figurinhas em páginas de 9","Comprar 9 pacotes de 45 figurinhas","Ganhar 9 figurinhas a mais","Perder 9 das 45 figurinhas"], c:0,
+   e:"Guardar 45 em páginas de 9 é perguntar <b>quantas páginas cabem</b>: 45 ÷ 9 = <b>5</b>."}
+];
+function quizSacos(){ somClique(); quizGenerico(2, "🎁 Missão 3 · Prova das Sacolinhas", QUIZ_M3, f3.acertos, PEDIDOS3.length); }
+window.quizSacos = quizSacos;
+
+/* ============================================================
+   MISSÃO 4 — MÁQUINA DE CORTAR (÷2, ÷4, ÷8 e as regras)
+   ============================================================ */
+const PEDIDOS4 = [ [16,2], [24,4], [40,8], [36,4], [18,2], [48,8] ];
+let f4 = null;
+function faseCortar(){
+  f4 = { i:0, valor:PEDIDOS4[0][0], cortes:0, cadeia:[PEDIDOS4[0][0]], acertos:0, resolvido:false };
+  desenhaF4();
+}
+function cortesNecessarios(dv){ return dv === 2 ? 1 : dv === 4 ? 2 : 3; }
+function desenhaF4(){
+  const [dd, dv] = PEDIDOS4[f4.i];
+  const alvo = dd/dv, precisa = cortesNecessarios(dv);
+  app.innerHTML = hud("✂️ Missão 4 · Máquina de Cortar") + `
+    <div class="card">
+      <p class="mini">Pedido ${f4.i+1} de ${PEDIDOS4.length} · acertos: <b>${f4.acertos}</b></p>
+      <div class="progresso"><i style="width:${f4.i/PEDIDOS4.length*100}%"></i></div>
+      <p>📋 A máquina precisa calcular <b style="color:var(--limonada);font-size:1.2em">${dd} ÷ ${dv}</b>.
+      Lembre: <b>÷2</b> = 1 corte, <b>÷4</b> = 2 cortes, <b>÷8</b> = 3 cortes.</p>
+
+      <div class="maquina">
+        <div class="visor">${f4.valor}</div>
+        <div class="cadeia">
+          ${f4.cadeia.map((v,k)=>`<span class="${k===f4.cadeia.length-1&&k>0?"novo":""}">${v}</span>`).join(" ")}
+        </div>
+        <p class="mini" style="margin-top:10px">cortes usados: <b>${f4.cortes}</b> de <b>${precisa}</b></p>
+        <div class="acoes">
+          <button class="btn limao" onclick="cortar()" ${f4.resolvido?"disabled":""}>✂️ CORTAR AO MEIO</button>
+          <button class="btn sec" onclick="resetCorte()">↺ Recomeçar</button>
+        </div>
+      </div>
+      <div class="feedback" id="fb4"></div>
+      <div class="acoes esconde" id="prox4">
+        <button class="btn" onclick="proxCorte()" id="btnProx4">Próximo pedido →</button>
+      </div>
+    </div>`;
+}
+function cortar(){
+  if(f4.resolvido) return;
+  const [dd, dv] = PEDIDOS4[f4.i];
+  const alvo = dd/dv, precisa = cortesNecessarios(dv);
+  f4.valor = f4.valor/2; f4.cortes++; f4.cadeia.push(f4.valor);
+  somPop();
+  const fb = () => $("#fb4");
+  if(f4.valor === alvo && f4.cortes === precisa){
+    f4.resolvido = true; f4.acertos++; somAcerto(); ganha(10); marcaAcerto(dd,dv);
+    desenhaF4();
+    fb().className = "feedback bom show";
+    fb().innerHTML = `<div class="tt">✅ ${elogio()}</div>
+      <b>${dd} ÷ ${dv} = ${alvo}</b> — em ${precisa} corte${precisa===1?"":"s"}:
+      ${f4.cadeia.join(" → ")}. Só metades!`;
+    $("#prox4").classList.remove("esconde");
+    $("#btnProx4").textContent = (f4.i === PEDIDOS4.length-1) ? "Ir para as perguntas →" : "Próximo pedido →";
+  } else if(f4.cortes > precisa){
+    somErro(); marcaErro(dd,dv);
+    desenhaF4();
+    fb().className = "feedback ruim show";
+    fb().innerHTML = `<div class="tt">❌ Cortou demais!</div>
+      Você cortou <b>${f4.cortes} vezes</b> e chegou a ${f4.valor}, mas <b>÷${dv}</b> pede
+      <b>${precisa} corte${precisa===1?"":"s"}</b>. Aperte <b>↺ Recomeçar</b> e tente de novo.`;
+  } else {
+    desenhaF4();
+    fb().className = "feedback bom show";
+    fb().innerHTML = `Cortou! Está em <b>${f4.valor}</b>. Falta${precisa-f4.cortes===1?"":"m"}
+      <b>${precisa - f4.cortes}</b> corte${precisa-f4.cortes===1?"":"s"} para chegar em ${dd} ÷ ${dv}.`;
+  }
+}
+window.cortar = cortar;
+function resetCorte(){
+  somClique();
+  const [dd] = PEDIDOS4[f4.i];
+  f4.valor = dd; f4.cortes = 0; f4.cadeia = [dd]; f4.resolvido = false;
+  desenhaF4();
+}
+window.resetCorte = resetCorte;
+function proxCorte(){
+  somClique();
+  f4.i++;
+  if(f4.i >= PEDIDOS4.length){
+    quizGenerico(3, "✂️ Missão 4 · Prova dos Atalhos", QUIZ_M4, f4.acertos, PEDIDOS4.length);
+    return;
+  }
+  const [dd] = PEDIDOS4[f4.i];
+  f4.valor = dd; f4.cortes = 0; f4.cadeia = [dd]; f4.resolvido = false;
+  desenhaF4();
+}
+window.proxCorte = proxCorte;
+const QUIZ_M4 = [
+  ...[[14,2],[32,4],[48,8],[70,10],[45,5]].map(([dd,dv])=>perguntaDiv(dd,dv)),
+  {p:"Para dividir um número por <b>8</b>, quantas vezes eu corto ao meio?",
+   o:["3 vezes","2 vezes","1 vez","8 vezes"], c:0,
+   e:"<b>3 vezes</b>, porque 8 = 2 × 2 × 2. Exemplo: 24 → 12 → 6 → <b>3</b>."},
+  {p:"Quanto dá <b>7 ÷ 1</b>?",
+   o:["7","1","0","Não dá"], c:0,
+   e:"<b>7</b>. Dividir por 1 é pôr tudo num prato só: nada muda."},
+  {p:"Quanto dá <b>6 ÷ 6</b>?",
+   o:["1","0","6","36"], c:0,
+   e:"<b>1</b>. Seis docinhos em seis pratos: um para cada."},
+  {p:"Quanto dá <b>0 ÷ 9</b>?",
+   o:["0","9","1","Não dá"], c:0,
+   e:"<b>0</b>. A bandeja está vazia — não tem nada para repartir entre os 9 pratos."},
+  {p:"E quanto dá <b>6 ÷ 0</b>?",
+   o:["Não dá: não se divide por zero","0","6","1"], c:0,
+   e:"<b>Não existe.</b> Repartir 6 docinhos entre <b>0 pratos</b> não faz sentido: não tem prato nenhum. É a única conta proibida da matemática."}
+];
+
+/* ============================================================
+   MISSÃO 5 — O QUE SOBRA (resto)
+   ============================================================ */
+const PEDIDOS5 = [ [13,4], [17,5], [11,3], [22,6], [9,2] ];   /* todas com resto */
+let f5 = null;
+function faseResto(){
+  f5 = { i:0, rodadas:0, acertos:0 };
+  desenhaF5();
+}
+function desenhaF5(){
+  const [tot, pratos] = PEDIDOS5[f5.i];
+  const porPrato = f5.rodadas;
+  const sobra = tot - porPrato*pratos;
+  const acabou = sobra < pratos;
+  const qc = Math.floor(tot/pratos), rs = tot % pratos;
+  app.innerHTML = hud("🐜 Missão 5 · O Que Sobra") + `
+    <div class="card">
+      <p class="mini">Mesa ${f5.i+1} de ${PEDIDOS5.length} · acertos: <b>${f5.acertos}</b></p>
+      <div class="progresso"><i style="width:${f5.i/PEDIDOS5.length*100}%"></i></div>
+      <p>🍬 <b>${tot} balas</b> e <b>${pratos} amigos</b>. Reparta enquanto der —
+      e pare quando sobrar <b>menos que ${pratos}</b>.</p>
+
+      <div class="mesa">
+        <div class="rotulo">bandeja — sobrando <b>${sobra}</b></div>
+        <div class="pilha">${
+          sobra > 0 ? Array.from({length:sobra},()=>`<div class="bala"></div>`).join("")
+                    : `<span class="vazia">bandeja vazia</span>`
+        }</div>
+        <div class="rotulo" style="margin-top:12px">pratos — <b>${porPrato}</b> em cada</div>
+        <div class="pratos">${
+          Array.from({length:pratos},()=>`<div class="prato">${
+            porPrato ? Array.from({length:porPrato},()=>`<div class="bala"></div>`).join("") : ``
+          }</div>`).join("")
+        }</div>
+        ${acabou && sobra>0 ? `<div class="formiga">
+          <span class="bicho">🐜</span>
+          <span>Não dá mais uma rodada: sobrou <b>${sobra}</b> e são <b>${pratos}</b> pratos.
+          O que sobrou é meu! 🍬</span>
+        </div>` : ``}
+      </div>
+
+      ${acabou ? `` : `<div class="acoes">
+        <button class="btn" onclick="rodada5()">🤲 Dar uma rodada (1 para cada)</button>
+        <button class="btn sec" onclick="resetRodada5()">↺ Recomeçar</button>
+      </div>`}
+
+      ${acabou ? `
+      <div class="card" style="background:rgba(30,17,54,.8);margin-top:16px">
+        <p class="centro"><b>Como se escreve essa divisão?</b></p>
+        <div class="conta">${tot} ÷ ${pratos}</div>
+        <div class="opcoes" id="ops5">
+          ${embaralha([
+            {t:`${qc} e sobra ${rs}`, ok:true},
+            {t:`${qc+1} e sobra ${rs}`, ok:false},
+            {t:`${qc} e sobra ${pratos}`, ok:false},
+            {t:`${rs} e sobra ${qc}`, ok:false}
+          ]).map((o,k)=>`<button class="op" onclick="respResto(${o.ok})">
+            <span class="letra">${"ABCD"[k]}</span><span>${o.t}</span></button>`).join("")}
+        </div>
+      </div>` : ``}
+      <div class="feedback" id="fb5"></div>
+    </div>`;
+}
+function rodada5(){
+  const [tot, pratos] = PEDIDOS5[f5.i];
+  if(tot - f5.rodadas*pratos < pratos) return;
+  f5.rodadas++; somPop();
+  desenhaF5();
+}
+window.rodada5 = rodada5;
+function resetRodada5(){ somClique(); f5.rodadas = 0; desenhaF5(); }
+window.resetRodada5 = resetRodada5;
+function respResto(ok){
+  const [tot, pratos] = PEDIDOS5[f5.i];
+  const qc = Math.floor(tot/pratos), rs = tot % pratos;
+  const fb = $("#fb5");
+  document.querySelectorAll("#ops5 .op").forEach(b=>{ b.disabled = true; });
+  if(ok){
+    f5.acertos++; somAcerto(); ganha(10);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>
+      <b>${tot} ÷ ${pratos} = ${qc} e sobra ${rs}</b>. Conferindo:
+      ${pratos} × ${qc} = ${pratos*qc}, mais ${rs} = <b>${tot}</b>. ✓`;
+  } else {
+    somErro();
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Quase, ${NOME()}!</div>
+      O certo é <b>${qc} e sobra ${rs}</b>: cada prato ficou com ${qc} e sobraram ${rs}
+      na bandeja. Confira: ${pratos} × ${qc} + ${rs} = <b>${tot}</b>.`;
+  }
+  setTimeout(()=>{
+    f5.i++;
+    if(f5.i >= PEDIDOS5.length){ fimResto(); return; }
+    f5.rodadas = 0; desenhaF5();
+  }, 2600);
+}
+window.respResto = respResto;
+function fimResto(){
+  somVitoria();
+  app.innerHTML = hud("🐜 Missão 5 · O Que Sobra") + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">🐜</div>
+      <h2>Comi bem hoje!</h2>
+      <p>${NOME()}, você repartiu <b>${PEDIDOS5.length} mesas</b> e ainda sobrou lanche para
+      a formiga em todas.</p>
+      <p class="mini">Agora as perguntas sobre o resto — inclusive as que aparecem na vida real.</p>
+      <div class="acoes">
+        <button class="btn" onclick="quizResto()">Ir para as perguntas →</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+const QUIZ_M5 = [
+  {p:"<b>17 ÷ 5</b> dá quanto?",
+   o:["3 e sobra 2","4 e sobra 3","3 e sobra 5","2 e sobra 7"], c:0,
+   e:"5 × 3 = 15, e faltam 2 para chegar em 17. Então <b>3 e sobra 2</b>. Confira: 5 × 3 + 2 = 17. ✓"},
+  {p:"Repartindo balas em <b>6 pratos</b>, qual resto é <b>impossível</b>?",
+   o:["6","0","3","5"], c:0,
+   e:"O resto é <b>sempre menor que o divisor</b>. Se sobrassem 6 com 6 pratos, ainda daria uma rodada inteira!"},
+  {p:"Numa divisão o divisor é <b>4</b>, o quociente é <b>5</b> e o resto é <b>3</b>. Qual era o dividendo?",
+   o:["23","20","12","35"], c:0,
+   e:"<b>divisor × quociente + resto</b> → 4 × 5 = 20, mais 3 = <b>23</b>."},
+  {p:"<b>25 crianças</b> vão para o parque em vans de <b>6 lugares</b>. Quantas vans precisam?",
+   o:["5","4","6","24"], c:0,
+   e:"25 ÷ 6 = 4 e sobra 1. Mas aquela criança não pode ficar! Precisa de <b>5 vans</b> — às vezes o resto manda arredondar para cima."},
+  {p:"Qual destas divisões é <b>exata</b> (não sobra nada)?",
+   o:["21 ÷ 3","22 ÷ 3","20 ÷ 3","19 ÷ 3"], c:0,
+   e:"<b>21 ÷ 3 = 7</b> certinho. As outras deixam resto: 22 → sobra 1, 20 → sobra 2, 19 → sobra 1."},
+  {p:"<b>9 ÷ 2</b> dá quanto?",
+   o:["4 e sobra 1","5 e sobra 1","4 e sobra 2","3 e sobra 3"], c:0,
+   e:"Metade de 8 é 4, e sobra 1 bala solta. <b>4 e sobra 1</b> — confira: 2 × 4 + 1 = 9. ✓"},
+  {p:"Se numa divisão o resto deu <b>0</b>, o que isso quer dizer?",
+   o:["Que a divisão foi exata","Que a conta está errada","Que não dá para dividir","Que sobrou tudo"], c:0,
+   e:"Resto <b>0</b> significa que deu para repartir tudo por igual — a divisão é <b>exata</b>."}
+];
+function quizResto(){ somClique(); quizGenerico(4, "🐜 Missão 5 · Prova do Resto", QUIZ_M5, f5.acertos, PEDIDOS5.length); }
+window.quizResto = quizResto;
+
+/* ============================================================
+   MISSÃO 6 — DESAFIO DA FESTA (arcade + prova final)
+   ============================================================ */
+const DUR_ARCADE = 60000;
+let f6 = null, rafArcade = null;
+function pararArcade(){ if(rafArcade){ cancelAnimationFrame(rafArcade); rafArcade = null; } }
+
+function faseDesafio(){
+  app.innerHTML = hud("🏆 Missão 6 · Desafio da Festa") + `
+    <div class="card centro destaque">
+      <div style="font-size:60px">🏆</div>
+      <h2>O Desafio da Festa, ${NOME()}</h2>
+      <p>São duas partes:</p>
+      <div class="card" style="text-align:left;background:rgba(30,17,54,.8)">
+        <p>⏱️ <b>Arcade</b> — 60 segundos respondendo o máximo que conseguir. Vale <b>pontos</b>.</p>
+        <p>🎓 <b>Prova final</b> — 12 divisões, sem relógio nenhum. Vale as <b>estrelas</b>.</p>
+      </div>
+      <p class="mini">O relógio nunca decide a sua nota: as estrelas vêm do que você sabe, não da
+      rapidez do dedo. E as divisões que você mais errou aparecem <b>mais vezes</b>, de propósito.</p>
+      <div class="acoes">
+        <button class="btn limao" onclick="comecaArcade()">⏱️ Começar o arcade</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      </div>
+    </div>`;
+}
+/* sorteia uma divisão, puxando para o que a criança errou — mas nunca repete a conta anterior */
+function umaDivisao(){
+  const dif = Object.keys(S.erros);
+  if(dif.length && Math.random() < 0.55){
+    const [dd,dv] = sorteio(dif).split("/").map(Number);
+    if(Number.isInteger(dd) && Number.isInteger(dv) && dv > 0) return [dd,dv];
+  }
+  const dv = 1 + Math.floor(Math.random()*9);      /* 1 a 9 */
+  const q  = Math.floor(Math.random()*10);         /* 0 a 9 */
+  return [dv*q, dv];
+}
+function sorteiaDivisao(anterior){
+  let f = umaDivisao();
+  for(let t=0; t<8 && anterior && f[0]===anterior[0] && f[1]===anterior[1]; t++) f = umaDivisao();
+  return f;
+}
+function comecaArcade(){
+  somClique(); ac();
+  f6 = { t:0, ultimo:performance.now(), ac:0, err:0, combo:0, melhorCombo:0,
+         fato:sorteiaDivisao(), respondida:false, fim:false };
+  desenhaArcade();
+  pararArcade();
+  rafArcade = requestAnimationFrame(tickArcade);
+}
+window.comecaArcade = comecaArcade;
+function tickArcade(agora){
+  if(!f6 || f6.fim || S.cena !== "m5"){ pararArcade(); return; }
+  const dt = Math.min(120, agora - f6.ultimo);
+  f6.ultimo = agora;
+  if($("#colinha").classList.contains("aberta")){ rafArcade = requestAnimationFrame(tickArcade); return; }
+  f6.t += dt;
+  const barra = document.getElementById("barraTempo");
+  if(barra) barra.style.width = Math.max(0, 100 - f6.t/DUR_ARCADE*100) + "%";
+  if(f6.t >= DUR_ARCADE){ fimArcade(); return; }
+  rafArcade = requestAnimationFrame(tickArcade);
+}
+function desenhaArcade(){
+  const [dd,dv] = f6.fato;
+  const opts = alternativas(dd,dv);
+  app.innerHTML = hud("🏆 Desafio da Festa · arcade") + `
+    <div class="card">
+      <div class="placar" id="placar">
+        <span>✅ ${f6.ac}</span>
+        <span>❌ ${f6.err}</span>
+        <span class="combo">🔥 ${f6.combo}</span>
+      </div>
+      <div class="cronometro"><i id="barraTempo" style="width:${Math.max(0,100 - f6.t/DUR_ARCADE*100)}%"></i></div>
+      <div class="conta">${dd} ÷ ${dv} = ?</div>
+      <div class="opcoes grade" id="opsArcade">
+        ${opts.map(v=>`<button class="op" onclick="respArcade(${v})">${v}</button>`).join("")}
+      </div>
+      <div class="feedback" id="fbArc"></div>
+    </div>`;
+}
+function respArcade(v){
+  if(!f6 || f6.fim || f6.respondida) return;
+  const [dd,dv] = f6.fato, certo = dd/dv;
+  const fb = $("#fbArc");
+  if(v === certo){
+    f6.ac++; f6.combo++; f6.melhorCombo = Math.max(f6.melhorCombo, f6.combo);
+    marcaAcerto(dd,dv); somAcerto(); S.pontos += 5;
+    f6.fato = sorteiaDivisao(f6.fato);
+    desenhaArcade();
+  } else {
+    f6.err++; f6.combo = 0; marcaErro(dd,dv); somErro();
+    f6.respondida = true;
+    document.querySelectorAll("#opsArcade .op").forEach(btn=>{
+      btn.disabled = true;
+      if(Number(btn.textContent) === certo) btn.classList.add("certa");
+      else if(Number(btn.textContent) === v) btn.classList.add("errada");
+    });
+    const pl = document.getElementById("placar");
+    if(pl) pl.innerHTML = `<span>✅ ${f6.ac}</span><span>❌ ${f6.err}</span><span class="combo">🔥 ${f6.combo}</span>`;
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ ${dd} ÷ ${dv} = <b>${certo}</b></div>${dica(dd,dv)}
+      <div class="acoes"><button class="btn" onclick="seguirArcade()">Continuar ▶</button></div>`;
+  }
+}
+window.respArcade = respArcade;
+function seguirArcade(){
+  if(!f6 || f6.fim) return;
+  somClique();
+  f6.respondida = false; f6.fato = sorteiaDivisao(f6.fato);
+  desenhaArcade();
+}
+window.seguirArcade = seguirArcade;
+function fimArcade(){
+  f6.fim = true; pararArcade();
+  const bonus = f6.ac * 5 + f6.melhorCombo * 10;
+  S.pontos += bonus; salvar(); somVitoria();
+  app.innerHTML = hud("🏆 Desafio da Festa") + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">${f6.ac>=20?"🔥":f6.ac>=10?"🎉":"👏"}</div>
+      <h2>Tempo esgotado!</h2>
+      <p>${NOME()}, você acertou <b>${f6.ac}</b> divisões em 60 segundos,
+      com melhor sequência de <b>${f6.melhorCombo}</b> seguidas.</p>
+      <p class="mini">Bônus de <b>${bonus} pontos</b>. Agora vem a parte que vale as estrelas —
+      e nela <b>não tem relógio nenhum</b>.</p>
+      <div class="acoes">
+        <button class="btn" onclick="provaFinal()">🎓 Ir para a prova final</button>
+        <button class="btn sec" onclick="comecaArcade()">🔁 Jogar o arcade de novo</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+function provaFinal(){
+  somClique(); pararArcade();
+  const usados = new Set();
+  const perguntas = [];
+  /* metade puxada do que a criança errou, metade sorteada por todo o campo */
+  for(const k of Object.keys(S.erros).slice(0,6)){
+    const [dd,dv] = k.split("/").map(Number);
+    if(!Number.isInteger(dd) || !Number.isInteger(dv) || dv < 1) continue;
+    usados.add(k); perguntas.push(perguntaDiv(dd,dv));
+  }
+  let voltas = 0;
+  while(perguntas.length < 12 && voltas < 400){
+    voltas++;
+    const dv = 2 + Math.floor(Math.random()*8);   /* 2 a 9 */
+    const q  = 2 + Math.floor(Math.random()*8);   /* 2 a 9 */
+    const dd = dv*q, k = chaveFato(dd,dv);
+    if(usados.has(k)) continue;
+    usados.add(k); perguntas.push(perguntaDiv(dd,dv));
+  }
+  quizGenerico(5, "🎓 Prova Final da Divisão", embaralha(perguntas), 0, 0, true);
+}
+window.provaFinal = provaFinal;
+
+/* ============================================================
+   DIPLOMA
+   ============================================================ */
+function telaDiploma(){
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const teimosas = listaDificeis(3);
+  app.innerHTML = hud() + `
+    <div class="diploma">
+      <div class="selo">🏅</div>
+      <h2>DIPLOMA DE ${g("MESTRA","MESTRE")}<br>DA DIVISÃO</h2>
+      <p>A Festa da Divisão concede este diploma a</p>
+      <div class="nome">${NOME()}</div>
+      <p>por ter aprendido a <b>dividir</b> de verdade — repartindo por igual, virando a
+      tabuada do avesso, enchendo sacolinhas, cortando ao meio e sabendo exatamente
+      o que fazer com o que sobra.</p>
+      <p class="fila-estrelas">${"⭐".repeat(totalEstrelas)}</p>
+      <p><b>${totalEstrelas} de 18 estrelas</b> · <b>${S.pontos} pontos</b></p>
+      <p style="margin-top:18px;font-style:italic">Matemática · 3º ano<br>Divisão</p>
+    </div>
+    <div class="acoes">
+      <button class="btn" onclick="irMapa()">🗺️ Voltar ao mapa</button>
+      <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      <button class="btn uva" onclick="window.print()">🖨️ Imprimir diploma</button>
+    </div>
+    ${teimosas.length?`<div class="card centro">
+      <p class="mini">Ainda escorregando em: <b>${teimosas.map(k=>{const [dd,dv]=k.split("/");return dd+"÷"+dv;}).join(" · ")}</b>.
+      Jogue o <b>Desafio da Festa</b> de novo — elas vão aparecer bastante.</p></div>`:``}
+    ${totalEstrelas<18?`<div class="card centro">
+      <p class="mini">Faltam <b>${18-totalEstrelas}</b> estrelas para a nota máxima, ${NOME()}.
+      Dá para refazer qualquer missão pelo mapa — e as estrelas só sobem!</p></div>`:`
+    <div class="card destaque centro"><div style="font-size:50px">👑</div>
+      <p><b>PERFEIÇÃO, ${NOME()}!</b> Todas as <b>18 estrelas</b>. A divisão agora é sua.</p></div>`}`;
+}
+
+/* ============================================================
+   INÍCIO
+   ============================================================ */
+if(carregar()){
+  S.cena = S.missoes.some(Boolean) ? "mapa" : "inicio";
+} else {
+  S.cena = "nome";
+}
+render();
+</script>
+</body>
+</html>

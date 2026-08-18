@@ -11,6 +11,7 @@ arquivo HTML: sem rede, sem dependências, funciona no celular e no computador.
 |---|---|---|---|---|
 | Ciências | 3º | O Corpo Humano | Cap. 9, p. 121–131 (fotos do livro) | [6 missões](https://quieterkali.github.io/assuntos/ciencias/3-ano/corpo-humano/) |
 | Matemática | 3º | Fábrica da Tabuada — multiplicação de 0 a 9 | currículo padrão do ano | [6 missões](https://quieterkali.github.io/assuntos/matematica/3-ano/tabuada/) |
+| Matemática | 3º | Festa da Divisão — dividir, o resto e os atalhos | currículo padrão do ano | [6 missões](https://quieterkali.github.io/assuntos/matematica/3-ano/divisao/) |
 | História | 6º | Rios do Tempo — Mesopotâmia e Egito | currículo padrão (BNCC EF06HI06–09) | [6 missões](https://quieterkali.github.io/assuntos/historia/6-ano/civilizacoes-antigas/) |
 
 > Todos os jogos **perguntam o nome antes de começar** e personalizam tudo com ele — inclusive a
