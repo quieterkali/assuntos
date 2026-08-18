@@ -1,0 +1,2209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Contagem Regressiva</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%9A%80%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#070d1f; --bg2:#0d1730; --panel:#132043; --panel2:#1b2c58;
+  --ink:#f2f7ff; --muted:#93a7d4;
+  --turbo:#38bdf8; --chama:#fb923c; --menta:#4ade80; --uva:#a78bfa;
+  --vermelho:#ff6b81; --ouro:#ffd166;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1000px 700px at 10% -12%, #1e3a8a 0%, transparent 55%),
+    radial-gradient(900px 600px at 92% 0%, #4c1d95 0%, transparent 52%),
+    radial-gradient(900px 700px at 50% 114%, #0c4a6e 0%, transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px; line-height:1.5;
+  overflow-x:hidden;
+}
+#estrelas{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:16px 14px 60px}
+
+h1,h2,h3{margin:0 0 10px;line-height:1.15}
+h1{font-size:clamp(28px,7vw,46px)}
+h2{font-size:clamp(22px,5vw,32px)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;font-weight:bold;
+  background:linear-gradient(135deg,var(--turbo),#0369a1);color:#04202e;
+  box-shadow:0 6px 0 #073b52, 0 12px 24px rgba(0,0,0,.45);
+  transition:transform .08s, box-shadow .08s; font-size:1.05em;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #073b52,0 6px 14px rgba(0,0,0,.35)}
+.btn.sec{background:linear-gradient(135deg,#263a6b,#15224a);color:var(--ink);box-shadow:0 6px 0 #0c1430,0 10px 20px rgba(0,0,0,.35)}
+.btn.uva{background:linear-gradient(135deg,var(--uva),#7c3aed);color:#fff;box-shadow:0 6px 0 #4c1d95,0 12px 24px rgba(0,0,0,.35)}
+.btn.chama{background:linear-gradient(135deg,var(--chama),#ea580c);color:#301103;box-shadow:0 6px 0 #7c2d12,0 12px 24px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ---------- HUD ---------- */
+.hud{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:rgba(19,32,67,.88);border:2px solid #2b437f;border-radius:var(--r);
+  padding:10px 14px;margin-bottom:14px;backdrop-filter:blur(6px);
+}
+.hud .nome{font-weight:bold;color:var(--turbo)}
+.chip{
+  background:#0d1730;border:2px solid #2b437f;border-radius:999px;
+  padding:9px 14px;font-size:.9em;font-weight:bold;white-space:nowrap;color:var(--ink);
+  line-height:1.2;min-height:38px;display:inline-flex;align-items:center
+}
+.chip.pts{color:var(--ouro);border-color:#8a6a13}
+.hud .espaco{flex:1}
+
+/* ---------- cartões ---------- */
+.card{
+  background:linear-gradient(160deg,rgba(27,44,88,.92),rgba(7,13,31,.94));
+  border:2px solid #2b437f;border-radius:var(--r);padding:20px;margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45)
+}
+.card.destaque{border-color:var(--ouro);box-shadow:0 0 0 3px rgba(255,209,102,.18),0 10px 30px rgba(0,0,0,.5)}
+
+/* ---------- mapa ---------- */
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.missao{
+  position:relative;text-align:left;width:100%;
+  background:linear-gradient(160deg,#1d3163,#0b1330);
+  border:2px solid #35529b;border-radius:var(--r);padding:16px 16px 14px;
+  color:var(--ink);transition:transform .12s,border-color .12s;
+}
+.missao:not(.trancada):hover{transform:translateY(-4px);border-color:var(--turbo)}
+.missao.trancada{opacity:.5;filter:grayscale(.6);cursor:not-allowed}
+.missao.feita{border-color:var(--menta)}
+.missao .num{
+  position:absolute;top:-12px;left:14px;background:var(--turbo);color:#04202e;
+  width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  font-weight:bold;box-shadow:0 3px 0 #073b52
+}
+.missao.feita .num{background:var(--menta);color:#04231a;box-shadow:0 3px 0 #0f6b4a}
+.missao .ico{font-size:34px;line-height:1;margin:6px 0 6px}
+.missao .tit{font-weight:bold;font-size:1.08em;margin-bottom:3px}
+.missao .sub{font-size:.85em;color:var(--muted)}
+.missao .estrelas{margin-top:8px;font-size:1.05em;letter-spacing:2px}
+
+/* ---------- quiz ---------- */
+.pergunta{font-size:1.14em;font-weight:bold;margin-bottom:14px}
+.enunciado{
+  background:#0d1730;border-left:6px solid var(--turbo);border-radius:12px;
+  padding:14px 16px;margin-bottom:14px;font-size:1.06em;line-height:1.55
+}
+.conta{
+  font-size:clamp(32px,9vw,54px);font-weight:bold;text-align:center;
+  letter-spacing:2px;margin:6px 0 16px;color:var(--ouro);
+  font-variant-numeric:tabular-nums;overflow-wrap:anywhere
+}
+.opcoes{display:grid;gap:10px}
+.opcoes.grade{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+.opcoes.quatro{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.op{
+  text-align:left;background:#16264f;border:2px solid #2b437f;border-radius:14px;
+  padding:13px 16px;color:var(--ink);transition:border-color .1s,background .1s,transform .1s;
+  display:flex;gap:10px;align-items:center
+}
+.opcoes.grade .op{justify-content:center;font-size:1.5em;font-weight:bold;
+  font-variant-numeric:tabular-nums;padding:16px 10px}
+.opcoes.quatro .op{justify-content:center;font-size:1.05em;font-weight:bold;padding:16px 10px;text-align:center}
+.op:not(:disabled):hover{border-color:var(--turbo);transform:translateY(-2px)}
+.op .letra{
+  flex:0 0 26px;height:26px;border-radius:8px;background:#2b437f;color:#fff;
+  display:grid;place-items:center;font-weight:bold;font-size:.85em
+}
+.op.certa{border-color:var(--menta);background:#0f4a36}
+.op.certa .letra{background:var(--menta);color:#04231a}
+.op.errada{border-color:var(--vermelho);background:#4b1524}
+.op.errada .letra{background:var(--vermelho);color:#3d0a16}
+.op:disabled{cursor:default}
+
+.feedback{margin-top:14px;border-radius:14px;padding:14px 16px;border-left:6px solid;display:none}
+.feedback.show{display:block;animation:sobe .25s}
+.feedback.bom{background:rgba(74,222,128,.15);border-color:var(--menta)}
+.feedback.ruim{background:rgba(255,107,129,.15);border-color:var(--vermelho)}
+.feedback .tt{font-weight:bold;margin-bottom:5px;font-size:1.05em}
+@keyframes sobe{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.progresso{height:9px;background:#0d1730;border-radius:99px;overflow:hidden;margin-bottom:16px}
+.progresso i{display:block;height:100%;background:linear-gradient(90deg,var(--uva),var(--turbo));transition:width .3s}
+
+/* ---------- painel de ordens (missão 2) ---------- */
+.rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
+table.ordens{border-collapse:collapse;margin:0 auto;font-variant-numeric:tabular-nums}
+table.ordens th,table.ordens td{border:2px solid #35529b;padding:8px 10px;text-align:center}
+table.ordens th{background:#1d3163;color:var(--turbo);font-size:.8em;letter-spacing:.04em}
+table.ordens td{font-size:clamp(24px,7vw,38px);font-weight:bold;min-width:56px;background:#0d1730}
+table.ordens td.zero{color:var(--ouro)}
+table.ordens td.vaga{color:#35529b}
+table.ordens th.classe{background:#2b437f;color:var(--ink);font-size:.78em}
+.tecla{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.tecla button{
+  width:56px;height:56px;border-radius:14px;background:#16264f;border:2px solid #2b437f;
+  color:var(--ink);font-size:1.5em;font-weight:bold;font-variant-numeric:tabular-nums
+}
+.tecla button:hover{border-color:var(--turbo)}
+.tecla button.apaga{background:#3a1a2a;border-color:#7a2b40;width:auto;padding:0 16px;font-size:1em}
+
+/* ---------- relógio (missão 6) ---------- */
+.relogio{display:block;margin:8px auto;max-width:260px;width:100%;height:auto}
+.relogio .mostrador{fill:#0d1730;stroke:#35529b;stroke-width:4}
+.relogio .marca{stroke:#93a7d4;stroke-width:2}
+.relogio .marca.hora{stroke:var(--turbo);stroke-width:4}
+.relogio .num{fill:var(--ink);font-size:11px;text-anchor:middle;dominant-baseline:middle;
+  font-family:"Trebuchet MS",sans-serif;font-weight:bold}
+.relogio .pont-h{stroke:var(--ouro);stroke-width:10;stroke-linecap:round;paint-order:stroke}
+.relogio .pont-m{stroke:var(--turbo);stroke-width:5;stroke-linecap:round}
+.relogio .halo{stroke:#070d1f;stroke-linecap:round}
+.relogio .centro-p{fill:var(--chama)}
+.digital{
+  background:#04101c;border:3px solid var(--turbo);border-radius:14px;
+  font-size:clamp(30px,9vw,50px);font-weight:bold;color:var(--turbo);text-align:center;
+  padding:10px;font-variant-numeric:tabular-nums;letter-spacing:3px;margin:10px auto;max-width:300px
+}
+table.cal{border-collapse:collapse;margin:0 auto;font-variant-numeric:tabular-nums}
+table.cal th,table.cal td{border:1px solid #2b437f;padding:7px 4px;text-align:center;min-width:36px;font-size:.92em}
+table.cal th{background:#1d3163;color:var(--turbo);font-size:.8em}
+table.cal td.fds{color:var(--chama)}
+table.cal td.marcado{background:var(--ouro);color:#301103;font-weight:bold;border-radius:6px}
+
+/* ---------- gráfico (missão 7) ---------- */
+.gcaixa{background:#0d1730;border:2px solid #2b437f;border-radius:14px;padding:14px 10px 8px;margin:12px 0}
+.grafico{display:block;width:100%;height:auto}
+.grafico .barra{fill:var(--turbo)}
+.grafico .barra.b2{fill:var(--chama)}
+.grafico .barra.b3{fill:var(--menta)}
+.grafico .barra.b4{fill:var(--uva)}
+.grafico .eixo{stroke:#93a7d4;stroke-width:2}
+.grafico .guia{stroke:#2b437f;stroke-width:1;stroke-dasharray:4 4}
+.grafico .rot{fill:var(--muted);font-size:11px;text-anchor:middle;font-family:"Trebuchet MS",sans-serif}
+.grafico .val{fill:var(--ink);font-size:12px;font-weight:bold;text-anchor:middle;font-family:"Trebuchet MS",sans-serif}
+table.dupla{border-collapse:collapse;margin:0 auto;font-variant-numeric:tabular-nums;font-size:.92em}
+table.dupla th,table.dupla td{border:1px solid #35529b;padding:8px 11px;text-align:center}
+table.dupla th{background:#1d3163;color:var(--turbo)}
+table.dupla th.linha{background:#16264f;color:var(--ink);text-align:left;font-weight:normal}
+table.dupla td.foco{background:rgba(255,209,102,.22);font-weight:bold;color:var(--ouro)}
+
+/* ---------- arcade ---------- */
+.cronometro{
+  height:16px;background:#0d1730;border-radius:99px;overflow:hidden;margin:10px 0 4px;
+  border:2px solid #2b437f
+}
+.cronometro i{display:block;height:100%;background:linear-gradient(90deg,var(--menta),var(--ouro),var(--vermelho));transition:width .2s linear}
+.placar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.placar span{background:#0d1730;border:2px solid #2b437f;border-radius:999px;padding:4px 14px;font-weight:bold}
+.combo{color:var(--chama)}
+
+/* ---------- aula ---------- */
+.aula{
+  background:#f4f9ff;
+  background-image:linear-gradient(rgba(30,58,138,.10) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(30,58,138,.10) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:#0f1e3d;border:3px solid #60a5fa;border-radius:var(--r);
+  padding:24px 22px 20px;margin-bottom:14px;box-shadow:0 14px 40px rgba(0,0,0,.55)
+}
+.aula b{color:#1d4ed8}
+.aula .guia{
+  display:flex;gap:10px;align-items:center;font-size:.86em;color:#33507f;
+  border-bottom:2px dashed #a8c8f0;padding-bottom:10px;margin-bottom:16px
+}
+.aula .guia .robo{font-size:30px;line-height:1}
+.aula .ico{font-size:60px;line-height:1;text-align:center;margin-bottom:6px}
+.aula h2{color:#1d4ed8;text-align:center;font-size:clamp(21px,5.2vw,30px)}
+.aula p{font-size:1.06em;margin:0 0 12px}
+.aula .chave{
+  background:#fff;border-left:6px solid #7c3aed;border-radius:10px;
+  padding:12px 14px;margin-top:14px;font-size:1.03em
+}
+.aula .chave .rot{display:block;font-weight:bold;color:#6d28d9;font-size:.82em;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.aula .lista{margin:10px 0 0;padding-left:20px}
+.aula .lista li{margin-bottom:6px}
+.aula .destaque{
+  text-align:center;font-size:clamp(19px,5vw,28px);font-weight:bold;color:#6d28d9;
+  background:#fff;border-radius:12px;padding:10px 8px;margin:12px 0;
+  font-variant-numeric:tabular-nums;overflow-wrap:anywhere
+}
+.aula table.mini-tab{border-collapse:collapse;margin:10px auto;font-size:.92em}
+.aula table.mini-tab th,.aula table.mini-tab td{border:1px solid #a8c8f0;padding:6px 10px;text-align:center}
+.aula table.mini-tab th{background:#dbeafe;color:#1d4ed8}
+.pontos{display:flex;gap:7px;justify-content:center;margin:18px 0 4px;flex-wrap:wrap}
+.pontos i{width:9px;height:9px;border-radius:50%;background:#a8c8f0;display:block}
+.pontos i.aqui{background:#1d4ed8;transform:scale(1.35)}
+.pontos i.vista{background:#1d4ed8;opacity:.45}
+.btn.aula{background:linear-gradient(135deg,#2563eb,#60a5fa);color:#fff;box-shadow:0 6px 0 #1e3a8a,0 10px 20px rgba(0,0,0,.35)}
+.btn.aula.fraco{background:linear-gradient(135deg,#9db4d4,#7f92ad);box-shadow:0 6px 0 #4a5a70,0 10px 20px rgba(0,0,0,.3)}
+
+/* ---------- diversos ---------- */
+.centro{text-align:center}
+.mini{font-size:.88em;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{background:#0d1730;border:1px solid #2b437f;border-radius:999px;padding:3px 11px;font-size:.8em;color:var(--muted)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.esconde{display:none!important}
+.campo{
+  width:100%;max-width:340px;padding:14px 18px;border-radius:14px;border:3px solid var(--turbo);
+  background:#0d1730;color:var(--ink);font-size:1.15em;font-family:inherit;text-align:center;margin:6px 0 4px
+}
+.campo:focus{outline:none;border-color:var(--ouro);box-shadow:0 0 0 4px rgba(56,189,248,.2)}
+
+/* colinha */
+.colinha{position:fixed;inset:0;background:rgba(4,8,20,.98);z-index:50;overflow-y:auto;padding:20px 14px 60px;display:none}
+.colinha.aberta{display:block}
+.colinha .in{max-width:760px;margin:0 auto}
+.colinha h3{color:var(--ouro);margin-top:24px;border-bottom:2px solid #2b437f;padding-bottom:6px}
+.colinha ul,.colinha ol{padding-left:20px}
+.colinha li{margin-bottom:7px}
+.colinha b{color:var(--turbo)}
+.fechar{position:sticky;top:0;float:right;background:var(--turbo);color:#04202e;border-radius:999px;
+  width:44px;height:44px;font-size:22px;font-weight:bold;box-shadow:0 4px 0 #073b52;z-index:2}
+
+/* diploma */
+.diploma{
+  background:linear-gradient(160deg,#fffdf7,#eef5ff);color:#0f1e3d;border-radius:20px;
+  padding:28px 22px;text-align:center;border:8px double #60a5fa;box-shadow:0 20px 50px rgba(0,0,0,.6)
+}
+.diploma h2{color:#1d4ed8;font-size:clamp(24px,6vw,36px)}
+.diploma .nome{
+  font-size:clamp(24px,6.4vw,40px);font-weight:bold;color:#6d28d9;
+  border-bottom:3px solid #60a5fa;display:inline-block;padding:4px 22px;margin:10px 0 14px;
+  overflow-wrap:anywhere;max-width:100%
+}
+.diploma .selo{font-size:56px}
+.fila-estrelas{font-size:clamp(15px,4.4vw,24px);line-height:1.7;letter-spacing:1px;
+  overflow-wrap:anywhere;word-break:break-word;max-width:100%;margin:12px 0}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;top:80px;transform:translateX(-50%);
+  background:var(--menta);color:#04231a;font-weight:bold;padding:10px 22px;border-radius:999px;
+  z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transition:opacity .25s,top .25s;
+  pointer-events:none;max-width:90vw;text-align:center
+}
+.toast.show{opacity:1;top:100px}
+.toast.mau{background:var(--vermelho);color:#3d0a16}
+
+@media(max-width:520px){
+  body{font-size:16px}
+  .card{padding:16px 14px}
+  .wrap{padding:12px 10px 50px}
+  .tecla button{width:50px;height:50px;font-size:1.3em}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{ body{background:#fff} #estrelas,.hud,.acoes,.card:not(.diploma){display:none!important} }
+</style>
+</head>
+<body>
+<canvas id="estrelas"></canvas>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<div class="colinha" id="colinha">
+  <div class="in">
+    <button class="fechar" onclick="fecharColinha()">×</button>
+    <h2 style="color:var(--ouro)">📖 Colinha da Prova</h2>
+    <p class="mini">Os sete assuntos que caem na prova, num lugar só. Pode abrir a qualquer hora —
+    inclusive no meio da contagem regressiva, que o cronômetro para.</p>
+
+    <h3>🔢 As ordens e as classes</h3>
+    <p>Cada algarismo vale conforme o <b>lugar</b> onde ele está:</p>
+    <div class="rolagem">
+      <table class="ordens">
+        <tr><th class="classe" colspan="1">classe dos milhares</th><th class="classe" colspan="3">classe das unidades simples</th></tr>
+        <tr><th>4ª ordem<br>UM</th><th>3ª ordem<br>C</th><th>2ª ordem<br>D</th><th>1ª ordem<br>U</th></tr>
+        <tr><td>3</td><td>2</td><td>4</td><td>7</td></tr>
+      </table>
+    </div>
+    <p style="text-align:center"><b>3247 = 3000 + 200 + 40 + 7</b></p>
+    <ul>
+      <li><b>1ª ordem</b> — unidades (U)</li>
+      <li><b>2ª ordem</b> — dezenas (D) · 1 dezena = 10 unidades</li>
+      <li><b>3ª ordem</b> — centenas (C) · 1 centena = 10 dezenas = 100 unidades</li>
+      <li><b>4ª ordem</b> — unidades de milhar (UM) · 1 UM = 10 centenas = 1000 unidades</li>
+    </ul>
+    <p><b>O zero guarda o lugar.</b> Em <b>3047</b> não tem centena nenhuma, mas o zero precisa
+    ficar ali — sem ele viraria 347, que é outro número completamente diferente.</p>
+
+    <h3>✍️ Escrever por extenso</h3>
+    <ul>
+      <li><b>78</b> → setenta e oito</li>
+      <li><b>92</b> → noventa e dois</li>
+      <li><b>776</b> → setecentos e setenta e seis</li>
+      <li><b>838</b> → oitocentos e trinta e oito</li>
+      <li><b>2353</b> → dois mil, trezentos e cinquenta e três</li>
+      <li><b>100</b> → cem &nbsp;·&nbsp; mas <b>132</b> → <b>cento</b> e trinta e dois</li>
+    </ul>
+
+    <h3>⚖️ Comparar e ordenar</h3>
+    <ul>
+      <li><b>&gt;</b> quer dizer <b>maior que</b> · <b>&lt;</b> quer dizer <b>menor que</b>.
+          A boca aberta olha sempre para o maior.</li>
+      <li>Primeiro compare <b>quantos algarismos</b> tem. Mais algarismos = maior.
+          (1250 &gt; 999, mesmo o 9 sendo grandão.)</li>
+      <li>Empatou no tamanho? Compare da <b>ordem mais alta para a mais baixa</b>:
+          primeiro o UM, depois a C, depois a D, depois a U.</li>
+      <li><b>Crescente</b> = do menor para o maior. <b>Decrescente</b> = do maior para o menor.</li>
+      <li><b>Antecessor</b> é o de antes (−1). <b>Sucessor</b> é o de depois (+1).</li>
+    </ul>
+
+    <h3>✖️ Dobro, triplo e a divisão</h3>
+    <ul>
+      <li><b>Dobro</b> = ×2 · o dobro de 14 é <b>28</b>.</li>
+      <li><b>Triplo</b> = ×3 · o triplo de 14 é <b>42</b>.</li>
+      <li><b>Metade</b> = ÷2 · a metade de 14 é <b>7</b>.</li>
+      <li><b>Terça parte</b> = ÷3.</li>
+    </ul>
+    <p>Os nomes das peças da divisão:</p>
+    <p style="text-align:center;font-size:1.2em"><b>36 ÷ 4 = 9</b></p>
+    <ul>
+      <li><b>36</b> é o <b>dividendo</b> — o que vai ser repartido</li>
+      <li><b>4</b> é o <b>divisor</b> — em quantas partes</li>
+      <li><b>9</b> é o <b>quociente</b> — quanto ficou em cada parte</li>
+      <li>o que sobra é o <b>resto</b>. Se o resto é <b>0</b>, a divisão é <b>exata</b>.</li>
+    </ul>
+    <p>Conferindo: <b>divisor × quociente + resto = dividendo</b> → 4 × 9 + 0 = 36 ✓</p>
+
+    <h3>🎯 Qual operação usar?</h3>
+    <p>Esta é a parte que mais derruba gente na prova. Leia o que o problema <b>pede</b>,
+    não os números que ele mostra.</p>
+    <div class="rolagem">
+      <table class="dupla">
+        <tr><th>Se o problema fala…</th><th>É</th><th>Exemplo</th></tr>
+        <tr><th class="linha">ao todo · juntos · no total · ganhou mais</th><td><b>+</b></td><td>120 + 98</td></tr>
+        <tr><th class="linha">quanto falta · quantos a mais · diferença · sobrou · troco · gastou</th><td><b>−</b></td><td>55 − 46</td></tr>
+        <tr><th class="linha">grupos iguais · fileiras de · cada um tem tantos · o dobro/triplo</th><td><b>×</b></td><td>9 × 50</td></tr>
+        <tr><th class="linha">repartir igualmente · dividir entre · quantos grupos de · quantos cabem</th><td><b>÷</b></td><td>54 ÷ 6</td></tr>
+      </table>
+    </div>
+    <p><b>Cuidado com a pegadinha:</b> "8 ramalhetes de 9 flores" tem os números 8 e 9, mas
+    <b>não é 9 − 8</b>. São 8 grupos iguais de 9 → <b>8 × 9 = 72</b>.</p>
+
+    <h3>🪜 Problema de duas etapas</h3>
+    <p>Alguns problemas escondem <b>duas contas</b>. Se você parar na primeira, responde certo
+    a pergunta errada.</p>
+    <p><i>"Um caderno custa 15 reais e cada caneta 2 reais. Comprei o caderno e 2 canetas
+    e paguei com 50. Quanto recebi de troco?"</i></p>
+    <ul>
+      <li>1ª conta: 2 canetas → 2 × 2 = 4 &nbsp;·&nbsp; gastou 15 + 4 = <b>19</b></li>
+      <li>2ª conta: o troco → 50 − 19 = <b>31</b></li>
+    </ul>
+    <p><b>Antes de escrever a resposta, releia a pergunta.</b> Ela pediu o troco, não o gasto.</p>
+
+    <h3>🔍 Estimar (a conta de olho)</h3>
+    <ul>
+      <li><b>Arredonde</b> cada número para a centena mais perto e some de cabeça.</li>
+      <li>147 + 185 → 150 + 200 = <b>350</b> → então é <b>menos</b> de 400.</li>
+      <li>650 + 390 → 650 + 400 = <b>1050</b> → então é <b>mais</b> de 1000.</li>
+      <li>Serve para <b>conferir</b>: se a conta deu muito longe da estimativa, tem erro nela.</li>
+    </ul>
+
+    <h3>➖ Subtrair com troca</h3>
+    <p>Quando não dá para tirar, <b>troque</b> uma peça maior por dez menores:</p>
+    <p style="text-align:center"><b>312 − 125</b> → não dá 2 − 5, então troco 1 dezena por 10 unidades →
+    12 − 5 = 7 · não dá 0 − 2, troco 1 centena por 10 dezenas → 10 − 2 = 8 · 2 − 1 = 1 →
+    <b>187</b></p>
+    <p><b>Confira sempre somando de volta:</b> 187 + 125 = 312 ✓</p>
+    <p>Atalho do livro: subtraia os <b>antecessores</b>. 300 − 125 dá o mesmo que 299 − 124 = <b>175</b>,
+    e aí não precisa trocar nada.</p>
+
+    <h3>🕐 Relógio e calendário</h3>
+    <ul>
+      <li>O ponteiro <b>curto e gordo</b> marca a <b>hora</b>. O <b>comprido e fino</b> marca os <b>minutos</b>.</li>
+      <li>Cada numerinho vale <b>5 minutos</b> para o ponteiro comprido: no 3 são 15 min, no 6 são 30 min, no 9 são 45 min.</li>
+      <li><b>1 hora = 60 minutos</b> · <b>meia hora = 30 min</b> · <b>um quarto de hora = 15 min</b>.</li>
+      <li><b>1 dia = 24 horas.</b> Depois do meio-dia, some 12: 3 h da tarde = <b>15 h</b>.</li>
+      <li>Para achar quanto tempo passou, conte de hora em hora e depois os minutos:
+          das 8h30 às 11h são <b>2 h e 30 min</b>.</li>
+      <li><b>1 semana = 7 dias</b> · <b>1 ano = 12 meses = 365 dias</b> (366 no bissexto).</li>
+      <li>Meses de <b>31</b> dias: jan, mar, mai, jul, ago, out, dez. De <b>30</b>: abr, jun, set, nov.
+          <b>Fevereiro</b> tem 28 (ou 29).</li>
+    </ul>
+
+    <h3>📊 Gráficos e tabelas</h3>
+    <ul>
+      <li>Leia sempre o <b>título</b> primeiro: ele diz do que a tabela está falando.</li>
+      <li>No gráfico de barras: a barra mais <b>alta</b> é a maior quantidade. Suba da barra até a
+          linha tracejada para ler o valor.</li>
+      <li><b>Tabela de dupla entrada:</b> o número que você quer está no <b>cruzamento</b> da
+          <b>linha</b> com a <b>coluna</b>. Ponha um dedo na linha, outro na coluna, e ande até se encontrarem.</li>
+      <li>Cuidado: a coluna <b>Total</b> não é a resposta de "quantos meninos…". Total é a soma
+          da linha inteira.</li>
+    </ul>
+
+    <div class="centro" style="margin-top:26px">
+      <button class="btn" onclick="fecharColinha()">Voltar ao jogo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const CHAVE = "contagemRegressiva.v1";
+
+/* A lista de missões é a única fonte da verdade. Nenhum número de missão
+   ou de estrela aparece cravado no código — tudo sai de MISSOES.length. */
+const MISSOES = [
+  {ico:"🔭", tit:"Torre de Controle",   sub:"Por extenso · comparar · ordenar", hab:"numeros"},
+  {ico:"🎛️", tit:"Painel de Ordens",    sub:"U, D, C, UM · valor posicional",   hab:"posicional"},
+  {ico:"⚙️", tit:"Oficina do Foguete",  sub:"Dobro, triplo e os nomes da divisão", hab:"dobro"},
+  {ico:"🎯", tit:"Sala de Decisão",     sub:"Qual operação usar — sem calcular", hab:"operacao"},
+  {ico:"🪜", tit:"Escada Dupla",        sub:"Problemas de duas etapas · estimar", hab:"etapas"},
+  {ico:"🕐", tit:"Relógio da Base",     sub:"Horas, minutos e calendário",      hab:"tempo"},
+  {ico:"📊", tit:"Sala de Dados",       sub:"Gráficos e tabelas de dupla entrada", hab:"dados"},
+  {ico:"🚀", tit:"Contagem Regressiva", sub:"Arcade + prova final",             hab:"final"}
+];
+const N_MISSOES  = MISSOES.length;
+const POR_MISSAO = 3;                        /* estrelas por missão */
+const TOTAL_ESTRELAS = N_MISSOES * POR_MISSAO;
+const vazio = v => Array.from({length:N_MISSOES}, () => v);
+
+const S = {
+  nome: "",
+  genero: "f",
+  pontos: 0,
+  missoes:  vazio(false),
+  estrelas: vazio(0),
+  aulas:    vazio(false),
+  erros: {},          /* habilidade -> quantas vezes escorregou. Alimenta a prova final. */
+  cena: "nome"
+};
+
+function esc(x){
+  return String(x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function g(fem, masc){ return S.genero === "f" ? fem : masc; }
+const NOME = () => esc(S.nome);
+
+function salvar(){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify({
+      nome:S.nome, genero:S.genero, pontos:S.pontos,
+      missoes:S.missoes, estrelas:S.estrelas, aulas:S.aulas, erros:S.erros
+    }));
+  }catch(e){/* sem localStorage o jogo roda igual, só não guarda */}
+}
+function carregar(){
+  try{
+    const d = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if(d && d.nome){
+      S.nome = d.nome; S.genero = d.genero === "m" ? "m" : "f";
+      S.pontos = d.pontos|0;
+      if(Array.isArray(d.missoes)  && d.missoes.length===N_MISSOES)  S.missoes  = d.missoes.map(Boolean);
+      if(Array.isArray(d.estrelas) && d.estrelas.length===N_MISSOES) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(POR_MISSAO,n|0)));
+      if(Array.isArray(d.aulas)    && d.aulas.length===N_MISSOES)    S.aulas    = d.aulas.map(Boolean);
+      if(d.erros && typeof d.erros === "object") S.erros = d.erros;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+/* registro por HABILIDADE, não por conta: numa revisão o que importa é
+   qual assunto escorrega, não qual número apareceu. */
+const NOME_HAB = {
+  numeros:"escrever e comparar números", posicional:"valor posicional",
+  dobro:"dobro, triplo e divisão",       operacao:"escolher a operação",
+  etapas:"problema de duas etapas",      estimativa:"estimar arredondando",
+  troca:"subtração com troca",           tempo:"relógio e calendário",
+  dados:"ler gráfico e tabela",          pergunta:"responder o que foi perguntado"
+};
+function marcaErro(hab){ if(!hab) return; S.erros[hab] = (S.erros[hab]||0) + 1; salvar(); }
+function marcaAcerto(hab){
+  if(!hab || !S.erros[hab]) return;
+  S.erros[hab]--; if(S.erros[hab] <= 0) delete S.erros[hab];
+  salvar();
+}
+function listaFracas(n){
+  return Object.entries(S.erros).sort((x,y)=>y[1]-x[1]).slice(0, n||4).map(e=>e[0]);
+}
+
+/* ============================================================
+   SOM
+   ============================================================ */
+let AC = null;
+function ac(){ if(!AC){ try{AC = new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function bip(freq, dur, tipo, vol){
+  const c = ac(); if(!c) return;
+  if(c.state === "suspended") c.resume();
+  const o = c.createOscillator(), gn = c.createGain();
+  o.type = tipo || "sine"; o.frequency.value = freq;
+  gn.gain.setValueAtTime(vol||0.13, c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  o.connect(gn); gn.connect(c.destination);
+  o.start(); o.stop(c.currentTime + dur);
+}
+const somAcerto = ()=>{ bip(660,.09,"triangle"); setTimeout(()=>bip(880,.14,"triangle"),90); };
+const somErro   = ()=>{ bip(200,.18,"sawtooth",.09); };
+const somClique = ()=>{ bip(520,.05,"square",.05); };
+const somVitoria= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>bip(f,.2,"triangle"),i*110)); };
+const somPop    = ()=>{ bip(880,.06,"sine",.07); };
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+function embaralha(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function sorteio(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+let toastT = null;
+function toast(txt, mau){
+  const t = $("#toast");
+  t.innerHTML = txt;
+  t.className = "toast show" + (mau ? " mau" : "");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ t.className = "toast" + (mau?" mau":""); }, 1500);
+}
+function ganha(p){ S.pontos += p; toast("+" + p + " pontos!"); }
+
+function estrelasTxt(n){ return "⭐".repeat(n) + "☆".repeat(POR_MISSAO-n); }
+function estrelasPor(acertos, total){
+  const pct = total ? acertos/total : 0;
+  if(pct >= 0.99) return 3;
+  if(pct >= 0.7)  return 2;
+  if(pct >= 0.4)  return 1;
+  return 0;
+}
+const ELOGIOS = ["Isso, {n}!","Boa, {n}!","Mandou bem, {n}!","{n} arrasou!","Exatamente, {n}!","Perfeito, {n}!","Decolou, {n}!"];
+function elogio(){ return sorteio(ELOGIOS).replace("{n}", NOME()); }
+
+/* por extenso — usado na missão 1 e na colinha das respostas */
+const UNI = ["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez",
+  "onze","doze","treze","catorze","quinze","dezesseis","dezessete","dezoito","dezenove"];
+const DEZ = ["","","vinte","trinta","quarenta","cinquenta","sessenta","setenta","oitenta","noventa"];
+const CEM = ["","cento","duzentos","trezentos","quatrocentos","quinhentos","seiscentos",
+  "setecentos","oitocentos","novecentos"];
+function porExtenso(n){
+  n = n|0;
+  if(n < 20) return UNI[n];
+  if(n < 100){ const d = (n/10)|0, u = n%10; return DEZ[d] + (u ? " e " + UNI[u] : ""); }
+  if(n === 100) return "cem";
+  if(n < 1000){ const c = (n/100)|0, r = n%100; return CEM[c] + (r ? " e " + porExtenso(r) : ""); }
+  const m = (n/1000)|0, r = n%1000;
+  const mil = (m === 1 ? "mil" : porExtenso(m) + " mil");
+  if(!r) return mil;
+  /* o livro usa vírgula quando o resto tem centena, e "e" quando não tem */
+  return mil + (r < 100 ? " e " : ", ") + porExtenso(r);
+}
+
+function hud(titulo){
+  const emMissao = /^m\d+$/.test(S.cena);
+  return `<div class="hud">
+    <span class="nome">🚀 ${NOME()}</span>
+    <span class="chip pts">⭐ ${S.pontos} pts</span>
+    <span class="espaco"></span>
+    ${emMissao ? `<button class="chip" onclick="reverAula(${S.cena.slice(1)})" style="cursor:pointer">📚 Aula</button>` : ``}
+    <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
+    <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
+  </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
+}
+
+function abrirColinha(){ somClique(); pausaCrono(true); $("#colinha").classList.add("aberta"); }
+function fecharColinha(){ somClique(); $("#colinha").classList.remove("aberta"); pausaCrono(false); }
+window.abrirColinha = abrirColinha; window.fecharColinha = fecharColinha;
+
+/* ============================================================
+   FUNDO — campo de estrelas
+   ============================================================ */
+(function fundo(){
+  const cv = $("#estrelas"), cx = cv.getContext("2d");
+  let pcs = [];
+  function dim(){
+    cv.width = innerWidth; cv.height = innerHeight;
+    pcs = [];
+    const n = Math.min(110, Math.floor(innerWidth*innerHeight/12000));
+    for(let i=0;i<n;i++) pcs.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      r:Math.random()*1.6+.4, vy:Math.random()*.22+.05,
+      alfa:Math.random()*.6+.2, fase:Math.random()*6.28
+    });
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    const t = Date.now()/900;
+    for(const p of pcs){
+      p.y += p.vy;
+      if(p.y > cv.height + 4){ p.y = -4; p.x = Math.random()*cv.width; }
+      cx.globalAlpha = p.alfa * (0.6 + 0.4*Math.sin(t + p.fase));
+      cx.fillStyle = "#dbeafe";
+      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.2832); cx.fill();
+    }
+    cx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  addEventListener("resize", dim); dim(); loop();
+})();
+
+/* ============================================================
+   ROTEADOR
+   ============================================================ */
+function irMapa(){ somClique(); pararArcade(); S.cena="mapa"; render(); }
+window.irMapa = irMapa;
+
+function abrirMissao(i){
+  if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a missão anterior primeiro, " + NOME() + "!", true); return; }
+  pararArcade();
+  if(!S.aulas[i]){ abrirAula(i); return; }   /* a aula vem antes, na estreia da missão */
+  somClique(); S.cena = "m"+i; render();
+}
+window.abrirMissao = abrirMissao;
+
+function concluiMissao(i, acertos, total, bonus){
+  S.missoes[i] = true;
+  const est = estrelasPor(acertos, total);
+  S.estrelas[i] = Math.max(S.estrelas[i], est);
+  const pts = acertos*10 + est*25 + (bonus||0);
+  S.pontos += pts;
+  salvar();
+  somVitoria();
+  const tudoFeito = S.missoes.every(Boolean);
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:64px">${est===3?"🏆":est===2?"🎉":"👏"}</div>
+      <h2>Missão ${i+1} concluída, ${NOME()}!</h2>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${estrelasTxt(est)}</div>
+      <p>Você acertou <b>${acertos} de ${total}</b> e ganhou <b>${pts} pontos</b>.</p>
+      ${est<POR_MISSAO?`<p class="mini">Dá para refazer e buscar as ${POR_MISSAO} estrelas — elas só sobem, nunca descem.</p>`:``}
+      <div class="acoes">
+        ${tudoFeito
+          ? `<button class="btn" onclick="verDiploma()">🎓 Ver meu diploma!</button>`
+          : (i < N_MISSOES-1 ? `<button class="btn uva" onclick="abrirMissao(${i+1})">Próxima missão →</button>` : ``)}
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+        <button class="btn sec" onclick="abrirMissao(${i})">🔁 Refazer</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+
+const FASES = [faseNumeros, fasePosicional, faseDobro, faseOperacao,
+               faseEtapas, faseTempo, faseDados, faseFinal];
+
+function render(){
+  scrollTo(0,0);
+  if(S.cena === "nome")    return telaNome();
+  if(S.cena === "inicio")  return telaInicio();
+  if(S.cena === "mapa")    return telaMapa();
+  if(S.cena === "diploma") return telaDiploma();
+  let m = /^m(\d+)$/.exec(S.cena);
+  if(m && FASES[+m[1]]) return FASES[+m[1]]();
+  m = /^a(\d+)$/.exec(S.cena);
+  if(m) return telaAula(+m[1]);
+}
+
+/* ============================================================
+   TELA DO NOME
+   ============================================================ */
+function telaNome(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--turbo)">
+      <div style="font-size:70px;line-height:1">🚀</div>
+      <h1 style="background:linear-gradient(90deg,var(--uva),var(--turbo),var(--ouro));-webkit-background-clip:text;background-clip:text;color:transparent">
+        CONTAGEM REGRESSIVA
+      </h1>
+      <p style="font-size:1.1em">Revisão para a <b>prova de Matemática</b></p>
+      <p class="mini">3º ano · 3ª etapa · os 7 assuntos do roteiro</p>
+      <div class="card" style="text-align:left;background:rgba(13,23,48,.85);margin-top:18px">
+        <p><b>🛰️ O foguete está na plataforma e a base precisa de ${g("uma comandante","um comandante")}.</b></p>
+        <p>Antes da decolagem, todos os sistemas precisam ser conferidos — um por assunto da prova.
+        Só falta uma coisa: <b>como você se chama?</b></p>
+      </div>
+      <input class="campo" id="nomeInput" type="text" maxlength="18" autocomplete="off"
+             placeholder="Digite seu nome" onkeydown="if(event.key==='Enter')pedeGenero()">
+      <p class="mini" id="avisoNome" style="min-height:20px"></p>
+      <p style="margin-top:6px"><b>E como você quer ser ${g("chamada","chamado")} na base?</b></p>
+      <div class="acoes">
+        <button class="btn" onclick="definir('f')">🛰️ Sou a comandante</button>
+        <button class="btn uva" onclick="definir('m')">🛰️ Sou o comandante</button>
+      </div>
+    </div>`;
+  const inp = $("#nomeInput");
+  if(inp){ inp.value = S.nome; setTimeout(()=>inp.focus(), 120); }
+}
+function definir(gen){
+  const inp = $("#nomeInput");
+  let v = (inp ? inp.value : "").trim().replace(/\s+/g," ");
+  if(v.length < 2){
+    somErro();
+    $("#avisoNome").innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`;
+    if(inp) inp.focus();
+    return;
+  }
+  v = v.split(" ").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" ");
+  S.nome = v;
+  if(gen === "f" || gen === "m") S.genero = gen;
+  ac(); somVitoria(); salvar();
+  S.cena = "inicio"; render();
+}
+window.definir = definir;
+function pedeGenero(){
+  const inp = $("#nomeInput"), aviso = $("#avisoNome");
+  if((inp ? inp.value : "").trim().length < 2){
+    somErro(); aviso.innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`; return;
+  }
+  somClique();
+  aviso.innerHTML = `<span style="color:var(--ouro)">Agora toque num dos dois botões aí embaixo 👇</span>`;
+}
+window.pedeGenero = pedeGenero;
+function trocarNome(){ somClique(); S.cena = "nome"; render(); }
+window.trocarNome = trocarNome;
+function zerar(){
+  if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
+  S.pontos = 0; S.missoes = vazio(false); S.estrelas = vazio(0); S.aulas = vazio(false); S.erros = {};
+  salvar(); somClique(); render();
+}
+window.zerar = zerar;
+
+/* ============================================================
+   TELA INICIAL
+   ============================================================ */
+function telaInicio(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--turbo)">
+      <div style="font-size:66px;line-height:1">🤖</div>
+      <h1 style="background:linear-gradient(90deg,var(--uva),var(--turbo),var(--ouro));-webkit-background-clip:text;background-clip:text;color:transparent">
+        OI, ${NOME()}!
+      </h1>
+      <p style="font-size:1.12em">Você é ${g("a comandante","o comandante")} da
+      <b style="color:var(--turbo)">Contagem Regressiva</b>.</p>
+      <div class="card" style="text-align:left;background:rgba(13,23,48,.85);margin-top:18px">
+        <p><b>🎯 O combinado é este:</b></p>
+        <p>Este jogo não foi inventado no chute: cada missão é <b>um assunto do roteiro da sua
+        prova</b>, na ordem em que a escola pediu. São <b>${N_MISSOES-1} sistemas para conferir</b>
+        e, no fim, a decolagem.</p>
+        <p><b>📚 Cada missão começa com uma aula rapidinha</b> do <b>Zero</b>, o robô do controle
+        de solo. Ele explica primeiro; você põe a mão na massa depois.</p>
+        <p class="mini">⭐ Cada missão vale até ${POR_MISSAO} estrelas. Errar faz parte: o jogo mostra o porquê
+        e <b>anota em que assunto você escorregou</b>, para cobrar de novo na decolagem.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn" onclick="comecar()">🚀 Ir para a plataforma</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Ver a colinha</button>
+      </div>
+      <p class="mini" style="margin-top:14px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Não sou ${NOME()}, trocar nome</button>
+      </p>
+    </div>`;
+}
+function comecar(){ ac(); somVitoria(); S.cena="mapa"; render(); }
+window.comecar = comecar;
+
+/* ============================================================
+   MAPA
+   ============================================================ */
+function telaMapa(){
+  const feitas = S.missoes.filter(Boolean).length;
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(5);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <h2>🛰️ Plataforma ${g("da","do")} ${NOME()}</h2>
+      <p class="mini">${feitas} de ${N_MISSOES} sistemas conferidos · ${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas · ${S.pontos} pontos</p>
+      <div class="progresso"><i style="width:${feitas/N_MISSOES*100}%"></i></div>
+      <div class="missoes">
+        ${MISSOES.map((m,i)=>{
+          const trancada = i>0 && !S.missoes[i-1];
+          return `<button class="missao ${trancada?"trancada":""} ${S.missoes[i]?"feita":""}"
+                    onclick="abrirMissao(${i})" ${trancada?"disabled":""}>
+            <span class="num">${S.missoes[i]?"✓":i+1}</span>
+            <div class="ico">${trancada?"🔒":m.ico}</div>
+            <div class="tit">${m.tit}</div>
+            <div class="sub">${trancada?"Confira o sistema anterior":m.sub}</div>
+            ${(!trancada && !S.aulas[i])?`<div class="tags" style="margin-top:8px"><span class="tag" style="border-color:var(--ouro);color:var(--ouro)">📚 começa com uma aula</span></div>`:``}
+            ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
+          </button>`;
+        }).join("")}
+      </div>
+      <p class="mini centro" style="margin-top:16px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Trocar nome</button>
+        <button class="chip" onclick="zerar()" style="cursor:pointer">🔄 Começar tudo de novo</button>
+      </p>
+    </div>
+    ${fracas.length?`<div class="card">
+      <h2>🎯 Onde você está escorregando</h2>
+      <p class="mini">O jogo foi anotando. Estes assuntos aparecem <b>mais vezes</b> na
+      Contagem Regressiva — é assim que a gente vira o jogo antes da prova.</p>
+      <div class="tags">${fracas.map(h=>
+        `<span class="tag" style="border-color:var(--chama);color:var(--chama);font-size:1em">${NOME_HAB[h]||h}</span>`
+      ).join("")}</div>
+    </div>`:``}
+    ${feitas===N_MISSOES?`<div class="card destaque centro">
+      <div style="font-size:56px">🎓</div>
+      <h2>Todos os sistemas conferidos, ${NOME()}!</h2>
+      <button class="btn" onclick="verDiploma()">Ver meu diploma</button>
+    </div>`:``}`;
+}
+function verDiploma(){ somVitoria(); S.cena="diploma"; render(); }
+window.verDiploma = verDiploma;
+
+/* ============================================================
+   AULAS — uma antes de cada missão, com o Zero
+   ============================================================ */
+const AULAS = [
+  /* ---- 1 · por extenso, comparar, ordenar ---- */
+  [
+    {ico:"🤖", tit:"Oi, {NOME}. Eu sou o Zero.",
+     txt:`Sou o robô do controle de solo, e o meu nome não é apelido: eu sou <b>o algarismo
+       que guarda o lugar</b>. Sem mim, 3<b>0</b>47 viraria 347 — outro número completamente
+       diferente. Guardar lugar é um trabalho sério.
+       <p>Nos próximos dias eu vou conferir com você <b>os sete assuntos</b> que caem na sua
+       prova. Um sistema por vez, do jeito que se prepara um foguete.</p>`,
+     chave:`Nada aqui é matéria nova. É a matéria que você já viu, olhada com calma.`},
+    {ico:"✍️", tit:"Escrever o número por extenso",
+     txt:`Escrever por extenso é só ler em voz alta e passar para o papel:
+       <div class="destaque">776 → setecentos e setenta e seis</div>
+       <p>Vá por partes, da esquerda para a direita: primeiro as centenas, depois as dezenas,
+       depois as unidades — ligando com <b>e</b>.</p>
+       <ul class="lista">
+       <li><b>100</b> sozinho é <b>cem</b>…</li>
+       <li>…mas com companhia vira <b>cento</b>: <b>132</b> = cento e trinta e dois.</li>
+       </ul>`,
+     chave:`Cem sozinho. <b>Cento</b> quando vem alguém junto.`},
+    {ico:"⚖️", tit:"Quem é maior? Conte os algarismos primeiro",
+     txt:`O jeito mais rápido de comparar não é olhar os números — é <b>contar quantos
+       algarismos</b> cada um tem.
+       <div class="destaque">1250 &gt; 999</div>
+       <p>O 999 tem três algarismos; o 1250 tem quatro. Quatro ganha de três, e nem precisou
+       olhar o resto. O 9 é grandão, mas está num lugar pequeno.</p>
+       <p>Empatou no tamanho? Aí sim compare <b>da ordem mais alta para a mais baixa</b>:
+       primeiro o milhar, depois a centena, e assim por diante, até achar a diferença.</p>`,
+     chave:`Mais algarismos = maior. Empatou? Compare da esquerda para a direita.`},
+    {ico:"🐊", tit:"Os sinais > e <",
+     txt:`<b>&gt;</b> quer dizer <b>maior que</b>. <b>&lt;</b> quer dizer <b>menor que</b>.
+       <p>Para nunca mais trocar: pense numa boquinha faminta. Ela <b>abre sempre para o
+       lado do maior</b>, porque é onde tem mais comida.</p>
+       <div class="destaque">1250 &gt; 999 &nbsp;&nbsp;·&nbsp;&nbsp; 999 &lt; 1250</div>
+       <p>São a mesma informação, escrita dos dois lados.</p>`,
+     chave:`A boca aberta olha para o maior. Sempre.`},
+    {ico:"📶", tit:"Crescente, decrescente, antecessor, sucessor",
+     txt:`<ul class="lista">
+       <li><b>Ordem crescente</b> — do <b>menor para o maior</b>, como uma escada subindo.</li>
+       <li><b>Ordem decrescente</b> — do <b>maior para o menor</b>, descendo.</li>
+       <li><b>Antecessor</b> — o que vem <b>antes</b>: é o número <b>−1</b>.</li>
+       <li><b>Sucessor</b> — o que vem <b>depois</b>: é o número <b>+1</b>.</li>
+       </ul>
+       <p>O antecessor de <b>1000</b> é <b>999</b>, e o sucessor é <b>1001</b>.</p>`,
+     chave:`Cresce = sobe. Antecessor = −1. Sucessor = +1.`}
+  ],
+  /* ---- 2 · valor posicional ---- */
+  [
+    {ico:"🎛️", tit:"O mesmo algarismo vale coisas diferentes",
+     txt:`Olhe estes dois números, {NOME}:
+       <div class="destaque">2<b style="color:#dc2626">5</b>0 &nbsp;e&nbsp; <b style="color:#dc2626">5</b>20</div>
+       <p>O algarismo <b>5</b> aparece nos dois. Mas num ele vale <b>50</b> e no outro vale
+       <b>500</b>. O que decidiu foi o <b>lugar</b> onde ele estava sentado.</p>
+       <p>Isso se chama <b>valor posicional</b>, e é a ideia que segura o nosso jeito de escrever
+       números inteiro.</p>`,
+     chave:`O algarismo é o mesmo. Quem muda o valor é a <b>posição</b>.`},
+    {ico:"🪜", tit:"As quatro ordens",
+     txt:`Cada casa tem nome, e elas contam de dez em dez, da direita para a esquerda:
+       <table class="mini-tab">
+       <tr><th>4ª ordem</th><th>3ª ordem</th><th>2ª ordem</th><th>1ª ordem</th></tr>
+       <tr><th>UM</th><th>C</th><th>D</th><th>U</th></tr>
+       <tr><td>3</td><td>2</td><td>4</td><td>7</td></tr>
+       <tr><td>3000</td><td>200</td><td>40</td><td>7</td></tr>
+       </table>
+       <p>10 unidades formam 1 dezena. 10 dezenas formam 1 centena. 10 centenas formam
+       1 unidade de milhar. Sempre de dez em dez.</p>`,
+     chave:`U · D · C · UM — da direita para a esquerda, de dez em dez.`},
+    {ico:"🧩", tit:"Decompor e compor",
+     txt:`<b>Decompor</b> é desmontar o número em pedaços:
+       <div class="destaque">7891 = 7000 + 800 + 90 + 1</div>
+       <b>Compor</b> é o caminho de volta, juntando os pedaços:
+       <div class="destaque">2 UM + 3 C + 5 D + 3 U = 2353</div>
+       <p>É a mesma peça de Lego montada e desmontada. Se você sabe fazer num sentido,
+       sabe fazer no outro.</p>`,
+     chave:`Decompor desmonta. Compor monta. Mesmo número dos dois lados.`},
+    {ico:"0️⃣", tit:"Por que eu existo",
+     txt:`Agora eu posso contar a minha parte, {NOME}. Veja o que acontece quando um número
+       <b>não tem</b> uma das ordens:
+       <div class="destaque">3 UM + 0 C + 4 D + 7 U = 30<b style="color:#dc2626">4</b>7</div>
+       <p>Não tem centena nenhuma. Mas se eu não ficasse ali segurando o lugar, o 4 e o 7
+       escorregariam e o número viraria <b>347</b>.</p>
+       <p>Por isso <b>3030 = 3000 + 0 + 30 + 0</b>. Eu não valho nada sozinho — e mesmo assim
+       mudo tudo.</p>`,
+     chave:`O zero <b>guarda o lugar</b>. Tirar o zero muda o número inteiro.`},
+    {ico:"🏷️", tit:"Classes: os números andam de três em três",
+     txt:`Repare em como a gente escreve <b>3 247</b>, com um espacinho. As ordens se juntam
+       em grupos de três, chamados <b>classes</b>:
+       <ul class="lista">
+       <li><b>classe das unidades simples</b> — U, D, C</li>
+       <li><b>classe dos milhares</b> — a partir da 4ª ordem</li>
+       </ul>
+       <p>É por isso que a gente lê "<b>três mil</b>, duzentos e quarenta e sete": a classe
+       dos milhares primeiro, depois o resto.</p>`,
+     chave:`Ordens se agrupam de três em três e formam as <b>classes</b>.`}
+  ],
+  /* ---- 3 · dobro, triplo, divisão ---- */
+  [
+    {ico:"✖️", tit:"Dobro e triplo são multiplicação disfarçada",
+     txt:`Palavra difícil, ideia simples:
+       <ul class="lista">
+       <li><b>dobro</b> de um número é ele <b>× 2</b> — o dobro de 14 é <b>28</b></li>
+       <li><b>triplo</b> é <b>× 3</b> — o triplo de 14 é <b>42</b></li>
+       </ul>
+       <p>E para o outro lado:</p>
+       <ul class="lista">
+       <li><b>metade</b> é <b>÷ 2</b> — a metade de 14 é <b>7</b></li>
+       <li><b>terça parte</b> é <b>÷ 3</b></li>
+       </ul>`,
+     chave:`dobro = ×2 · triplo = ×3 · metade = ÷2 · terça parte = ÷3`},
+    {ico:"🏷️", tit:"O nome de cada peça da divisão",
+     txt:`A prova pede esses nomes, então vamos gravar de uma vez:
+       <div class="destaque">36 ÷ 4 = 9</div>
+       <ul class="lista">
+       <li><b>36</b> é o <b>dividendo</b> — o que vai ser repartido</li>
+       <li><b>4</b> é o <b>divisor</b> — em quantas partes</li>
+       <li><b>9</b> é o <b>quociente</b> — quanto ficou em cada parte</li>
+       <li>o que sobra chama <b>resto</b></li>
+       </ul>
+       <p>Dica para não trocar: <b>divi<u>dendo</u></b> é o mais gordo, o que está sendo dividido.</p>`,
+     chave:`dividendo ÷ divisor = quociente · e o que sobra é o resto.`},
+    {ico:"✅", tit:"Divisão exata",
+     txt:`Quando o <b>resto é zero</b>, a divisão chama <b>exata</b>:
+       <div class="destaque">36 ÷ 4 = 9, resto <b>0</b> → exata</div>
+       <p>Quando sobra alguma coisa, não é erro — é só a resposta ter duas peças:</p>
+       <div class="destaque">13 ÷ 4 = 3, resto <b>1</b></div>
+       <p>E o resto é <b>sempre menor que o divisor</b>. Se sobrou 4 com divisor 4, ainda dava
+       para dar mais uma rodada.</p>`,
+     chave:`Resto 0 = divisão <b>exata</b>. E o resto é sempre menor que o divisor.`},
+    {ico:"🔑", tit:"Dividir é tabuada ao contrário",
+     txt:`Você já joga a <b>Festa da Divisão</b>, então já sabe o truque — mas ele cai na prova,
+       e repetir não dói:
+       <div class="destaque">36 ÷ 4 = ? &nbsp;→&nbsp; "4 vezes quanto dá 36?"</div>
+       <p>4 × <b>9</b> = 36, então 36 ÷ 4 = <b>9</b>. Pronto.</p>
+       <p>E dá para conferir de graça: <b>divisor × quociente + resto = dividendo</b>.
+       4 × 9 + 0 = 36 ✓</p>`,
+     chave:`Vire a pergunta: "o divisor vezes quanto dá o dividendo?"`}
+  ],
+  /* ---- 4 · qual operação ---- */
+  [
+    {ico:"🎯", tit:"Esta é a missão mais importante do jogo",
+     txt:`Vou ser direto, {NOME}: você <b>sabe fazer as contas</b>. Multiplicação de 4
+       algarismos, divisão com 3 — você acerta.
+       <p>O que derruba é outra coisa: <b>escolher a conta errada</b>. Ver 8 e 9 num problema
+       e fazer 9 − 8, quando a situação pedia 8 × 9.</p>
+       <p>Por isso nesta missão você <b>não vai calcular nada</b>. Só vai decidir <b>qual
+       operação</b> resolve. É a decisão que vale a nota.</p>`,
+     chave:`Errar a conta custa 1 questão. Errar a operação custa a questão inteira.`},
+    {ico:"➕", tit:"Quando é somar",
+     txt:`Some quando o problema <b>junta</b> duas quantidades diferentes e quer o
+       <b>total</b>. As palavras que entregam:
+       <div class="destaque">ao todo · juntos · no total · e mais · ganhou</div>
+       <p><i>"Júlia tem 120 figurinhas e Cristina tem 98. Quantas as duas têm <b>juntas</b>?"</i>
+       → 120 + 98 = 218</p>`,
+     chave:`Juntou tudo e quer o total? <b>Adição</b>.`},
+    {ico:"➖", tit:"Quando é subtrair",
+     txt:`Subtraia quando o problema <b>tira</b>, <b>compara</b> ou pergunta <b>quanto falta</b>:
+       <div class="destaque">quanto falta · quantos a mais · diferença · sobrou · troco · gastou</div>
+       <p><i>"Eduarda tem 55 bolinhas e a irmã tem 46. Qual a <b>diferença</b>?"</i> → 55 − 46 = 9</p>
+       <p>Repare: o problema tem duas quantidades, mas ele <b>não quer juntar</b> — quer saber
+       o quanto uma passa da outra.</p>`,
+     chave:`Comparar, tirar ou achar o que falta? <b>Subtração</b>.`},
+    {ico:"✖️", tit:"Quando é multiplicar",
+     txt:`Multiplique quando houver <b>vários grupos do mesmo tamanho</b>:
+       <div class="destaque">fileiras de · caixas com · cada um tem · o dobro · o triplo</div>
+       <p><i>"9 fileiras com 50 poltronas <b>cada</b>."</i> → 9 × 50 = 450</p>
+       <p><b>A pegadinha mora aqui.</b> O problema mostra 9 e 50 e a cabeça quer somar, dando 59.
+       Mas 59 não faz sentido nenhum: só a primeira fileira já tem 50! Um resultado que não
+       faz sentido é um aviso.</p>`,
+     chave:`Grupos iguais que se repetem? <b>Multiplicação</b>.`},
+    {ico:"➗", tit:"Quando é dividir",
+     txt:`Divida quando um total for <b>repartido em partes iguais</b>:
+       <div class="destaque">repartir igualmente · dividir entre · quantos grupos de · quantos cabem</div>
+       <p><i>"54 mangas em pacotes de 6. Quantos pacotes?"</i> → 54 ÷ 6 = 9</p>
+       <p>Outra vez o mesmo perigo: 54 − 6 = 48 é uma conta certa, mas responde a uma pergunta
+       que ninguém fez.</p>`,
+     chave:`Repartir um total em partes iguais? <b>Divisão</b>.`},
+    {ico:"🧭", tit:"O teste dos três segundos",
+     txt:`Antes de escrever qualquer conta, faça estas três perguntas:
+       <ul class="lista">
+       <li><b>1.</b> Os números são <b>grupos iguais</b> que se repetem? → é × ou ÷</li>
+       <li><b>2.</b> O problema quer <b>juntar</b> ou quer <b>comparar</b>? → é + ou −</li>
+       <li><b>3.</b> O resultado que eu achei <b>faz sentido</b>? Um total que ficou menor que
+       uma das partes está errado.</li>
+       </ul>`,
+     chave:`Leia o que se pede, não os números que aparecem.`}
+  ],
+  /* ---- 5 · duas etapas e estimativa ---- */
+  [
+    {ico:"🪜", tit:"O problema que tem um degrau escondido",
+     txt:`Alguns problemas parecem um só, mas são <b>dois</b>. E se você para no primeiro
+       degrau, responde certo… uma pergunta que ninguém fez.
+       <p><i>"Márcio comprou <b>2 fatias</b> de bolo a <b>4 reais</b> cada. Pagou com uma nota
+       de <b>10</b>. Quanto recebeu de <b>troco</b>?"</i></p>
+       <ul class="lista">
+       <li><b>1º degrau:</b> quanto ele gastou → 2 × 4 = <b>8</b></li>
+       <li><b>2º degrau:</b> o troco → 10 − 8 = <b>2</b></li>
+       </ul>
+       <p>Quem entrega "8" acertou o cálculo e errou a questão.</p>`,
+     chave:`Depois de calcular, <b>releia a pergunta</b>. Ela pediu isso mesmo?`},
+    {ico:"🔎", tit:"Como enxergar o degrau",
+     txt:`Antes de calcular, procure o <b>valor que o problema não te deu, mas você precisa</b>.
+       <p>No exemplo do bolo: ele te deu o preço de <b>uma</b> fatia, mas o troco depende do
+       preço de <b>duas</b>. Esse é o degrau escondido.</p>
+       <p>Um truque bom: sublinhe a pergunta final <b>antes</b> de fazer qualquer conta.
+       Assim você já sabe onde precisa chegar.</p>`,
+     chave:`Ache primeiro o número que falta. Ele quase sempre é o 1º degrau.`},
+    {ico:"🔍", tit:"Estimar é fazer a conta de olho",
+     txt:`Estimar não é chutar — é <b>arredondar e somar de cabeça</b> para saber
+       <b>mais ou menos</b> onde a resposta cai.
+       <div class="destaque">147 + 185 → 150 + 200 = <b>350</b></div>
+       <p>Então dá para responder na hora: é <b>menos</b> de 400. E nem precisou armar conta.</p>
+       <p>Arredondar é ir para a dezena ou a centena <b>mais perto</b>: 147 está mais perto de
+       150 do que de 100; 185 está mais perto de 200 do que de 100.</p>`,
+     chave:`Arredonde para o número redondo mais <b>perto</b> e some de cabeça.`},
+    {ico:"🛡️", tit:"A estimativa protege você",
+     txt:`O melhor uso da estimativa não é responder — é <b>conferir</b>.
+       <p>Se você estimou <b>350</b> e a sua conta armada deu <b>1040</b>, alguma coisa está
+       errada na conta. Você descobre o erro <b>sozinha</b>, sem ninguém corrigir.</p>
+       <p>Faça sempre nesta ordem: estime primeiro, calcule depois, compare os dois.
+       Se brigarem, refaça.</p>`,
+     chave:`Estimou e a conta deu muito longe? A conta está errada.`},
+    {ico:"➖", tit:"Subtrair com troca (e conferir)",
+     txt:`Nos problemas de duas etapas quase sempre aparece uma subtração com <b>troca</b>:
+       <div class="destaque">312 − 125 = 187</div>
+       <p>Não dá 2 − 5: troco 1 dezena por 10 unidades → 12 − 5 = 7. Não dá 0 − 2: troco
+       1 centena por 10 dezenas → 10 − 2 = 8. Sobra 2 − 1 = 1.</p>
+       <p><b>Confira somando de volta:</b> 187 + 125 = 312 ✓. Leva cinco segundos e salva a questão.</p>`,
+     chave:`Conferiu somando de volta e deu o número original? Está certo.`}
+  ],
+  /* ---- 6 · tempo ---- */
+  [
+    {ico:"🕐", tit:"Os dois ponteiros fazem trabalhos diferentes",
+     txt:`<ul class="lista">
+       <li>O ponteiro <b>curto e gordo</b> marca a <b>hora</b>.</li>
+       <li>O ponteiro <b>comprido e fino</b> marca os <b>minutos</b>.</li>
+       </ul>
+       <p>Confundir os dois é o erro mais comum do relógio inteiro. Curto = hora,
+       comprido = minuto. Sempre.</p>
+       <p>O ponteiro das horas anda devagarinho: leva <b>uma hora inteira</b> para pular de um
+       número para o próximo.</p>`,
+     chave:`Curto marca hora. Comprido marca minuto.`},
+    {ico:"5️⃣", tit:"Cada número vale 5 minutos",
+     txt:`O mostrador tem 12 números, mas a hora tem <b>60 minutos</b>. Então cada número vale
+       <b>5 minutos</b> para o ponteiro comprido — é a tabuada do 5 dando a volta:
+       <div class="destaque">1 → 5 min · 3 → 15 min · 6 → 30 min · 9 → 45 min</div>
+       <p>Por isso o comprido no <b>3</b> não quer dizer "três minutos": quer dizer
+       <b>15 minutos</b>.</p>`,
+     chave:`Multiplique o número por <b>5</b> para achar os minutos.`},
+    {ico:"🍕", tit:"Meia hora e um quarto de hora",
+     txt:`<ul class="lista">
+       <li><b>1 hora = 60 minutos</b></li>
+       <li><b>meia hora</b> = metade de 60 = <b>30 minutos</b> (comprido no 6)</li>
+       <li><b>um quarto de hora</b> = 60 ÷ 4 = <b>15 minutos</b> (comprido no 3)</li>
+       <li><b>três quartos de hora</b> = <b>45 minutos</b> (comprido no 9)</li>
+       </ul>
+       <p>Repare que é a mesma divisão do jogo da divisão, aplicada ao relógio.</p>`,
+     chave:`meia hora = 30 min · um quarto de hora = 15 min`},
+    {ico:"🌙", tit:"Depois do meio-dia, some 12",
+     txt:`O dia tem <b>24 horas</b>, mas o relógio de ponteiros só mostra 12. Ele dá
+       <b>duas voltas</b> por dia.
+       <p>Então, de tarde e de noite, some 12 ao que o ponteiro mostra:</p>
+       <div class="destaque">3 h da tarde = <b>15 h</b> · 8 h da noite = <b>20 h</b></div>
+       <p>É por isso que o ônibus das <b>19 h</b> é o das 7 da noite.</p>`,
+     chave:`Manhã: o número mesmo. Tarde e noite: <b>+12</b>.`},
+    {ico:"⏳", tit:"Quanto tempo passou",
+     txt:`Para saber <b>quanto tempo durou</b>, conte por partes — primeiro as horas cheias,
+       depois os minutos:
+       <p><i>"Começou 8h30 e terminou 11h. Quanto durou?"</i></p>
+       <ul class="lista">
+       <li>das 8h30 às 9h → <b>30 min</b></li>
+       <li>das 9h às 11h → <b>2 horas</b></li>
+       <li>total: <b>2 h e 30 min</b></li>
+       </ul>`,
+     chave:`Conte em pedaços: até a hora cheia, depois de hora em hora.`},
+    {ico:"📅", tit:"O calendário",
+     txt:`<ul class="lista">
+       <li><b>1 semana = 7 dias</b> · <b>1 ano = 12 meses</b></li>
+       <li>Meses com <b>31</b> dias: janeiro, março, maio, julho, agosto, outubro, dezembro</li>
+       <li>Meses com <b>30</b>: abril, junho, setembro, novembro</li>
+       <li><b>Fevereiro</b> é o esquisito: 28 dias (29 no ano bissexto)</li>
+       </ul>
+       <p>No calendário, andar <b>uma linha para baixo</b> é somar <b>7 dias</b> — cai sempre no
+       mesmo dia da semana.</p>`,
+     chave:`Uma linha abaixo no calendário = <b>+7 dias</b>, mesmo dia da semana.`}
+  ],
+  /* ---- 7 · gráficos e tabelas ---- */
+  [
+    {ico:"📊", tit:"O título vem antes de tudo",
+     txt:`Antes de olhar qualquer número, leia o <b>título</b> do gráfico ou da tabela.
+       Ele diz de que assunto aquilo está falando — e a prova costuma perguntar isso
+       diretamente.
+       <p>Depois olhe os <b>rótulos</b>: o que está escrito embaixo de cada barra, e o que está
+       escrito na lateral (a quantidade).</p>`,
+     chave:`Título primeiro. Sem ele, os números não querem dizer nada.`},
+    {ico:"📈", tit:"Ler a altura de uma barra",
+     txt:`Para saber o valor de uma barra, suba do topo dela até a lateral e leia o número.
+       As linhas tracejadas existem exatamente para isso.
+       <p>A barra <b>mais alta</b> é a maior quantidade; a mais <b>baixa</b>, a menor.</p>
+       <p>E as perguntas favoritas da prova: <b>"quantos a mais?"</b> (subtração entre duas
+       barras) e <b>"quantos ao todo?"</b> (soma de todas).</p>`,
+     chave:`"Quantos a mais" = subtrair. "Ao todo" = somar.`},
+    {ico:"➕", tit:"Tabela de dupla entrada",
+     txt:`É a tabela que tem informação <b>na linha e na coluna ao mesmo tempo</b>:
+       <table class="mini-tab">
+       <tr><th>Hábito</th><th>Meninas</th><th>Meninos</th><th>Total</th></tr>
+       <tr><td>Guardar uma parte</td><td>140</td><td>154</td><td>294</td></tr>
+       <tr><td>Pesquisar preços</td><td>150</td><td><b style="color:#dc2626">128</b></td><td>278</td></tr>
+       </table>
+       <p>"Quantos <b>meninos</b> acham melhor pesquisar preços?" A resposta é <b>128</b> —
+       o cruzamento da <b>linha</b> "pesquisar preços" com a <b>coluna</b> "meninos".</p>`,
+     chave:`Um dedo na linha, outro na coluna. Ande até se encontrarem.`},
+    {ico:"⚠️", tit:"A armadilha da coluna Total",
+     txt:`Na tabela acima, é fácil responder <b>278</b> em vez de 128 — o olho escorrega para
+       a direita e pega o <b>Total</b>.
+       <p>Mas 278 é a soma de meninas <b>e</b> meninos. Se a pergunta falou só de meninos,
+       a coluna Total não serve.</p>
+       <p>Antes de escrever, confirme: <b>a coluna em que parei é a que a pergunta pediu?</b></p>`,
+     chave:`Total é a soma da linha inteira. Quase nunca é a resposta pedida.`}
+  ],
+  /* ---- 8 · antes da decolagem ---- */
+  [
+    {ico:"🚀", tit:"Chegou a hora, {NOME}",
+     txt:`Todos os sistemas conferidos. Agora vem a <b>Contagem Regressiva</b>: primeiro um
+       arcade contra o relógio, valendo pontos, e depois a <b>prova final</b>, valendo as
+       estrelas.
+       <p class="mini">O relógio nunca decide a sua nota. As estrelas vêm do que você
+       <b>sabe</b>, não da rapidez do dedo.</p>`,
+     chave:`Pode abrir a colinha no meio da decolagem. O cronômetro para.`},
+    {ico:"🎯", tit:"O que o jogo anotou sobre você",
+     txt:`{FRACAS}`,
+     chave:`O que você mais errou vai aparecer mais vezes. De propósito.`},
+    {ico:"🧘", tit:"Como se sai bem numa prova",
+     txt:`Três coisas que valem mais do que saber a matéria toda:
+       <ul class="lista">
+       <li><b>Leia a pergunta duas vezes</b> — uma antes de calcular, outra depois.</li>
+       <li><b>Confira estimando.</b> Se a resposta parece esquisita, provavelmente está.</li>
+       <li><b>Escreva a unidade:</b> 625 <b>metros</b>, não 625 quilômetros. A conta certa com
+       a unidade errada perde ponto igual.</li>
+       </ul>
+       <p>Demorar um pouquinho e acertar vale muito mais do que responder rápido e errar.</p>`,
+     chave:`Pensar devagar é permitido. É o que todo mundo bom em matemática faz.`}
+  ]
+];
+
+let A = null;
+function nomear(txt){
+  return String(txt)
+    .replace(/\{NOME\}/g, NOME())
+    .replace(/\{FRACAS\}/g, textoFracas());
+}
+function textoFracas(){
+  const fracas = listaFracas(5);
+  if(!fracas.length){
+    return `<p>Até agora você <b>não escorregou em nada</b> — ou ainda não jogou o suficiente
+      para eu ter o que anotar. Vamos descobrir na decolagem!</p>
+      <p>A prova final vai passar por <b>todos os sete assuntos</b> do roteiro, sem dó.</p>`;
+  }
+  return `<p>Eu fui anotando cada escorregão. Estes são os assuntos em que você mais tropeçou —
+    dê uma olhada neles antes de começar:</p>
+    <div class="destaque">${fracas.map(h => NOME_HAB[h] || h).join("<br>")}</div>
+    <p>Eles vão aparecer <b>mais vezes</b> na prova final, de propósito. É a última chance de
+    virar o jogo antes de sexta.</p>`;
+}
+
+function abrirAula(i, revendo){
+  somClique(); pararArcade();
+  A = { missao:i, slide:0, revendo:!!revendo };
+  S.cena = "a"+i;
+  render();
+}
+window.abrirAula = abrirAula;
+function reverAula(i){ abrirAula(i, true); }
+window.reverAula = reverAula;
+
+function telaAula(i){
+  const slides = AULAS[i], s = slides[A.slide], ultimo = A.slide === slides.length-1;
+  const m = MISSOES[i];
+  app.innerHTML = hud() + `
+    <h2 style="text-align:center">${m.ico} Aula ${i+1} · ${m.tit}</h2>
+    <div class="aula">
+      <div class="guia">
+        <span class="robo">🤖</span>
+        <span>Sou o <b>Zero</b>, do controle de solo.
+        ${A.slide===0 ? `Antes de você mexer nos comandos, ${NOME()}, olha só.`
+                      : `Continuando, ${NOME()}…`}</span>
+      </div>
+      <div class="ico">${s.ico}</div>
+      <h2>${nomear(s.tit)}</h2>
+      ${s.txt.trim().startsWith("<") ? nomear(s.txt) : `<p>${nomear(s.txt)}</p>`}
+      ${s.chave ? `<div class="chave"><span class="rot">🔑 Grave isso</span>${nomear(s.chave)}</div>` : ``}
+      <div class="pontos">
+        ${slides.map((_,k)=>`<i class="${k===A.slide?"aqui":(k<A.slide?"vista":"")}"></i>`).join("")}
+      </div>
+    </div>
+    <div class="acoes">
+      ${A.slide>0 ? `<button class="btn aula fraco" onclick="aulaVolta()">← Voltar</button>` : ``}
+      ${ultimo
+        ? `<button class="btn" onclick="aulaFim()">🚀 Começar a missão ${i+1}</button>`
+        : `<button class="btn aula" onclick="aulaProx()">Próximo →</button>`}
+    </div>
+    <p class="centro mini" style="margin-top:14px">
+      ${ultimo ? `` : `<button class="chip" onclick="aulaFim()" style="cursor:pointer">Pular a aula e ir direto para a missão →</button>`}
+    </p>`;
+}
+function aulaProx(){ somClique(); A.slide++; telaAula(A.missao); scrollTo(0,0); }
+window.aulaProx = aulaProx;
+function aulaVolta(){ somClique(); A.slide--; telaAula(A.missao); scrollTo(0,0); }
+window.aulaVolta = aulaVolta;
+function aulaFim(){
+  somClique();
+  S.aulas[A.missao] = true; salvar();
+  S.cena = "m"+A.missao; render();
+}
+window.aulaFim = aulaFim;
+
+/* ============================================================
+   QUIZ GENÉRICO
+   ============================================================ */
+let Q = null;
+function embaralhaOpcoes(perguntas){
+  return perguntas.map(q=>{
+    if(q.fixo) return { ...q };                 /* ordem fixa: <, =, > e operações */
+    const ordem = embaralha(q.o.map((_,i)=>i));
+    return { ...q, o: ordem.map(i=>q.o[i]), c: ordem.indexOf(q.c) };
+  });
+}
+function quizGenerico(missaoIdx, titulo, perguntas, acertosIniciais, totalInicial, grade){
+  Q = { i:0, ac:acertosIniciais||0, tot:(totalInicial||0)+perguntas.length,
+        lista:embaralhaOpcoes(perguntas), missao:missaoIdx, titulo:titulo,
+        respondida:false, grade:!!grade };
+  desenhaQuiz();
+}
+function desenhaQuiz(){
+  const q = Q.lista[Q.i];
+  const classe = q.grade ? "grade" : (q.quatro ? "quatro" : "");
+  app.innerHTML = hud(Q.titulo) + `
+    <div class="card">
+      <p class="mini">Pergunta ${Q.i+1} de ${Q.lista.length}</p>
+      <div class="progresso"><i style="width:${Q.i/Q.lista.length*100}%"></i></div>
+      ${q.arte || ``}
+      ${q.enun ? `<div class="enunciado">${nomear(q.enun)}</div>` : ``}
+      ${q.conta ? `<div class="conta">${q.conta}</div>` : ``}
+      ${q.p ? `<div class="pergunta">${nomear(q.p)}</div>` : ``}
+      <div class="opcoes ${classe}" id="ops">
+        ${q.o.map((t,k)=>`<button class="op" onclick="respQuiz(${k})">
+          ${classe?``:`<span class="letra">${"ABCD"[k]}</span>`}<span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fbq"></div>
+      <div class="acoes esconde" id="proxBox">
+        <button class="btn" onclick="proxQuiz()" id="btnProx">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respQuiz(k){
+  if(Q.respondida) return;
+  Q.respondida = true;
+  const q = Q.lista[Q.i];
+  document.querySelectorAll("#ops .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===q.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbq");
+  if(k===q.c){
+    Q.ac++; somAcerto(); ganha(10);
+    marcaAcerto(q.hab);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${nomear(q.e)}`;
+  } else {
+    somErro();
+    marcaErro(q.hab);
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Quase, ${NOME()}! A resposta certa é <b>${q.o[q.c]}</b>.</div>${nomear(q.e)}`;
+  }
+  $("#proxBox").classList.remove("esconde");
+  $("#btnProx").textContent = (Q.i === Q.lista.length-1) ? "Terminar missão 🏁" : "Continuar →";
+  $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respQuiz = respQuiz;
+function proxQuiz(){
+  somClique();
+  Q.i++; Q.respondida = false;
+  if(Q.i >= Q.lista.length){ concluiMissao(Q.missao, Q.ac, Q.tot); return; }
+  desenhaQuiz();
+}
+window.proxQuiz = proxQuiz;
+
+/* monta 4 alternativas numéricas com erros que criança de verdade comete */
+function alternativasNum(certo, chutes){
+  const cand = [certo];
+  for(const c of chutes){
+    if(Number.isInteger(c) && c >= 0 && !cand.includes(c) && cand.length < 4) cand.push(c);
+  }
+  let n = 1;
+  while(cand.length < 4){ if(!cand.includes(certo+n)) cand.push(certo+n); n++; }
+  return cand;
+}
+function pergNum(enun, certo, chutes, explica, hab, conta){
+  const opts = embaralha(alternativasNum(certo, chutes));
+  return { enun, conta, o:opts.map(String), c:opts.indexOf(certo), e:explica, hab, grade:true };
+}
+
+/* ============================================================
+   MISSÃO 1 — TORRE DE CONTROLE (extenso · comparar · ordenar)
+   ============================================================ */
+const ORDENAR = [
+  {nums:[1250, 999, 1205, 989],  cres:true},
+  {nums:[3040, 3400, 3004, 3044], cres:true},
+  {nums:[776, 838, 787, 883],    cres:false}
+];
+let f1 = null;
+function faseNumeros(){
+  f1 = { i:0, acertos:0, escolhidos:[] };
+  desenhaF1();
+}
+function desenhaF1(){
+  const r = ORDENAR[f1.i];
+  const restantes = r.nums.filter(n => !f1.escolhidos.includes(n));
+  app.innerHTML = hud("🔭 Torre de Controle") + `
+    <div class="card">
+      <p class="mini">Rodada ${f1.i+1} de ${ORDENAR.length}</p>
+      <div class="progresso"><i style="width:${f1.i/ORDENAR.length*100}%"></i></div>
+      <div class="pergunta">Coloque em ordem <b>${r.cres?"crescente":"decrescente"}</b>
+        — ${r.cres?"do menor para o maior":"do maior para o menor"}.</div>
+      <p class="mini">Toque nos números na ordem certa. Dica: conte primeiro quantos algarismos cada um tem.</p>
+      <div class="opcoes grade" style="margin-top:12px">
+        ${restantes.length ? restantes.map(n=>
+          `<button class="op" onclick="escolheF1(${n})">${n}</button>`).join("")
+          : `<p class="centro mini">Pronto!</p>`}
+      </div>
+      <div class="enunciado" style="margin-top:14px;border-color:var(--ouro)">
+        <b>Sua sequência:</b>
+        <div class="conta" style="margin:8px 0 0;font-size:clamp(20px,6vw,32px)">
+          ${f1.escolhidos.length ? f1.escolhidos.join(" &nbsp;→&nbsp; ") : "—"}
+        </div>
+      </div>
+      <div class="feedback" id="fb1"></div>
+      <div class="acoes esconde" id="prox1">
+        <button class="btn" onclick="proxF1()" id="btn1">Continuar →</button>
+      </div>
+      <div class="acoes ${f1.escolhidos.length?"":"esconde"}" id="desfaz1">
+        <button class="btn sec" onclick="desfazF1()">↩️ Apagar e recomeçar</button>
+      </div>
+    </div>`;
+}
+function desfazF1(){ somClique(); f1.escolhidos = []; desenhaF1(); }
+window.desfazF1 = desfazF1;
+function escolheF1(n){
+  const r = ORDENAR[f1.i];
+  const certa = r.nums.slice().sort((a,b)=> r.cres ? a-b : b-a);
+  const pos = f1.escolhidos.length;
+  if(n === certa[pos]){
+    somPop(); f1.escolhidos.push(n);
+    if(f1.escolhidos.length === r.nums.length){
+      somAcerto(); f1.acertos++; ganha(10); marcaAcerto("numeros");
+      desenhaF1();
+      const fb = $("#fb1");
+      fb.className = "feedback bom show";
+      fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>
+        Ordem ${r.cres?"crescente":"decrescente"} certinha:
+        <b>${certa.join(" &lt; ").replace(/&lt;/g, r.cres?"&lt;":"&gt;")}</b>.`;
+      $("#prox1").classList.remove("esconde");
+      $("#desfaz1").classList.add("esconde");
+      $("#btn1").textContent = (f1.i === ORDENAR.length-1) ? "Ir para as perguntas →" : "Próxima rodada →";
+    } else desenhaF1();
+  } else {
+    somErro(); marcaErro("numeros");
+    toast("Esse ainda não, " + NOME() + "! O " + certa[pos] + " vem antes.", true);
+  }
+}
+window.escolheF1 = escolheF1;
+function proxF1(){
+  somClique(); f1.i++; f1.escolhidos = [];
+  if(f1.i >= ORDENAR.length) return quizF1();
+  desenhaF1();
+}
+window.proxF1 = proxF1;
+
+function quizF1(){
+  const perguntas = [
+    { p:"Como se escreve <b>776</b> por extenso?", hab:"numeros",
+      o:["setecentos e setenta e seis","setessentos e setenta e seis",
+         "setecentos e setenta e seis mil","sete centos e setenta e seis"], c:0,
+      e:`<b>700</b> é setecentos, <b>70</b> é setenta, <b>6</b> é seis:
+         <b>setecentos e setenta e seis</b>.` },
+    { p:"Como se escreve <b>132</b> por extenso?", hab:"numeros",
+      o:["cento e trinta e dois","cem e trinta e dois","centos e trinta e dois","cento trinta e dois"], c:0,
+      e:`<b>Cem</b> é quando ele está sozinho. Com companhia vira <b>cento</b>:
+         cento e trinta e dois.` },
+    { p:"Qual número é <b>dois mil, trezentos e cinquenta e três</b>?", hab:"numeros",
+      o:["2353","2000353","20353","2053"], c:0,
+      e:`2 unidades de milhar (2000) + 3 centenas (300) + 5 dezenas (50) + 3 unidades =
+         <b>2353</b>.` },
+    { p:"Qual sinal completa? &nbsp; <b>1250 &nbsp;__&nbsp; 999</b>", hab:"numeros", fixo:true, quatro:true,
+      o:["&gt; (maior que)","&lt; (menor que)","= (igual)","nenhum"], c:0,
+      e:`1250 tem <b>quatro</b> algarismos e 999 tem <b>três</b>. Mais algarismos = maior:
+         <b>1250 &gt; 999</b>. A boquinha abre para o lado do maior.` },
+    { p:"Qual sinal completa? &nbsp; <b>3040 &nbsp;__&nbsp; 3400</b>", hab:"numeros", fixo:true, quatro:true,
+      o:["&lt; (menor que)","&gt; (maior que)","= (igual)","nenhum"], c:0,
+      e:`Os dois têm 4 algarismos e começam com 3. Vá para a ordem seguinte: a centena.
+         <b>0</b> centena contra <b>4</b> centenas → <b>3040 &lt; 3400</b>.` },
+    { p:"Qual é o <b>antecessor</b> de <b>1000</b>?", hab:"numeros", grade:true,
+      o:["999","1001","900","1100"], c:0,
+      e:`Antecessor é o que vem <b>antes</b>: 1000 − 1 = <b>999</b>.` },
+    { p:"Qual é o <b>sucessor</b> de <b>2099</b>?", hab:"numeros", grade:true,
+      o:["2100","2098","3099","2999"], c:0,
+      e:`Sucessor é o de <b>depois</b>: 2099 + 1 = <b>2100</b>. As 9 dezenas e 9 unidades
+         viram uma centena nova.` }
+  ];
+  quizGenerico(0, "🔭 Torre de Controle", perguntas, f1.acertos, ORDENAR.length);
+}
+
+/* ============================================================
+   MISSÃO 2 — PAINEL DE ORDENS (valor posicional)
+   ============================================================ */
+const PAINEL = [3247, 3047, 5017, 2353];
+let f2 = null;
+function fasePosicional(){
+  f2 = { i:0, digitos:[], acertos:0 };
+  desenhaF2();
+}
+function desenhaF2(){
+  const alvo = PAINEL[f2.i];
+  const txt  = String(alvo);
+  const nomes = ["UM","C","D","U"];
+  app.innerHTML = hud("🎛️ Painel de Ordens") + `
+    <div class="card">
+      <p class="mini">Painel ${f2.i+1} de ${PAINEL.length}</p>
+      <div class="progresso"><i style="width:${f2.i/PAINEL.length*100}%"></i></div>
+      <div class="pergunta">Digite o número <b>${porExtenso(alvo)}</b> no painel, uma ordem por vez.</div>
+      <p class="mini">Comece pela ordem mais alta (UM) e vá até as unidades. O <b>zero</b> também
+      é um algarismo — se a ordem estiver vazia, ele guarda o lugar.</p>
+      <div class="rolagem">
+        <table class="ordens">
+          <tr><th class="classe">classe dos milhares</th><th class="classe" colspan="3">classe das unidades simples</th></tr>
+          <tr>${nomes.map((n,k)=>`<th>${4-k}ª ordem<br>${n}</th>`).join("")}</tr>
+          <tr>${nomes.map((n,k)=>{
+            const d = f2.digitos[k];
+            return `<td class="${d===undefined?"vaga":(d===0?"zero":"")}">${d===undefined?"·":d}</td>`;
+          }).join("")}</tr>
+        </table>
+      </div>
+      <div class="tecla">
+        ${[0,1,2,3,4,5,6,7,8,9].map(d=>`<button onclick="teclaF2(${d})">${d}</button>`).join("")}
+        <button class="apaga" onclick="apagaF2()">← apagar</button>
+      </div>
+      <div class="feedback" id="fb2"></div>
+      <div class="acoes esconde" id="prox2">
+        <button class="btn" onclick="proxF2()" id="btn2">Continuar →</button>
+      </div>
+    </div>`;
+}
+function teclaF2(d){
+  if(f2.digitos.length >= 4) return;
+  const alvo = String(PAINEL[f2.i]);
+  const pos  = f2.digitos.length;
+  if(d === +alvo[pos]){
+    somPop(); f2.digitos.push(d);
+    if(f2.digitos.length === 4){
+      somAcerto(); f2.acertos++; ganha(10); marcaAcerto("posicional");
+      desenhaF2();
+      const n = PAINEL[f2.i];
+      const partes = String(n).split("").map((x,k)=> +x * Math.pow(10, 3-k)).filter(v=>v>0);
+      const fb = $("#fb2");
+      fb.className = "feedback bom show";
+      fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>
+        <b>${n} = ${partes.join(" + ")}</b>
+        ${String(n).includes("0") ? `<br>E repare no <b>zero</b>: ele não vale nada sozinho,
+          mas se sair dali o número inteiro muda.` : ``}`;
+      $("#prox2").classList.remove("esconde");
+      $("#btn2").textContent = (f2.i === PAINEL.length-1) ? "Ir para as perguntas →" : "Próximo painel →";
+    } else desenhaF2();
+  } else {
+    somErro(); marcaErro("posicional");
+    const nomes = ["unidades de milhar","centenas","dezenas","unidades"];
+    toast("Nessa casa vai outro algarismo — conte as " + nomes[pos] + ".", true);
+  }
+}
+window.teclaF2 = teclaF2;
+function apagaF2(){ somClique(); f2.digitos.pop(); desenhaF2(); }
+window.apagaF2 = apagaF2;
+function proxF2(){
+  somClique(); f2.i++; f2.digitos = [];
+  if(f2.i >= PAINEL.length) return quizF2();
+  desenhaF2();
+}
+window.proxF2 = proxF2;
+
+function quizF2(){
+  const perguntas = [
+    { p:"No número <b>3247</b>, o algarismo <b>2</b> está em que ordem?", hab:"posicional", quatro:true,
+      o:["3ª ordem — centenas","2ª ordem — dezenas","4ª ordem — unidades de milhar","1ª ordem — unidades"], c:0,
+      e:`Contando da direita para a esquerda: 7 (U), 4 (D), <b>2 (C)</b>, 3 (UM).
+         O 2 vale <b>200</b>.` },
+    { p:"Qual é a decomposição de <b>7891</b>?", hab:"posicional", quatro:true,
+      o:["7000 + 800 + 90 + 1","700 + 80 + 9 + 1","7 + 8 + 9 + 1","7000 + 80 + 90 + 1"], c:0,
+      e:`Cada algarismo vale conforme a casa: 7 UM = 7000, 8 C = 800, 9 D = 90, 1 U = 1.` },
+    { p:"<b>5 unidades de milhar + 0 centena + 1 dezena + 7 unidades</b> formam que número?",
+      hab:"posicional", grade:true, o:["5017","517","5170","5107"], c:0,
+      e:`5000 + 0 + 10 + 7 = <b>5017</b>. O <b>zero</b> tem que ficar na casa das centenas,
+         senão o número vira 517.` },
+    { p:"Qual é a decomposição de <b>3030</b>?", hab:"posicional", quatro:true,
+      o:["3000 + 0 + 30 + 0","3000 + 30","300 + 30","3000 + 300"], c:0,
+      e:`As duas estão certas na conta, mas a prova quer a decomposição <b>por ordem</b>:
+         3 UM, <b>0</b> C, 3 D, <b>0</b> U → <b>3000 + 0 + 30 + 0</b>.` },
+    { p:"Em <b>250</b> e <b>520</b>, quanto vale o algarismo <b>5</b> em cada um?",
+      hab:"posicional", quatro:true,
+      o:["50 e 500","500 e 50","5 e 5","50 e 50"], c:0,
+      e:`Em <b>250</b> o 5 está na casa das dezenas → vale <b>50</b>.
+         Em <b>520</b> está na das centenas → vale <b>500</b>. Mesmo algarismo, lugares diferentes.` },
+    { p:"Quantas <b>dezenas</b> completas tem 1 centena?", hab:"posicional", grade:true,
+      o:["10","100","1","1000"], c:0,
+      e:`1 centena = <b>10 dezenas</b> = 100 unidades. Cada ordem vale 10 vezes a anterior.` }
+  ];
+  quizGenerico(1, "🎛️ Painel de Ordens", perguntas, f2.acertos, PAINEL.length);
+}
+
+/* ============================================================
+   MISSÃO 3 — OFICINA DO FOGUETE (dobro, triplo, divisão)
+   ============================================================ */
+function faseDobro(){
+  const perguntas = [
+    pergNum("O foguete leva <b>14</b> caixas de mantimento. Na volta ele vai levar o <b>dobro</b>.",
+      28, [16,7,42], `<b>Dobro é × 2</b>: 14 × 2 = <b>28</b>. (Dobrar é somar o número com ele
+      mesmo: 14 + 14 = 28.)`, "dobro", "dobro de 14 = ?"),
+    pergNum("Agora o <b>triplo</b> de 14.",
+      42, [28,17,7], `<b>Triplo é × 3</b>: 14 × 3 = <b>42</b>. Ou: 14 + 14 + 14.`,
+      "dobro", "triplo de 14 = ?"),
+    pergNum("E a <b>metade</b> de 14?",
+      7, [28,12,4], `<b>Metade é ÷ 2</b>: 14 ÷ 2 = <b>7</b>, porque 7 + 7 = 14.`,
+      "dobro", "metade de 14 = ?"),
+    { p:"Na conta <b>36 ÷ 4 = 9</b>, quem é o <b>dividendo</b>?", hab:"dobro", quatro:true,
+      o:["36","4","9","o resto"], c:0,
+      e:`O <b>dividendo</b> é o que está sendo repartido — o número gordo da frente: <b>36</b>.
+         (O 4 é o divisor e o 9 é o quociente.)` },
+    { p:"Na conta <b>36 ÷ 4 = 9</b>, quem é o <b>quociente</b>?", hab:"dobro", quatro:true,
+      o:["9","36","4","0"], c:0,
+      e:`O <b>quociente</b> é o resultado — quanto ficou em cada parte: <b>9</b>.` },
+    { p:"Na conta <b>36 ÷ 4 = 9</b>, quem é o <b>divisor</b>?", hab:"dobro", quatro:true,
+      o:["4","36","9","o resto"], c:0,
+      e:`O <b>divisor</b> diz em quantas partes repartir: <b>4</b>.
+         dividendo ÷ <b>divisor</b> = quociente.` },
+    { p:"Qual destas divisões é <b>exata</b>?", hab:"dobro", quatro:true,
+      o:["48 ÷ 6","50 ÷ 6","47 ÷ 6","49 ÷ 6"], c:0,
+      e:`Exata é a que tem <b>resto zero</b>. 6 × 8 = 48, então <b>48 ÷ 6 = 8, resto 0</b>.
+         As outras sobram 2, 5 e 1.` },
+    pergNum("Uma divisão tem divisor <b>7</b>, quociente <b>5</b> e resto <b>0</b>. Qual é o dividendo?",
+      35, [12,2,57], `Confira multiplicando de volta: <b>divisor × quociente + resto = dividendo</b>
+      → 7 × 5 + 0 = <b>35</b>.`, "dobro", "7 × 5 + 0 = ?"),
+    { p:"Numa divisão o <b>divisor é 5</b>. Qual destes <b>não pode</b> ser o resto?",
+      hab:"dobro", grade:true, o:["5","4","1","0"], c:0,
+      e:`O resto é <b>sempre menor que o divisor</b>. Se sobrou <b>5</b> com divisor 5, ainda dava
+         para dar mais uma rodada inteira. Resto 5 = você parou cedo demais.` }
+  ];
+  quizGenerico(2, "⚙️ Oficina do Foguete", perguntas, 0, 0);
+}
+
+/* ============================================================
+   MISSÃO 4 — SALA DE DECISÃO (qual operação usar)
+   Os problemas são os do livro dela. Aqui não se calcula nada:
+   decide-se a operação, que é onde a nota escorrega.
+   ============================================================ */
+const OPS = ["Adição (+)","Subtração (−)","Multiplicação (×)","Divisão (÷)"];
+const DECISOES = [
+  { enun:`Júlia tem <b>120</b> figurinhas e Cristina tem <b>98</b>.
+          Quantas figurinhas as duas têm <b>juntas</b>?`, c:0,
+    e:`"<b>Juntas</b>" manda somar: 120 + 98 = <b>218 figurinhas</b>.` },
+  { enun:`Eduarda ganhou <b>55</b> bolinhas de gude e a irmã dela ganhou <b>46</b>.
+          Qual é a <b>diferença</b> entre as duas quantidades?`, c:1,
+    e:`"<b>Diferença</b>" é comparar, e comparar é <b>subtrair</b>: 55 − 46 = <b>9 bolinhas</b>.
+       <br>A armadilha é somar por reflexo e chegar a 101 — mas 101 não é diferença de nada,
+       é o total.` },
+  { enun:`Sara montou <b>8 ramalhetes</b> e pôs <b>9 flores</b> em cada um.
+          Quantas flores ela usou?`, c:2,
+    e:`São <b>8 grupos iguais</b> de 9 → <b>multiplicação</b>: 8 × 9 = <b>72 flores</b>.
+       <br>Cuidado com o reflexo de fazer 9 − 8 = 1. Um ramalhete sozinho já tem 9 flores;
+       a resposta não pode ser 1.` },
+  { enun:`Um cinema tem <b>9 fileiras</b> com <b>50 poltronas</b> em cada fileira.
+          Quantas poltronas tem o cinema?`, c:2,
+    e:`Fileiras iguais que se repetem → <b>multiplicação</b>: 9 × 50 = <b>450 poltronas</b>.
+       <br>Somar daria 59 — menos que uma fileira só. Quando o resultado é menor que uma das
+       partes, tem coisa errada.` },
+  { enun:`A professora vai separar <b>28 alunos</b> em equipes de <b>7</b>.
+          Quantas equipes ela vai formar?`, c:3,
+    e:`Repartir um total em grupos iguais → <b>divisão</b>: 28 ÷ 7 = <b>4 equipes</b>.
+       <br>28 − 7 = 21 é uma conta certa, mas responde a uma pergunta que ninguém fez.` },
+  { enun:`<b>54 mangas</b> foram guardadas em pacotes de <b>6 mangas</b> cada.
+          Quantos pacotes foram usados?`, c:3,
+    e:`"Quantos pacotes de 6 cabem em 54?" → <b>divisão</b>: 54 ÷ 6 = <b>9 pacotes</b>.` },
+  { enun:`Numa partida de basquete, Tiago fez <b>8 cestas</b> de <b>2 pontos</b> cada.
+          Quantos pontos ele marcou?`, c:2,
+    e:`8 cestas iguais de 2 pontos → <b>multiplicação</b>: 8 × 2 = <b>16 pontos</b>.
+       <br>Somar 8 + 2 daria 10, que não tem relação nenhuma com a situação.` },
+  { enun:`A conta de água da casa de Jorge foi de <b>35, 36, 39, 43 e 44</b> metros cúbicos
+          de janeiro a maio. Qual foi o consumo <b>total</b> nesses 5 meses?`, c:0,
+    e:`São cinco valores <b>diferentes</b>, então não dá para multiplicar — tem que
+       <b>somar</b> um por um: 35 + 36 + 39 + 43 + 44 = <b>197 m³</b>.
+       <br>Multiplicação só serve quando todos os grupos são <b>iguais</b>.` },
+  { enun:`Num campeonato de ginástica participaram <b>242 atletas</b>, e <b>138</b> são meninos.
+          Quantas meninas participaram?`, c:1,
+    e:`O total já é conhecido e você quer <b>tirar</b> uma parte → <b>subtração</b>:
+       242 − 138 = <b>104 meninas</b>.` },
+  { enun:`Quantos <b>grupos de 10 pessoas</b> podem ser formados com <b>50 pessoas</b>?`, c:3,
+    e:`"Quantos grupos de 10 cabem em 50?" → <b>divisão</b>: 50 ÷ 10 = <b>5 grupos</b>.` }
+];
+function faseOperacao(){
+  const perguntas = embaralha(DECISOES).slice(0,8).map(d => ({
+    enun: d.enun,
+    p: "Qual operação resolve este problema? <span class='mini'>(não precisa calcular)</span>",
+    o: OPS, c: d.c, fixo:true, quatro:true, hab:"operacao", e: d.e
+  }));
+  quizGenerico(3, "🎯 Sala de Decisão", perguntas, 0, 0);
+}
+
+/* ============================================================
+   MISSÃO 5 — ESCADA DUPLA (duas etapas · estimar)
+   Cada problema vem em dois degraus: o valor do meio e só depois
+   o que a pergunta realmente pediu.
+   ============================================================ */
+function faseEtapas(){
+  const bolo = `Na festa junina, cada fatia de bolo custa <b>4 reais</b>.
+    Márcio comprou <b>2 fatias</b> e pagou com uma nota de <b>10 reais</b>.`;
+  const papel = `Um caderno custa <b>15 reais</b> e cada caneta custa <b>2 reais</b>.
+    Ana comprou <b>1 caderno e 2 canetas</b> e pagou com <b>50 reais</b>.`;
+  const passeio = `O ônibus para o passeio custa <b>150 reais</b> e os ingressos custam
+    <b>96 reais</b>. A turma já tem <b>200 reais</b> guardados.`;
+
+  const perguntas = [
+    /* --- degrau 1 e 2 do bolo --- */
+    { enun:bolo, p:"<b>1º degrau:</b> quanto Márcio <b>gastou</b> com as fatias?",
+      hab:"etapas", grade:true, o:["8","6","2","40"], c:0,
+      e:`2 fatias × 4 reais = <b>8 reais</b>. Guarde este número: ele ainda não é a resposta final.` },
+    { enun:bolo, p:"<b>2º degrau:</b> e quanto ele recebeu de <b>troco</b>?",
+      hab:"pergunta", grade:true, o:["2","8","10","18"], c:0,
+      e:`Troco é o que volta: 10 − 8 = <b>2 reais</b>.
+         <br>Quem responde <b>8</b> acertou a conta e errou a pergunta — 8 foi o gasto, não o troco.
+         <b>Sempre releia o que se pede antes de escrever.</b>` },
+    /* --- degrau 1 e 2 da papelaria --- */
+    { enun:papel, p:"<b>1º degrau:</b> quanto Ana <b>gastou</b> ao todo?",
+      hab:"etapas", grade:true, o:["19","17","32","21"], c:0,
+      e:`As canetas: 2 × 2 = 4. Com o caderno: 15 + 4 = <b>19 reais</b>.
+         <br>Responder 17 é esquecer que eram <b>duas</b> canetas.` },
+    { enun:papel, p:"<b>2º degrau:</b> quanto ela recebeu de <b>troco</b>?",
+      hab:"pergunta", grade:true, o:["31","19","35","69"], c:0,
+      e:`50 − 19 = <b>31 reais</b>. Confira somando de volta: 31 + 19 = 50 ✓` },
+    /* --- degrau 1 e 2 do passeio --- */
+    { enun:passeio, p:"<b>1º degrau:</b> quanto custa o passeio <b>no total</b>?",
+      hab:"etapas", grade:true, o:["246","54","350","144"], c:0,
+      e:`150 + 96 = <b>246 reais</b>.` },
+    { enun:passeio, p:"<b>2º degrau:</b> quanto ainda <b>falta</b> juntar?",
+      hab:"pergunta", grade:true, o:["46","246","446","54"], c:0,
+      e:`246 − 200 = <b>46 reais</b>. Confira: 200 + 46 = 246 ✓` },
+    /* --- estimativa --- */
+    { p:`<b>Sem armar a conta:</b> <b>147 + 185</b> dá mais ou menos de <b>400</b>?`,
+      hab:"estimativa", quatro:true, fixo:true,
+      o:["Menos de 400","Mais de 400","Exatamente 400","Não dá para saber"], c:0,
+      e:`Arredonde: 147 ≈ <b>150</b> e 185 ≈ <b>200</b>. 150 + 200 = <b>350</b> → <b>menos</b> de 400.
+         <br>(A conta exata dá 332. A estimativa acertou o lado sem precisar armar nada.)` },
+    { p:`<b>Sem armar a conta:</b> <b>650 + 390</b> dá mais ou menos de <b>1000</b>?`,
+      hab:"estimativa", quatro:true, fixo:true,
+      o:["Mais de 1000","Menos de 1000","Exatamente 1000","Não dá para saber"], c:0,
+      e:`390 ≈ <b>400</b>, então 650 + 400 = <b>1050</b> → <b>mais</b> de 1000.
+         <br>(A conta exata dá 1040. Repare como "quase 1000" enganaria.)` },
+    { p:`Uma fábrica produz <b>123 garrafas por hora</b>. Em <b>8 horas</b>, ela produz
+         <b>aproximadamente</b> quantas?`,
+      hab:"estimativa", quatro:true, fixo:true,
+      o:["cerca de 1000","cerca de 100","cerca de 30","cerca de 10000"], c:0,
+      e:`Arredonde 123 para <b>100</b>: 100 × 8 = <b>800</b>, ou seja, perto de <b>1000</b>.
+         <br>(A conta exata dá 984.) Estimar serve para saber o <b>tamanho</b> da resposta antes
+         de calcular — e depois conferir se a conta bateu.` },
+    /* --- subtração com troca --- */
+    pergNum(`Numa empresa trabalham <b>312 pessoas</b> e <b>125</b> são homens.
+             Quantas são mulheres?`, 187, [237, 213, 437],
+      `312 − 125: não dá 2 − 5, <b>troco</b> 1 dezena → 12 − 5 = 7. Não dá 0 − 2, troco 1 centena
+       → 10 − 2 = 8. Sobra 2 − 1 = 1. Resultado <b>187</b>.
+       <br>Confira somando de volta: 187 + 125 = 312 ✓`, "troca", "312 − 125 = ?"),
+    pergNum(`Um grupo tem <b>325 turistas</b> e <b>195</b> não falam inglês.
+             Quantos falam inglês?`, 130, [230, 170, 70],
+      `325 − 195 = <b>130</b>. Troque com calma: 5 − 5 = 0; não dá 2 − 9, troco 1 centena →
+       12 − 9 = 3; sobra 2 − 1 = 1.
+       <br>Confira: 130 + 195 = 325 ✓`, "troca", "325 − 195 = ?"),
+    pergNum(`<b>800 − 125</b>`, 675, [775, 175, 685],
+      `Zero no meio pede duas trocas seguidas. O atalho do livro é mais seguro:
+       subtraia os <b>antecessores</b> → <b>799 − 124 = 675</b>, sem trocar nada.
+       <br>Confira: 675 + 125 = 800 ✓`, "troca", "800 − 125 = ?")
+  ];
+  quizGenerico(4, "🪜 Escada Dupla", perguntas, 0, 0);
+}
+
+/* ============================================================
+   MISSÃO 6 — RELÓGIO DA BASE (horas e calendário)
+   ============================================================ */
+function relogioSVG(h, m){
+  const cx = 100, cy = 100, R = 88;
+  let marcas = "", nums = "";
+  for(let i=0;i<60;i++){
+    const a = (i*6 - 90) * Math.PI/180;
+    const hora = i%5 === 0;
+    const r1 = R - (hora ? 12 : 6);
+    marcas += `<line class="marca ${hora?"hora":""}" x1="${(cx+r1*Math.cos(a)).toFixed(1)}"
+      y1="${(cy+r1*Math.sin(a)).toFixed(1)}" x2="${(cx+R*Math.cos(a)).toFixed(1)}"
+      y2="${(cy+R*Math.sin(a)).toFixed(1)}"/>`;
+  }
+  for(let n=1;n<=12;n++){
+    const a = (n*30 - 90) * Math.PI/180, r = R - 19;
+    nums += `<text class="num" x="${(cx+r*Math.cos(a)).toFixed(1)}"
+      y="${(cy+r*Math.sin(a)).toFixed(1)}">${n}</text>`;
+  }
+  const am = (m*6 - 90) * Math.PI/180;
+  const ah = ((h%12)*30 + m*0.5 - 90) * Math.PI/180;
+  return `<svg class="relogio" viewBox="0 0 200 200" role="img"
+      aria-label="relógio marcando ${h} horas e ${m} minutos">
+    <circle class="mostrador" cx="${cx}" cy="${cy}" r="${R}"/>
+    ${marcas}${nums}
+    <line class="pont-h" x1="${cx}" y1="${cy}" x2="${(cx+36*Math.cos(ah)).toFixed(1)}" y2="${(cy+36*Math.sin(ah)).toFixed(1)}"/>
+    <line class="halo" style="stroke-width:11" x1="${cx}" y1="${cy}" x2="${(cx+58*Math.cos(am)).toFixed(1)}" y2="${(cy+58*Math.sin(am)).toFixed(1)}"/>
+    <line class="pont-m" x1="${cx}" y1="${cy}" x2="${(cx+58*Math.cos(am)).toFixed(1)}" y2="${(cy+58*Math.sin(am)).toFixed(1)}"/>
+    <circle class="centro-p" cx="${cx}" cy="${cy}" r="6"/>
+  </svg>`;
+}
+/* calendário de agosto de 2026: 1/8 caiu num sábado, 31 dias */
+function calendarioAgosto(marcados){
+  const dias = ["dom","seg","ter","qua","qui","sex","sáb"];
+  const inicio = 6;            /* 1º de agosto de 2026 = sábado (índice 6) */
+  let h = `<p class="centro mini"><b>Agosto de 2026</b></p><div class="rolagem"><table class="cal"><tr>`;
+  h += dias.map(d=>`<th>${d}</th>`).join("") + "</tr><tr>";
+  for(let i=0;i<inicio;i++) h += "<td></td>";
+  let col = inicio;
+  for(let d=1; d<=31; d++){
+    if(col === 7){ h += "</tr><tr>"; col = 0; }
+    const fds = (col === 0 || col === 6);
+    const mk  = (marcados||[]).includes(d);
+    h += `<td class="${fds?"fds":""} ${mk?"marcado":""}">${d}</td>`;
+    col++;
+  }
+  while(col < 7 && col > 0){ h += "<td></td>"; col++; }
+  return h + "</tr></table></div>";
+}
+function faseTempo(){
+  const perguntas = [
+    { arte: relogioSVG(10, 15), p:"Que horas o relógio está marcando?",
+      hab:"tempo", quatro:true, o:["10 h e 15 min","10 h e 3 min","3 h e 10 min","11 h e 15 min"], c:0,
+      e:`O ponteiro <b>curto</b> (o gordo) passou do 10 → são <b>10 horas</b>. O <b>comprido</b>
+         está no 3, e cada número vale 5 minutos: 3 × 5 = <b>15 minutos</b> — um quarto de hora.` },
+    { arte: relogioSVG(7, 30), p:"E agora?",
+      hab:"tempo", quatro:true, o:["7 h e 30 min","6 h e 30 min","7 h e 6 min","30 h e 7 min"], c:0,
+      e:`Comprido no <b>6</b> → 6 × 5 = <b>30 minutos</b>, ou seja, <b>meia hora</b>.
+         O curto já passou do 7, então são <b>7h30</b>.` },
+    { arte: relogioSVG(2, 45), p:"E este?",
+      hab:"tempo", quatro:true, o:["2 h e 45 min","2 h e 9 min","9 h e 45 min","3 h e 45 min"], c:0,
+      e:`Comprido no <b>9</b> → 9 × 5 = <b>45 minutos</b> (três quartos de hora).
+         O curto já passou do 2 mas <b>ainda não chegou no 3</b>, então a hora é <b>2</b>.` },
+    { p:"Quantos <b>minutos</b> tem <b>meia hora</b>?", hab:"tempo", grade:true,
+      o:["30","60","15","50"], c:0,
+      e:`1 hora = 60 minutos. Metade de 60 = <b>30 minutos</b>.` },
+    { p:"Quantos <b>minutos</b> tem <b>um quarto de hora</b>?", hab:"tempo", grade:true,
+      o:["15","25","30","40"], c:0,
+      e:`Um quarto é uma parte de quatro: 60 ÷ 4 = <b>15 minutos</b>.` },
+    { arte:`<div class="digital">15:00</div>`,
+      p:"O relógio digital marca <b>15:00</b>. Que hora do dia é essa?",
+      hab:"tempo", quatro:true, o:["3 horas da tarde","3 horas da manhã","5 horas da tarde","15 horas da noite"], c:0,
+      e:`Depois do meio-dia o relógio digital continua contando: 15 − 12 = <b>3</b>.
+         São <b>3 horas da tarde</b>.` },
+    { p:"Uma aula começou às <b>8h30</b> e terminou às <b>11h</b>. Quanto tempo durou?",
+      hab:"tempo", quatro:true, o:["2 h e 30 min","3 h e 30 min","2 h e 70 min","1 h e 30 min"], c:0,
+      e:`Conte em pedaços: das 8h30 às 9h são <b>30 min</b>; das 9h às 11h são <b>2 horas</b>.
+         Total: <b>2 h e 30 min</b>.` },
+    { arte: calendarioAgosto([7, 14]),
+      p:"O dia <b>7</b> de agosto de 2026 caiu numa <b>sexta</b>. Que dia da semana é o dia <b>14</b>?",
+      hab:"tempo", quatro:true, o:["sexta-feira","sábado","quinta-feira","domingo"], c:0,
+      e:`14 − 7 = <b>7 dias</b>, exatamente uma semana. Uma linha para baixo no calendário
+         cai <b>sempre no mesmo dia da semana</b>: <b>sexta</b> de novo.` },
+    { p:"Quantos dias tem o mês de <b>agosto</b>?", hab:"tempo", grade:true,
+      o:["31","30","28","29"], c:0,
+      e:`Agosto tem <b>31</b> dias. Os de 31: jan, mar, mai, jul, <b>ago</b>, out, dez.` },
+    { p:"Quantos meses tem <b>1 ano</b>?", hab:"tempo", grade:true, o:["12","10","7","24"], c:0,
+      e:`<b>12 meses</b>. E 1 semana tem 7 dias, 1 dia tem 24 horas, 1 hora tem 60 minutos.` }
+  ];
+  quizGenerico(5, "🕐 Relógio da Base", perguntas, 0, 0);
+}
+
+/* ============================================================
+   MISSÃO 7 — SALA DE DADOS (gráficos e tabelas)
+   ============================================================ */
+function graficoSVG(titulo, dados, passo){
+  const W = 420, H = 250, esq = 46, base = H - 42, topo = 18;
+  const max = Math.max(...dados.map(d=>d.v));
+  const teto = Math.ceil(max/passo)*passo;
+  const alt  = base - topo;
+  const larg = (W - esq - 16) / dados.length;
+  let guias = "", barras = "";
+  for(let v=0; v<=teto; v+=passo){
+    const y = base - (v/teto)*alt;
+    guias += `<line class="guia" x1="${esq}" y1="${y.toFixed(1)}" x2="${W-8}" y2="${y.toFixed(1)}"/>
+      <text class="rot" x="${esq-6}" y="${(y+4).toFixed(1)}" style="text-anchor:end">${v}</text>`;
+  }
+  dados.forEach((d,i)=>{
+    const h = (d.v/teto)*alt, x = esq + i*larg + larg*0.22, w = larg*0.56;
+    barras += `<rect class="barra b${(i%4)+1}" x="${x.toFixed(1)}" y="${(base-h).toFixed(1)}"
+        width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="3"/>
+      <text class="val" x="${(x+w/2).toFixed(1)}" y="${(base-h-6).toFixed(1)}">${d.v}</text>
+      <text class="rot" x="${(x+w/2).toFixed(1)}" y="${base+16}">${d.r}</text>
+      ${d.r2?`<text class="rot" x="${(x+w/2).toFixed(1)}" y="${base+29}">${d.r2}</text>`:``}`;
+  });
+  return `<div class="gcaixa">
+    <p class="centro" style="margin:0 0 6px;font-weight:bold">${titulo}</p>
+    <svg class="grafico" viewBox="0 0 ${W} ${H}" role="img" aria-label="${titulo}">
+      ${guias}
+      <line class="eixo" x1="${esq}" y1="${topo}" x2="${esq}" y2="${base}"/>
+      <line class="eixo" x1="${esq}" y1="${base}" x2="${W-8}" y2="${base}"/>
+      ${barras}
+    </svg>
+    <p class="centro mini" style="margin:2px 0 0">Dados fictícios.</p>
+  </div>`;
+}
+const TV = [ {r:"20",r2:"pol",v:106}, {r:"29",r2:"pol",v:235}, {r:"36",r2:"pol",v:185}, {r:"42",r2:"pol",v:27} ];
+function tabelaDupla(foco){
+  const linhas = [
+    ["Guardar uma parte do dinheiro", 140, 154, 294],
+    ["Não comprar tudo o que quer",   134, 120, 254],
+    ["Pesquisar preços antes",        150, 128, 278]
+  ];
+  return `<div class="gcaixa">
+    <p class="centro" style="margin:0 0 8px;font-weight:bold">Hábitos de economia dos alunos</p>
+    <div class="rolagem"><table class="dupla">
+      <tr><th>Hábito</th><th>Meninas</th><th>Meninos</th><th>Total</th></tr>
+      ${linhas.map((l,i)=>`<tr><th class="linha">${l[0]}</th>
+        ${[1,2,3].map(k=>`<td class="${foco && foco[0]===i && foco[1]===k ? "foco":""}">${l[k]}</td>`).join("")}
+      </tr>`).join("")}
+      <tr><th class="linha"><b>Total</b></th><td>424</td><td>402</td><td>826</td></tr>
+    </table></div>
+    <p class="centro mini" style="margin:6px 0 0">Dados fictícios.</p>
+  </div>`;
+}
+function faseDados(){
+  const perguntas = [
+    { arte: graficoSVG("Quantidade de aparelhos de televisão em 2021", TV, 50),
+      p:"Qual tamanho de televisão a cidade tem <b>em maior quantidade</b>?",
+      hab:"dados", quatro:true, o:["29 polegadas","36 polegadas","20 polegadas","42 polegadas"], c:0,
+      e:`A barra mais <b>alta</b> é a de 29 polegadas, com <b>235</b> aparelhos.` },
+    { arte: graficoSVG("Quantidade de aparelhos de televisão em 2021", TV, 50),
+      p:"Quantos aparelhos de <b>36 polegadas</b> existem?",
+      hab:"dados", grade:true, o:["185","235","106","27"], c:0,
+      e:`Suba do topo da barra de 36 polegadas até a lateral: <b>185</b> aparelhos.` },
+    { arte: graficoSVG("Quantidade de aparelhos de televisão em 2021", TV, 50),
+      p:"Quantos aparelhos de <b>29 polegadas</b> existem <b>a mais</b> que de 36 polegadas?",
+      hab:"dados", grade:true, o:["50","420","185","30"], c:0,
+      e:`"Quantos <b>a mais</b>" pede <b>subtração</b> entre as duas barras:
+         235 − 185 = <b>50 aparelhos</b>.` },
+    { arte: graficoSVG("Quantidade de alunos do 3º ano", [
+        {r:"já fizeram",r2:"8 anos",v:89},{r:"ainda não",r2:"fizeram 8",v:79}], 10),
+      p:"Quantos alunos cursam o 3º ano nessa escola <b>ao todo</b>?",
+      hab:"dados", grade:true, o:["168","10","89","79"], c:0,
+      e:`"Ao todo" pede <b>soma</b> das duas barras: 89 + 79 = <b>168 alunos</b>.` },
+    { arte: tabelaDupla(),
+      p:"Quantos <b>meninos</b> acham mais importante <b>pesquisar preços antes</b>?",
+      hab:"dados", grade:true, o:["128","278","150","402"], c:0,
+      e:`Ponha um dedo na <b>linha</b> "pesquisar preços" e outro na <b>coluna</b> "Meninos".
+         Onde eles se encontram está o <b>128</b>.
+         <br><b>Cuidado com o 278:</b> aquele é o <b>Total</b> da linha, ou seja, meninas
+         <b>mais</b> meninos juntos. A pergunta falou só de meninos.` },
+    { arte: tabelaDupla([1,1]),
+      p:"Quantas <b>meninas</b> escolheram <b>“não comprar tudo o que quer”</b>?",
+      hab:"dados", grade:true, o:["134","120","254","150"], c:0,
+      e:`Linha "não comprar tudo o que quer" × coluna "Meninas" → <b>134</b>.` },
+    { arte: tabelaDupla(),
+      p:"Qual é o <b>título</b> desta tabela?",
+      hab:"dados", quatro:true,
+      o:["Hábitos de economia dos alunos","Meninas e meninos","Total de alunos","Pesquisar preços"], c:0,
+      e:`O título fica sempre <b>em cima</b> e diz do que a tabela trata:
+         <b>Hábitos de economia dos alunos</b>. Ler o título primeiro evita metade dos erros.` },
+    { arte: tabelaDupla(),
+      p:"No total, participaram mais <b>meninas</b> ou mais <b>meninos</b> da pesquisa?",
+      hab:"dados", quatro:true, o:["Meninas (424)","Meninos (402)","Empataram","Não dá para saber"], c:0,
+      e:`A última linha traz os totais: <b>424 meninas</b> contra <b>402 meninos</b>.
+         424 > 402, então mais meninas — 22 a mais.` }
+  ];
+  quizGenerico(6, "📊 Sala de Dados", perguntas, 0, 0);
+}
+
+/* ============================================================
+   MISSÃO 8 — CONTAGEM REGRESSIVA (arcade + prova final)
+   ============================================================ */
+/* perguntas curtas, uma por habilidade, para o arcade */
+const BANCO = [
+  {hab:"numeros",    q:"Antecessor de <b>500</b>",            o:["499","501","400","550"], c:0},
+  {hab:"numeros",    q:"Sucessor de <b>1999</b>",             o:["2000","1998","1990","2999"], c:0},
+  {hab:"numeros",    q:"<b>899</b> __ <b>1002</b>",           o:["&lt;","&gt;","=","+"], c:0},
+  {hab:"numeros",    q:"<b>4300</b> __ <b>4030</b>",          o:["&gt;","&lt;","=","−"], c:0},
+  {hab:"numeros",    q:"Por extenso, <b>418</b> é…",          o:["quatrocentos e dezoito","quarenta e dezoito","quatro mil e dezoito","quatrocentos e oitenta"], c:0},
+  {hab:"posicional", q:"Em <b>4726</b>, o <b>7</b> vale…",    o:["700","70","7","7000"], c:0},
+  {hab:"posicional", q:"<b>6000 + 400 + 0 + 3</b> = ",        o:["6403","643","6043","6430"], c:0},
+  {hab:"posicional", q:"Quantas ordens tem <b>2508</b>?",     o:["4","3","2","5"], c:0},
+  {hab:"posicional", q:"Em <b>3047</b>, a casa das centenas tem…", o:["0","3","4","7"], c:0},
+  {hab:"dobro",      q:"O <b>dobro</b> de 25",                o:["50","75","12","27"], c:0},
+  {hab:"dobro",      q:"O <b>triplo</b> de 20",               o:["60","40","23","10"], c:0},
+  {hab:"dobro",      q:"A <b>metade</b> de 48",               o:["24","96","44","12"], c:0},
+  {hab:"dobro",      q:"Em <b>45 ÷ 9 = 5</b>, o divisor é…",  o:["9","45","5","0"], c:0},
+  {hab:"dobro",      q:"Em <b>45 ÷ 9 = 5</b>, o quociente é…",o:["5","9","45","4"], c:0},
+  {hab:"operacao",   q:"<b>6 caixas com 7 lápis cada.</b> Quantos lápis?", o:["×","+","−","÷"], c:0},
+  {hab:"operacao",   q:"<b>72 balas em sacos de 8.</b> Quantos sacos?",    o:["÷","−","+","×"], c:0},
+  {hab:"operacao",   q:"<b>Tinha 90, gastou 35.</b> Quanto sobrou?",       o:["−","+","×","÷"], c:0},
+  {hab:"operacao",   q:"<b>115 meninos e 98 meninas.</b> Quantos ao todo?",o:["+","−","×","÷"], c:0},
+  {hab:"operacao",   q:"<b>O triplo de 30.</b> Qual operação?",            o:["×","+","−","÷"], c:0},
+  {hab:"estimativa", q:"<b>210 + 195</b> é mais perto de…",   o:["400","300","600","100"], c:0},
+  {hab:"estimativa", q:"<b>498 + 305</b> passa de 800?",      o:["Sim","Não","Fica igual","Não dá para saber"], c:0},
+  {hab:"troca",      q:"<b>400 − 175</b>",                    o:["225","325","275","235"], c:0},
+  {hab:"troca",      q:"<b>231 − 148</b>",                    o:["83","93","117","183"], c:0},
+  {hab:"tempo",      q:"Meia hora tem quantos minutos?",      o:["30","60","15","50"], c:0},
+  {hab:"tempo",      q:"Ponteiro comprido no <b>9</b> = quantos min?", o:["45","9","30","15"], c:0},
+  {hab:"tempo",      q:"<b>18 h</b> é que hora da tarde?",    o:["6 h","8 h","5 h","4 h"], c:0},
+  {hab:"tempo",      q:"Quantos dias tem uma semana?",        o:["7","5","30","12"], c:0},
+  {hab:"dados",      q:"“Quantos <b>a mais</b>?” pede qual operação?", o:["−","+","×","÷"], c:0},
+  {hab:"dados",      q:"Numa tabela de dupla entrada, o valor está no…", o:["cruzamento da linha com a coluna","fim da linha Total","título","rodapé"], c:0}
+];
+let arc = null, cronoT = null, cronoPausa = false;
+function pararArcade(){ if(cronoT){ clearInterval(cronoT); cronoT = null; } arc = null; }
+function pausaCrono(v){ cronoPausa = !!v; }
+
+function faseFinal(){
+  app.innerHTML = hud("🚀 Contagem Regressiva") + `
+    <div class="card centro">
+      <div style="font-size:60px">🚀</div>
+      <h2>Últimos sistemas, ${NOME()}</h2>
+      <p>Esta missão tem <b>duas partes</b>, e só a segunda vale estrelas:</p>
+      <div class="enunciado" style="text-align:left">
+        <p><b>1 · Arcade da decolagem</b> — 60 segundos de perguntas rápidas de todos os
+        assuntos. Vale <b>pontos</b>, não estrelas. Serve para aquecer.</p>
+        <p style="margin:0"><b>2 · Prova final</b> — sem relógio nenhum. É ela que vale as
+        <b>${POR_MISSAO} estrelas</b>, e ela puxa mais do que você errou.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn chama" onclick="iniciaArcade()">⏱️ Começar o arcade</button>
+        <button class="btn uva" onclick="provaFinal()">🎓 Ir direto para a prova final</button>
+      </div>
+    </div>`;
+}
+function bancoOrdenado(){
+  const lista = [];
+  for(const item of BANCO){
+    lista.push(item);
+    const peso = S.erros[item.hab] || 0;
+    for(let k=0; k<Math.min(peso,3); k++) lista.push(item);   /* o que ela erra aparece mais */
+  }
+  return lista;
+}
+function iniciaArcade(){
+  ac(); somClique();
+  arc = { pontos:0, acertos:0, erros:0, combo:0, tempo:60, usadas:[], banco:bancoOrdenado() };
+  sorteiaArcade();
+  cronoT = setInterval(()=>{
+    if(cronoPausa) return;
+    arc.tempo -= 0.1;
+    const b = document.getElementById("cronoBarra");
+    if(b) b.style.width = Math.max(0, arc.tempo/60*100) + "%";
+    if(arc.tempo <= 0) fimArcade();
+  }, 100);
+}
+window.iniciaArcade = iniciaArcade;
+function sorteiaArcade(){
+  /* trava anti-repetição: nunca repete uma das 6 últimas enquanto houver alternativa */
+  let item = null, voltas = 0;
+  do { item = sorteio(arc.banco); voltas++; }
+  while(arc.usadas.includes(item.q) && voltas < 60);
+  arc.usadas.push(item.q);
+  if(arc.usadas.length > 6) arc.usadas.shift();
+  arc.atual = item;
+  desenhaArcade();
+}
+function desenhaArcade(){
+  const it = arc.atual;
+  const ordem = embaralha(it.o.map((_,i)=>i));
+  const opts  = ordem.map(i=>it.o[i]);
+  arc.certa = ordem.indexOf(it.c);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <div class="placar">
+        <span>⭐ ${arc.pontos}</span>
+        <span>✅ ${arc.acertos}</span>
+        <span class="combo">🔥 ${arc.combo}</span>
+      </div>
+      <div class="cronometro"><i id="cronoBarra" style="width:${Math.max(0,arc.tempo/60*100)}%"></i></div>
+      <p class="mini centro">Responda o máximo que conseguir. Errar não tira estrela nenhuma.</p>
+      <div class="conta" style="font-size:clamp(20px,5.5vw,32px)">${it.q}</div>
+      <div class="opcoes grade" id="ops">
+        ${opts.map((t,k)=>`<button class="op" onclick="respArcade(${k})">${t}</button>`).join("")}
+      </div>
+      <div class="acoes"><button class="btn sec" onclick="fimArcade()">Parar e ir para a prova →</button></div>
+    </div>`;
+}
+function respArcade(k){
+  if(!arc) return;
+  if(k === arc.certa){
+    arc.combo++; arc.acertos++;
+    const p = 10 + arc.combo*2;
+    arc.pontos += p; S.pontos += p;
+    marcaAcerto(arc.atual.hab);
+    somAcerto(); toast("+" + p + (arc.combo>2 ? " 🔥 combo " + arc.combo : ""));
+  } else {
+    arc.combo = 0; arc.erros++;
+    marcaErro(arc.atual.hab);
+    somErro(); toast("Era " + arc.atual.o[arc.atual.c], true);
+  }
+  salvar();
+  sorteiaArcade();
+}
+window.respArcade = respArcade;
+function fimArcade(){
+  if(cronoT){ clearInterval(cronoT); cronoT = null; }
+  const r = arc || {pontos:0,acertos:0,erros:0};
+  arc = null;
+  somVitoria(); salvar();
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">⏱️</div>
+      <h2>Arcade encerrado!</h2>
+      <p>Você acertou <b>${r.acertos}</b> e ganhou <b>${r.pontos} pontos</b>.</p>
+      <p class="mini">Agora vem o que vale as estrelas — <b>sem relógio</b>.</p>
+      <div class="acoes">
+        <button class="btn" onclick="provaFinal()">🎓 Fazer a prova final</button>
+        <button class="btn sec" onclick="iniciaArcade()">🔁 Jogar o arcade de novo</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+window.fimArcade = fimArcade;
+
+/* --- prova final: cobre os 7 assuntos, puxando o que ela mais errou --- */
+const FINAL = [
+  { hab:"numeros", p:"Escreva <b>3 402</b> por extenso:", quatro:true,
+    o:["três mil, quatrocentos e dois","trezentos e quatrocentos e dois",
+       "três mil e quarenta e dois","trinta e quatro mil e dois"], c:0,
+    e:`3 UM → três mil · 4 C → quatrocentos · 0 D · 2 U → e dois.` },
+  { hab:"numeros", p:"Coloque em ordem <b>crescente</b>: 1080 · 1800 · 1008 · 1088", quatro:true,
+    o:["1008 · 1080 · 1088 · 1800","1008 · 1088 · 1080 · 1800",
+       "1800 · 1088 · 1080 · 1008","1080 · 1008 · 1088 · 1800"], c:0,
+    e:`Todos têm 4 algarismos e começam com 1. Compare a centena: 0, 0, 0 e 8 → o 1800 é o
+       maior. Entre os três primeiros, compare a dezena: 0, 8 e 8; depois a unidade: 0 e 8.` },
+  { hab:"posicional", p:"Qual é a decomposição de <b>4 507</b>?", quatro:true,
+    o:["4000 + 500 + 0 + 7","400 + 50 + 7","4000 + 50 + 7","4000 + 500 + 70"], c:0,
+    e:`4 UM = 4000 · 5 C = 500 · <b>0</b> D · 7 U = 7. O zero fica: sem ele viraria 457.` },
+  { hab:"posicional", p:"Em <b>8 216</b>, o algarismo <b>8</b> ocupa qual ordem?", quatro:true,
+    o:["4ª ordem — unidades de milhar","3ª ordem — centenas","1ª ordem — unidades","2ª ordem — dezenas"], c:0,
+    e:`Da direita para a esquerda: 6 (U), 1 (D), 2 (C), <b>8 (UM)</b> — vale 8000.` },
+  { hab:"dobro", p:"O <b>triplo</b> de <b>35</b> é:", grade:true, o:["105","70","38","95"], c:0,
+    e:`Triplo é × 3: 35 × 3 = <b>105</b>.` },
+  { hab:"dobro", p:"Numa divisão exata, quanto vale o <b>resto</b>?", grade:true,
+    o:["0","1","o divisor","o quociente"], c:0,
+    e:`<b>Exata</b> quer dizer que não sobrou nada: resto <b>0</b>.` },
+  { hab:"operacao", enun:`Um pacote traz <b>12 figurinhas</b>. Bruno comprou <b>7 pacotes</b>.`,
+    p:"Qual operação resolve “quantas figurinhas ele tem”?", fixo:true, quatro:true,
+    o:OPS, c:2, e:`7 grupos iguais de 12 → <b>multiplicação</b>: 7 × 12 = 84 figurinhas.` },
+  { hab:"operacao", enun:`Uma escola tem <b>96 alunos</b> e vai formar times de <b>8</b>.`,
+    p:"Qual operação resolve “quantos times”?", fixo:true, quatro:true,
+    o:OPS, c:3, e:`Repartir o total em grupos iguais → <b>divisão</b>: 96 ÷ 8 = 12 times.` },
+  { hab:"operacao", enun:`Um livro tem <b>240 páginas</b> e Lia já leu <b>165</b>.`,
+    p:"Qual operação resolve “quantas faltam”?", fixo:true, quatro:true,
+    o:OPS, c:1, e:`"Quantas faltam" compara com o total → <b>subtração</b>: 240 − 165 = 75.` },
+  { hab:"etapas", enun:`Um caderno custa <b>18 reais</b> e uma borracha <b>3 reais</b>.
+      Camila comprou <b>1 caderno e 2 borrachas</b> e pagou com <b>30 reais</b>.`,
+    p:"Quanto ela recebeu de <b>troco</b>?", grade:true, o:["6","24","9","12"], c:0,
+    e:`1º degrau: 2 × 3 = 6, mais 18 → gastou <b>24</b>. 2º degrau: 30 − 24 = <b>6 reais</b>.
+       <br>Quem para em 24 respondeu o gasto, não o troco.` },
+  { hab:"estimativa", p:"<b>Sem calcular:</b> <b>312 + 289</b> passa de <b>600</b>?", fixo:true, quatro:true,
+    o:["Sim, passa","Não, fica abaixo","Fica exatamente 600","Não dá para saber"], c:0,
+    e:`312 ≈ 300 e 289 ≈ 300 → 300 + 300 = <b>600</b>, e os dois foram arredondados
+       <b>para baixo</b>, então o total passa. (A conta exata dá 601.)` },
+  { hab:"troca", p:"<b>603 − 218</b> =", grade:true, o:["385","495","415","475"], c:0,
+    e:`Pelos antecessores fica fácil: <b>602 − 217 = 385</b>.
+       <br>Confira: 385 + 218 = 603 ✓` },
+  { hab:"tempo", arte:`<div class="digital">20:30</div>`,
+    p:"Que horas são, no jeito de falar do dia a dia?", quatro:true,
+    o:["8 h e meia da noite","10 h e meia da noite","8 h e 3 min","6 h e meia"], c:0,
+    e:`20 − 12 = <b>8</b>, e 30 minutos é <b>meia</b> hora → 8 h e meia da noite.` },
+  { hab:"tempo", p:`Um filme começou às <b>14h15</b> e durou <b>1 hora e 45 minutos</b>.
+      A que horas terminou?`, quatro:true, o:["16h","15h60","16h15","15h45"], c:0,
+    e:`14h15 + 1 h = 15h15. Mais 45 min: 15h15 + 45 min = <b>16h</b>
+       (porque 15 + 45 = 60 min = 1 hora cheia).` },
+  { hab:"dados", arte: tabelaDupla(),
+    p:"Quantas <b>meninas</b> escolheram <b>“guardar uma parte do dinheiro”</b>?", grade:true,
+    o:["140","154","294","424"], c:0,
+    e:`Linha "guardar uma parte" × coluna "Meninas" → <b>140</b>.
+       O 294 é o Total daquela linha, e o 424 é o total de todas as meninas.` },
+  { hab:"dados", arte: graficoSVG("Quantidade de aparelhos de televisão em 2021", TV, 50),
+    p:"Quantos aparelhos de <b>20</b> e de <b>42</b> polegadas existem <b>juntos</b>?", grade:true,
+    o:["133","79","106","185"], c:0,
+    e:`"Juntos" pede soma: 106 + 27 = <b>133 aparelhos</b>.` }
+];
+function provaFinal(){
+  pararArcade();
+  const pool = [];
+  for(const q of FINAL){
+    pool.push({q, peso: 1 + Math.min(S.erros[q.hab]||0, 3)});
+  }
+  /* sorteio sem repetir, com peso: quem ela erra mais tem mais chance de ser puxada */
+  const escolhidas = [];
+  const resto = pool.slice();
+  while(escolhidas.length < 12 && resto.length){
+    const soma = resto.reduce((a,b)=>a+b.peso,0);
+    let r = Math.random()*soma, k = 0;
+    while(k < resto.length-1 && r > resto[k].peso){ r -= resto[k].peso; k++; }
+    escolhidas.push(resto[k].q);
+    resto.splice(k,1);
+  }
+  quizGenerico(N_MISSOES-1, "🎓 Prova Final", embaralha(escolhidas), 0, 0);
+}
+window.provaFinal = provaFinal;
+
+/* ============================================================
+   DIPLOMA
+   ============================================================ */
+function telaDiploma(){
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(3);
+  app.innerHTML = hud() + `
+    <div class="diploma">
+      <div class="selo">🏅</div>
+      <h2>${g("PRONTA","PRONTO")} PARA A PROVA<br>DE MATEMÁTICA</h2>
+      <p>A base de lançamento certifica que</p>
+      <div class="nome">${NOME()}</div>
+      <p>conferiu os <b>${N_MISSOES-1} sistemas</b> do roteiro da 3ª etapa: escrever e comparar
+      números, valor posicional, dobro, triplo e divisão, escolher a operação certa, problemas
+      de duas etapas, relógio e calendário, gráficos e tabelas.</p>
+      <p class="fila-estrelas">${"⭐".repeat(totalEstrelas)}</p>
+      <p><b>${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas</b> · <b>${S.pontos} pontos</b></p>
+      <p style="margin-top:18px;font-style:italic">Matemática · 3º ano · 3ª etapa</p>
+    </div>
+    <div class="acoes">
+      <button class="btn" onclick="irMapa()">🗺️ Voltar à plataforma</button>
+      <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      <button class="btn uva" onclick="window.print()">🖨️ Imprimir diploma</button>
+    </div>
+    ${fracas.length?`<div class="card centro">
+      <p class="mini">Ainda escorregando em: <b>${fracas.map(h=>NOME_HAB[h]||h).join(" · ")}</b>.
+      Refaça a <b>Contagem Regressiva</b> — esses assuntos vão aparecer bastante.</p></div>`:``}
+    ${totalEstrelas<TOTAL_ESTRELAS?`<div class="card centro">
+      <p class="mini">Faltam <b>${TOTAL_ESTRELAS-totalEstrelas}</b> estrelas para a nota máxima, ${NOME()}.
+      Dá para refazer qualquer missão pela plataforma — e as estrelas só sobem!</p></div>`:`
+    <div class="card destaque centro"><div style="font-size:50px">👑</div>
+      <p><b>PERFEIÇÃO, ${NOME()}!</b> Todas as <b>${TOTAL_ESTRELAS} estrelas</b>.
+      Pode ir para a prova de cabeça erguida.</p></div>`}`;
+}
+
+/* ============================================================
+   INÍCIO
+   ============================================================ */
+if(carregar()){
+  S.cena = S.missoes.some(Boolean) ? "mapa" : "inicio";
+} else {
+  S.cena = "nome";
+}
+render();
+</script>
+</body>
+</html>
