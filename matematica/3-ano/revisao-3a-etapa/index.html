@@ -165,6 +165,8 @@ table.ordens th.classe{background:#2b437f;color:var(--ink);font-size:.78em}
 .relogio .pont-m{stroke:var(--turbo);stroke-width:5;stroke-linecap:round}
 .relogio .halo{stroke:#070d1f;stroke-linecap:round}
 .relogio .centro-p{fill:var(--chama)}
+.pend-h .pont-h{opacity:.16}
+.pend-m .pont-m,.pend-m .halo{opacity:.16}
 .digital{
   background:#04101c;border:3px solid var(--turbo);border-radius:14px;
   font-size:clamp(30px,9vw,50px);font-weight:bold;color:var(--turbo);text-align:center;
@@ -186,6 +188,7 @@ table.cal td.marcado{background:var(--ouro);color:#301103;font-weight:bold;borde
 .grafico .eixo{stroke:#93a7d4;stroke-width:2}
 .grafico .guia{stroke:#2b437f;stroke-width:1;stroke-dasharray:4 4}
 .grafico .rot{fill:var(--muted);font-size:11px;text-anchor:middle;font-family:"Trebuchet MS",sans-serif}
+.grafico .salto{fill:none;stroke:var(--chama);stroke-width:2.5;marker-end:none}
 .grafico .val{fill:var(--ink);font-size:12px;font-weight:bold;text-anchor:middle;font-family:"Trebuchet MS",sans-serif}
 table.dupla{border-collapse:collapse;margin:0 auto;font-variant-numeric:tabular-nums;font-size:.92em}
 table.dupla th,table.dupla td{border:1px solid #35529b;padding:8px 11px;text-align:center}
@@ -1116,26 +1119,49 @@ const AULAS = [
        <div class="destaque">3 h da tarde = <b>15 h</b> · 8 h da noite = <b>20 h</b></div>
        <p>É por isso que o ônibus das <b>19 h</b> é o das 7 da noite.</p>`,
      chave:`Manhã: o número mesmo. Tarde e noite: <b>+12</b>.`},
-    {ico:"⏳", tit:"Quanto tempo passou",
-     txt:`Para saber <b>quanto tempo durou</b>, conte por partes — primeiro as horas cheias,
-       depois os minutos:
+    {ico:"⏳", tit:"Quanto tempo passou — conte em saltos",
+     txt:`Aqui vale o mesmo truque que o seu livro usa para subtrair na <b>reta numérica</b>:
+       em vez de armar conta, você <b>anda em saltos</b> e soma os saltos.
        <p><i>"Começou 8h30 e terminou 11h. Quanto durou?"</i></p>
        <ul class="lista">
-       <li>das 8h30 às 9h → <b>30 min</b></li>
-       <li>das 9h às 11h → <b>2 horas</b></li>
-       <li>total: <b>2 h e 30 min</b></li>
-       </ul>`,
-     chave:`Conte em pedaços: até a hora cheia, depois de hora em hora.`},
-    {ico:"📅", tit:"O calendário",
-     txt:`<ul class="lista">
-       <li><b>1 semana = 7 dias</b> · <b>1 ano = 12 meses</b></li>
+       <li>primeiro salte até a <b>hora cheia</b>: das 8h30 às 9h → <b>+30 min</b></li>
+       <li>depois salte <b>de hora em hora</b>: 9h → 10h → 11h → <b>+2 h</b></li>
+       <li>some os saltos: <b>2 h e 30 min</b></li>
+       </ul>
+       <p><b>Nunca escreva "2 h e 70 min".</b> Passou de 60 minutos, vira mais uma hora —
+       do mesmo jeito que 10 unidades viram 1 dezena.</p>`,
+     chave:`Salte até a hora cheia, depois de hora em hora, e some os saltos.`},
+    {ico:"🪜", tit:"Tempo também tem degrau escondido",
+     txt:`Lembra da <b>Escada Dupla</b>? Problema de tempo faz o mesmo truque com você:
+       <p><i>"O lançamento era 9h20. Atrasou 40 minutos e depois a contagem levou mais 15."</i></p>
+       <ul class="lista">
+       <li><b>1º degrau:</b> 9h20 + 40 min = <b>10h</b> (20 + 40 = 60 min = 1 hora cheia)</li>
+       <li><b>2º degrau:</b> 10h + 15 min = <b>10h15</b></li>
+       </ul>
+       <p>Quem entrega <b>10h</b> respondeu o fim do atraso, não a hora da decolagem.
+       E não existe "9h60": ao chegar em 60 minutos, some 1 na hora e zere os minutos.</p>`,
+     chave:`Releia a pergunta. E 60 minutos viram 1 hora, nunca "h60".`},
+    {ico:"📏", tit:"Escreva a unidade",
+     txt:`Uma resposta de tempo sem unidade não é resposta. E a unidade errada derruba a
+       questão inteira, mesmo com a conta certa:
+       <div class="destaque">45 <b>minutos</b> ✓ &nbsp;·&nbsp; 45 horas ✗ &nbsp;·&nbsp; 45 ✗</div>
+       <p>45 horas seriam quase <b>dois dias inteiros</b> de treino. Antes de entregar,
+       pergunte: minutos, horas ou dias?</p>`,
+     chave:`Número sem unidade não responde "quanto tempo".`},
+    {ico:"📅", tit:"O calendário é uma tabela de dupla entrada",
+     txt:`Repare no formato dele: a <b>coluna</b> diz o <b>dia da semana</b> e a <b>linha</b> diz
+       <b>qual semana</b> do mês. É exatamente a tabela de dupla entrada da missão de gráficos —
+       um dedo na linha, outro na coluna.
+       <p>E daí sai o atalho: <b>descer uma linha é somar 7 dias</b>, sempre caindo na
+       <b>mesma coluna</b>, ou seja, no mesmo dia da semana.</p>
+       <div class="destaque">7 → 14 → 21 · todas sextas</div>
+       <ul class="lista">
+       <li><b>1 semana = 7 dias</b> · <b>1 ano = 12 meses</b> · <b>1 dia = 24 horas</b></li>
        <li>Meses com <b>31</b> dias: janeiro, março, maio, julho, agosto, outubro, dezembro</li>
        <li>Meses com <b>30</b>: abril, junho, setembro, novembro</li>
        <li><b>Fevereiro</b> é o esquisito: 28 dias (29 no ano bissexto)</li>
-       </ul>
-       <p>No calendário, andar <b>uma linha para baixo</b> é somar <b>7 dias</b> — cai sempre no
-       mesmo dia da semana.</p>`,
-     chave:`Uma linha abaixo no calendário = <b>+7 dias</b>, mesmo dia da semana.`}
+       </ul>`,
+     chave:`Uma linha abaixo = <b>+7 dias</b>, mesma coluna, mesmo dia da semana.`}
   ],
   /* ---- 7 · gráficos e tabelas ---- */
   [
@@ -1790,16 +1816,132 @@ function calendarioAgosto(marcados){
   while(col < 7 && col > 0){ h += "<td></td>"; col++; }
   return h + "</tr></table></div>";
 }
+/* --- reta numérica do tempo: o mesmo recurso que o livro usa para subtrair
+   (p.131, "quantos metros faltam", contando saltos na reta) --- */
+function linhaDoTempoSVG(h1, m1, h2, m2){
+  const W=440, H=118, esq=30, dir=W-22, y=76;
+  const ini = h1*60+m1, fim = h2*60+m2;
+  const marcos = [];
+  let t = ini;
+  if(m1 !== 0){ const prox = (h1+1)*60; marcos.push([ini, prox]); t = prox; }
+  while(t + 60 <= fim){ marcos.push([t, t+60]); t += 60; }
+  if(t < fim) marcos.push([t, fim]);
+  const larg = dir - esq, total = fim - ini;
+  const px = v => esq + ((v-ini)/total)*larg;
+  const rot = v => Math.floor(v/60) + "h" + (v%60 ? String(v%60).padStart(2,"0") : "");
+  let arcos = "", ticks = "";
+  const pontos = [ini, ...marcos.map(s=>s[1])];
+  pontos.forEach(v=>{
+    ticks += `<line class="eixo" x1="${px(v).toFixed(1)}" y1="${y-7}" x2="${px(v).toFixed(1)}" y2="${y+7}"/>
+      <text class="rot" x="${px(v).toFixed(1)}" y="${y+24}">${rot(v)}</text>`;
+  });
+  marcos.forEach(([a,b])=>{
+    const xa=px(a), xb=px(b), mx=(xa+xb)/2;
+    arcos += `<path class="salto" d="M ${xa.toFixed(1)} ${y-9} Q ${mx.toFixed(1)} ${y-40} ${xb.toFixed(1)} ${y-9}"/>
+      <text class="val" x="${mx.toFixed(1)}" y="${y-44}">+${b-a===60?"1 h":(b-a)+" min"}</text>`;
+  });
+  return `<div class="gcaixa">
+    <p class="centro mini" style="margin:0 0 4px">Contando de pedaço em pedaço, como na reta numérica</p>
+    <svg class="grafico" viewBox="0 0 ${W} ${H}" role="img"
+      aria-label="linha do tempo de ${rot(ini)} até ${rot(fim)}">
+      <line class="eixo" x1="${esq}" y1="${y}" x2="${dir}" y2="${y}"/>
+      ${ticks}${arcos}
+    </svg></div>`;
+}
+
+/* --- fase interativa: acertar os dois ponteiros --- */
+const ACERTAR = [
+  {h:7,  m:15, txt:"sete horas e quinze minutos", dica:"Quinze minutos é um quarto de hora."},
+  {h:2,  m:30, txt:"duas e meia da tarde",        dica:"“E meia” é sempre 30 minutos — o comprido no 6."},
+  {h:9,  m:45, txt:"nove horas e quarenta e cinco minutos", dica:"45 min = três quartos de hora."},
+  {h:6,  m:0,  txt:"seis horas em ponto",         dica:"“Em ponto” quer dizer 0 minuto — o comprido no 12."}
+];
+let f6 = null;
 function faseTempo(){
+  f6 = { i:0, h:null, m:null, acertos:0 };
+  desenhaF6();
+}
+function desenhaF6(){
+  const r = ACERTAR[f6.i];
+  const ph = f6.h===null ? 12 : f6.h, pm = f6.m===null ? 0 : f6.m;
+  const faltaH = f6.h===null;
+  app.innerHTML = hud("🕐 Relógio da Base") + `
+    <div class="card">
+      <p class="mini">Relógio ${f6.i+1} de ${ACERTAR.length}</p>
+      <div class="progresso"><i style="width:${f6.i/ACERTAR.length*100}%"></i></div>
+      <div class="pergunta">Acerte o relógio para marcar <b>${r.txt}</b>.</div>
+      <div class="${f6.h===null?"pend-h ":""}${f6.m===null?"pend-m":""}">${relogioSVG(ph, pm)}</div>
+      <p class="centro mini" style="margin:0 0 10px">
+        ${f6.h===null ? "Nenhum ponteiro colocado ainda." :
+          `curto na <b style="color:var(--ouro)">hora ${f6.h}</b>` +
+          (f6.m===null ? " · falta o comprido" : ` · comprido em <b style="color:var(--turbo)">${f6.m} min</b>`)}
+      </p>
+      <div class="enunciado" style="border-color:${faltaH?"var(--ouro)":"var(--turbo)"}">
+        ${faltaH
+          ? `<b>1º — o ponteiro curto (das horas).</b> Em que número ele fica?`
+          : `<b>2º — o ponteiro comprido (dos minutos).</b> Lembre: cada número vale <b>5 minutos</b>.`}
+      </div>
+      <div class="opcoes grade" id="ops">
+        ${faltaH
+          ? [1,2,3,4,5,6,7,8,9,10,11,12].map(n=>
+              `<button class="op" onclick="poeF6('h',${n})">${n}</button>`).join("")
+          : [12,1,2,3,4,5,6,7,8,9,10,11].map(n=>{
+              const min = (n%12)*5;
+              return `<button class="op" onclick="poeF6('m',${min})" style="font-size:1em;flex-direction:column;gap:2px">
+                <span>nº ${n}</span><span class="mini">${min} min</span></button>`;
+            }).join("")}
+      </div>
+      <div class="feedback" id="fb6"></div>
+      <div class="acoes esconde" id="prox6">
+        <button class="btn" onclick="proxF6()" id="btn6">Continuar →</button>
+      </div>
+      ${f6.h!==null?`<div class="acoes"><button class="btn sec" onclick="limpaF6()">↩️ Recomeçar este relógio</button></div>`:``}
+    </div>`;
+}
+function limpaF6(){ somClique(); f6.h=null; f6.m=null; desenhaF6(); }
+window.limpaF6 = limpaF6;
+function poeF6(qual, v){
+  const r = ACERTAR[f6.i];
+  if(qual === "h"){
+    if(v !== r.h){
+      somErro(); marcaErro("tempo");
+      toast("Esse é o ponteiro das horas — " + r.txt.split(" ")[0] + " não é " + v + ".", true);
+      return;
+    }
+    somPop(); f6.h = v; desenhaF6(); return;
+  }
+  if(v !== r.m){
+    somErro(); marcaErro("tempo");
+    toast("Aí seriam " + v + " minutos. " + r.dica, true);
+    return;
+  }
+  somAcerto(); f6.m = v; f6.acertos++; ganha(10); marcaAcerto("tempo");
+  desenhaF6();
+  const fb = $("#fb6");
+  fb.className = "feedback bom show";
+  fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>
+    <b>${r.h}h${String(r.m).padStart(2,"0")}</b> — curto no <b>${r.h}</b>, comprido em <b>${r.m} min</b>.
+    ${r.m ? `Repare: o comprido está no número <b>${r.m/5}</b>, e ${r.m/5} × 5 = <b>${r.m}</b>.` :
+            `Comprido no <b>12</b> quer dizer <b>zero</b> minuto.`}
+    ${r.txt.includes("tarde") ? `<br>Como é <b>de tarde</b>, no relógio digital isso aparece como
+      <b>${r.h+12}:${String(r.m).padStart(2,"0")}</b> — ${r.h} + 12.` : ``}`;
+  $("#prox6").classList.remove("esconde");
+  $("#btn6").textContent = (f6.i === ACERTAR.length-1) ? "Ir para as perguntas →" : "Próximo relógio →";
+}
+window.poeF6 = poeF6;
+function proxF6(){
+  somClique(); f6.i++; f6.h=null; f6.m=null;
+  if(f6.i >= ACERTAR.length) return quizF6();
+  desenhaF6();
+}
+window.proxF6 = proxF6;
+
+function quizF6(){
   const perguntas = [
     { arte: relogioSVG(10, 15), p:"Que horas o relógio está marcando?",
       hab:"tempo", quatro:true, o:["10 h e 15 min","10 h e 3 min","3 h e 10 min","11 h e 15 min"], c:0,
       e:`O ponteiro <b>curto</b> (o gordo) passou do 10 → são <b>10 horas</b>. O <b>comprido</b>
          está no 3, e cada número vale 5 minutos: 3 × 5 = <b>15 minutos</b> — um quarto de hora.` },
-    { arte: relogioSVG(7, 30), p:"E agora?",
-      hab:"tempo", quatro:true, o:["7 h e 30 min","6 h e 30 min","7 h e 6 min","30 h e 7 min"], c:0,
-      e:`Comprido no <b>6</b> → 6 × 5 = <b>30 minutos</b>, ou seja, <b>meia hora</b>.
-         O curto já passou do 7, então são <b>7h30</b>.` },
     { arte: relogioSVG(2, 45), p:"E este?",
       hab:"tempo", quatro:true, o:["2 h e 45 min","2 h e 9 min","9 h e 45 min","3 h e 45 min"], c:0,
       e:`Comprido no <b>9</b> → 9 × 5 = <b>45 minutos</b> (três quartos de hora).
@@ -1815,22 +1957,48 @@ function faseTempo(){
       hab:"tempo", quatro:true, o:["3 horas da tarde","3 horas da manhã","5 horas da tarde","15 horas da noite"], c:0,
       e:`Depois do meio-dia o relógio digital continua contando: 15 − 12 = <b>3</b>.
          São <b>3 horas da tarde</b>.` },
-    { p:"Uma aula começou às <b>8h30</b> e terminou às <b>11h</b>. Quanto tempo durou?",
+    /* intervalo pelo método da reta numérica, igual ao do livro */
+    { arte: linhaDoTempoSVG(8,30, 11,0),
+      p:"Uma aula começou às <b>8h30</b> e terminou às <b>11h</b>. Quanto tempo durou?",
       hab:"tempo", quatro:true, o:["2 h e 30 min","3 h e 30 min","2 h e 70 min","1 h e 30 min"], c:0,
-      e:`Conte em pedaços: das 8h30 às 9h são <b>30 min</b>; das 9h às 11h são <b>2 horas</b>.
-         Total: <b>2 h e 30 min</b>.` },
-    { arte: calendarioAgosto([7, 14]),
-      p:"O dia <b>7</b> de agosto de 2026 caiu numa <b>sexta</b>. Que dia da semana é o dia <b>14</b>?",
+      e:`Conte os saltos da linha: 30 min até as 9h, depois 1 h e mais 1 h.
+         30 min + 2 h = <b>2 h e 30 min</b>.
+         <br>Nunca escreva "2 h e 70 min": passou de 60 minutos, vira mais uma hora.` },
+    /* problema de duas etapas com tempo — o degrau escondido dela */
+    { enun:`O lançamento estava marcado para as <b>9h20</b>. Houve um atraso de
+            <b>40 minutos</b> e, depois disso, a contagem regressiva ainda levou <b>15 minutos</b>.`,
+      p:"A que horas o foguete decolou?", hab:"pergunta", quatro:true,
+      o:["10h15","9h60","10h00","9h75"], c:0,
+      e:`<b>1º degrau:</b> 9h20 + 40 min = <b>10h</b> (20 + 40 = 60 min = 1 hora cheia).
+         <b>2º degrau:</b> 10h + 15 min = <b>10h15</b>.
+         <br>Quem para no primeiro degrau responde 10h — que era só o fim do atraso, não a decolagem.` },
+    /* armadilha da unidade — o erro dos "625 quilômetros" */
+    { enun:`Um treino de astronauta começou às <b>14h</b> e acabou às <b>14h45</b>.`,
+      p:"Qual resposta está escrita <b>corretamente</b>?", hab:"tempo", quatro:true, fixo:true,
+      o:["45 minutos","45 horas","45","4h5min"], c:0,
+      e:`A conta certa com a <b>unidade errada</b> perde ponto igual. De 14h a 14h45 passaram
+         <b>45 minutos</b> — não 45 horas (isso seria quase dois dias inteiros), e um número
+         sozinho não responde "quanto tempo".` },
+    /* calendário lido como tabela de dupla entrada */
+    { arte: calendarioAgosto([7, 14, 21]),
+      p:"O dia <b>7</b> caiu numa <b>sexta</b>. Que dia da semana é o dia <b>21</b>?",
       hab:"tempo", quatro:true, o:["sexta-feira","sábado","quinta-feira","domingo"], c:0,
-      e:`14 − 7 = <b>7 dias</b>, exatamente uma semana. Uma linha para baixo no calendário
-         cai <b>sempre no mesmo dia da semana</b>: <b>sexta</b> de novo.` },
+      e:`No calendário, a <b>coluna</b> é o dia da semana e a <b>linha</b> é a semana —
+         igualzinho a uma tabela de dupla entrada. Descer uma linha é somar <b>7 dias</b>:
+         7 → 14 → <b>21</b>, tudo na mesma coluna, todas <b>sextas</b>.
+         <br>(E o dia 21 é justamente o da sua prova. 🚀)` },
+    { arte: calendarioAgosto([18, 21]),
+      p:"De <b>18</b> a <b>21</b> de agosto, quantos dias faltam?",
+      hab:"tempo", grade:true, o:["3","4","2","39"], c:0,
+      e:`21 − 18 = <b>3 dias</b>. Conte pulando no calendário: 19, 20, 21 → três pulos.` },
     { p:"Quantos dias tem o mês de <b>agosto</b>?", hab:"tempo", grade:true,
       o:["31","30","28","29"], c:0,
-      e:`Agosto tem <b>31</b> dias. Os de 31: jan, mar, mai, jul, <b>ago</b>, out, dez.` },
+      e:`Agosto tem <b>31</b> dias. Os de 31: jan, mar, mai, jul, <b>ago</b>, out, dez.
+         Os de 30: abr, jun, set, nov. E fevereiro, 28 (ou 29).` },
     { p:"Quantos meses tem <b>1 ano</b>?", hab:"tempo", grade:true, o:["12","10","7","24"], c:0,
       e:`<b>12 meses</b>. E 1 semana tem 7 dias, 1 dia tem 24 horas, 1 hora tem 60 minutos.` }
   ];
-  quizGenerico(5, "🕐 Relógio da Base", perguntas, 0, 0);
+  quizGenerico(5, "🕐 Relógio da Base", perguntas, f6.acertos, ACERTAR.length);
 }
 
 /* ============================================================
