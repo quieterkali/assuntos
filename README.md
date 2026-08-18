@@ -10,10 +10,12 @@ arquivo HTML: sem rede, sem dependências, funciona no celular e no computador.
 | Matéria | Ano | Assunto | Base do conteúdo | Jogar |
 |---|---|---|---|---|
 | Ciências | 3º | O Corpo Humano | Cap. 9, p. 121–131 (fotos do livro) | [6 missões](https://quieterkali.github.io/assuntos/ciencias/3-ano/corpo-humano/) |
+| Matemática | 3º | Fábrica da Tabuada — multiplicação de 0 a 9 | currículo padrão do ano | [6 missões](https://quieterkali.github.io/assuntos/matematica/3-ano/tabuada/) |
 | História | 6º | Rios do Tempo — Mesopotâmia e Egito | currículo padrão (BNCC EF06HI06–09) | [6 missões](https://quieterkali.github.io/assuntos/historia/6-ano/civilizacoes-antigas/) |
 
-> O jogo de História **pergunta o nome antes de começar** e personaliza tudo com ele — incluindo
-> a concordância (arqueólogo/arqueóloga) e o diploma final.
+> Todos os jogos **perguntam o nome antes de começar** e personalizam tudo com ele — inclusive a
+> concordância de gênero escolhida pela criança e o diploma final. E **cada missão começa com uma
+> aula curta**, narrada por um guia diferente em cada matéria.
 
 ## Estrutura
 
@@ -29,6 +31,7 @@ Como está hoje:
 
 ```
 /ciencias/3-ano/corpo-humano/
+/matematica/3-ano/tabuada/
 /historia/6-ano/civilizacoes-antigas/
 ```
 
@@ -66,6 +69,12 @@ Estes foram decididos depois de testar e encontrar o problema, não a priori:
 - **Alvos de toque generosos e nunca sobrepostos** — dedo de criança, tela de celular.
 - **Refazer só melhora.** As estrelas nunca descem.
 - **Quem joga tem nome.** Nada de constante fixa no código: o jogo pergunta e personaliza.
+- **A explicação vem antes do erro, não só depois dele.** Cada missão abre com uma aula curta:
+  um conceito por slide, uma frase-chave, e o último slide diz o que vai cair. Só aparece na
+  estreia da missão, e dá para pular.
+- **Habilidade se treina, conteúdo se entende.** Em matéria de treino (tabuada), o jogo **anota o
+  que a criança errou** e faz esses fatos voltarem com mais frequência depois. Errar é dado, não
+  fracasso.
 
 ## Privacidade
 

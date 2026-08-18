@@ -1,0 +1,1802 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Fábrica da Tabuada</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%8D%AA%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#07202a; --bg2:#0c2f3d; --panel:#0f3a4a; --panel2:#155063;
+  --ink:#f2fbff; --muted:#9fc4d0;
+  --limao:#a3e635; --laranja:#fb923c; --amarelo:#fbbf24; --ciano:#22d3ee;
+  --rosa:#f472b6; --verde:#34d399; --vermelho:#fb7185; --biscoito:#d9a441;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1000px 700px at 10% -10%, #0e7490 0%, transparent 55%),
+    radial-gradient(900px 600px at 92% 4%, #7c2d12 0%, transparent 50%),
+    radial-gradient(900px 700px at 50% 112%, #3f6212 0%, transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px; line-height:1.5;
+  overflow-x:hidden;
+}
+#estrelas{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:16px 14px 60px}
+
+h1,h2,h3{margin:0 0 10px;line-height:1.15}
+h1{font-size:clamp(28px,7vw,46px)}
+h2{font-size:clamp(22px,5vw,32px)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;font-weight:bold;
+  background:linear-gradient(135deg,var(--limao),var(--verde));color:#08240f;
+  box-shadow:0 6px 0 #3f6212, 0 12px 24px rgba(0,0,0,.4);
+  transition:transform .08s, box-shadow .08s; font-size:1.05em;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #3f6212,0 6px 14px rgba(0,0,0,.35)}
+.btn.sec{background:linear-gradient(135deg,#1c5266,#123a49);color:var(--ink);box-shadow:0 6px 0 #0a2733,0 10px 20px rgba(0,0,0,.3)}
+.btn.ciano{background:linear-gradient(135deg,var(--ciano),#3b82f6);color:#04222b;box-shadow:0 6px 0 #155e75,0 12px 24px rgba(0,0,0,.35)}
+.btn.laranja{background:linear-gradient(135deg,var(--amarelo),var(--laranja));color:#3a1d05;box-shadow:0 6px 0 #9a3412,0 12px 24px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ---------- HUD ---------- */
+.hud{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:rgba(15,58,74,.85);border:2px solid #1d6b83;border-radius:var(--r);
+  padding:10px 14px;margin-bottom:14px;backdrop-filter:blur(6px);
+}
+.hud .nome{font-weight:bold;color:var(--amarelo)}
+.chip{
+  background:#082430;border:2px solid #1d6b83;border-radius:999px;
+  padding:4px 13px;font-size:.9em;font-weight:bold;white-space:nowrap;color:var(--ink)
+}
+.chip.pts{color:var(--amarelo);border-color:#8a6a13}
+.hud .espaco{flex:1}
+
+/* ---------- cartões ---------- */
+.card{
+  background:linear-gradient(160deg,rgba(21,80,99,.92),rgba(8,32,42,.94));
+  border:2px solid #1d6b83;border-radius:var(--r);padding:20px;margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4)
+}
+.card.destaque{border-color:var(--amarelo);box-shadow:0 0 0 3px rgba(251,191,36,.18),0 10px 30px rgba(0,0,0,.45)}
+
+/* ---------- mapa de missões ---------- */
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.missao{
+  position:relative;text-align:left;width:100%;
+  background:linear-gradient(160deg,#14586e,#0b3140);
+  border:2px solid #227d99;border-radius:var(--r);padding:16px 16px 14px;
+  color:var(--ink);transition:transform .12s,border-color .12s;
+}
+.missao:not(.trancada):hover{transform:translateY(-4px);border-color:var(--limao)}
+.missao.trancada{opacity:.5;filter:grayscale(.6);cursor:not-allowed}
+.missao.feita{border-color:var(--verde)}
+.missao .num{
+  position:absolute;top:-12px;left:14px;background:var(--limao);color:#08240f;
+  width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  font-weight:bold;box-shadow:0 3px 0 #3f6212
+}
+.missao.feita .num{background:var(--verde);box-shadow:0 3px 0 #0f6b4a}
+.missao .ico{font-size:34px;line-height:1;margin:6px 0 6px}
+.missao .tit{font-weight:bold;font-size:1.08em;margin-bottom:3px}
+.missao .sub{font-size:.85em;color:var(--muted)}
+.missao .estrelas{margin-top:8px;font-size:1.05em;letter-spacing:2px}
+
+/* ---------- quiz ---------- */
+.pergunta{font-size:1.14em;font-weight:bold;margin-bottom:14px}
+.conta{
+  font-size:clamp(38px,11vw,64px);font-weight:bold;text-align:center;
+  letter-spacing:2px;margin:6px 0 16px;color:var(--amarelo);
+  font-variant-numeric:tabular-nums
+}
+.opcoes{display:grid;gap:10px}
+.opcoes.grade{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+.op{
+  text-align:left;background:#0e3f52;border:2px solid #1d6b83;border-radius:14px;
+  padding:13px 16px;color:var(--ink);transition:border-color .1s,background .1s,transform .1s;
+  display:flex;gap:10px;align-items:center
+}
+.opcoes.grade .op{justify-content:center;font-size:1.5em;font-weight:bold;
+  font-variant-numeric:tabular-nums;padding:16px 10px}
+.op:not(:disabled):hover{border-color:var(--limao);transform:translateY(-2px)}
+.op .letra{
+  flex:0 0 26px;height:26px;border-radius:8px;background:#1d6b83;color:#fff;
+  display:grid;place-items:center;font-weight:bold;font-size:.85em
+}
+.op.certa{border-color:var(--verde);background:#12503a}
+.op.certa .letra{background:var(--verde);color:#04231a}
+.op.errada{border-color:var(--vermelho);background:#4b1524}
+.op.errada .letra{background:var(--vermelho);color:#3d0a16}
+.op:disabled{cursor:default}
+
+.feedback{margin-top:14px;border-radius:14px;padding:14px 16px;border-left:6px solid;display:none}
+.feedback.show{display:block;animation:sobe .25s}
+.feedback.bom{background:rgba(52,211,153,.15);border-color:var(--verde)}
+.feedback.ruim{background:rgba(251,113,133,.15);border-color:var(--vermelho)}
+.feedback .tt{font-weight:bold;margin-bottom:5px;font-size:1.05em}
+@keyframes sobe{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.progresso{height:9px;background:#082430;border-radius:99px;overflow:hidden;margin-bottom:16px}
+.progresso i{display:block;height:100%;background:linear-gradient(90deg,var(--ciano),var(--limao));transition:width .3s}
+
+/* ---------- missão 1: bandejas ---------- */
+.bandejas{display:flex;flex-direction:column;gap:8px;align-items:center;margin:14px 0}
+.bandeja{
+  display:flex;gap:6px;justify-content:center;flex-wrap:nowrap;
+  background:#5b3a12;border:3px solid #8a5a12;border-radius:12px;padding:8px 10px;
+  animation:entra .2s
+}
+@keyframes entra{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+.biscoito{
+  width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 32%,#f0c46a,var(--biscoito));
+  box-shadow:inset 0 -2px 0 rgba(0,0,0,.25);position:relative;flex:0 0 auto
+}
+.biscoito::after{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 30% 65%,#5b3a12 1.6px,transparent 2px),
+             radial-gradient(circle at 68% 38%,#5b3a12 1.6px,transparent 2px),
+             radial-gradient(circle at 60% 72%,#5b3a12 1.4px,transparent 2px)}
+.controles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:10px}
+.controle{background:#0b3140;border:2px solid #1d6b83;border-radius:14px;padding:12px;text-align:center}
+.controle .rot{font-size:.85em;color:var(--muted);display:block;margin-bottom:6px}
+.controle .linha{display:flex;gap:10px;align-items:center;justify-content:center}
+.controle .val{font-size:1.8em;font-weight:bold;min-width:40px;font-variant-numeric:tabular-nums;color:var(--amarelo)}
+.mais{width:40px;height:40px;border-radius:12px;background:var(--ciano);color:#04222b;font-size:1.4em;font-weight:bold}
+.menos{width:40px;height:40px;border-radius:12px;background:#1c5266;color:var(--ink);font-size:1.4em;font-weight:bold}
+.soma{
+  text-align:center;font-size:clamp(17px,4.6vw,24px);font-weight:bold;margin:12px 0 4px;
+  color:var(--limao);overflow-wrap:anywhere
+}
+
+/* ---------- missão 2: máquina de dobrar ---------- */
+.maquina{
+  background:linear-gradient(160deg,#164e63,#0b3140);border:4px solid #227d99;
+  border-radius:20px;padding:18px 16px;text-align:center;margin:14px 0
+}
+.visor{
+  background:#04161d;border:3px solid var(--limao);border-radius:14px;
+  font-size:clamp(30px,9vw,52px);font-weight:bold;color:var(--limao);
+  padding:12px 10px;font-variant-numeric:tabular-nums;letter-spacing:2px
+}
+.cadeia{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;font-weight:bold}
+.cadeia span{background:#082430;border:2px solid #1d6b83;border-radius:999px;padding:4px 12px;
+  font-variant-numeric:tabular-nums}
+.cadeia span.novo{border-color:var(--limao);color:var(--limao);animation:entra .25s}
+
+/* ---------- missão 3: dedos ---------- */
+.maos{width:100%;max-width:460px;height:auto;display:block;margin:0 auto}
+.dedo{cursor:pointer}
+.dedo .pele{fill:#f7c99b;stroke:#9a5c2b;stroke-width:2.5;transition:fill .15s}
+.dedo:hover .pele{fill:#ffe0bf}
+.dedo.abaixado .pele{fill:#b98a63;stroke:#6b3d18}
+.dedo .num{font-size:11px;font-weight:bold;fill:#6b3d18;pointer-events:none}
+.sequencia{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.passo{
+  background:#0b3140;border:2px dashed #1d6b83;border-radius:12px;min-width:58px;
+  padding:10px 6px;text-align:center;font-size:1.25em;font-weight:bold;
+  font-variant-numeric:tabular-nums;color:var(--muted)
+}
+.passo.dado{border-style:solid;border-color:var(--verde);color:var(--verde)}
+.passo.alvo{border-color:var(--amarelo);color:var(--amarelo);animation:pulsa 1s infinite}
+@keyframes pulsa{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* ---------- missão 4: pares ---------- */
+.pares{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.coluna{display:flex;flex-direction:column;gap:9px}
+.coluna .rot{font-size:.82em;color:var(--muted);text-align:center;margin-bottom:2px}
+.par{
+  background:#0e3f52;border:2px solid #1d6b83;border-radius:12px;padding:12px 6px;
+  color:var(--ink);font-size:1.2em;font-weight:bold;font-variant-numeric:tabular-nums;
+  transition:transform .1s,border-color .1s
+}
+.par:hover{transform:translateY(-2px)}
+.par.sel{border-color:var(--amarelo);background:#3d2f10;transform:translateY(-2px)}
+.par.ok{border-color:var(--verde);background:#12503a;opacity:.55;pointer-events:none}
+.par.erro{border-color:var(--vermelho);animation:treme .3s}
+@keyframes treme{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* ---------- missão 6: arcade ---------- */
+.cronometro{
+  height:16px;background:#082430;border-radius:99px;overflow:hidden;margin:10px 0 4px;
+  border:2px solid #1d6b83
+}
+.cronometro i{display:block;height:100%;background:linear-gradient(90deg,var(--verde),var(--amarelo),var(--vermelho));transition:width .2s linear}
+.placar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.placar span{background:#082430;border:2px solid #1d6b83;border-radius:999px;padding:4px 14px;font-weight:bold}
+.combo{color:var(--laranja)}
+
+/* ---------- aula ---------- */
+.aula{
+  background:#f4f9ec;
+  background-image:linear-gradient(rgba(88,140,60,.16) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(88,140,60,.16) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:#123018;border:3px solid #6ea23f;border-radius:var(--r);
+  padding:24px 22px 20px;margin-bottom:14px;box-shadow:0 14px 40px rgba(0,0,0,.5)
+}
+.aula b{color:#2f6b1f}
+.aula .guia{
+  display:flex;gap:10px;align-items:center;font-size:.86em;color:#3f5c3a;
+  border-bottom:2px dashed #9dc47a;padding-bottom:10px;margin-bottom:16px
+}
+.aula .guia .robo{font-size:30px;line-height:1}
+.aula .ico{font-size:60px;line-height:1;text-align:center;margin-bottom:6px}
+.aula h2{color:#2f6b1f;text-align:center;font-size:clamp(21px,5.2vw,30px)}
+.aula p{font-size:1.06em;margin:0 0 12px}
+.aula .chave{
+  background:#fff;border-left:6px solid var(--laranja);border-radius:10px;
+  padding:12px 14px;margin-top:14px;font-size:1.03em
+}
+.aula .chave .rot{display:block;font-weight:bold;color:#b45309;font-size:.82em;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.aula .lista{margin:10px 0 0;padding-left:20px}
+.aula .lista li{margin-bottom:6px}
+.aula .destaque{
+  text-align:center;font-size:clamp(20px,5.5vw,30px);font-weight:bold;color:#b45309;
+  background:#fff;border-radius:12px;padding:10px 8px;margin:12px 0;
+  font-variant-numeric:tabular-nums;overflow-wrap:anywhere
+}
+.pontos{display:flex;gap:7px;justify-content:center;margin:18px 0 4px}
+.pontos i{width:9px;height:9px;border-radius:50%;background:#9dc47a;display:block}
+.pontos i.aqui{background:#2f6b1f;transform:scale(1.35)}
+.pontos i.vista{background:#2f6b1f;opacity:.45}
+.btn.aula{background:linear-gradient(135deg,#4d8a2a,#6ea23f);color:#fff;box-shadow:0 6px 0 #2f5219,0 10px 20px rgba(0,0,0,.35)}
+.btn.aula.fraco{background:linear-gradient(135deg,#a3bd8c,#87a173);box-shadow:0 6px 0 #5c6b4e,0 10px 20px rgba(0,0,0,.3)}
+
+/* ---------- diversos ---------- */
+.centro{text-align:center}
+.mini{font-size:.88em;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{background:#082430;border:1px solid #1d6b83;border-radius:999px;padding:3px 11px;font-size:.8em;color:var(--muted)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.esconde{display:none!important}
+.campo{
+  width:100%;max-width:340px;padding:14px 18px;border-radius:14px;border:3px solid var(--amarelo);
+  background:#082430;color:var(--ink);font-size:1.15em;font-family:inherit;text-align:center;margin:6px 0 4px
+}
+.campo:focus{outline:none;border-color:var(--limao);box-shadow:0 0 0 4px rgba(163,230,53,.2)}
+
+/* colinha */
+.colinha{position:fixed;inset:0;background:rgba(3,15,20,.96);z-index:50;overflow-y:auto;padding:20px 14px 60px;display:none}
+.colinha.aberta{display:block}
+.colinha .in{max-width:760px;margin:0 auto}
+.colinha h3{color:var(--amarelo);margin-top:22px;border-bottom:2px solid #1d6b83;padding-bottom:6px}
+.colinha ul{padding-left:20px}
+.colinha li{margin-bottom:7px}
+.colinha b{color:var(--limao)}
+.fechar{position:sticky;top:0;float:right;background:var(--limao);color:#08240f;border-radius:999px;
+  width:42px;height:42px;font-size:22px;font-weight:bold;box-shadow:0 4px 0 #3f6212;z-index:2}
+.rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
+table.tab{border-collapse:collapse;margin:0 auto;font-variant-numeric:tabular-nums}
+table.tab th,table.tab td{border:1px solid #1d6b83;padding:5px 7px;text-align:center;font-size:.86em;min-width:32px}
+table.tab th{background:#0e3f52;color:var(--amarelo);font-weight:bold}
+table.tab td.diag{background:rgba(163,230,53,.16);font-weight:bold;color:var(--limao)}
+
+/* diploma */
+.diploma{
+  background:linear-gradient(160deg,#fffdf0,#fdf0cf);color:#26340f;border-radius:20px;
+  padding:28px 22px;text-align:center;border:8px double #6ea23f;box-shadow:0 20px 50px rgba(0,0,0,.55)
+}
+.diploma h2{color:#3f6212;font-size:clamp(24px,6vw,36px)}
+.diploma .nome{
+  font-size:clamp(24px,6.4vw,40px);font-weight:bold;color:#b45309;
+  border-bottom:3px solid #6ea23f;display:inline-block;padding:4px 22px;margin:10px 0 14px;
+  overflow-wrap:anywhere;max-width:100%
+}
+.diploma .selo{font-size:56px}
+.fila-estrelas{font-size:clamp(15px,4.4vw,24px);line-height:1.7;letter-spacing:1px;
+  overflow-wrap:anywhere;word-break:break-word;max-width:100%;margin:12px 0}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;top:80px;transform:translateX(-50%);
+  background:var(--verde);color:#04231a;font-weight:bold;padding:10px 22px;border-radius:999px;
+  z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transition:opacity .25s,top .25s;
+  pointer-events:none;max-width:90vw;text-align:center
+}
+.toast.show{opacity:1;top:100px}
+.toast.mau{background:var(--vermelho);color:#3d0a16}
+
+@media(max-width:520px){
+  body{font-size:16px}
+  .card{padding:16px 14px}
+  .wrap{padding:12px 10px 50px}
+  .biscoito{width:20px;height:20px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{ body{background:#fff} #estrelas,.hud,.acoes,.card:not(.diploma){display:none!important} }
+</style>
+</head>
+<body>
+<canvas id="estrelas"></canvas>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<div class="colinha" id="colinha">
+  <div class="in">
+    <button class="fechar" onclick="fecharColinha()">×</button>
+    <h2 style="color:var(--amarelo)">📖 Colinha da Tabuada</h2>
+    <p class="mini">A tabuada inteira e todos os truques. Pode abrir a qualquer hora — inclusive no
+    meio do desafio, que o cronômetro para.</p>
+
+    <h3>🧮 A tabuada inteira (0 a 9)</h3>
+    <p class="mini">Procure a linha e a coluna: onde elas se cruzam está a resposta.
+    Os números verdes são os "quadrados" (o número vezes ele mesmo).</p>
+    <div class="rolagem" id="gradeColinha"></div>
+
+    <h3>🔑 Os truques que economizam decoreba</h3>
+    <ul>
+      <li><b>×0</b> — sempre <b>0</b>. Nenhum grupo, nada dentro.</li>
+      <li><b>×1</b> — o próprio número. Um grupo só.</li>
+      <li><b>×2</b> — o <b>dobro</b>: some o número com ele mesmo.</li>
+      <li><b>×4</b> — o <b>dobro do dobro</b>. 7×4 → 14 → 28.</li>
+      <li><b>×8</b> — <b>dobre três vezes</b>. 7×8 → 14 → 28 → 56.</li>
+      <li><b>×5</b> — termina sempre em <b>0 ou 5</b>. É a <b>metade do ×10</b>: 8×5 → 80 → 40.</li>
+      <li><b>×9</b> — os dois algarismos <b>somam 9</b> (18, 27, 36, 45…). E dá para fazer nos dedos.</li>
+      <li><b>×3</b> — o <b>dobro mais um grupo</b>: 7×3 → 14 + 7 = 21.</li>
+      <li><b>×6</b> — o <b>×5 mais um grupo</b>: 7×6 → 35 + 7 = 42.</li>
+      <li><b>×7</b> — o <b>×5 mais o ×2</b>: 8×7 → 40 + 16 = 56.</li>
+    </ul>
+
+    <h3>🔄 A virada (propriedade comutativa)</h3>
+    <p>A ordem <b>não muda</b> o resultado: <b>3 × 7 = 7 × 3 = 21</b>. Vire o retângulo e conte de novo:
+    dá o mesmo. Por isso, quando você aprende uma conta, ganha duas de graça — e a tabuada
+    encolhe quase pela metade.</p>
+
+    <h3>🖐️ O truque dos dedos do 9</h3>
+    <ol>
+      <li>Abra as duas mãos na sua frente, com os 10 dedos.</li>
+      <li>Para <b>9 × 4</b>, abaixe o <b>4º dedo</b> (contando da esquerda).</li>
+      <li>Dedos <b>à esquerda</b> do abaixado = <b>dezenas</b> (3).</li>
+      <li>Dedos <b>à direita</b> = <b>unidades</b> (6).</li>
+      <li>Resposta: <b>36</b>. Funciona de 9×1 até 9×10!</li>
+    </ol>
+
+    <h3>💪 Os 5 fatos mais difíceis (vale decorar)</h3>
+    <ul>
+      <li><b>6 × 7 = 42</b></li>
+      <li><b>7 × 8 = 56</b></li>
+      <li><b>6 × 8 = 48</b></li>
+      <li><b>7 × 7 = 49</b></li>
+      <li><b>6 × 6 = 36</b></li>
+    </ul>
+
+    <div class="centro" style="margin-top:26px">
+      <button class="btn" onclick="fecharColinha()">Voltar ao jogo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const CHAVE = "fabricaTabuada.v1";
+const S = {
+  nome: "",
+  genero: "f",
+  pontos: 0,
+  missoes: [false,false,false,false,false,false],
+  estrelas: [0,0,0,0,0,0],
+  aulas:    [false,false,false,false,false,false],
+  erros: {},          // "6x7" -> quantas vezes errou. Alimenta a prova final e a aula 6.
+  cena: "nome"
+};
+
+const MISSOES = [
+  {ico:"🍪", tit:"Fábrica de Bandejas", sub:"O que multiplicar quer dizer · ×0 e ×1"},
+  {ico:"⚙️", tit:"Máquina de Dobrar",   sub:"×2, ×4 e ×8 sem decorar nada"},
+  {ico:"🖐️", tit:"Caça-Padrões",        sub:"×5 e ×9 têm truque"},
+  {ico:"🔄", tit:"Jogo da Virada",      sub:"3×7 = 7×3 · a tabuada pela metade"},
+  {ico:"💪", tit:"Os Difíceis",         sub:"×3, ×6 e ×7 por partes"},
+  {ico:"🏆", tit:"Desafio Turbo",       sub:"Arcade + prova final"}
+];
+
+function esc(x){
+  return String(x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function g(fem, masc){ return S.genero === "f" ? fem : masc; }
+const NOME = () => esc(S.nome);
+
+function salvar(){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify({
+      nome:S.nome, genero:S.genero, pontos:S.pontos,
+      missoes:S.missoes, estrelas:S.estrelas, aulas:S.aulas, erros:S.erros
+    }));
+  }catch(e){/* sem localStorage o jogo roda igual, só não guarda */}
+}
+function carregar(){
+  try{
+    const d = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if(d && d.nome){
+      S.nome = d.nome; S.genero = d.genero === "m" ? "m" : "f";
+      S.pontos = d.pontos|0;
+      if(Array.isArray(d.missoes)  && d.missoes.length===6)  S.missoes  = d.missoes.map(Boolean);
+      if(Array.isArray(d.estrelas) && d.estrelas.length===6) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(3,n|0)));
+      if(Array.isArray(d.aulas)    && d.aulas.length===6)    S.aulas    = d.aulas.map(Boolean);
+      if(d.erros && typeof d.erros === "object") S.erros = d.erros;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+/* registro dos fatos errados — é o que personaliza o treino depois */
+function marcaErro(a,b){
+  const k = Math.min(a,b) + "x" + Math.max(a,b);   // 3x7 e 7x3 são o mesmo fato
+  S.erros[k] = (S.erros[k]||0) + 1;
+  salvar();
+}
+function marcaAcerto(a,b){
+  const k = Math.min(a,b) + "x" + Math.max(a,b);
+  if(S.erros[k]){ S.erros[k]--; if(S.erros[k] <= 0) delete S.erros[k]; salvar(); }
+}
+function listaDificeis(n){
+  return Object.entries(S.erros).sort((x,y)=>y[1]-x[1]).slice(0, n||4).map(e=>e[0]);
+}
+
+/* ============================================================
+   SOM
+   ============================================================ */
+let AC = null;
+function ac(){ if(!AC){ try{AC = new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function bip(freq, dur, tipo, vol){
+  const c = ac(); if(!c) return;
+  if(c.state === "suspended") c.resume();
+  const o = c.createOscillator(), gn = c.createGain();
+  o.type = tipo || "sine"; o.frequency.value = freq;
+  gn.gain.setValueAtTime(vol||0.13, c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  o.connect(gn); gn.connect(c.destination);
+  o.start(); o.stop(c.currentTime + dur);
+}
+const somAcerto = ()=>{ bip(660,.09,"triangle"); setTimeout(()=>bip(880,.14,"triangle"),90); };
+const somErro   = ()=>{ bip(200,.18,"sawtooth",.09); };
+const somClique = ()=>{ bip(520,.05,"square",.05); };
+const somVitoria= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>bip(f,.2,"triangle"),i*110)); };
+const somPop    = ()=>{ bip(880,.06,"sine",.07); };
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+function embaralha(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function sorteio(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+let toastT = null;
+function toast(txt, mau){
+  const t = $("#toast");
+  t.innerHTML = txt;
+  t.className = "toast show" + (mau ? " mau" : "");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ t.className = "toast" + (mau?" mau":""); }, 1500);
+}
+function ganha(p){ S.pontos += p; toast("+" + p + " pontos!"); }
+
+function estrelasTxt(n){ return "⭐".repeat(n) + "☆".repeat(3-n); }
+function estrelasPor(acertos, total){
+  const pct = total ? acertos/total : 0;
+  if(pct >= 0.99) return 3;
+  if(pct >= 0.7)  return 2;
+  if(pct >= 0.4)  return 1;
+  return 0;
+}
+const ELOGIOS = ["Isso, {n}!","Boa, {n}!","Mandou bem, {n}!","{n} arrasou!","Exatamente, {n}!","Perfeito, {n}!"];
+function elogio(){ return sorteio(ELOGIOS).replace("{n}", NOME()); }
+
+function hud(titulo){
+  return `<div class="hud">
+    <span class="nome">🍪 ${NOME()}</span>
+    <span class="chip pts">⭐ ${S.pontos} pts</span>
+    <span class="espaco"></span>
+    ${/^m[0-5]$/.test(S.cena) ? `<button class="chip" onclick="reverAula(${S.cena[1]})" style="cursor:pointer">📚 Aula</button>` : ``}
+    <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
+    <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
+  </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
+}
+
+function abrirColinha(){ somClique(); $("#colinha").classList.add("aberta"); }
+function fecharColinha(){ somClique(); $("#colinha").classList.remove("aberta"); }
+window.abrirColinha = abrirColinha; window.fecharColinha = fecharColinha;
+
+/* grade completa da colinha, montada uma vez */
+(function montaGrade(){
+  let h = '<table class="tab"><tr><th>×</th>';
+  for(let c=0;c<=9;c++) h += `<th>${c}</th>`;
+  h += "</tr>";
+  for(let l=0;l<=9;l++){
+    h += `<tr><th>${l}</th>`;
+    for(let c=0;c<=9;c++) h += `<td class="${l===c?"diag":""}">${l*c}</td>`;
+    h += "</tr>";
+  }
+  h += "</table>";
+  document.getElementById("gradeColinha").innerHTML = h;
+})();
+
+/* ============================================================
+   FUNDO
+   ============================================================ */
+(function fundo(){
+  const cv = $("#estrelas"), cx = cv.getContext("2d");
+  let est = [];
+  function dim(){
+    cv.width = innerWidth; cv.height = innerHeight;
+    est = [];
+    const n = Math.min(110, Math.floor(innerWidth*innerHeight/13000));
+    for(let i=0;i<n;i++) est.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      r:Math.random()*1.6+.4, a:Math.random(), v:Math.random()*.02+.004
+    });
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    for(const e of est){
+      e.a += e.v; cx.globalAlpha = .2 + Math.abs(Math.sin(e.a))*.6;
+      cx.fillStyle = "#d9f99d";
+      cx.beginPath(); cx.arc(e.x,e.y,e.r,0,7); cx.fill();
+    }
+    cx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  addEventListener("resize", dim); dim(); loop();
+})();
+
+/* ============================================================
+   ROTEADOR
+   ============================================================ */
+function irMapa(){ somClique(); pararArcade(); S.cena="mapa"; render(); }
+window.irMapa = irMapa;
+
+function abrirMissao(i){
+  if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a missão anterior primeiro, " + NOME() + "!", true); return; }
+  pararArcade();
+  if(!S.aulas[i]){ abrirAula(i); return; }
+  somClique(); S.cena = "m"+i; render();
+}
+window.abrirMissao = abrirMissao;
+
+function concluiMissao(i, acertos, total, bonus){
+  S.missoes[i] = true;
+  const est = estrelasPor(acertos, total);
+  S.estrelas[i] = Math.max(S.estrelas[i], est);
+  const pts = acertos*10 + est*25 + (bonus||0);
+  S.pontos += pts;
+  salvar();
+  somVitoria();
+  const tudoFeito = S.missoes.every(Boolean);
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:64px">${est===3?"🏆":est===2?"🎉":"👏"}</div>
+      <h2>Missão ${i+1} concluída, ${NOME()}!</h2>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${estrelasTxt(est)}</div>
+      <p>Você acertou <b>${acertos} de ${total}</b> e ganhou <b>${pts} pontos</b>.</p>
+      ${est<3?`<p class="mini">Dá para refazer e buscar as 3 estrelas ⭐⭐⭐ — elas só sobem, nunca descem.</p>`:``}
+      <div class="acoes">
+        ${tudoFeito
+          ? `<button class="btn" onclick="verDiploma()">🎓 Ver meu diploma!</button>`
+          : (i<5 ? `<button class="btn ciano" onclick="abrirMissao(${i+1})">Próxima missão →</button>` : ``)}
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+        <button class="btn sec" onclick="abrirMissao(${i})">🔁 Refazer</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+
+function render(){
+  scrollTo(0,0);
+  switch(S.cena){
+    case "nome":   telaNome();   break;
+    case "inicio": telaInicio(); break;
+    case "mapa":   telaMapa();   break;
+    case "m0": faseBandejas(); break;
+    case "m1": faseDobrar();   break;
+    case "m2": fasePadroes();  break;
+    case "m3": faseVirada();   break;
+    case "m4": faseDificeis(); break;
+    case "m5": faseTurbo();    break;
+    case "diploma": telaDiploma(); break;
+    default:
+      if(/^a[0-5]$/.test(S.cena)){ telaAula(+S.cena[1]); }
+      break;
+  }
+}
+
+/* ============================================================
+   TELA DO NOME
+   ============================================================ */
+function telaNome(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--amarelo)">
+      <div style="font-size:70px;line-height:1">🍪</div>
+      <h1 style="background:linear-gradient(90deg,var(--ciano),var(--limao),var(--amarelo));-webkit-background-clip:text;background-clip:text;color:transparent">
+        FÁBRICA DA TABUADA
+      </h1>
+      <p style="font-size:1.1em">Aprenda a tabuada do <b>0 ao 9</b> sem decoreba</p>
+      <p class="mini">Matemática · 3º ano</p>
+      <div class="card" style="text-align:left;background:rgba(8,36,48,.8);margin-top:18px">
+        <p><b>🤖 A fábrica está ligada e falta um chefe.</b></p>
+        <p>Antes de abrir os portões, me diga: <b>como você se chama?</b></p>
+      </div>
+      <input class="campo" id="nomeInput" type="text" maxlength="18" autocomplete="off"
+             placeholder="Digite seu nome" onkeydown="if(event.key==='Enter')pedeGenero()">
+      <p class="mini" id="avisoNome" style="min-height:20px"></p>
+      <p style="margin-top:6px"><b>E como você quer ser chamado(a) na fábrica?</b></p>
+      <div class="acoes">
+        <button class="btn" onclick="definir('f')">👷‍♀️ Sou a chefe</button>
+        <button class="btn ciano" onclick="definir('m')">👷‍♂️ Sou o chefe</button>
+      </div>
+    </div>`;
+  const inp = $("#nomeInput");
+  if(inp){ inp.value = S.nome; setTimeout(()=>inp.focus(), 120); }
+}
+function definir(gen){
+  const inp = $("#nomeInput");
+  let v = (inp ? inp.value : "").trim().replace(/\s+/g," ");
+  if(v.length < 2){
+    somErro();
+    $("#avisoNome").innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`;
+    if(inp) inp.focus();
+    return;
+  }
+  v = v.split(" ").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" ");
+  S.nome = v;
+  if(gen === "f" || gen === "m") S.genero = gen;
+  ac(); somVitoria(); salvar();
+  S.cena = "inicio"; render();
+}
+window.definir = definir;
+function pedeGenero(){
+  const inp = $("#nomeInput"), aviso = $("#avisoNome");
+  if((inp ? inp.value : "").trim().length < 2){
+    somErro(); aviso.innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`; return;
+  }
+  somClique();
+  aviso.innerHTML = `<span style="color:var(--amarelo)">Agora toque num dos dois botões aí embaixo 👇</span>`;
+}
+window.pedeGenero = pedeGenero;
+function trocarNome(){ somClique(); S.cena = "nome"; render(); }
+window.trocarNome = trocarNome;
+function zerar(){
+  if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
+  S.pontos = 0; S.missoes = [false,false,false,false,false,false];
+  S.estrelas = [0,0,0,0,0,0]; S.aulas = [false,false,false,false,false,false]; S.erros = {};
+  salvar(); somClique(); render();
+}
+window.zerar = zerar;
+
+/* ============================================================
+   TELA INICIAL
+   ============================================================ */
+function telaInicio(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--amarelo)">
+      <div style="font-size:66px;line-height:1">🤖</div>
+      <h1 style="background:linear-gradient(90deg,var(--ciano),var(--limao),var(--amarelo));-webkit-background-clip:text;background-clip:text;color:transparent">
+        OI, ${NOME()}!
+      </h1>
+      <p style="font-size:1.12em">Você é ${g("a nova chefe","o novo chefe")} da
+      <b style="color:var(--amarelo)">Fábrica da Tabuada</b>.</p>
+      <div class="card" style="text-align:left;background:rgba(8,36,48,.8);margin-top:18px">
+        <p><b>🎯 O combinado é este:</b></p>
+        <p>Muita gente acha que tabuada é decorar 100 continhas. <b>Não é.</b> Tem
+        <b>truque para quase tudo</b> — e quando você souber os truques, sobram pouquíssimas
+        contas para guardar de cabeça.</p>
+        <p><b>📚 Cada missão começa com uma aula rapidinha</b> do <b>Dobrão</b>, o robô da fábrica.
+        Ele ensina o truque, e só depois você põe a mão na massa.</p>
+        <p class="mini">⭐ Cada missão vale até 3 estrelas. Errar faz parte: o jogo mostra o porquê
+        e ainda <b>anota o que você errou</b>, para treinar isso de novo mais tarde.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn" onclick="comecar()">🚀 Ligar a fábrica</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Ver a colinha</button>
+      </div>
+      <p class="mini" style="margin-top:14px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Não sou ${NOME()}, trocar nome</button>
+      </p>
+    </div>`;
+}
+function comecar(){ ac(); somVitoria(); S.cena="mapa"; render(); }
+window.comecar = comecar;
+
+/* ============================================================
+   MAPA
+   ============================================================ */
+function telaMapa(){
+  const feitas = S.missoes.filter(Boolean).length;
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const dif = listaDificeis(5);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <h2>🗺️ Fábrica ${g("da chefe","do chefe")} ${NOME()}</h2>
+      <p class="mini">${feitas} de 6 missões · ${totalEstrelas} de 18 estrelas · ${S.pontos} pontos</p>
+      <div class="progresso"><i style="width:${feitas/6*100}%"></i></div>
+      <div class="missoes">
+        ${MISSOES.map((m,i)=>{
+          const trancada = i>0 && !S.missoes[i-1];
+          return `<button class="missao ${trancada?"trancada":""} ${S.missoes[i]?"feita":""}"
+                    onclick="abrirMissao(${i})" ${trancada?"disabled":""}>
+            <span class="num">${S.missoes[i]?"✓":i+1}</span>
+            <div class="ico">${trancada?"🔒":m.ico}</div>
+            <div class="tit">${m.tit}</div>
+            <div class="sub">${trancada?"Complete a missão anterior":m.sub}</div>
+            ${(!trancada && !S.aulas[i])?`<div class="tags" style="margin-top:8px"><span class="tag" style="border-color:var(--amarelo);color:var(--amarelo)">📚 começa com uma aula</span></div>`:``}
+            ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
+          </button>`;
+        }).join("")}
+      </div>
+      <p class="mini centro" style="margin-top:16px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Trocar nome</button>
+        <button class="chip" onclick="zerar()" style="cursor:pointer">🔄 Começar tudo de novo</button>
+      </p>
+    </div>
+    ${dif.length?`<div class="card">
+      <h2>🎯 Suas contas mais teimosas</h2>
+      <p class="mini">Estas são as que você mais errou. Elas voltam com mais frequência no
+      Desafio Turbo — é assim que a gente vira o jogo.</p>
+      <div class="tags">${dif.map(k=>{
+        const [a,b] = k.split("x").map(Number);
+        return `<span class="tag" style="border-color:var(--laranja);color:var(--laranja);font-size:1em">${a} × ${b} = ${a*b}</span>`;
+      }).join("")}</div>
+    </div>`:``}
+    ${feitas===6?`<div class="card destaque centro">
+      <div style="font-size:56px">🎓</div>
+      <h2>Você completou tudo, ${NOME()}!</h2>
+      <button class="btn" onclick="verDiploma()">Ver meu diploma</button>
+    </div>`:``}`;
+}
+function verDiploma(){ somVitoria(); S.cena="diploma"; render(); }
+window.verDiploma = verDiploma;
+
+/* ============================================================
+   AULAS
+   ============================================================ */
+const AULAS = [
+  /* ---- 1 · o que é multiplicar ---- */
+  [
+    {ico:"🍪", tit:"Multiplicar é juntar grupos iguais",
+     txt:`Na fábrica, os biscoitos saem em <b>bandejas iguais</b>. Se vierem <b>3 bandejas</b>
+       com <b>4 biscoitos</b> em cada uma, quantos biscoitos são?
+       <div class="destaque">4 + 4 + 4 = 12</div>
+       <p>Somar três vezes o 4 dá trabalho. Por isso inventaram um jeito curto de escrever
+       isso: <b>3 × 4 = 12</b>. Lê-se "três vezes quatro".</p>`,
+     chave:`<b>×</b> quer dizer <b>"vezes"</b>: quantos grupos iguais você tem.`},
+    {ico:"▦", tit:"O retângulo mágico",
+     txt:`Coloque as bandejas uma embaixo da outra e você vê um <b>retângulo</b>:
+       3 fileiras de 4 biscoitos.
+       <p>Esse retângulo é a melhor imagem da multiplicação. Se um dia você esquecer uma conta,
+       <b>desenhe o retângulo e conte</b>. Nunca falha.</p>`,
+     chave:`3 fileiras de 4 = <b>12</b>. Multiplicar é medir um retângulo.`},
+    {ico:"0️⃣", tit:"A tabuada do 0 é a mais fácil do mundo",
+     txt:`Se você tem <b>5 bandejas vazias</b>, quantos biscoitos tem? Nenhum!
+       <div class="destaque">5 × 0 = 0 · 9 × 0 = 0 · 0 × 0 = 0</div>
+       <p>Qualquer número vezes zero dá <b>zero</b>. Sempre. Sem exceção.</p>`,
+     chave:`Qualquer coisa <b>× 0 = 0</b>.`},
+    {ico:"1️⃣", tit:"A tabuada do 1 é a segunda mais fácil",
+     txt:`Uma bandeja só, com 7 biscoitos dentro: são 7 biscoitos.
+       <div class="destaque">7 × 1 = 7 · 1 × 9 = 9</div>
+       <p>Qualquer número vezes 1 é <b>ele mesmo</b>, sem mudar nada.</p>`,
+     chave:`Qualquer coisa <b>× 1 = ela mesma</b>.`},
+    {ico:"🎉", tit:"Olha o tamanho do atalho",
+     txt:`A tabuada do 0 ao 9 tem <b>100 continhas</b>. Parece muito.
+       <p>Mas o <b>×0</b> já resolve 19 delas, e o <b>×1</b> resolve mais 17.
+       Você acabou de aprender <b>mais de um terço</b> da tabuada inteira em dois slides.</p>`,
+     chave:`Tabuada não é decorar 100 contas. É aprender uns poucos truques.`},
+    {ico:"✅", tit:"O que vem na missão",
+     txt:`Você vai <b>montar as bandejas</b> com os próprios dedos e ver o resultado aparecer.
+       <p>Depois, algumas perguntas sobre grupos, ×0 e ×1.</p>`,
+     chave:`Se travar, monte o retângulo e conte. É sempre permitido.`}
+  ],
+  /* ---- 2 · dobrar ---- */
+  [
+    {ico:"✌️", tit:"×2 é só dobrar",
+     txt:`Multiplicar por <b>2</b> é somar o número <b>com ele mesmo</b>:
+       <div class="destaque">7 × 2 = 7 + 7 = 14</div>
+       <p>Você já sabe fazer isso desde pequeno. A tabuada do 2 inteira é só isso.</p>`,
+     chave:`<b>×2 = dobro.</b> Some o número com ele mesmo.`},
+    {ico:"4️⃣", tit:"×4 é o dobro do dobro",
+     txt:`Agora o pulo do gato: <b>4 é 2 vezes 2</b>. Então multiplicar por 4 é
+       <b>dobrar duas vezes</b>:
+       <div class="destaque">7 × 4 → 14 → 28</div>
+       <p>Dobrou o 7 e deu 14. Dobrou o 14 e deu 28. Pronto: 7 × 4 = 28.</p>`,
+     chave:`<b>×4 = dobre, e dobre de novo.</b>`},
+    {ico:"8️⃣", tit:"×8 é dobrar três vezes",
+     txt:`E o 8, que assusta todo mundo? <b>8 é 2 × 2 × 2</b>. Então:
+       <div class="destaque">7 × 8 → 14 → 28 → 56</div>
+       <p>Três dobras e acabou. Nada de decorar: dá para fazer de cabeça, devagar,
+       sempre que precisar.</p>`,
+     chave:`<b>×8 = dobre três vezes.</b> 6×8 → 12 → 24 → 48.`},
+    {ico:"🧠", tit:"Por que isso é tão bom",
+     txt:`Com uma só ideia — <b>dobrar</b> — você resolve as tabuadas do <b>2</b>, do <b>4</b>
+       e do <b>8</b> inteiras. São <b>30 continhas</b> a menos para decorar.
+       <p>E dobrar é a conta mais fácil que existe depois de somar.</p>`,
+     chave:`Um truque só, três tabuadas resolvidas.`},
+    {ico:"✅", tit:"O que vem na missão",
+     txt:`Você vai operar a <b>Máquina de Dobrar</b>: põe o número, aperta o botão e vê a
+       cadeia crescer.
+       <p>Sua tarefa é descobrir <b>quantas dobras</b> cada pedido precisa.</p>`,
+     chave:`×2 → 1 dobra · ×4 → 2 dobras · ×8 → 3 dobras.`}
+  ],
+  /* ---- 3 · padrões ---- */
+  [
+    {ico:"5️⃣", tit:"A tabuada do 5 tem cara",
+     txt:`Olhe só como ela termina:
+       <div class="destaque">5 · 10 · 15 · 20 · 25 · 30 · 35 · 40 · 45</div>
+       <p>Sempre <b>0 ou 5</b> no final, alternando. Se a sua resposta na tabuada do 5
+       terminar em outro número, ela está errada — dá para conferir sozinha.</p>`,
+     chave:`No <b>×5</b>, o resultado sempre termina em <b>0 ou 5</b>.`},
+    {ico:"➗", tit:"O 5 é a metade do 10",
+     txt:`Multiplicar por 10 é fácil demais: é só pôr um zero (8 × 10 = 80).
+       <p>E como 5 é <b>metade</b> de 10, dá para fazer assim:</p>
+       <div class="destaque">8 × 5 → 8 × 10 = 80 → metade = 40</div>`,
+     chave:`<b>×5 = ×10 e depois metade.</b>`},
+    {ico:"🖐️", tit:"O truque dos dedos do 9",
+     txt:`Este é o truque mais legal da tabuada. Abra as <b>duas mãos</b> na sua frente.
+       <p>Para <b>9 × 4</b>, abaixe o <b>4º dedo</b>, contando da esquerda.</p>
+       <ul class="lista">
+       <li>Dedos <b>à esquerda</b> do abaixado: 3 → é o algarismo das <b>dezenas</b></li>
+       <li>Dedos <b>à direita</b>: 6 → é o das <b>unidades</b></li>
+       </ul>
+       <div class="destaque">9 × 4 = 36</div>`,
+     chave:`Abaixe o dedo do número. Esquerda = dezena, direita = unidade.`},
+    {ico:"9️⃣", tit:"E tem mais um padrão no 9",
+     txt:`Some os dois algarismos de qualquer resultado da tabuada do 9:
+       <div class="destaque">18 → 1+8 = 9<br>27 → 2+7 = 9<br>45 → 4+5 = 9</div>
+       <p>Sempre <b>9</b>. É outro jeito de conferir se você acertou.</p>`,
+     chave:`No <b>×9</b>, os dois algarismos <b>somam 9</b>.`},
+    {ico:"✅", tit:"O que vem na missão",
+     txt:`Primeiro você completa a <b>sequência do 5</b>. Depois usa as <b>mãos de verdade</b>
+       na tela para resolver a tabuada do 9.`,
+     chave:`Dois truques, duas tabuadas inteiras a menos.`}
+  ],
+  /* ---- 4 · comutativa ---- */
+  [
+    {ico:"🔄", tit:"Vire o retângulo",
+     txt:`Monte 3 fileiras de 7 biscoitos. Agora gire a bandeja: viraram 7 fileiras de 3.
+       <p>Você <b>tirou ou pôs</b> algum biscoito? Não. Então a quantidade é a mesma.</p>
+       <div class="destaque">3 × 7 = 7 × 3 = 21</div>`,
+     chave:`A <b>ordem não muda</b> o resultado da multiplicação.`},
+    {ico:"🎁", tit:"Aprendeu uma, ganhou duas",
+     txt:`Isso é um presente enorme. Se você já sabe que <b>6 × 8 = 48</b>, então você
+       <b>já sabe</b> que 8 × 6 = 48 também. Sem estudar nada a mais.
+       <p>Cada conta que você aprende vale por duas.</p>`,
+     chave:`Sabe uma? Sabe a virada dela também.`},
+    {ico:"✂️", tit:"A tabuada encolheu",
+     txt:`Com a virada, a tabuada de 100 continhas cai para pouco mais de <b>50</b> de verdade.
+       <p>Junte com o ×0, o ×1, o dobrar, o ×5 e o ×9… e sobram só <b>algumas poucas</b>
+       contas realmente novas. Elas cabem na palma da mão.</p>`,
+     chave:`Metade da tabuada é a outra metade de cabeça para baixo.`},
+    {ico:"✅", tit:"O que vem na missão",
+     txt:`Você vai <b>ligar cada conta à virada dela</b>: achar o par de 3×7 do outro lado
+       da tela.`,
+     chave:`Procure o mesmo resultado com os números trocados de lugar.`}
+  ],
+  /* ---- 5 · os difíceis ---- */
+  [
+    {ico:"3️⃣", tit:"×3 é o dobro mais um grupo",
+     txt:`Três grupos são <b>dois grupos + mais um</b>. Então:
+       <div class="destaque">7 × 3 → 7 × 2 = 14 → 14 + 7 = 21</div>
+       <p>Você já sabia dobrar. Agora é só somar o número uma vez mais.</p>`,
+     chave:`<b>×3 = dobro + o número.</b>`},
+    {ico:"6️⃣", tit:"×6 é o ×5 mais um grupo",
+     txt:`Você já domina o ×5 (metade do ×10). Então o 6 sai de graça:
+       <div class="destaque">7 × 6 → 7 × 5 = 35 → 35 + 7 = 42</div>`,
+     chave:`<b>×6 = ×5 + o número.</b>`},
+    {ico:"7️⃣", tit:"×7 é o ×5 mais o ×2",
+     txt:`E o 7, o mais temido de todos? <b>7 = 5 + 2</b>, e você sabe os dois:
+       <div class="destaque">8 × 7 → (8×5 = 40) + (8×2 = 16) → 56</div>
+       <p>Quebrar um número difícil em dois fáceis é o que matemático faz o tempo todo.</p>`,
+     chave:`<b>×7 = ×5 + ×2.</b> Quebre em pedaços fáceis.`},
+    {ico:"🏅", tit:"As 5 contas que valem decorar",
+     txt:`Depois de todos os truques, sobram pouquíssimas contas teimosas. Estas são as
+       campeãs de erro do mundo inteiro:
+       <div class="destaque">6×7 = 42 · 7×8 = 56 · 6×8 = 48<br>7×7 = 49 · 6×6 = 36</div>
+       <p>São só cinco. Essas, sim, vale guardar de cabeça.</p>`,
+     chave:`Truque para quase tudo, decoreba só para cinco.`},
+    {ico:"✅", tit:"O que vem na missão",
+     txt:`Perguntas do <b>×3</b>, <b>×6</b> e <b>×7</b>. Quando você errar, o jogo mostra a
+       conta <b>quebrada em pedaços</b>, do jeito que o Dobrão ensinou.`,
+     chave:`Não precisa saber de cara. Precisa saber como chegar lá.`}
+  ],
+  /* ---- 6 · antes do desafio ---- */
+  [
+    {ico:"🏆", tit:"Chegou a hora, {NOME}",
+     txt:`Você aprendeu <b>todos</b> os truques da fábrica. Agora vem o <b>Desafio Turbo</b>:
+       primeiro um arcade contra o relógio, valendo pontos, e depois a <b>prova final</b>,
+       valendo as estrelas.
+       <p class="mini">O relógio nunca decide a sua nota. As estrelas vêm do que você
+       <b>sabe</b>, não da rapidez do dedo.</p>`,
+     chave:`Pode abrir a colinha no meio do desafio. O cronômetro para.`},
+    {ico:"🎯", tit:"Suas contas teimosas",
+     txt:`{DIFICEIS}`,
+     chave:`Errar e voltar é exatamente como se aprende tabuada.`},
+    {ico:"🧰", tit:"A caixa de ferramentas inteira",
+     txt:`<ul class="lista">
+       <li><b>×0</b> = 0 · <b>×1</b> = o próprio número</li>
+       <li><b>×2</b> = dobro · <b>×4</b> = 2 dobras · <b>×8</b> = 3 dobras</li>
+       <li><b>×5</b> = metade do ×10 · termina em 0 ou 5</li>
+       <li><b>×9</b> = truque dos dedos · algarismos somam 9</li>
+       <li><b>×3</b> = dobro + o número · <b>×6</b> = ×5 + o número · <b>×7</b> = ×5 + ×2</li>
+       <li><b>A virada</b>: 3×7 = 7×3</li>
+       </ul>`,
+     chave:`Nenhuma conta da tabuada fica fora dessa lista.`},
+    {ico:"✅", tit:"Só mais uma coisa",
+     txt:`Se travar numa conta, <b>não chute</b>: use um truque. Dobre, quebre em pedaços,
+       vire o retângulo, conte nos dedos.
+       <p>Demorar um pouquinho e acertar vale muito mais do que responder rápido e errar.</p>`,
+     chave:`Pensar devagar é permitido. É o que matemático faz.`}
+  ]
+];
+
+let A = null;
+function nomear(txt){
+  return String(txt)
+    .replace(/\{NOME\}/g, NOME())
+    .replace(/\{DIFICEIS\}/g, textoDificeis());
+}
+function textoDificeis(){
+  const dif = listaDificeis(5);
+  if(!dif.length){
+    return `Até agora você <b>não errou nenhuma conta</b> — ou ainda não treinou o suficiente
+      para o jogo saber. Vamos descobrir no desafio!`;
+  }
+  return `O jogo foi anotando o que você errou. Estas são as suas contas mais teimosas —
+    dê uma olhada nelas antes de começar:
+    <div class="destaque">${dif.map(k=>{
+      const [a,b] = k.split("x").map(Number);
+      return `${a} × ${b} = ${a*b}`;
+    }).join("<br>")}</div>
+    <p class="mini">Elas vão aparecer <b>mais vezes</b> no desafio, de propósito.</p>`;
+}
+
+function abrirAula(i, revendo){
+  somClique(); pararArcade();
+  A = { missao:i, slide:0, revendo:!!revendo };
+  S.cena = "a"+i;
+  render();
+}
+window.abrirAula = abrirAula;
+function reverAula(i){ abrirAula(i, true); }
+window.reverAula = reverAula;
+
+function telaAula(i){
+  const slides = AULAS[i], s = slides[A.slide], ultimo = A.slide === slides.length-1;
+  const m = MISSOES[i];
+  app.innerHTML = hud() + `
+    <h2 style="text-align:center">${m.ico} Aula ${i+1} · ${m.tit}</h2>
+    <div class="aula">
+      <div class="guia">
+        <span class="robo">🤖</span>
+        <span>Sou o <b>Dobrão</b>, robô da fábrica.
+        ${A.slide===0 ? `Antes de você pôr a mão na massa, ${NOME()}, olha só o truque.`
+                      : `Continuando, ${NOME()}…`}</span>
+      </div>
+      <div class="ico">${s.ico}</div>
+      <h2>${nomear(s.tit)}</h2>
+      ${s.txt.trim().startsWith("<") ? nomear(s.txt) : `<p>${nomear(s.txt)}</p>`}
+      ${s.chave ? `<div class="chave"><span class="rot">🔑 Grave isso</span>${nomear(s.chave)}</div>` : ``}
+      <div class="pontos">
+        ${slides.map((_,k)=>`<i class="${k===A.slide?"aqui":(k<A.slide?"vista":"")}"></i>`).join("")}
+      </div>
+    </div>
+    <div class="acoes">
+      ${A.slide>0 ? `<button class="btn aula fraco" onclick="aulaVolta()">← Voltar</button>` : ``}
+      ${ultimo
+        ? `<button class="btn" onclick="aulaFim()">🚀 Começar a missão ${i+1}</button>`
+        : `<button class="btn aula" onclick="aulaProx()">Próximo →</button>`}
+    </div>
+    <p class="centro mini" style="margin-top:14px">
+      ${ultimo ? `` : `<button class="chip" onclick="aulaFim()" style="cursor:pointer">Pular a aula e ir direto para a missão →</button>`}
+    </p>`;
+}
+function aulaProx(){ somClique(); A.slide++; telaAula(A.missao); scrollTo(0,0); }
+window.aulaProx = aulaProx;
+function aulaVolta(){ somClique(); A.slide--; telaAula(A.missao); scrollTo(0,0); }
+window.aulaVolta = aulaVolta;
+function aulaFim(){
+  somClique();
+  S.aulas[A.missao] = true; salvar();
+  S.cena = "m"+A.missao; render();
+}
+window.aulaFim = aulaFim;
+
+/* ============================================================
+   QUIZ GENÉRICO
+   ============================================================ */
+let Q = null;
+function embaralhaOpcoes(perguntas){
+  return perguntas.map(q=>{
+    const ordem = embaralha(q.o.map((_,i)=>i));
+    return { ...q, o: ordem.map(i=>q.o[i]), c: ordem.indexOf(q.c) };
+  });
+}
+function quizGenerico(missaoIdx, titulo, perguntas, acertosIniciais, totalInicial, grade){
+  Q = { i:0, ac:acertosIniciais||0, tot:(totalInicial||0)+perguntas.length,
+        lista:embaralhaOpcoes(perguntas), missao:missaoIdx, titulo:titulo,
+        respondida:false, grade:!!grade };
+  desenhaQuiz();
+}
+function desenhaQuiz(){
+  const q = Q.lista[Q.i];
+  app.innerHTML = hud(Q.titulo) + `
+    <div class="card">
+      <p class="mini">Pergunta ${Q.i+1} de ${Q.lista.length}</p>
+      <div class="progresso"><i style="width:${Q.i/Q.lista.length*100}%"></i></div>
+      ${q.conta ? `<div class="conta">${q.conta}</div>` : ``}
+      ${q.p ? `<div class="pergunta">${q.p}</div>` : ``}
+      <div class="opcoes ${Q.grade||q.grade?"grade":""}" id="ops">
+        ${q.o.map((t,k)=>`<button class="op" onclick="respQuiz(${k})">
+          ${(Q.grade||q.grade)?``:`<span class="letra">${"ABCD"[k]}</span>`}<span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fbq"></div>
+      <div class="acoes esconde" id="proxBox">
+        <button class="btn" onclick="proxQuiz()" id="btnProx">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respQuiz(k){
+  if(Q.respondida) return;
+  Q.respondida = true;
+  const q = Q.lista[Q.i];
+  document.querySelectorAll("#ops .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===q.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbq");
+  if(k===q.c){
+    Q.ac++; somAcerto(); ganha(10);
+    if(q.fato) marcaAcerto(q.fato[0], q.fato[1]);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${q.e}`;
+  } else {
+    somErro();
+    if(q.fato) marcaErro(q.fato[0], q.fato[1]);
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Quase, ${NOME()}! A resposta certa é <b>${q.o[q.c]}</b>.</div>${q.e}`;
+  }
+  $("#proxBox").classList.remove("esconde");
+  $("#btnProx").textContent = (Q.i === Q.lista.length-1) ? "Terminar missão 🏁" : "Continuar →";
+  $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respQuiz = respQuiz;
+function proxQuiz(){
+  somClique();
+  Q.i++; Q.respondida = false;
+  if(Q.i >= Q.lista.length){ concluiMissao(Q.missao, Q.ac, Q.tot); return; }
+  desenhaQuiz();
+}
+window.proxQuiz = proxQuiz;
+
+/* alternativas plausíveis para uma conta: erros que crianças de verdade cometem */
+function alternativas(a, b){
+  const certo = a*b;
+  const cand = new Set([certo]);
+  const chutes = [certo+a, certo-a, certo+b, certo-b, a*(b+1), a*(b-1), (a+1)*b, a+b, certo+1, certo-1, certo+10];
+  for(const c of embaralha(chutes)){
+    if(c >= 0 && c !== certo && cand.size < 4) cand.add(c);
+  }
+  let n = 2;
+  while(cand.size < 4){ cand.add(certo + n); n++; }
+  return embaralha([...cand]);
+}
+function perguntaConta(a, b, explica){
+  const opts = alternativas(a,b);
+  return {
+    conta: `${a} × ${b} = ?`,
+    o: opts.map(String),
+    c: opts.indexOf(a*b),
+    fato: [a,b],
+    grade: true,
+    e: explica || dica(a,b)
+  };
+}
+/* a dica escolhe o truque certo para cada conta — é a aula reaparecendo na hora do erro */
+function dica(a, b){
+  const r = a*b;
+  const menor = Math.min(a,b), maior = Math.max(a,b);
+  if(menor === 0) return `Qualquer número <b>× 0</b> dá <b>0</b>. Bandeja vazia não tem biscoito!`;
+  if(menor === 1) return `Qualquer número <b>× 1</b> é <b>ele mesmo</b>: ${maior} × 1 = <b>${maior}</b>.`;
+  if(menor === 2) return `<b>×2 é o dobro:</b> ${maior} + ${maior} = <b>${r}</b>.`;
+  if(menor === 4) return `<b>×4 é dobrar duas vezes:</b> ${maior} → ${maior*2} → <b>${r}</b>.`;
+  if(menor === 8) return `<b>×8 é dobrar três vezes:</b> ${maior} → ${maior*2} → ${maior*4} → <b>${r}</b>.`;
+  if(menor === 5) return `<b>×5 é a metade do ×10:</b> ${maior} × 10 = ${maior*10}, metade = <b>${r}</b>.
+    (E repare: termina em ${r%10}.)`;
+  if(menor === 9) return `<b>Truque dos dedos:</b> abaixe o ${maior}º dedo → sobram ${maior-1} à esquerda
+    e ${10-maior} à direita → <b>${r}</b>. (E ${Math.floor(r/10)} + ${r%10} = 9!)`;
+  if(menor === 3) return `<b>×3 é o dobro mais um:</b> ${maior}×2 = ${maior*2}, e ${maior*2} + ${maior} = <b>${r}</b>.`;
+  if(menor === 6) return `<b>×6 é o ×5 mais um:</b> ${maior}×5 = ${maior*5}, e ${maior*5} + ${maior} = <b>${r}</b>.`;
+  if(menor === 7) return `<b>×7 é ×5 mais ×2:</b> (${maior}×5 = ${maior*5}) + (${maior}×2 = ${maior*2}) = <b>${r}</b>.`;
+  return `${a} × ${b} = <b>${r}</b>.`;
+}
+
+/* ============================================================
+   MISSÃO 1 — FÁBRICA DE BANDEJAS
+   ============================================================ */
+const PEDIDOS = [ [3,4], [2,5], [4,3], [5,2], [3,6] ];
+let f1 = null;
+function faseBandejas(){
+  f1 = { i:0, band:1, por:1, acertos:0, conferido:false };
+  desenhaF1();
+}
+function desenhaF1(){
+  const [pb, pp] = PEDIDOS[f1.i];
+  const total = f1.band * f1.por;
+  app.innerHTML = hud("🍪 Missão 1 · Fábrica de Bandejas") + `
+    <div class="card">
+      <p class="mini">Pedido ${f1.i+1} de ${PEDIDOS.length} · acertos: <b>${f1.acertos}</b></p>
+      <div class="progresso"><i style="width:${f1.i/PEDIDOS.length*100}%"></i></div>
+      <p>📋 <b>Pedido da vez:</b> <b style="color:var(--amarelo)">${pb} bandejas</b> com
+      <b style="color:var(--amarelo)">${pp} biscoitos</b> em cada uma.</p>
+      <p class="mini">Use os botões para montar exatamente esse pedido, ${NOME()}.</p>
+
+      <div class="bandejas" id="bandejas">
+        ${Array.from({length:f1.band}, ()=>`<div class="bandeja">${
+          Array.from({length:f1.por}, ()=>`<div class="biscoito"></div>`).join("")
+        }</div>`).join("")}
+      </div>
+      <div class="soma">${
+        f1.band ? Array.from({length:f1.band}, ()=>f1.por).join(" + ") + " = " + total : "nenhuma bandeja"
+      }</div>
+      <div class="centro" style="font-size:1.5em;font-weight:bold;color:var(--limao)">
+        ${f1.band} × ${f1.por} = ${total}
+      </div>
+
+      <div class="controles">
+        <div class="controle">
+          <span class="rot">bandejas</span>
+          <div class="linha">
+            <button class="menos" onclick="ajusta('band',-1)">−</button>
+            <span class="val">${f1.band}</span>
+            <button class="mais" onclick="ajusta('band',1)">+</button>
+          </div>
+        </div>
+        <div class="controle">
+          <span class="rot">biscoitos por bandeja</span>
+          <div class="linha">
+            <button class="menos" onclick="ajusta('por',-1)">−</button>
+            <span class="val">${f1.por}</span>
+            <button class="mais" onclick="ajusta('por',1)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="acoes">
+        <button class="btn" onclick="confereBandeja()">✅ Conferir o pedido</button>
+      </div>
+      <div class="feedback" id="fb1"></div>
+    </div>`;
+}
+function ajusta(qual, d){
+  somPop();
+  const v = f1[qual] + d;
+  if(v < 0 || v > 9) return;
+  f1[qual] = v;
+  desenhaF1();
+}
+window.ajusta = ajusta;
+function confereBandeja(){
+  const [pb, pp] = PEDIDOS[f1.i];
+  const fb = $("#fb1");
+  if(f1.band === pb && f1.por === pp){
+    f1.acertos++; somAcerto(); ganha(10);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>
+      ${pb} bandejas de ${pp} biscoitos = <b>${pb} × ${pp} = ${pb*pp}</b> biscoitos.
+      Repare que somar ${pp} ${pb} vezes dá exatamente isso.`;
+    setTimeout(()=>{
+      f1.i++;
+      if(f1.i >= PEDIDOS.length){ fimBandejas(); return; }
+      f1.band = 1; f1.por = 1;
+      desenhaF1();
+    }, 1900);
+  } else {
+    somErro();
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Ainda não é esse o pedido.</div>
+      Você montou <b>${f1.band} bandeja${f1.band===1?"":"s"} de ${f1.por}</b>.
+      O pedido pede <b>${pb} bandejas de ${pp}</b>. Ajuste os botões e confira de novo!`;
+  }
+}
+window.confereBandeja = confereBandeja;
+function fimBandejas(){
+  somVitoria();
+  app.innerHTML = hud("🍪 Missão 1 · Fábrica de Bandejas") + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">🍪</div>
+      <h2>Todos os pedidos entregues!</h2>
+      <p>${NOME()}, você montou <b>${PEDIDOS.length} pedidos</b> com as próprias mãos.</p>
+      <p class="mini">Agora vêm as perguntas — inclusive sobre as tabuadas mais fáceis do mundo,
+      a do <b>0</b> e a do <b>1</b>.</p>
+      <div class="acoes">
+        <button class="btn" onclick="quizBandejas()">Ir para as perguntas →</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+const QUIZ_M1 = [
+  {p:"Numa fábrica há <b>4 bandejas</b> com <b>5 biscoitos</b> em cada uma. Qual conta resolve isso?",
+   o:["4 + 5","4 × 5","5 − 4","4 ÷ 5"], c:1,
+   e:"São <b>4 grupos de 5</b>: 5 + 5 + 5 + 5 = 20. O jeito curto de escrever é <b>4 × 5 = 20</b>."},
+  {p:"O que <b>3 × 6</b> quer dizer?",
+   o:["3 grupos com 6 em cada um","3 mais 6","6 tirando 3","3 dividido por 6"], c:0,
+   e:"<b>3 × 6</b> = três grupos de seis = 6 + 6 + 6 = <b>18</b>."},
+  ...[[7,0],[0,4],[9,1],[1,6]].map(([a,b])=>perguntaConta(a,b)),
+  {p:"Qual frase está <b>certa</b>?",
+   o:["Todo número × 0 dá 0","Todo número × 0 dá ele mesmo","Todo número × 1 dá 0","0 × 0 dá 1"], c:0,
+   e:"<b>× 0 sempre dá 0</b> (bandeja vazia!) e <b>× 1 dá o próprio número</b> (uma bandeja só)."}
+];
+function quizBandejas(){ somClique(); quizGenerico(0, "🍪 Missão 1 · Prova das Bandejas", QUIZ_M1, f1.acertos, PEDIDOS.length); }
+window.quizBandejas = quizBandejas;
+
+/* ============================================================
+   MISSÃO 2 — MÁQUINA DE DOBRAR
+   ============================================================ */
+const PEDIDOS_DOBRA = [ [3,2], [5,4], [6,8], [7,4], [9,2], [4,8] ];
+let f2 = null;
+function faseDobrar(){
+  f2 = { i:0, valor:PEDIDOS_DOBRA[0][0], dobras:0, cadeia:[PEDIDOS_DOBRA[0][0]], acertos:0, resolvido:false };
+  desenhaF2();
+}
+function dobrasNecessarias(mult){ return mult === 2 ? 1 : mult === 4 ? 2 : 3; }
+function desenhaF2(){
+  const [num, mult] = PEDIDOS_DOBRA[f2.i];
+  const alvo = num*mult, precisa = dobrasNecessarias(mult);
+  app.innerHTML = hud("⚙️ Missão 2 · Máquina de Dobrar") + `
+    <div class="card">
+      <p class="mini">Pedido ${f2.i+1} de ${PEDIDOS_DOBRA.length} · acertos: <b>${f2.acertos}</b></p>
+      <div class="progresso"><i style="width:${f2.i/PEDIDOS_DOBRA.length*100}%"></i></div>
+      <p>📋 A máquina precisa calcular <b style="color:var(--amarelo);font-size:1.2em">${num} × ${mult}</b>.
+      Lembre: <b>×2</b> = 1 dobra, <b>×4</b> = 2 dobras, <b>×8</b> = 3 dobras.</p>
+
+      <div class="maquina">
+        <div class="visor">${f2.valor}</div>
+        <div class="cadeia">
+          ${f2.cadeia.map((v,k)=>`<span class="${k===f2.cadeia.length-1&&k>0?"novo":""}">${v}</span>`).join(" ")}
+        </div>
+        <p class="mini" style="margin-top:10px">dobras usadas: <b>${f2.dobras}</b> de <b>${precisa}</b></p>
+        <div class="acoes">
+          <button class="btn laranja" onclick="dobrar()" ${f2.resolvido?"disabled":""}>⚙️ DOBRAR</button>
+          <button class="btn sec" onclick="resetDobra()">↺ Recomeçar</button>
+        </div>
+      </div>
+      <div class="feedback" id="fb2"></div>
+      <div class="acoes esconde" id="prox2">
+        <button class="btn" onclick="proxDobra()" id="btnProx2">Próximo pedido →</button>
+      </div>
+    </div>`;
+}
+function dobrar(){
+  if(f2.resolvido) return;
+  const [num, mult] = PEDIDOS_DOBRA[f2.i];
+  const alvo = num*mult, precisa = dobrasNecessarias(mult);
+  f2.valor *= 2; f2.dobras++; f2.cadeia.push(f2.valor);
+  somPop();
+  const fb = () => $("#fb2");
+  if(f2.valor === alvo && f2.dobras === precisa){
+    f2.resolvido = true; f2.acertos++; somAcerto(); ganha(10);
+    desenhaF2();
+    fb().className = "feedback bom show";
+    fb().innerHTML = `<div class="tt">✅ ${elogio()}</div>
+      <b>${num} × ${mult} = ${alvo}</b> — em ${precisa} dobra${precisa===1?"":"s"}:
+      ${f2.cadeia.join(" → ")}. Sem decorar nada!`;
+    $("#prox2").classList.remove("esconde");
+    $("#btnProx2").textContent = (f2.i === PEDIDOS_DOBRA.length-1) ? "Ir para as perguntas →" : "Próximo pedido →";
+  } else if(f2.dobras > precisa){
+    somErro();
+    desenhaF2();
+    fb().className = "feedback ruim show";
+    fb().innerHTML = `<div class="tt">❌ Passou do ponto!</div>
+      Você dobrou <b>${f2.dobras} vezes</b> e chegou a ${f2.valor}, mas <b>×${mult}</b> pede
+      <b>${precisa} dobra${precisa===1?"":"s"}</b>. Aperte <b>↺ Recomeçar</b> e tente de novo.`;
+  } else {
+    desenhaF2();
+    fb().className = "feedback bom show";
+    fb().innerHTML = `Dobrou! Vai em <b>${f2.valor}</b>. Faltam <b>${precisa - f2.dobras}</b>
+      dobra${precisa-f2.dobras===1?"":"s"} para chegar em ${num} × ${mult}.`;
+  }
+}
+window.dobrar = dobrar;
+function resetDobra(){
+  somClique();
+  const [num] = PEDIDOS_DOBRA[f2.i];
+  f2.valor = num; f2.dobras = 0; f2.cadeia = [num]; f2.resolvido = false;
+  desenhaF2();
+}
+window.resetDobra = resetDobra;
+function proxDobra(){
+  somClique();
+  f2.i++;
+  if(f2.i >= PEDIDOS_DOBRA.length){
+    quizGenerico(1, "⚙️ Missão 2 · Prova do Dobro", QUIZ_M2, f2.acertos, PEDIDOS_DOBRA.length);
+    return;
+  }
+  const [num] = PEDIDOS_DOBRA[f2.i];
+  f2.valor = num; f2.dobras = 0; f2.cadeia = [num]; f2.resolvido = false;
+  desenhaF2();
+}
+window.proxDobra = proxDobra;
+const QUIZ_M2 = [
+  ...[[6,2],[8,4],[7,8],[9,4],[3,8]].map(([a,b])=>perguntaConta(a,b)),
+  {p:"Para multiplicar por <b>8</b>, quantas vezes eu dobro o número?",
+   o:["1 vez","2 vezes","3 vezes","8 vezes"], c:2,
+   e:"<b>3 vezes</b>, porque 8 = 2 × 2 × 2. Exemplo: 5 → 10 → 20 → <b>40</b>."}
+];
+
+/* ============================================================
+   MISSÃO 3 — CAÇA-PADRÕES (×5 e ×9)
+   ============================================================ */
+let f3 = null;
+function fasePadroes(){
+  const seq = [5,10,null,20,null,30,null,40,45];
+  f3 = { etapa:"cinco", seq, resp:0, acertos:0, dedo:null, alvo9:null, rodada9:0,
+         total: seq.filter(x=>x===null).length + ALVOS9.length };
+  desenhaF3cinco();
+}
+function desenhaF3cinco(){
+  const faltam = f3.seq.map((v,i)=>v===null?i:-1).filter(i=>i>=0);
+  const proximo = faltam[0];
+  app.innerHTML = hud("🖐️ Missão 3 · Caça-Padrões") + `
+    <div class="card">
+      <h3 style="color:var(--amarelo)">Parte 1 · a escada do 5</h3>
+      <p>A tabuada do 5 é uma escada: cada degrau sobe <b>5</b>. Complete os degraus que caíram,
+      ${NOME()}.</p>
+      <div class="sequencia">
+        ${f3.seq.map((v,i)=>`<div class="passo ${v!==null?"dado":(i===proximo?"alvo":"")}">${v===null?"?":v}</div>`).join("")}
+      </div>
+      <p class="mini centro">Qual número entra no espaço que está piscando?</p>
+      <div class="opcoes grade" id="ops5">
+        ${embaralha([ (proximo+1)*5, (proximo+1)*5+2, (proximo+1)*5-3, (proximo+1)*5+5 ])
+          .map(v=>`<button class="op" onclick="respCinco(${v}, ${(proximo+1)*5})">${v}</button>`).join("")}
+      </div>
+      <div class="feedback" id="fb3"></div>
+    </div>`;
+}
+function respCinco(v, certo){
+  const fb = $("#fb3");
+  if(v === certo){
+    const i = f3.seq.findIndex(x=>x===null);
+    f3.seq[i] = certo; f3.acertos++; somAcerto(); ganha(10);
+    if(f3.seq.every(x=>x!==null)){
+      somVitoria();
+      app.innerHTML = hud("🖐️ Missão 3 · Caça-Padrões") + `
+        <div class="card destaque centro">
+          <div style="font-size:56px">5️⃣</div>
+          <h2>Escada do 5 completa!</h2>
+          <div class="sequencia">${f3.seq.map(v=>`<div class="passo dado">${v}</div>`).join("")}</div>
+          <p>Repare: <b>todos terminam em 0 ou 5</b>. Esse é o padrão que denuncia um erro.</p>
+          <div class="acoes"><button class="btn" onclick="iniciaDedos()">Agora o truque dos dedos 🖐️</button></div>
+        </div>`;
+      scrollTo(0,0);
+      return;
+    }
+    desenhaF3cinco();
+    $("#fb3").className = "feedback bom show";
+    $("#fb3").innerHTML = `<div class="tt">✅ Isso!</div>De 5 em 5, sempre terminando em 0 ou 5.`;
+  } else {
+    somErro();
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Não é esse.</div>Olhe o degrau anterior e some <b>5</b>.
+      E lembre: o resultado tem que terminar em <b>0 ou 5</b>.`;
+  }
+}
+window.respCinco = respCinco;
+
+function iniciaDedos(){
+  somClique();
+  f3.etapa = "dedos"; f3.rodada9 = 0; f3.alvo9 = [2,3,4,6,7][0]; f3.dedo = null;
+  desenhaDedos();
+}
+window.iniciaDedos = iniciaDedos;
+const ALVOS9 = [3,7,4,6,8];
+function desenhaDedos(){
+  const alvo = ALVOS9[f3.rodada9];
+  app.innerHTML = hud("🖐️ Missão 3 · Caça-Padrões") + `
+    <div class="card">
+      <h3 style="color:var(--amarelo)">Parte 2 · o truque dos dedos do 9</h3>
+      <p class="mini">Conta ${f3.rodada9+1} de ${ALVOS9.length}</p>
+      <p style="text-align:center;font-size:1.6em;font-weight:bold;color:var(--limao)">9 × ${alvo} = ?</p>
+      <p class="mini centro">Toque no <b>${alvo}º dedo</b>, contando da esquerda para a direita.</p>
+      ${maosSVG()}
+      <div class="feedback" id="fb3d"></div>
+      <div class="acoes esconde" id="prox3">
+        <button class="btn" onclick="proxDedo()" id="btnProx3">Próxima conta →</button>
+      </div>
+    </div>`;
+}
+function maosSVG(){
+  const dedos = [];
+  for(let i=1;i<=10;i++){
+    const mao = i<=5 ? 0 : 1;
+    const idx = i<=5 ? i-1 : i-6;
+    const baseX = mao===0 ? 22 : 218;
+    const x = baseX + idx*36;
+    const alt = (idx===0||idx===4) ? 62 : (idx===1||idx===3) ? 84 : 96;   // dedos das pontas mais curtos
+    const y = 128 - alt;
+    const abaixado = f3.dedo === i;
+    dedos.push(`<g class="dedo ${abaixado?"abaixado":""}" onclick="tocaDedo(${i})">
+      <rect class="pele" x="${x}" y="${abaixado ? 110 : y}" width="26" height="${abaixado ? 18 : alt}" rx="13"/>
+      <text class="num" x="${x+13}" y="${abaixado ? 123 : y+16}" text-anchor="middle">${i}</text>
+    </g>`);
+  }
+  return `<svg class="maos" viewBox="0 0 400 190" role="img" aria-label="Duas mãos com dez dedos numerados">
+    ${dedos.join("")}
+    <rect x="14" y="126" width="176" height="52" rx="18" fill="#f7c99b" stroke="#9a5c2b" stroke-width="2.5"/>
+    <rect x="210" y="126" width="176" height="52" rx="18" fill="#f7c99b" stroke="#9a5c2b" stroke-width="2.5"/>
+    <text x="102" y="186" text-anchor="middle" font-size="11" fill="#9fc4d0">mão esquerda</text>
+    <text x="298" y="186" text-anchor="middle" font-size="11" fill="#9fc4d0">mão direita</text>
+  </svg>`;
+}
+function tocaDedo(i){
+  const alvo = ALVOS9[f3.rodada9];
+  if(f3.dedo !== null) return;
+  f3.dedo = i;
+  desenhaDedos();
+  const fb = $("#fb3d");
+  if(i === alvo){
+    f3.acertos++; somAcerto(); ganha(10);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>
+      À esquerda do dedo abaixado sobraram <b>${alvo-1}</b> dedos → <b>dezenas</b>.<br>
+      À direita sobraram <b>${10-alvo}</b> → <b>unidades</b>.<br>
+      Então <b>9 × ${alvo} = ${9*alvo}</b>. E olha só: ${Math.floor(9*alvo/10)} + ${(9*alvo)%10} = <b>9</b>!`;
+    $("#prox3").classList.remove("esconde");
+    $("#btnProx3").textContent = (f3.rodada9 === ALVOS9.length-1) ? "Ir para as perguntas →" : "Próxima conta →";
+  } else {
+    somErro();
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Esse é o ${i}º dedo.</div>
+      Para <b>9 × ${alvo}</b> você precisa abaixar o <b>${alvo}º</b>, contando da esquerda.
+      Toque em <b>Próxima conta</b> para tentar de novo com outra.`;
+    $("#prox3").classList.remove("esconde");
+    $("#btnProx3").textContent = (f3.rodada9 === ALVOS9.length-1) ? "Ir para as perguntas →" : "Próxima conta →";
+  }
+}
+window.tocaDedo = tocaDedo;
+function proxDedo(){
+  somClique();
+  f3.rodada9++; f3.dedo = null;
+  if(f3.rodada9 >= ALVOS9.length){
+    quizGenerico(2, "🖐️ Missão 3 · Prova dos Padrões", QUIZ_M3, f3.acertos, f3.total);
+    return;
+  }
+  desenhaDedos();
+}
+window.proxDedo = proxDedo;
+const QUIZ_M3 = [
+  ...[[6,5],[9,3],[8,5],[9,7]].map(([a,b])=>perguntaConta(a,b)),
+  {p:"Um resultado da tabuada do <b>5</b> pode terminar em <b>3</b>?",
+   o:["Pode, às vezes","Não: só termina em 0 ou 5","Só se o número for grande","Sempre termina em 3"], c:1,
+   e:"Nunca. A tabuada do 5 termina <b>sempre em 0 ou 5</b> — é o jeito mais rápido de descobrir que errou."},
+  {p:"Na tabuada do <b>9</b>, quanto dão os dois algarismos do resultado somados?",
+   o:["Sempre 9","Sempre 10","Depende","Sempre 5"], c:0,
+   e:"Sempre <b>9</b>: 18 (1+8), 27 (2+7), 36 (3+6), 45 (4+5)… é o padrão secreto do 9."}
+];
+
+/* ============================================================
+   MISSÃO 4 — JOGO DA VIRADA
+   ============================================================ */
+const PARES = [ [3,7], [4,6], [2,9], [5,8], [6,7], [4,8] ];
+let f4 = null;
+function faseVirada(){
+  f4 = {
+    esq: embaralha(PARES.map(([a,b])=>({a,b,id:a+"x"+b}))),
+    dir: embaralha(PARES.map(([a,b])=>({a:b,b:a,id:a+"x"+b}))),
+    sel: null, feitos: [], erros: 0
+  };
+  desenhaF4();
+}
+function desenhaF4(){
+  app.innerHTML = hud("🔄 Missão 4 · Jogo da Virada") + `
+    <div class="card">
+      <p>Cada conta da esquerda tem uma <b>gêmea virada</b> na direita — o mesmo resultado,
+      com os números trocados de lugar. Ligue as duas, ${NOME()}!</p>
+      <p class="mini">Pares ligados: <b>${f4.feitos.length}/${PARES.length}</b></p>
+      <div class="progresso"><i style="width:${f4.feitos.length/PARES.length*100}%"></i></div>
+      <div class="pares">
+        <div class="coluna">
+          <div class="rot">a conta</div>
+          ${f4.esq.map((p,i)=>`<button class="par ${f4.feitos.includes(p.id)?"ok":""} ${f4.sel===i?"sel":""}"
+            onclick="selPar(${i})">${p.a} × ${p.b}</button>`).join("")}
+        </div>
+        <div class="coluna">
+          <div class="rot">a virada dela</div>
+          ${f4.dir.map((p,i)=>`<button class="par ${f4.feitos.includes(p.id)?"ok":""}"
+            onclick="ligaPar(${i})">${p.a} × ${p.b}</button>`).join("")}
+        </div>
+      </div>
+      <div class="feedback" id="fb4"></div>
+    </div>`;
+}
+function selPar(i){
+  if(f4.feitos.includes(f4.esq[i].id)) return;
+  somClique(); f4.sel = i; desenhaF4();
+}
+window.selPar = selPar;
+function ligaPar(j){
+  const fb = () => $("#fb4");
+  if(f4.sel === null){ toast("Escolha primeiro uma conta da esquerda 👈", true); somErro(); return; }
+  const e = f4.esq[f4.sel], d = f4.dir[j];
+  if(f4.feitos.includes(d.id)) return;
+  if(e.id === d.id){
+    f4.feitos.push(e.id); f4.sel = null; somAcerto(); ganha(10);
+    desenhaF4();
+    fb().className = "feedback bom show";
+    fb().innerHTML = `<div class="tt">✅ ${elogio()}</div>
+      <b>${e.a} × ${e.b} = ${d.a} × ${d.b} = ${e.a*e.b}</b>. Virou o retângulo e o total não mudou.`;
+    if(f4.feitos.length === PARES.length){
+      setTimeout(()=>{
+        somVitoria();
+        app.innerHTML = hud("🔄 Missão 4 · Jogo da Virada") + `
+          <div class="card destaque centro">
+            <div style="font-size:60px">🔄</div>
+            <h2>Todos os pares ligados!</h2>
+            <p>${NOME()}, você errou <b>${f4.erros}</b> ${f4.erros===1?"vez":"vezes"} — e ligou os
+            <b>${PARES.length} pares</b>.</p>
+            <p class="mini">Cada par desses é uma conta que vale por duas. Foi assim que a tabuada
+            encolheu pela metade.</p>
+            <div class="acoes">
+              <button class="btn" onclick="quizVirada()">Ir para as perguntas →</button>
+              <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+            </div>
+          </div>`;
+        scrollTo(0,0);
+      }, 1600);
+    }
+  } else {
+    f4.erros++; somErro();
+    desenhaF4();
+    fb().className = "feedback ruim show";
+    fb().innerHTML = `<div class="tt">❌ Essas duas não são gêmeas.</div>
+      <b>${e.a} × ${e.b}</b> vira <b>${e.b} × ${e.a}</b> — os mesmos dois números, na ordem trocada.`;
+  }
+}
+window.ligaPar = ligaPar;
+const QUIZ_M4 = [
+  {p:"Se <b>6 × 8 = 48</b>, quanto é <b>8 × 6</b>?",
+   o:["48","46","14","64"], c:0,
+   e:"<b>48</b>, o mesmo! A ordem não muda o resultado — é a <b>virada</b>."},
+  {p:"Qual conta tem o <b>mesmo resultado</b> que 4 × 9?",
+   o:["9 × 4","4 + 9","9 − 4","4 × 4"], c:0,
+   e:"<b>9 × 4</b>. Os dois valem <b>36</b>: é o mesmo retângulo, girado."},
+  {p:"Por que a virada ajuda tanto a estudar tabuada?",
+   o:["Porque cada conta aprendida vale por duas","Porque muda o resultado","Porque só funciona com números pequenos","Porque deixa a conta mais difícil"], c:0,
+   e:"Aprendeu 7 × 8? Ganhou 8 × 7 de graça. Isso corta quase <b>metade</b> do trabalho."},
+  ...[[7,3],[8,4],[9,6]].map(([a,b])=>perguntaConta(a,b))
+];
+function quizVirada(){ somClique(); quizGenerico(3, "🔄 Missão 4 · Prova da Virada", QUIZ_M4, f4.feitos.length, PARES.length); }
+window.quizVirada = quizVirada;
+
+/* ============================================================
+   MISSÃO 5 — OS DIFÍCEIS
+   ============================================================ */
+const QUIZ_M5 = [
+  ...[[7,3],[8,3],[7,6],[9,6],[8,7],[6,6],[7,7],[6,8]].map(([a,b])=>perguntaConta(a,b)),
+  {p:"Qual é o jeito mais fácil de fazer <b>8 × 7</b> de cabeça?",
+   o:["8×5 = 40, mais 8×2 = 16 → 56","8 + 7 = 15","Contar de 1 em 1 até 56","Não tem jeito, é decorar"], c:0,
+   e:"<b>×7 = ×5 + ×2.</b> Quebrar o número difícil em dois fáceis é o truque mais poderoso da tabuada."}
+];
+function faseDificeis(){
+  app.innerHTML = hud("💪 Missão 5 · Os Difíceis") + `
+    <div class="card centro destaque">
+      <div style="font-size:60px">💪</div>
+      <h2>As contas que assustam</h2>
+      <p>${NOME()}, agora vêm o <b>×3</b>, o <b>×6</b> e o <b>×7</b> — as tabuadas que mais dão nó
+      na cabeça de todo mundo.</p>
+      <div class="card" style="text-align:left;background:rgba(8,36,48,.8)">
+        <p>🧰 <b>Suas ferramentas:</b></p>
+        <p><b>×3</b> = dobro + o número · <b>×6</b> = ×5 + o número · <b>×7</b> = ×5 + ×2</p>
+      </div>
+      <p class="mini">Não precisa saber de cara. Se errar, o Dobrão mostra a conta quebrada em pedaços.</p>
+      <div class="acoes">
+        <button class="btn" onclick="comecaDificeis()">Pode vir! 💪</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Rever a colinha</button>
+      </div>
+    </div>`;
+}
+function comecaDificeis(){ somClique(); quizGenerico(4, "💪 Missão 5 · Os Difíceis", QUIZ_M5, 0, 0); }
+window.comecaDificeis = comecaDificeis;
+
+/* ============================================================
+   MISSÃO 6 — DESAFIO TURBO (arcade + prova final)
+   ============================================================ */
+const DUR_ARCADE = 60000;
+let f5 = null, rafArcade = null;
+function pararArcade(){ if(rafArcade){ cancelAnimationFrame(rafArcade); rafArcade = null; } }
+
+function faseTurbo(){
+  app.innerHTML = hud("🏆 Missão 6 · Desafio Turbo") + `
+    <div class="card centro destaque">
+      <div style="font-size:60px">🏆</div>
+      <h2>O Desafio Turbo, ${g("chefe","chefe")} ${NOME()}</h2>
+      <p>São duas partes:</p>
+      <div class="card" style="text-align:left;background:rgba(8,36,48,.8)">
+        <p>⏱️ <b>Arcade</b> — 60 segundos respondendo o máximo que conseguir. Vale <b>pontos</b>.</p>
+        <p>🎓 <b>Prova final</b> — 12 contas, sem relógio nenhum. Vale as <b>estrelas</b>.</p>
+      </div>
+      <p class="mini">O relógio nunca decide a sua nota: as estrelas vêm do que você sabe, não da
+      rapidez do dedo. E as contas que você mais errou aparecem <b>mais vezes</b>, de propósito.</p>
+      <div class="acoes">
+        <button class="btn laranja" onclick="comecaArcade()">⏱️ Começar o arcade</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      </div>
+    </div>`;
+}
+/* sorteia um fato, puxando para o que a criança errou */
+function sorteiaFato(){
+  const dif = Object.keys(S.erros);
+  if(dif.length && Math.random() < 0.55){
+    const [a,b] = sorteio(dif).split("x").map(Number);
+    return Math.random() < .5 ? [a,b] : [b,a];
+  }
+  return [Math.floor(Math.random()*10), Math.floor(Math.random()*10)];
+}
+function comecaArcade(){
+  somClique(); ac();
+  f5 = { t:0, ultimo:performance.now(), ac:0, err:0, combo:0, melhorCombo:0, fato:sorteiaFato(), respondida:false, fim:false };
+  desenhaArcade();
+  pararArcade();
+  rafArcade = requestAnimationFrame(tickArcade);
+}
+window.comecaArcade = comecaArcade;
+function tickArcade(agora){
+  if(!f5 || f5.fim || S.cena !== "m5"){ pararArcade(); return; }
+  const dt = Math.min(120, agora - f5.ultimo);
+  f5.ultimo = agora;
+  if($("#colinha").classList.contains("aberta")){ rafArcade = requestAnimationFrame(tickArcade); return; }
+  f5.t += dt;
+  const barra = document.getElementById("barraTempo");
+  if(barra) barra.style.width = Math.max(0, 100 - f5.t/DUR_ARCADE*100) + "%";
+  if(f5.t >= DUR_ARCADE){ fimArcade(); return; }
+  rafArcade = requestAnimationFrame(tickArcade);
+}
+function desenhaArcade(){
+  const [a,b] = f5.fato;
+  const opts = alternativas(a,b);
+  app.innerHTML = hud("🏆 Desafio Turbo · arcade") + `
+    <div class="card">
+      <div class="placar" id="placar">
+        <span>✅ ${f5.ac}</span>
+        <span>❌ ${f5.err}</span>
+        <span class="combo">🔥 ${f5.combo}</span>
+      </div>
+      <div class="cronometro"><i id="barraTempo" style="width:${Math.max(0,100 - f5.t/DUR_ARCADE*100)}%"></i></div>
+      <div class="conta">${a} × ${b} = ?</div>
+      <div class="opcoes grade" id="opsArcade">
+        ${opts.map(v=>`<button class="op" onclick="respArcade(${v})">${v}</button>`).join("")}
+      </div>
+      <div class="feedback" id="fbArc"></div>
+    </div>`;
+}
+function respArcade(v){
+  if(!f5 || f5.fim || f5.respondida) return;
+  const [a,b] = f5.fato, certo = a*b;
+  const fb = $("#fbArc");
+  if(v === certo){
+    f5.ac++; f5.combo++; f5.melhorCombo = Math.max(f5.melhorCombo, f5.combo);
+    marcaAcerto(a,b); somAcerto(); S.pontos += 5;
+    f5.fato = sorteiaFato();
+    desenhaArcade();
+  } else {
+    f5.err++; f5.combo = 0; marcaErro(a,b); somErro();
+    f5.respondida = true;
+    document.querySelectorAll("#opsArcade .op").forEach(btn=>{
+      btn.disabled = true;
+      if(Number(btn.textContent) === certo) btn.classList.add("certa");
+      else if(Number(btn.textContent) === v) btn.classList.add("errada");
+    });
+    const pl = document.getElementById("placar");
+    if(pl) pl.innerHTML = `<span>✅ ${f5.ac}</span><span>❌ ${f5.err}</span><span class="combo">🔥 ${f5.combo}</span>`;
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ ${a} × ${b} = <b>${certo}</b></div>${dica(a,b)}
+      <div class="acoes"><button class="btn" onclick="seguirArcade()">Continuar ▶</button></div>`;
+  }
+}
+window.respArcade = respArcade;
+function seguirArcade(){
+  if(!f5 || f5.fim) return;
+  somClique();
+  f5.respondida = false; f5.fato = sorteiaFato();
+  desenhaArcade();
+}
+window.seguirArcade = seguirArcade;
+function fimArcade(){
+  f5.fim = true; pararArcade();
+  const bonus = f5.ac * 5 + f5.melhorCombo * 10;
+  S.pontos += bonus; salvar(); somVitoria();
+  app.innerHTML = hud("🏆 Desafio Turbo") + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">${f5.ac>=20?"🔥":f5.ac>=10?"🎉":"👏"}</div>
+      <h2>Tempo esgotado!</h2>
+      <p>${NOME()}, você acertou <b>${f5.ac}</b> contas em 60 segundos,
+      com melhor sequência de <b>${f5.melhorCombo}</b> seguidas.</p>
+      <p class="mini">Bônus de <b>${bonus} pontos</b>. Agora vem a parte que vale as estrelas —
+      e nela <b>não tem relógio nenhum</b>.</p>
+      <div class="acoes">
+        <button class="btn" onclick="provaFinal()">🎓 Ir para a prova final</button>
+        <button class="btn sec" onclick="comecaArcade()">🔁 Jogar o arcade de novo</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+function provaFinal(){
+  somClique(); pararArcade();
+  const usados = new Set();
+  const perguntas = [];
+  /* metade puxada do que a criança errou, metade sorteada por toda a tabuada */
+  const dif = Object.keys(S.erros);
+  for(const k of dif.slice(0,6)){
+    const [a,b] = k.split("x").map(Number);
+    usados.add(k); perguntas.push(perguntaConta(a,b));
+  }
+  let voltas = 0;
+  while(perguntas.length < 12 && voltas < 400){
+    voltas++;
+    const a = 2 + Math.floor(Math.random()*8), b = 2 + Math.floor(Math.random()*8);
+    const k = Math.min(a,b)+"x"+Math.max(a,b);
+    if(usados.has(k)) continue;
+    usados.add(k); perguntas.push(perguntaConta(a,b));
+  }
+  quizGenerico(5, "🎓 Prova Final da Tabuada", embaralha(perguntas), 0, 0, true);
+}
+window.provaFinal = provaFinal;
+
+/* ============================================================
+   DIPLOMA
+   ============================================================ */
+function telaDiploma(){
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const teimosas = listaDificeis(3);
+  app.innerHTML = hud() + `
+    <div class="diploma">
+      <div class="selo">🏅</div>
+      <h2>DIPLOMA DE ${g("MESTRA","MESTRE")}<br>DA TABUADA</h2>
+      <p>A Fábrica da Tabuada concede este diploma a</p>
+      <div class="nome">${NOME()}</div>
+      <p>por ter dominado a tabuada do <b>0 ao 9</b> — entendendo o que multiplicar quer dizer,
+      dobrando, achando padrões, virando retângulos e quebrando as contas difíceis em pedaços
+      fáceis.</p>
+      <p class="fila-estrelas">${"⭐".repeat(totalEstrelas)}</p>
+      <p><b>${totalEstrelas} de 18 estrelas</b> · <b>${S.pontos} pontos</b></p>
+      <p style="margin-top:18px;font-style:italic">Matemática · 3º ano<br>Tabuada da multiplicação</p>
+    </div>
+    <div class="acoes">
+      <button class="btn" onclick="irMapa()">🗺️ Voltar ao mapa</button>
+      <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      <button class="btn ciano" onclick="window.print()">🖨️ Imprimir diploma</button>
+    </div>
+    ${teimosas.length?`<div class="card centro">
+      <p class="mini">Ainda escorregando em: <b>${teimosas.map(k=>{const [a,b]=k.split("x");return a+"×"+b;}).join(" · ")}</b>.
+      Jogue o <b>Desafio Turbo</b> de novo — elas vão aparecer bastante.</p></div>`:``}
+    ${totalEstrelas<18?`<div class="card centro">
+      <p class="mini">Faltam <b>${18-totalEstrelas}</b> estrelas para a nota máxima, ${NOME()}.
+      Dá para refazer qualquer missão pelo mapa — e as estrelas só sobem!</p></div>`:`
+    <div class="card destaque centro"><div style="font-size:50px">👑</div>
+      <p><b>PERFEIÇÃO, ${NOME()}!</b> Todas as <b>18 estrelas</b>. A tabuada agora é sua.</p></div>`}`;
+}
+
+/* ============================================================
+   INÍCIO
+   ============================================================ */
+if(carregar()){
+  S.cena = S.missoes.some(Boolean) ? "mapa" : "inicio";
+} else {
+  S.cena = "nome";
+}
+render();
+</script>
+</body>
+</html>
