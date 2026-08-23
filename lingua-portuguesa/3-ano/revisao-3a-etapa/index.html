@@ -1,0 +1,2643 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Cidade das Palavras</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%A6%9C%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0f0a1a; --bg2:#171029; --panel:#211838; --panel2:#2e2150;
+  --ink:#f8f4ff; --muted:#b0a2d0;
+  --turbo:#fbbf24; --chama:#fb7185; --menta:#4ade80; --uva:#a78bfa;
+  --vermelho:#ff6b81; --ouro:#ffd166;
+  --borda:#3b2d63; --borda2:#4a3a7d; --fundo2:#150e28; --fundo3:#241a40; --fundo4:#2b2050;
+  --tintaBtn:#2a1a02; --sombraBtn:#7c5205;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1000px 700px at 10% -12%, #4c1d95 0%, transparent 55%),
+    radial-gradient(900px 600px at 92% 0%, #7c2d12 0%, transparent 50%),
+    radial-gradient(900px 700px at 50% 114%, #312e81 0%, transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px; line-height:1.5;
+  overflow-x:hidden;
+}
+#estrelas{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:16px 14px 60px}
+
+h1,h2,h3{margin:0 0 10px;line-height:1.15}
+h1{font-size:clamp(28px,7vw,46px)}
+h2{font-size:clamp(22px,5vw,32px)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;font-weight:bold;
+  background:linear-gradient(135deg,var(--turbo),#d97706);color:var(--tintaBtn);
+  box-shadow:0 6px 0 var(--sombraBtn), 0 12px 24px rgba(0,0,0,.45);
+  transition:transform .08s, box-shadow .08s; font-size:1.05em;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--sombraBtn),0 6px 14px rgba(0,0,0,.35)}
+.btn.sec{background:linear-gradient(135deg,#3b2d63,#221838);color:var(--ink);box-shadow:0 6px 0 #150e28,0 10px 20px rgba(0,0,0,.35)}
+.btn.uva{background:linear-gradient(135deg,var(--uva),#7c3aed);color:#fff;box-shadow:0 6px 0 #4c1d95,0 12px 24px rgba(0,0,0,.35)}
+.btn.chama{background:linear-gradient(135deg,var(--chama),#e11d48);color:#fff;box-shadow:0 6px 0 #881337,0 12px 24px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ---------- HUD ---------- */
+.hud{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:rgba(33,24,56,.88);border:2px solid var(--borda);border-radius:var(--r);
+  padding:10px 14px;margin-bottom:14px;backdrop-filter:blur(6px);
+}
+.hud .nome{font-weight:bold;color:var(--turbo)}
+.chip{
+  background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;
+  padding:9px 14px;font-size:.9em;font-weight:bold;white-space:nowrap;color:var(--ink);
+  line-height:1.2;min-height:42px;display:inline-flex;align-items:center
+}
+.chip.pts{color:var(--ouro);border-color:#8a6a13}
+.hud .espaco{flex:1}
+
+/* ---------- cartões ---------- */
+.card{
+  background:linear-gradient(160deg,rgba(46,33,80,.92),rgba(15,10,26,.94));
+  border:2px solid var(--borda);border-radius:var(--r);padding:20px;margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45)
+}
+.card.destaque{border-color:var(--ouro);box-shadow:0 0 0 3px rgba(255,209,102,.18),0 10px 30px rgba(0,0,0,.5)}
+
+/* ---------- mapa ---------- */
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.missao{
+  position:relative;text-align:left;width:100%;
+  background:linear-gradient(160deg,var(--fundo4),#130d24);
+  border:2px solid var(--borda2);border-radius:var(--r);padding:16px 16px 14px;
+  color:var(--ink);transition:transform .12s,border-color .12s;
+}
+.missao:not(.trancada):hover{transform:translateY(-4px);border-color:var(--turbo)}
+.missao.trancada{opacity:.5;filter:grayscale(.6);cursor:not-allowed}
+.missao.feita{border-color:var(--menta)}
+.missao .num{
+  position:absolute;top:-12px;left:14px;background:var(--turbo);color:var(--tintaBtn);
+  width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  font-weight:bold;box-shadow:0 3px 0 var(--sombraBtn)
+}
+.missao.feita .num{background:var(--menta);color:#04231a;box-shadow:0 3px 0 #0f6b4a}
+.missao .ico{font-size:34px;line-height:1;margin:6px 0 6px}
+.missao .tit{font-weight:bold;font-size:1.08em;margin-bottom:3px}
+.missao .sub{font-size:.85em;color:var(--muted)}
+.missao .estrelas{margin-top:8px;font-size:1.05em;letter-spacing:2px}
+
+/* ---------- quiz ---------- */
+.pergunta{font-size:1.14em;font-weight:bold;margin-bottom:14px}
+.enunciado{
+  background:var(--fundo2);border-left:6px solid var(--turbo);border-radius:12px;
+  padding:14px 16px;margin-bottom:14px;font-size:1.06em;line-height:1.55
+}
+.enunciado.texto{font-size:1.02em;max-height:none}
+.conta{
+  font-size:clamp(24px,6.5vw,40px);font-weight:bold;text-align:center;
+  margin:6px 0 16px;color:var(--ouro);overflow-wrap:anywhere;line-height:1.25
+}
+.opcoes{display:grid;gap:10px}
+.opcoes.grade{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.opcoes.quatro{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.op{
+  text-align:left;background:var(--fundo3);border:2px solid var(--borda);border-radius:14px;
+  padding:13px 16px;color:var(--ink);transition:border-color .1s,background .1s,transform .1s;
+  display:flex;gap:10px;align-items:center
+}
+.opcoes.grade .op{justify-content:center;font-size:1.15em;font-weight:bold;padding:16px 10px;text-align:center}
+.opcoes.quatro .op{justify-content:center;font-size:1.05em;font-weight:bold;padding:16px 10px;text-align:center}
+.op:not(:disabled):hover{border-color:var(--turbo);transform:translateY(-2px)}
+.op .letra{
+  flex:0 0 26px;height:26px;border-radius:8px;background:var(--borda2);color:#fff;
+  display:grid;place-items:center;font-weight:bold;font-size:.85em
+}
+.op.certa{border-color:var(--menta);background:#0f4a36}
+.op.certa .letra{background:var(--menta);color:#04231a}
+.op.errada{border-color:var(--vermelho);background:#4b1524}
+.op.errada .letra{background:var(--vermelho);color:#3d0a16}
+.op:disabled{cursor:default}
+
+.feedback{margin-top:14px;border-radius:14px;padding:14px 16px;border-left:6px solid;display:none}
+.feedback.show{display:block;animation:sobe .25s}
+.feedback.bom{background:rgba(74,222,128,.15);border-color:var(--menta)}
+.feedback.ruim{background:rgba(255,107,129,.15);border-color:var(--vermelho)}
+.feedback .tt{font-weight:bold;margin-bottom:5px;font-size:1.05em}
+@keyframes sobe{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.progresso{height:9px;background:var(--fundo2);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.progresso i{display:block;height:100%;background:linear-gradient(90deg,var(--uva),var(--turbo));transition:width .3s}
+
+/* ---------- frase com palavra em foco (missão do adjetivo) ---------- */
+.frase{
+  background:#fbf7ee;color:#2a1f10;border-radius:14px;padding:18px 16px;margin:10px 0 16px;
+  font-size:clamp(18px,4.8vw,25px);line-height:1.6;text-align:center;
+  border:3px solid var(--turbo);box-shadow:0 8px 24px rgba(0,0,0,.45)
+}
+.frase .foco{
+  background:var(--turbo);color:var(--tintaBtn);border-radius:8px;padding:1px 8px;font-weight:bold;
+  box-shadow:0 3px 0 var(--sombraBtn)
+}
+.frase .lac{
+  display:inline-block;min-width:74px;border-bottom:4px solid var(--uva);
+  color:#6d28d9;font-weight:bold;padding:0 8px;cursor:pointer;border-radius:6px 6px 0 0
+}
+.frase .lac.vazia{color:#b0a2d0}
+.frase .lac.pronta{background:rgba(167,139,250,.22)}
+.frase .lac.alvo{background:rgba(251,191,36,.35);border-bottom-color:var(--turbo)}
+.frase .lac.certa{background:rgba(74,222,128,.3);border-bottom-color:#16a34a;color:#166534}
+.frase .lac.errada{background:rgba(255,107,129,.3);border-bottom-color:#dc2626;color:#991b1b}
+
+/* ---------- ponte da concordância ---------- */
+.ponte{display:block;margin:6px auto 2px;max-width:420px;width:100%;height:auto}
+.ponte .agua{fill:#1b1436}
+.ponte .pilar{fill:#3b2d63}
+.ponte .tabua{fill:var(--borda2);stroke:#150e28;stroke-width:2}
+.ponte .tabua.posta{fill:var(--menta)}
+.ponte .bicho{font-size:22px}
+.contadorTabuas{
+  text-align:center;font-weight:bold;color:var(--turbo);margin:4px 0 12px;font-size:1.05em
+}
+
+/* ---------- fichas / grade de classificação ---------- */
+.rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
+table.grade2{border-collapse:collapse;margin:0 auto;font-size:.93em}
+table.grade2 th,table.grade2 td{border:2px solid var(--borda2);padding:8px 11px;text-align:center}
+table.grade2 th{background:var(--fundo4);color:var(--turbo);font-size:.82em}
+table.grade2 th.linha{background:var(--fundo3);color:var(--ink);text-align:left;font-weight:normal}
+table.grade2 td{background:var(--fundo2)}
+table.grade2 td.marca{color:var(--menta);font-weight:bold}
+
+/* ---------- duas perguntas em degrau (classe → classificação) ---------- */
+.degraus{display:flex;gap:10px;justify-content:center;margin:0 0 14px;flex-wrap:wrap}
+.degrau{
+  background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;
+  padding:7px 16px;font-size:.88em;font-weight:bold;color:var(--muted)
+}
+.degrau.aqui{border-color:var(--turbo);color:var(--turbo)}
+.degrau.ok{border-color:var(--menta);color:var(--menta)}
+
+/* ---------- arcade ---------- */
+.cronometro{
+  height:16px;background:var(--fundo2);border-radius:99px;overflow:hidden;margin:10px 0 4px;
+  border:2px solid var(--borda)
+}
+.cronometro i{display:block;height:100%;background:linear-gradient(90deg,var(--menta),var(--ouro),var(--vermelho));transition:width .2s linear}
+.placar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.placar span{background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;padding:4px 14px;font-weight:bold}
+.combo{color:var(--chama)}
+
+/* ---------- aula ---------- */
+.aula{
+  background:#fdfaf3;
+  background-image:linear-gradient(rgba(124,58,237,.09) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(124,58,237,.09) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:#2a1f10;border:3px solid var(--turbo);border-radius:var(--r);
+  padding:24px 22px 20px;margin-bottom:14px;box-shadow:0 14px 40px rgba(0,0,0,.55)
+}
+.aula b{color:#7c3aed}
+.aula .guia{
+  display:flex;gap:10px;align-items:center;font-size:.86em;color:#5b4a2e;
+  border-bottom:2px dashed #e3d3ae;padding-bottom:10px;margin-bottom:16px
+}
+.aula .guia .robo{font-size:30px;line-height:1}
+.aula .ico{font-size:60px;line-height:1;text-align:center;margin-bottom:6px}
+.aula h2{color:#7c3aed;text-align:center;font-size:clamp(21px,5.2vw,30px)}
+.aula p{font-size:1.06em;margin:0 0 12px}
+.aula .chave{
+  background:#fff;border-left:6px solid #d97706;border-radius:10px;
+  padding:12px 14px;margin-top:14px;font-size:1.03em
+}
+.aula .chave .rot{display:block;font-weight:bold;color:#b45309;font-size:.82em;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.aula .lista{margin:10px 0 0;padding-left:20px}
+.aula .lista li{margin-bottom:6px}
+.aula .destaque{
+  text-align:center;font-size:clamp(18px,4.6vw,26px);font-weight:bold;color:#7c3aed;
+  background:#fff;border-radius:12px;padding:12px 10px;margin:12px 0;
+  overflow-wrap:anywhere;line-height:1.35
+}
+.aula .errado{color:#b91c1c;text-decoration:line-through}
+.aula .certo{color:#15803d}
+.aula table.mini-tab{border-collapse:collapse;margin:10px auto;font-size:.92em}
+.aula table.mini-tab th,.aula table.mini-tab td{border:1px solid #e3d3ae;padding:6px 10px;text-align:center}
+.aula table.mini-tab th{background:#fdf1d6;color:#b45309}
+.pontos{display:flex;gap:7px;justify-content:center;margin:18px 0 4px;flex-wrap:wrap}
+.pontos i{width:9px;height:9px;border-radius:50%;background:#e3d3ae;display:block}
+.pontos i.aqui{background:#d97706;transform:scale(1.35)}
+.pontos i.vista{background:#d97706;opacity:.45}
+.btn.aula{background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;box-shadow:0 6px 0 #4c1d95,0 10px 20px rgba(0,0,0,.35)}
+.btn.aula.fraco{background:linear-gradient(135deg,#a99ec2,#867b9d);box-shadow:0 6px 0 #4d4560,0 10px 20px rgba(0,0,0,.3)}
+
+/* ---------- diversos ---------- */
+.centro{text-align:center}
+.mini{font-size:.88em;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{background:var(--fundo2);border:1px solid var(--borda);border-radius:999px;padding:3px 11px;font-size:.8em;color:var(--muted)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.esconde{display:none!important}
+.campo{
+  width:100%;max-width:340px;padding:14px 18px;border-radius:14px;border:3px solid var(--turbo);
+  background:var(--fundo2);color:var(--ink);font-size:1.15em;font-family:inherit;text-align:center;margin:6px 0 4px
+}
+.campo:focus{outline:none;border-color:var(--uva);box-shadow:0 0 0 4px rgba(251,191,36,.2)}
+
+/* colinha */
+.colinha{position:fixed;inset:0;background:rgba(10,6,20,.98);z-index:50;overflow-y:auto;padding:20px 14px 60px;display:none}
+.colinha.aberta{display:block}
+.colinha .in{max-width:760px;margin:0 auto}
+.colinha h3{color:var(--ouro);margin-top:26px;border-bottom:2px solid var(--borda);padding-bottom:6px}
+.colinha ul,.colinha ol{padding-left:20px}
+.colinha li{margin-bottom:7px}
+.colinha b{color:var(--turbo)}
+.colinha .ex{background:var(--fundo2);border-left:5px solid var(--uva);border-radius:10px;padding:10px 14px;margin:10px 0}
+.fechar{position:sticky;top:0;float:right;background:var(--turbo);color:var(--tintaBtn);border-radius:999px;
+  width:44px;height:44px;font-size:22px;font-weight:bold;box-shadow:0 4px 0 var(--sombraBtn);z-index:2}
+
+/* diploma */
+.diploma{
+  background:linear-gradient(160deg,#fffdf7,#f6efff);color:#2a1f10;border-radius:20px;
+  padding:28px 22px;text-align:center;border:8px double var(--turbo);box-shadow:0 20px 50px rgba(0,0,0,.6)
+}
+.diploma h2{color:#7c3aed;font-size:clamp(24px,6vw,36px)}
+.diploma .nome{
+  font-size:clamp(24px,6.4vw,40px);font-weight:bold;color:#b45309;
+  border-bottom:3px solid var(--uva);display:inline-block;padding:4px 22px;margin:10px 0 14px;
+  overflow-wrap:anywhere;max-width:100%
+}
+.diploma .selo{font-size:56px}
+.fila-estrelas{font-size:clamp(15px,4.4vw,24px);line-height:1.7;letter-spacing:1px;
+  overflow-wrap:anywhere;word-break:break-word;max-width:100%;margin:12px 0}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;top:80px;transform:translateX(-50%);
+  background:var(--menta);color:#04231a;font-weight:bold;padding:10px 22px;border-radius:999px;
+  z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transition:opacity .25s,top .25s;
+  pointer-events:none;max-width:90vw;text-align:center
+}
+.toast.show{opacity:1;top:100px}
+.toast.mau{background:var(--vermelho);color:#3d0a16}
+
+@media(max-width:520px){
+  body{font-size:16px}
+  .card{padding:16px 14px}
+  .wrap{padding:12px 10px 50px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{ body{background:#fff} #estrelas,.hud,.acoes,.card:not(.diploma){display:none!important} }
+</style>
+</head>
+<body>
+<canvas id="estrelas"></canvas>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<div class="colinha" id="colinha">
+  <div class="in">
+    <button class="fechar" onclick="fecharColinha()">×</button>
+    <h2 style="color:var(--ouro)">📖 Colinha da Prova</h2>
+    <p class="mini">Os sete assuntos do roteiro, num lugar só. Pode abrir a qualquer hora —
+    inclusive no meio do arcade, que o cronômetro para.</p>
+
+    <h3>🧭 Classe e classificação não são a mesma coisa</h3>
+    <p>Esta é a pergunta que mais confunde. São <b>dois andares</b>:</p>
+    <div class="ex">
+      <p style="margin:0"><b>Classe gramatical</b> = <i>que tipo de palavra é?</i><br>
+      → substantivo · artigo · adjetivo · numeral</p>
+      <p style="margin:8px 0 0"><b>Classificação</b> = <i>que tipo daquela classe?</i><br>
+      → próprio/comum · definido/indefinido · cardinal/ordinal</p>
+    </div>
+    <p>Em <i>"<b>o</b> cachorro"</i>: a <b>classe</b> de "o" é <b>artigo</b>; a <b>classificação</b>
+    dele é <b>definido</b>. Quem responde "definido" para a pergunta da classe pulou um andar.</p>
+
+    <h3>🗂️ Substantivo</h3>
+    <p>Palavra que <b>nomeia</b> os seres, os lugares, os objetos, os sentimentos e tudo o que existe.</p>
+    <ul>
+      <li><b>Comum</b> — nomeia de <b>forma geral</b>: menino, cidade, escola, cachorro.</li>
+      <li><b>Próprio</b> — nomeia um ser <b>específico</b> e vai de <b>letra maiúscula</b>:
+          Pedro, Fortaleza, Brasil, Maria.</li>
+      <li><b>Concreto</b> — tem <b>existência própria</b>, real <b>ou imaginária</b>:
+          cadeira, árvore, bicicleta e também <b>fada</b>, saci, dragão.</li>
+      <li><b>Coletivo</b> — está no <b>singular</b> mas indica um <b>conjunto</b> de seres da
+          <b>mesma espécie</b>.</li>
+      <li><b>Primitivo</b> — <b>não vem</b> de outra palavra: pedra, flor, papel.</li>
+      <li><b>Derivado</b> — <b>nasceu de</b> um primitivo: pedreiro, floricultura, papelaria.</li>
+    </ul>
+    <p><b>Coletivos que caem:</b> cardume (peixes) · enxame (abelhas) · rebanho (ovelhas) ·
+    boiada (bois) · matilha (cães) · alcateia (lobos) · ramalhete (flores) · pomar (árvores frutíferas) ·
+    biblioteca (livros) · álbum (fotografias) · esquadrilha (aviões) · frota (navios) ·
+    banda (músicos) · elenco (artistas) · classe (alunos) · turma (estudantes) · time (atletas) ·
+    constelação (estrelas) · alfabeto (letras) · enxoval (roupas) · ninhada (filhotes) ·
+    cacho (uvas/bananas) · molho (chaves).</p>
+
+    <h3>🚪 Artigo</h3>
+    <p>Palavra que vem <b>antes do substantivo</b> e mostra o <b>gênero</b> e o <b>número</b> dele.</p>
+    <div class="rolagem">
+      <table class="grade2">
+        <tr><th></th><th>masc. sing.</th><th>fem. sing.</th><th>masc. plural</th><th>fem. plural</th></tr>
+        <tr><th class="linha">Definido</th><td>o</td><td>a</td><td>os</td><td>as</td></tr>
+        <tr><th class="linha">Indefinido</th><td>um</td><td>uma</td><td>uns</td><td>umas</td></tr>
+      </table>
+    </div>
+    <ul>
+      <li><b>Definido</b> — o substantivo é <b>específico e conhecido</b>: "<b>o</b> cachorro que eu perdi".</li>
+      <li><b>Indefinido</b> — é <b>vago, impreciso ou desconhecido</b>: "<b>um</b> cachorro vagando na rua".</li>
+    </ul>
+
+    <h3>🎨 Adjetivo</h3>
+    <p>Palavra que <b>caracteriza</b> o substantivo: diz <b>como ele é</b>.</p>
+    <p><b>A mesma palavra pode mudar de classe.</b> Quem manda é o lugar dela na frase:</p>
+    <div class="ex">
+      <p style="margin:0">"O <b>jovem</b> atleta venceu." → <b>jovem</b> descreve o atleta = <b>adjetivo</b></p>
+      <p style="margin:6px 0 0">"O jovem <b>cantor</b> venceu." → <b>cantor</b> é quem venceu = <b>substantivo</b></p>
+    </div>
+    <p><b>Truque:</b> pergunte "<i>quem?</i>" → é substantivo. Pergunte "<i>como é?</i>" → é adjetivo.</p>
+    <p><b>Grau comparativo</b> — compara dois seres, com três fórmulas fixas:</p>
+    <ul>
+      <li><b>igualdade</b> — <b>tão</b> … <b>quanto</b> (ou <b>como</b>): "Ana é <b>tão</b> alta <b>quanto</b> Bia."</li>
+      <li><b>superioridade</b> — <b>mais</b> … <b>(do) que</b>: "Ana é <b>mais</b> alta <b>do que</b> Bia."</li>
+      <li><b>inferioridade</b> — <b>menos</b> … <b>(do) que</b>: "Ana é <b>menos</b> alta <b>do que</b> Bia."</li>
+    </ul>
+    <p>Dois fogem da regra e caem sempre: <b>bom → melhor (do) que</b> e <b>mau → pior (do) que</b>.
+    Nunca "mais bom", nunca "mais mau".</p>
+
+    <h3>🔗 Concordância — o segundo lugar da frase</h3>
+    <p>O artigo e o adjetivo <b>repetem</b> o gênero e o número do substantivo. Como o Eco.</p>
+    <div class="ex">
+      <p style="margin:0"><span style="color:var(--vermelho)">✗</span>
+      "Um animal <b>das florestas</b> do Brasil"</p>
+      <p style="margin:6px 0 0"><span style="color:var(--menta)">✓</span>
+      "Um animal <b>da floresta</b> do Brasil"</p>
+    </div>
+    <p><b>Quase toda frase tem mais de um lugar para arrumar.</b> Depois de mudar o primeiro,
+    volte e leia a frase inteira até o ponto final, procurando o segundo.</p>
+
+    <h3>⚖️ Gênero, número e grau</h3>
+    <ul>
+      <li><b>Gênero</b> — masculino (o, os, um, uns) ou feminino (a, as, uma, umas).</li>
+      <li><b>Número</b> — singular (um só) ou plural (mais de um).</li>
+      <li><b>Grau</b> — <b>diminutivo</b> (-inho, -inha, -zinho) ou <b>aumentativo</b> (-ão, -ona, -zão).</li>
+    </ul>
+    <p><b>Regras do plural:</b></p>
+    <ul>
+      <li>termina em <b>r, s, z</b> → acrescenta <b>-es</b>: cantor–cantor<b>es</b>, luz–luz<b>es</b>, mês–mes<b>es</b></li>
+      <li>termina em <b>vogal</b> → acrescenta <b>s</b>: bola–bola<b>s</b>, vela–vela<b>s</b></li>
+      <li>termina em <b>m</b> → troca o <b>m</b> por <b>ns</b>: trem–tre<b>ns</b>, nuvem–nuve<b>ns</b></li>
+      <li>termina em <b>al, el, ol</b> → troca o <b>l</b> por <b>is</b>: animal–anima<b>is</b>,
+          pincel–pincé<b>is</b>, girassol–girassó<b>is</b></li>
+      <li>não mudam: <b>o</b> pires / <b>os</b> pires · lápis · ônibus · tênis</li>
+    </ul>
+    <p><b>Cuidado com o grau:</b> nem toda palavra em <b>-ão</b> é aumentativo.
+    Coração, limão, mamão e leão são só palavras que terminam assim.</p>
+
+    <h3>🔢 Numeral</h3>
+    <ul>
+      <li><b>Cardinal</b> — indica <b>quantidade</b>: um, dois, três, quatro, dez, cem.</li>
+      <li><b>Ordinal</b> — indica <b>ordem ou posição</b>: primeiro, segundo, terceiro, décimo.</li>
+    </ul>
+    <p>Os que mais escorregam: 6º <b>sexto</b> · 7º <b>sétimo</b> · 9º <b>nono</b> ·
+    10º <b>décimo</b> · 11º <b>décimo primeiro</b> · 20º <b>vigésimo</b> · 100º <b>centésimo</b>.</p>
+
+    <h3>🔁 Sinônimo e antônimo</h3>
+    <ul>
+      <li><b>Sinônimo</b> — significado <b>parecido</b>: apertado / estreito · bonito / belo · começar / iniciar.</li>
+      <li><b>Antônimo</b> — significado <b>oposto</b>: melhor / pior · lembrar / esquecer · alegre / triste.</li>
+    </ul>
+    <p>Truque: <b>anTÔnimo</b> tem <b>O</b> de <b>Oposto</b>. <b>Sinônimo</b> é <b>Semelhante</b>.</p>
+
+    <h3>✍️ Ortografia</h3>
+    <ul>
+      <li><b>mau × mal</b> — <b>mau</b> é o contrário de <b>bom</b> (o lobo <b>mau</b>);
+          <b>mal</b> é o contrário de <b>bem</b> (passou <b>mal</b>). Se der para trocar por
+          "bom", escreve <b>mau</b>.</li>
+      <li><b>-au, -eu, -ou</b> — degr<b>au</b>, chap<b>éu</b>, most<b>rou</b>. Fale devagar e
+          escute a última letra.</li>
+      <li><b>L ou U no fim da sílaba</b> — anima<b>l</b>, papé<b>l</b>, sa<b>l</b> (dá para
+          formar o plural em <b>-is</b>) × cha<b>péu</b>, tro<b>féu</b>.</li>
+      <li><b>ç / c / s</b> — infân<b>c</b>ia, dicioná<b>r</b>io, emo<b>ç</b>ão, simpli<b>c</b>idade,
+          bibliote<b>c</b>a, carro<b>ss</b>el.</li>
+      <li><b>-ção</b> no fim de palavra é sempre com <b>ç</b>: emoção, atenção, coração, canção.</li>
+    </ul>
+
+    <h3>📖 Interpretação de texto</h3>
+    <ul>
+      <li><b>Leia a pergunta duas vezes</b> antes de responder — e uma vez depois.</li>
+      <li>"Responda com um <b>trecho do texto</b>" quer dizer <b>copiar</b> as palavras do texto,
+          não explicar com as suas.</li>
+      <li>Cuidado com a pergunta que pede <b>o seguinte</b> e você responde <b>o que ele é</b>.
+          Se a pergunta é "qual vem <b>depois</b>", a resposta não é a definição.</li>
+      <li>Antes de entregar, confira: <b>eu respondi exatamente o que foi perguntado?</b></li>
+    </ul>
+
+    <div class="centro" style="margin-top:26px">
+      <button class="btn" onclick="fecharColinha()">Voltar ao jogo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const CHAVE = "cidadeDasPalavras.v1";
+
+/* A lista de missões é a única fonte da verdade. Nenhum número de missão
+   ou de estrela aparece cravado no código — tudo sai de MISSOES.length. */
+const MISSOES = [
+  {ico:"📖", tit:"Sala de Leitura",       sub:"Interpretação · sinônimo e antônimo", hab:"leitura"},
+  {ico:"🗂️", tit:"Cartório dos Nomes",    sub:"Substantivo: classificar e formar",   hab:"substantivo"},
+  {ico:"🚪", tit:"Portaria dos Artigos",  sub:"Artigo definido, indefinido e gênero", hab:"artigo"},
+  {ico:"🔢", tit:"Balcão da Contagem",    sub:"Número, grau e numeral",              hab:"contagem"},
+  {ico:"🎨", tit:"Ateliê do Adjetivo",    sub:"Adjetivo, gênero, número e grau",     hab:"adjetivo"},
+  {ico:"🔗", tit:"Ponte da Concordância", sub:"O segundo lugar da frase",            hab:"concordancia"},
+  {ico:"✍️", tit:"Oficina da Escrita",    sub:"Ortografia",                          hab:"ortografia"},
+  {ico:"🏆", tit:"Prova da Cidade",       sub:"Arcade + prova final",                hab:"final"}
+];
+const N_MISSOES  = MISSOES.length;
+const POR_MISSAO = 3;                        /* estrelas por missão */
+const TOTAL_ESTRELAS = N_MISSOES * POR_MISSAO;
+const vazio = v => Array.from({length:N_MISSOES}, () => v);
+
+const S = {
+  nome: "",
+  genero: "f",
+  pontos: 0,
+  missoes:  vazio(false),
+  estrelas: vazio(0),
+  aulas:    vazio(false),
+  erros: {},          /* habilidade -> quantas vezes escorregou. Alimenta a prova final. */
+  cena: "nome"
+};
+
+function esc(x){
+  return String(x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function g(fem, masc){ return S.genero === "f" ? fem : masc; }
+const NOME = () => esc(S.nome);
+
+function salvar(){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify({
+      nome:S.nome, genero:S.genero, pontos:S.pontos,
+      missoes:S.missoes, estrelas:S.estrelas, aulas:S.aulas, erros:S.erros
+    }));
+  }catch(e){/* sem localStorage o jogo roda igual, só não guarda */}
+}
+function carregar(){
+  try{
+    const d = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if(d && d.nome){
+      S.nome = d.nome; S.genero = d.genero === "m" ? "m" : "f";
+      S.pontos = d.pontos|0;
+      if(Array.isArray(d.missoes)  && d.missoes.length===N_MISSOES)  S.missoes  = d.missoes.map(Boolean);
+      if(Array.isArray(d.estrelas) && d.estrelas.length===N_MISSOES) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(POR_MISSAO,n|0)));
+      if(Array.isArray(d.aulas)    && d.aulas.length===N_MISSOES)    S.aulas    = d.aulas.map(Boolean);
+      if(d.erros && typeof d.erros === "object") S.erros = d.erros;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+/* registro por HABILIDADE, não por palavra: numa revisão o que importa é
+   qual assunto escorrega, não qual exemplo apareceu. */
+const NOME_HAB = {
+  leitura:"responder o que foi perguntado", sinonimo:"sinônimo e antônimo",
+  substantivo:"classificar o substantivo",  formacao:"primitivo e derivado",
+  coletivo:"substantivo coletivo",          artigo:"artigo definido e indefinido",
+  classe:"classe × classificação",          genero:"gênero da palavra",
+  numero:"singular e plural",               grau:"grau: diminutivo e aumentativo",
+  numeral:"numeral cardinal e ordinal",     adjetivo:"reconhecer o adjetivo",
+  comparativo:"grau comparativo",           concordancia:"concordância na frase inteira",
+  ortografia:"ortografia"
+};
+function marcaErro(hab){ if(!hab) return; S.erros[hab] = (S.erros[hab]||0) + 1; salvar(); }
+function marcaAcerto(hab){
+  if(!hab || !S.erros[hab]) return;
+  S.erros[hab]--; if(S.erros[hab] <= 0) delete S.erros[hab];
+  salvar();
+}
+function listaFracas(n){
+  return Object.entries(S.erros).sort((x,y)=>y[1]-x[1]).slice(0, n||4).map(e=>e[0]);
+}
+
+/* ============================================================
+   SOM
+   ============================================================ */
+let AC = null;
+function ac(){ if(!AC){ try{AC = new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function bip(freq, dur, tipo, vol){
+  const c = ac(); if(!c) return;
+  if(c.state === "suspended") c.resume();
+  const o = c.createOscillator(), gn = c.createGain();
+  o.type = tipo || "sine"; o.frequency.value = freq;
+  gn.gain.setValueAtTime(vol||0.13, c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  o.connect(gn); gn.connect(c.destination);
+  o.start(); o.stop(c.currentTime + dur);
+}
+const somAcerto = ()=>{ bip(660,.09,"triangle"); setTimeout(()=>bip(880,.14,"triangle"),90); };
+const somErro   = ()=>{ bip(200,.18,"sawtooth",.09); };
+const somClique = ()=>{ bip(520,.05,"square",.05); };
+const somVitoria= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>bip(f,.2,"triangle"),i*110)); };
+const somPop    = ()=>{ bip(880,.06,"sine",.07); };
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+function embaralha(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function sorteio(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+let toastT = null;
+function toast(txt, mau){
+  const t = $("#toast");
+  t.innerHTML = txt;
+  t.className = "toast show" + (mau ? " mau" : "");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ t.className = "toast" + (mau?" mau":""); }, 1500);
+}
+function ganha(p){ S.pontos += p; toast("+" + p + " pontos!"); }
+
+function estrelasTxt(n){ return "⭐".repeat(n) + "☆".repeat(POR_MISSAO-n); }
+function estrelasPor(acertos, total){
+  const pct = total ? acertos/total : 0;
+  if(pct >= 0.99) return 3;
+  if(pct >= 0.7)  return 2;
+  if(pct >= 0.4)  return 1;
+  return 0;
+}
+const ELOGIOS = ["Isso, {n}!","Boa, {n}!","Mandou bem, {n}!","{n} arrasou!","Exatamente, {n}!","Perfeito, {n}!","Show, {n}!"];
+function elogio(){ return sorteio(ELOGIOS).replace("{n}", NOME()); }
+
+function hud(titulo){
+  const emMissao = /^m\d+$/.test(S.cena);
+  return `<div class="hud">
+    <span class="nome">🦜 ${NOME()}</span>
+    <span class="chip pts">⭐ ${S.pontos} pts</span>
+    <span class="espaco"></span>
+    ${emMissao ? `<button class="chip" onclick="reverAula(${S.cena.slice(1)})" style="cursor:pointer">📚 Aula</button>` : ``}
+    <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
+    <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
+  </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
+}
+
+function abrirColinha(){ somClique(); pausaCrono(true); $("#colinha").classList.add("aberta"); }
+function fecharColinha(){ somClique(); $("#colinha").classList.remove("aberta"); pausaCrono(false); }
+window.abrirColinha = abrirColinha; window.fecharColinha = fecharColinha;
+
+/* ============================================================
+   FUNDO — luzinhas da cidade
+   ============================================================ */
+(function fundo(){
+  const cv = $("#estrelas"), cx = cv.getContext("2d");
+  let pcs = [];
+  function dim(){
+    cv.width = innerWidth; cv.height = innerHeight;
+    pcs = [];
+    const n = Math.min(110, Math.floor(innerWidth*innerHeight/12000));
+    for(let i=0;i<n;i++) pcs.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      r:Math.random()*1.6+.4, vy:Math.random()*.18+.04,
+      alfa:Math.random()*.6+.2, fase:Math.random()*6.28,
+      cor: Math.random()<.35 ? "#fcd34d" : "#e9d5ff"
+    });
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    const t = Date.now()/900;
+    for(const p of pcs){
+      p.y -= p.vy;                                  /* as luzinhas sobem, como vaga-lumes */
+      if(p.y < -4){ p.y = cv.height + 4; p.x = Math.random()*cv.width; }
+      cx.globalAlpha = p.alfa * (0.6 + 0.4*Math.sin(t + p.fase));
+      cx.fillStyle = p.cor;
+      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.2832); cx.fill();
+    }
+    cx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  addEventListener("resize", dim); dim(); loop();
+})();
+
+/* ============================================================
+   ROTEADOR
+   ============================================================ */
+function irMapa(){ somClique(); pararArcade(); S.cena="mapa"; render(); }
+window.irMapa = irMapa;
+
+function abrirMissao(i){
+  if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a missão anterior primeiro, " + NOME() + "!", true); return; }
+  pararArcade();
+  if(!S.aulas[i]){ abrirAula(i); return; }   /* a aula vem antes, na estreia da missão */
+  somClique(); S.cena = "m"+i; render();
+}
+window.abrirMissao = abrirMissao;
+
+function concluiMissao(i, acertos, total, bonus){
+  S.missoes[i] = true;
+  const est = estrelasPor(acertos, total);
+  S.estrelas[i] = Math.max(S.estrelas[i], est);
+  const pts = acertos*10 + est*25 + (bonus||0);
+  S.pontos += pts;
+  salvar();
+  somVitoria();
+  const tudoFeito = S.missoes.every(Boolean);
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:64px">${est===3?"🏆":est===2?"🎉":"👏"}</div>
+      <h2>Missão ${i+1} concluída, ${NOME()}!</h2>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${estrelasTxt(est)}</div>
+      <p>Você acertou <b>${acertos} de ${total}</b> e ganhou <b>${pts} pontos</b>.</p>
+      ${est<POR_MISSAO?`<p class="mini">Dá para refazer e buscar as ${POR_MISSAO} estrelas — elas só sobem, nunca descem.</p>`:``}
+      <div class="acoes">
+        ${tudoFeito
+          ? `<button class="btn" onclick="verDiploma()">🎓 Ver meu diploma!</button>`
+          : (i < N_MISSOES-1 ? `<button class="btn uva" onclick="abrirMissao(${i+1})">Próxima missão →</button>` : ``)}
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+        <button class="btn sec" onclick="abrirMissao(${i})">🔁 Refazer</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+
+const FASES = [faseLeitura, faseCartorio, faseArtigos, faseContagem,
+               faseAdjetivo, fasePonte, faseOrtografia, faseFinal];
+
+function render(){
+  scrollTo(0,0);
+  if(S.cena === "nome")    return telaNome();
+  if(S.cena === "inicio")  return telaInicio();
+  if(S.cena === "mapa")    return telaMapa();
+  if(S.cena === "diploma") return telaDiploma();
+  let m = /^m(\d+)$/.exec(S.cena);
+  if(m && FASES[+m[1]]) return FASES[+m[1]]();
+  m = /^a(\d+)$/.exec(S.cena);
+  if(m) return telaAula(+m[1]);
+}
+
+/* ============================================================
+   TELA DO NOME
+   ============================================================ */
+function telaNome(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--turbo)">
+      <div style="font-size:70px;line-height:1">🦜</div>
+      <h1 style="background:linear-gradient(90deg,var(--uva),var(--turbo),var(--chama));-webkit-background-clip:text;background-clip:text;color:transparent">
+        CIDADE DAS PALAVRAS
+      </h1>
+      <p style="font-size:1.1em">Revisão para a <b>prova de Língua Portuguesa</b></p>
+      <p class="mini">3º ano · 3ª etapa · os 7 assuntos do roteiro</p>
+      <div class="card" style="text-align:left;background:rgba(21,14,40,.85);margin-top:18px">
+        <p><b>🏙️ Na Cidade das Palavras, cada palavra tem um emprego.</b></p>
+        <p>Umas <b>dão nome</b> às coisas, outras <b>descrevem</b>, outras <b>anunciam</b>,
+        outras <b>contam</b>. Hoje a cidade precisa de ${g("uma inspetora","um inspetor")} para
+        conferir se cada palavra está no emprego certo.</p>
+        <p style="margin:0">Só falta uma coisa: <b>como você se chama?</b></p>
+      </div>
+      <input class="campo" id="nomeInput" type="text" maxlength="18" autocomplete="off"
+             placeholder="Digite seu nome" onkeydown="if(event.key==='Enter')pedeGenero()">
+      <p class="mini" id="avisoNome" style="min-height:20px"></p>
+      <p style="margin-top:6px"><b>E como você quer ser ${g("chamada","chamado")} na cidade?</b></p>
+      <div class="acoes">
+        <button class="btn" onclick="definir('f')">🔍 Sou a inspetora</button>
+        <button class="btn uva" onclick="definir('m')">🔍 Sou o inspetor</button>
+      </div>
+    </div>`;
+  const inp = $("#nomeInput");
+  if(inp){ inp.value = S.nome; setTimeout(()=>inp.focus(), 120); }
+}
+function definir(gen){
+  const inp = $("#nomeInput");
+  let v = (inp ? inp.value : "").trim().replace(/\s+/g," ");
+  if(v.length < 2){
+    somErro();
+    $("#avisoNome").innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`;
+    if(inp) inp.focus();
+    return;
+  }
+  v = v.split(" ").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" ");
+  S.nome = v;
+  if(gen === "f" || gen === "m") S.genero = gen;
+  ac(); somVitoria(); salvar();
+  S.cena = "inicio"; render();
+}
+window.definir = definir;
+function pedeGenero(){
+  const inp = $("#nomeInput"), aviso = $("#avisoNome");
+  if((inp ? inp.value : "").trim().length < 2){
+    somErro(); aviso.innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`; return;
+  }
+  somClique();
+  aviso.innerHTML = `<span style="color:var(--ouro)">Agora toque num dos dois botões aí embaixo 👇</span>`;
+}
+window.pedeGenero = pedeGenero;
+function trocarNome(){ somClique(); S.cena = "nome"; render(); }
+window.trocarNome = trocarNome;
+function zerar(){
+  if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
+  S.pontos = 0; S.missoes = vazio(false); S.estrelas = vazio(0); S.aulas = vazio(false); S.erros = {};
+  salvar(); somClique(); render();
+}
+window.zerar = zerar;
+
+/* ============================================================
+   TELA INICIAL
+   ============================================================ */
+function telaInicio(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--turbo)">
+      <div style="font-size:66px;line-height:1">🦜</div>
+      <h1 style="background:linear-gradient(90deg,var(--uva),var(--turbo),var(--chama));-webkit-background-clip:text;background-clip:text;color:transparent">
+        OI, ${NOME()}!
+      </h1>
+      <p style="font-size:1.12em">Você é ${g("a inspetora","o inspetor")} da
+      <b style="color:var(--turbo)">Cidade das Palavras</b>.</p>
+      <div class="card" style="text-align:left;background:rgba(21,14,40,.85);margin-top:18px">
+        <p><b>🎯 O combinado é este:</b></p>
+        <p>Este jogo não foi inventado no chute: cada missão é <b>um assunto do roteiro da sua
+        prova</b>, com os textos e as palavras que estão nas suas próprias folhas de atividade.
+        São <b>${N_MISSOES-1} lugares para visitar</b> e, no fim, a prova da cidade.</p>
+        <p><b>📚 Cada missão começa com uma aula rapidinha</b> do <b>Eco</b>, o papagaio da
+        cidade. Ele explica primeiro; você põe a mão na massa depois.</p>
+        <p class="mini">⭐ Cada missão vale até ${POR_MISSAO} estrelas. Errar faz parte: o jogo mostra o porquê
+        e <b>anota em que assunto você escorregou</b>, para cobrar de novo na prova final.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn" onclick="comecar()">🏙️ Entrar na cidade</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Ver a colinha</button>
+      </div>
+      <p class="mini" style="margin-top:14px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Não sou ${NOME()}, trocar nome</button>
+      </p>
+    </div>`;
+}
+function comecar(){ ac(); somVitoria(); S.cena="mapa"; render(); }
+window.comecar = comecar;
+
+/* ============================================================
+   MAPA
+   ============================================================ */
+function telaMapa(){
+  const feitas = S.missoes.filter(Boolean).length;
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(5);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <h2>🏙️ Cidade ${g("da","do")} ${NOME()}</h2>
+      <p class="mini">${feitas} de ${N_MISSOES} lugares visitados · ${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas · ${S.pontos} pontos</p>
+      <div class="progresso"><i style="width:${feitas/N_MISSOES*100}%"></i></div>
+      <div class="missoes">
+        ${MISSOES.map((m,i)=>{
+          const trancada = i>0 && !S.missoes[i-1];
+          return `<button class="missao ${trancada?"trancada":""} ${S.missoes[i]?"feita":""}"
+                    onclick="abrirMissao(${i})" ${trancada?"disabled":""}>
+            <span class="num">${S.missoes[i]?"✓":i+1}</span>
+            <div class="ico">${trancada?"🔒":m.ico}</div>
+            <div class="tit">${m.tit}</div>
+            <div class="sub">${trancada?"Visite o lugar anterior":m.sub}</div>
+            ${(!trancada && !S.aulas[i])?`<div class="tags" style="margin-top:8px"><span class="tag" style="border-color:var(--ouro);color:var(--ouro)">📚 começa com uma aula</span></div>`:``}
+            ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
+          </button>`;
+        }).join("")}
+      </div>
+      <p class="mini centro" style="margin-top:16px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Trocar nome</button>
+        <button class="chip" onclick="zerar()" style="cursor:pointer">🔄 Começar tudo de novo</button>
+      </p>
+    </div>
+    ${fracas.length?`<div class="card">
+      <h2>🎯 Onde você está escorregando</h2>
+      <p class="mini">O Eco foi anotando. Estes assuntos aparecem <b>mais vezes</b> na
+      Prova da Cidade — é assim que a gente vira o jogo antes da prova de verdade.</p>
+      <div class="tags">${fracas.map(h=>
+        `<span class="tag" style="border-color:var(--chama);color:var(--chama);font-size:1em">${NOME_HAB[h]||h}</span>`
+      ).join("")}</div>
+    </div>`:``}
+    ${feitas===N_MISSOES?`<div class="card destaque centro">
+      <div style="font-size:56px">🎓</div>
+      <h2>Cidade inteira conferida, ${NOME()}!</h2>
+      <button class="btn" onclick="verDiploma()">Ver meu diploma</button>
+    </div>`:``}`;
+}
+function verDiploma(){ somVitoria(); S.cena="diploma"; render(); }
+window.verDiploma = verDiploma;
+
+
+/* ============================================================
+   AULAS — uma antes de cada missão, com o Eco
+   ============================================================ */
+const AULAS = [
+  /* ---- 1 · interpretação + sinônimo e antônimo ---- */
+  [
+    {ico:"🦜", tit:"Oi, {NOME}. Eu sou o Eco.",
+     txt:`Sou o papagaio da Cidade das Palavras, e o meu nome não é apelido: papagaio
+       <b>repete</b>. E repetir é justamente o trabalho mais importante desta cidade —
+       o artigo e o adjetivo <b>repetem</b> o gênero e o número do substantivo. Você vai ver.
+       <p>Nos próximos passeios eu vou conferir com você <b>os sete assuntos</b> que caem na sua
+       prova. Um lugar da cidade por vez.</p>`,
+     chave:`Nada aqui é matéria nova. É a matéria que você já viu, olhada com calma.`},
+    {ico:"👀", tit:"O erro nº 1 não é não saber. É responder outra coisa.",
+     txt:`Olhe esta pergunta de verdade, de uma folha sua:
+       <div class="destaque">"Que verbete vem <b>logo depois</b> de <i>alfabeto</i>?"</div>
+       <p>A resposta era <b>alimentar</b> — a palavra seguinte da lista. Mas dá uma vontade
+       enorme de escrever o que <i>alfabeto</i> significa, não é? Aí a resposta fica certinha…
+       para uma pergunta que ninguém fez.</p>
+       <p>Isso não é falta de estudo. É a pergunta ter sido lida rápido demais.</p>`,
+     chave:`Antes de escrever, releia a pergunta. Ela pediu <b>isso</b> mesmo?`},
+    {ico:"📋", tit:"Os três tipos de pergunta de interpretação",
+     txt:`<ul class="lista">
+       <li><b>Está escrito no texto</b> — "Onde morava a vovó Rosa?" A resposta está lá,
+       é só achar e copiar.</li>
+       <li><b>"Responda com um trecho do texto"</b> — aqui você <b>copia as palavras do texto</b>,
+       com aspas se quiser. Explicar com as suas palavras perde ponto.</li>
+       <li><b>O que você acha</b> — "Que história você guarda no coração?" Não tem resposta
+       errada, mas tem que <b>responder de verdade</b>, com uma frase completa.</li>
+       </ul>`,
+     chave:`Se a pergunta pede um trecho, <b>copie</b>. Se pede sua opinião, <b>opine</b>.`},
+    {ico:"🔁", tit:"Sinônimo e antônimo",
+     txt:`<ul class="lista">
+       <li><b>Sinônimo</b> — significado <b>parecido</b>: apertado / estreito · bonito / belo ·
+       começar / iniciar · esperto / inteligente.</li>
+       <li><b>Antônimo</b> — significado <b>oposto</b>: melhor / pior · lembrar / esquecer ·
+       alegre / triste · subir / descer.</li>
+       </ul>
+       <p>Para nunca mais trocar os dois nomes:</p>
+       <div class="destaque">an<b>TÔ</b>nimo tem <b>O</b> de <b>Oposto</b></div>`,
+     chave:`Sinônimo = Semelhante. Antônimo = Oposto.`},
+    {ico:"🕵️", tit:"Sinônimo dentro do texto",
+     txt:`Na prova, sinônimo quase nunca vem sozinho: vem <b>dentro de uma frase do texto</b>.
+       <p><i>"O bisavô me ensinou a pescar."</i> — trocar <b>ensinou</b> por qual palavra
+       não muda o sentido? Por <b>mostrou</b>, por <b>explicou</b>. Nunca por <b>escondeu</b>.</p>
+       <p>O teste é simples: <b>troque a palavra na frase e leia de novo</b>. Se a frase continuar
+       querendo dizer a mesma coisa, é sinônimo. Se virar o contrário, é antônimo.</p>`,
+     chave:`Troque a palavra na frase e releia. A frase te diz se acertou.`}
+  ],
+
+  /* ---- 2 · substantivo: classificação e formação ---- */
+  [
+    {ico:"🗂️", tit:"O Cartório dos Nomes",
+     txt:`Substantivo é a palavra que <b>nomeia</b>: os seres, os lugares, os objetos, os
+       sentimentos e <b>tudo o que existe</b>.
+       <p>Aqui no cartório, cada nome ganha uma ficha com <b>três carimbos diferentes</b>.
+       E é aqui que a prova pega gente: são três perguntas diferentes sobre a
+       <b>mesma palavra</b>, e cada uma tem a sua resposta.</p>`,
+     chave:`Um substantivo recebe <b>vários</b> carimbos ao mesmo tempo.`},
+    {ico:"1️⃣", tit:"Carimbo 1 — comum ou próprio",
+     txt:`<ul class="lista">
+       <li><b>Comum</b> — nomeia de <b>forma geral</b>, sem dizer quem é:
+       menino, cidade, escola, cachorro.</li>
+       <li><b>Próprio</b> — nomeia <b>um ser específico</b> e vai sempre de
+       <b>letra maiúscula</b>: Pedro, Fortaleza, Brasil, Maria.</li>
+       </ul>
+       <p>A letra maiúscula não é enfeite: ela é o aviso de que aquele nome é de
+       <b>um</b> só.</p>
+       <div class="destaque">cachorro (comum) → <b>Toquinho</b> (próprio)</div>`,
+     chave:`Geral = comum. Específico e com maiúscula = próprio.`},
+    {ico:"2️⃣", tit:"Carimbo 2 — concreto e coletivo",
+     txt:`<b>Concreto</b> é o que tem <b>existência própria</b> — e olha a pegadinha:
+       vale para o <b>real e o imaginário</b>.
+       <div class="destaque">cadeira · árvore · bicicleta · <b>fada</b> · saci · dragão</div>
+       <p>Fada não existe de verdade, mas existe como <b>ser</b>. Por isso é concreto.</p>
+       <p><b>Coletivo</b> é o substantivo que está no <b>singular</b> mas indica um
+       <b>conjunto</b> de seres da <b>mesma espécie</b>:</p>
+       <ul class="lista">
+       <li><b>cardume</b> de peixes · <b>enxame</b> de abelhas · <b>rebanho</b> de ovelhas</li>
+       <li><b>ramalhete</b> de flores · <b>biblioteca</b> de livros · <b>frota</b> de navios</li>
+       <li><b>constelação</b> de estrelas · <b>alfabeto</b> de letras · <b>ninhada</b> de filhotes</li>
+       </ul>`,
+     chave:`Coletivo: <b>uma</b> palavra, no singular, para <b>muitos</b> seres iguais.`},
+    {ico:"3️⃣", tit:"Carimbo 3 — primitivo ou derivado",
+     txt:`Este carimbo pergunta <b>de onde a palavra nasceu</b>.
+       <ul class="lista">
+       <li><b>Primitivo</b> — <b>não vem</b> de nenhuma outra palavra. É a raiz:
+       pedra, flor, papel, dente, chuva, sal, carta, banco, árvore.</li>
+       <li><b>Derivado</b> — <b>nasceu de</b> um primitivo: pedreiro, floricultura,
+       papelaria, dentista, chuvisco, saleiro, carteiro, banqueiro, arvoredo.</li>
+       </ul>
+       <p>O jeito de achar: <b>tire os pedacinhos do fim</b> e veja se sobra uma palavra
+       que existe sozinha.</p>
+       <div class="destaque">flor<b>ista</b> → sobra <b>flor</b> ✓ derivado</div>`,
+     chave:`Sobrou uma palavra sozinha quando você tirou o fim? Então era <b>derivado</b>.`},
+    {ico:"🃏", tit:"A ficha completa",
+     txt:`Na prova a pergunta costuma vir assim: <i>"Classifique os substantivos conforme
+       os exemplos."</i> Você tem que dar <b>todos</b> os carimbos que couberem:
+       <table class="mini-tab">
+       <tr><th>palavra</th><th>1</th><th>2</th><th>3</th></tr>
+       <tr><td>Garrafas</td><td>comum</td><td>concreto</td><td>—</td></tr>
+       <tr><td>Boiada</td><td>comum</td><td>concreto e <b>coletivo</b></td><td><b>derivado</b> (de boi)</td></tr>
+       <tr><td>Renata</td><td><b>próprio</b></td><td>concreto</td><td>primitivo</td></tr>
+       </table>
+       <p>Ninhada também leva os dois de uma vez: é <b>coletiva</b> (muitos filhotes) e
+       <b>derivada</b> (de ninho).</p>`,
+     chave:`Uma palavra pode ser coletiva <b>e</b> derivada ao mesmo tempo. Não escolha só um.`}
+  ],
+
+  /* ---- 3 · artigo + gênero ---- */
+  [
+    {ico:"🚪", tit:"A palavra que vai na frente",
+     txt:`<b>Artigo</b> é a palavra que <b>antecede o substantivo</b> para determiná-lo de
+       forma particular ou geral. São só oito no mundo inteiro:
+       <div class="destaque">o · a · os · as<br>um · uma · uns · umas</div>
+       <p>E olha o que essas oito palavrinhas conseguem fazer: elas <b>avisam o gênero e o
+       número</b> do substantivo que vem atrás.</p>`,
+     chave:`O artigo vem antes e <b>entrega</b> o gênero e o número do substantivo.`},
+    {ico:"🎯", tit:"Definido ou indefinido",
+     txt:`<ul class="lista">
+       <li><b>Definido</b> (o, a, os, as) — o substantivo é <b>específico e conhecido</b>.</li>
+       <li><b>Indefinido</b> (um, uma, uns, umas) — o substantivo é <b>vago, impreciso ou
+       desconhecido</b>; é <b>qualquer um</b> daquele tipo.</li>
+       </ul>
+       <p>Na tirinha do cachorro perdido, a diferença aparece inteirinha em duas falas:</p>
+       <div class="destaque">"Coitadinho! <b>Um</b> cachorro vagando na rua…"<br>
+       <span style="font-size:.8em">(o menino não conhece — qualquer cachorro)</span><br><br>
+       "Ah, <b>o</b> cachorro que eu perdi!"<br>
+       <span style="font-size:.8em">(a menina conhece — é aquele, o dela)</span></div>`,
+     chave:`Conhecido e específico = definido. Qualquer um = indefinido.`},
+    {ico:"🧭", tit:"CLASSE não é CLASSIFICAÇÃO",
+     txt:`{NOME}, esta é a pergunta que mais derruba gente — e a sua professora já marcou isso
+       numa folha sua. São <b>dois andares diferentes</b>:
+       <table class="mini-tab">
+       <tr><th>pergunta</th><th>respostas possíveis</th></tr>
+       <tr><td><b>Que CLASSE gramatical é?</b></td><td>substantivo · <b>artigo</b> · adjetivo · numeral</td></tr>
+       <tr><td><b>Qual é a CLASSIFICAÇÃO?</b></td><td>definido · indefinido</td></tr>
+       </table>
+       <p>Se perguntarem <i>"qual a classe gramatical das palavras que acompanham o substantivo
+       cachorro?"</i>, a resposta é <b class="certo">artigo</b>.
+       <br><b class="errado">Definido e indefinido</b> responde a <b>outra</b> pergunta.</p>`,
+     chave:`Classe = que tipo de <b>palavra</b>. Classificação = que tipo de <b>artigo</b>.`},
+    {ico:"♀️", tit:"O artigo mostra o gênero",
+     txt:`Este é o atalho que a sua folha ensina:
+       <ul class="lista">
+       <li>cabe <b>o, os, um, uns</b> → o substantivo é <b>masculino</b></li>
+       <li>cabe <b>a, as, uma, umas</b> → o substantivo é <b>feminino</b></li>
+       </ul>
+       <div class="destaque"><b>o</b> tio · <b>a</b> tia</div>
+       <p>Serve para palavras difíceis também: você não precisa saber se "o" ou "a"
+       — é só falar em voz baixa e ver qual cabe. <b>A</b> alface, <b>o</b> grampeador.</p>`,
+     chave:`Não sabe o gênero? Ponha o artigo na frente e escute.`},
+    {ico:"🔢", tit:"E o número também",
+     txt:`<table class="mini-tab">
+       <tr><th></th><th>masc. sing.</th><th>fem. sing.</th><th>masc. pl.</th><th>fem. pl.</th></tr>
+       <tr><th>definido</th><td>o</td><td>a</td><td>os</td><td>as</td></tr>
+       <tr><th>indefinido</th><td>um</td><td>uma</td><td>uns</td><td>umas</td></tr>
+       </table>
+       <p>Repare que <b>plural pede plural</b>: se o substantivo tem <b>s</b>, o artigo também tem.</p>
+       <div class="destaque"><span class="errado">o sapos</span> &nbsp;→&nbsp;
+       <span class="certo">os sapos</span></div>`,
+     chave:`Substantivo no plural pede artigo no plural. Sempre.`}
+  ],
+
+  /* ---- 4 · número, grau e numeral ---- */
+  [
+    {ico:"🔢", tit:"Três perguntas sobre quantidade",
+     txt:`No Balcão da Contagem a cidade responde três coisas:
+       <ul class="lista">
+       <li><b>Número</b> — é <b>um</b> ou são <b>muitos</b>? (singular / plural)</li>
+       <li><b>Grau</b> — é <b>pequeno</b> ou <b>grande</b>? (diminutivo / aumentativo)</li>
+       <li><b>Numeral</b> — <b>quantos</b> são, ou <b>em que ordem</b> estão?</li>
+       </ul>`,
+     chave:`Número, grau e numeral são três perguntas diferentes sobre tamanho e quantidade.`},
+    {ico:"➕", tit:"Singular e plural — as quatro regras",
+     txt:`<ul class="lista">
+       <li>termina em <b>r, s, z</b> → acrescenta <b>-es</b>:
+       cantor–cantor<b>es</b>, luz–luz<b>es</b>, mês–mes<b>es</b>, nariz–nariz<b>es</b></li>
+       <li>termina em <b>vogal</b> → acrescenta <b>s</b>: bola–bola<b>s</b>, vela–vela<b>s</b></li>
+       <li>termina em <b>m</b> → troca o <b>m</b> por <b>ns</b>:
+       trem–tre<b>ns</b>, nuvem–nuve<b>ns</b>, bombom–bombo<b>ns</b></li>
+       <li>termina em <b>al, el, ol</b> → troca o <b>l</b> por <b>is</b>:
+       animal–anima<b>is</b>, pincel–pincé<b>is</b>, girassol–girassó<b>is</b></li>
+       </ul>
+       <p>E tem os teimosos, que <b>não mudam nada</b>: <b>o</b> pires / <b>os</b> pires ·
+       lápis · ônibus · tênis. Nesses, quem avisa o número é <b>o artigo</b>.</p>`,
+     chave:`Nos invariáveis, só o artigo muda: <b>o</b> lápis → <b>os</b> lápis.`},
+    {ico:"🐭", tit:"Grau: diminutivo e aumentativo",
+     txt:`O <b>grau</b> diz o tamanho:
+       <ul class="lista">
+       <li><b>Diminutivo</b> — <b>-inho, -inha, -zinho, -zinha</b>:
+       gato → gat<b>inho</b> · casa → cas<b>inha</b> · pé → pe<b>zinho</b> · cão → cão<b>zinho</b></li>
+       <li><b>Aumentativo</b> — <b>-ão, -ona, -zão</b>:
+       gato → gat<b>ão</b> · casa → casa<b>rão</b> · nariz → nari<b>gão</b> ·
+       mulher → mulher<b>ona</b> · rapaz → rapa<b>gão</b></li>
+       </ul>
+       <p>O diminutivo nem sempre é sobre tamanho: <i>amiguinho</i> pode ser carinho, e
+       <i>continha</i> pode ser desprezo. Mas na prova o que cai é a <b>terminação</b>.</p>`,
+     chave:`-inho / -zinho = diminutivo. -ão / -ona / -zão = aumentativo.`},
+    {ico:"⚠️", tit:"A pegadinha do -ão",
+     txt:`Cuidado, {NOME}: <b>nem toda palavra terminada em -ão é aumentativo</b>.
+       <div class="destaque"><span class="errado">coração · limão · mamão · leão · pão</span></div>
+       <p>Essas são palavras <b>inteiras</b> que por acaso terminam em -ão. Ninguém diz que
+       existe um "cora" pequeno que virou "coração".</p>
+       <p><b>O teste:</b> tire o -ão e veja se sobra a palavra original.
+       Gat<b>ão</b> → sobra <b>gato</b> ✓ aumentativo. Cora<b>ção</b> → sobra "cora" ✗ não é.</p>`,
+     chave:`Tirou o -ão e não sobrou palavra nenhuma? Então não é aumentativo.`},
+    {ico:"🥇", tit:"Numeral cardinal e ordinal",
+     txt:`<ul class="lista">
+       <li><b>Cardinal</b> — indica <b>quantidade</b>: um, dois, <b>quatro</b>, dez, cem.</li>
+       <li><b>Ordinal</b> — indica <b>ordem ou posição</b>: <b>primeiro</b>, segundo, décimo.</li>
+       </ul>
+       <p>Você já respondeu isso certinho numa folha: <i>"Primeiro — ordinal, porque indica
+       <b>ordem ou posição</b>"</i> e <i>"Quatro — cardinal, porque indica <b>quantidade</b>"</i>.
+       É exatamente isso.</p>
+       <p>Os ordinais que mais escorregam na hora de escrever:</p>
+       <div class="destaque">6º sexto · 7º sétimo · 9º nono · 10º décimo · 20º vigésimo</div>`,
+     chave:`Quantos? cardinal. Em que lugar da fila? ordinal.`}
+  ],
+
+  /* ---- 5 · adjetivo ---- */
+  [
+    {ico:"🎨", tit:"O adjetivo diz COMO é",
+     txt:`Se o substantivo <b>dá o nome</b>, o adjetivo <b>caracteriza</b>: diz como aquele
+       ser é.
+       <div class="destaque">A onça está sempre pronta para a festa:<br>
+       <b>Bela</b>, corpo <b>pintado</b>, unhas <b>afiadas</b>, bigodes <b>elétricos</b>.</div>
+       <p>Tire os adjetivos e sobra só "a onça, corpo, unhas, bigodes". Os adjetivos são o
+       que faz a gente <b>enxergar</b> a onça.</p>`,
+     chave:`Substantivo = o nome. Adjetivo = <b>como</b> ele é.`},
+    {ico:"⚠️", tit:"A mesma palavra pode trocar de emprego",
+     txt:`Agora a parte que derruba mais gente na cidade inteira, {NOME}. Leia as duas frases:
+       <div class="destaque">"O <b>jovem</b> atleta venceu a maratona."<br>
+       "O jovem <b>cantor</b> venceu o concurso."</div>
+       <p>Na primeira, <b>jovem</b> está dizendo <i>como é</i> o atleta → <b>adjetivo</b>.<br>
+       Na segunda, <b>cantor</b> é <i>quem</i> venceu → <b>substantivo</b>.</p>
+       <p>E olha só: na segunda frase, <b>jovem</b> continua sendo adjetivo — agora do cantor.</p>`,
+     chave:`Não decore a palavra. Olhe <b>o lugar dela na frase</b>.`},
+    {ico:"❓", tit:"O truque das duas perguntas",
+     txt:`Quando bater a dúvida, faça uma pergunta para a palavra:
+       <ul class="lista">
+       <li>Se ela responde <b>"quem?"</b> ou <b>"o quê?"</b> → é <b>substantivo</b></li>
+       <li>Se ela responde <b>"como é?"</b> → é <b>adjetivo</b></li>
+       </ul>
+       <p>Outro teste que quase nunca falha: <b>põe um artigo na frente</b>. Se couber
+       naturalmente, é substantivo.</p>
+       <div class="destaque"><b>o</b> cantor ✓ substantivo &nbsp;·&nbsp;
+       <b>o</b> brilhoso ✗ adjetivo</div>`,
+     chave:`Responde "quem?" = substantivo. Responde "como é?" = adjetivo.`},
+    {ico:"🔗", tit:"O adjetivo copia o substantivo",
+     txt:`Este é o meu trabalho, o de papagaio: <b>o adjetivo concorda com o substantivo em
+       gênero e número</b>. Ele repete.
+       <table class="mini-tab">
+       <tr><td>menino bonit<b>o</b></td><td>menina bonit<b>a</b></td></tr>
+       <tr><td>meninos bonit<b>os</b></td><td>meninas bonit<b>as</b></td></tr>
+       </table>
+       <p>Mudou o substantivo, muda o adjetivo junto. Não tem escolha, não tem exceção.</p>
+       <p><i>"Os meninos estão <b>elegantes</b> e as meninas <b>belas</b>."</i></p>`,
+     chave:`O adjetivo é o meu eco: repete o gênero e o número do substantivo.`},
+    {ico:"⚖️", tit:"Grau comparativo — as três fórmulas",
+     txt:`Quando o adjetivo <b>compara dois seres</b>, ele usa uma destas três fórmulas.
+       São fixas, é só encaixar:
+       <table class="mini-tab">
+       <tr><th>grau</th><th>fórmula</th><th>exemplo</th></tr>
+       <tr><td><b>igualdade</b></td><td><b>tão</b> … <b>quanto</b> / <b>como</b></td><td>Ana é <b>tão</b> alta <b>quanto</b> Bia</td></tr>
+       <tr><td><b>superioridade</b></td><td><b>mais</b> … <b>(do) que</b></td><td>Ana é <b>mais</b> alta <b>do que</b> Bia</td></tr>
+       <tr><td><b>inferioridade</b></td><td><b>menos</b> … <b>(do) que</b></td><td>Ana é <b>menos</b> alta <b>do que</b> Bia</td></tr>
+       </table>
+       <p>Repare que a fórmula tem <b>duas partes</b>: a palavrinha da frente
+       (tão / mais / menos) e a do meio (quanto / do que). As duas juntas, sempre.</p>`,
+     chave:`tão…quanto = igual · mais…que = maior · menos…que = menor`},
+    {ico:"🚫", tit:"Os dois que fogem da regra",
+     txt:`Dois adjetivos não aceitam o "mais". Eles têm palavra própria, e caem
+       <b>sempre</b> na prova:
+       <div class="destaque"><span class="errado">mais bom</span> →
+       <span class="certo">melhor (do) que</span><br>
+       <span class="errado">mais mau</span> →
+       <span class="certo">pior (do) que</span></div>
+       <p>"Este bolo é <b>melhor do que</b> aquele." · "Meu dia foi <b>pior do que</b> o seu."</p>
+       <p>Para <b>menos</b> bom, aí sim vale a fórmula normal:
+       "menos bom do que" ou, mais fácil, "pior do que".</p>`,
+     chave:`bom → <b>melhor</b>. mau → <b>pior</b>. Nunca "mais bom", nunca "mais mau".`}
+  ],
+
+  /* ---- 6 · concordância ---- */
+  [
+    {ico:"🔗", tit:"A missão que eu fiz para você, {NOME}",
+     txt:`Esta ponte não estava no roteiro da prova como um assunto separado. Eu coloquei
+       porque <b>olhei as suas folhas</b>.
+       <p>Você acerta concordância quando as palavras estão <b>grudadas</b>:</p>
+       <div class="destaque">"Uns cachorros peludos" → "<b>Um cachorro peludo</b>" ✓</div>
+       <p>Três palavras, três mudanças, 100% certo. Mas quando o segundo lugar de arrumar
+       está <b>longe</b>, no meio da frase, ele fica para trás.</p>`,
+     chave:`Você sabe fazer. O que escapa é o <b>segundo</b> lugar.`},
+    {ico:"🕳️", tit:"Os quatro buracos da ponte",
+     txt:`São quatro frases das suas folhas. Em todas, a primeira mudança saiu certa e a
+       segunda ficou:
+       <table class="mini-tab">
+       <tr><th>pedido</th><th>saiu</th><th>era</th></tr>
+       <tr><td>ao singular</td><td>Um animal <span class="errado">das florestas</span> do Brasil</td><td><span class="certo">da floresta</span></td></tr>
+       <tr><td>artigos indefinidos</td><td>Uma menina comprou <span class="errado">sorvete</span></td><td><span class="certo">um sorvete</span></td></tr>
+       <tr><td>ao masculino</td><td>O bode <span class="errado">e a galo</span></td><td><span class="certo">e o galo</span></td></tr>
+       <tr><td>ao plural</td><td><span class="errado">Vermelho → Vermelho</span></td><td><span class="certo">vermelhos</span></td></tr>
+       </table>
+       <p>Repare: <b>nenhum</b> deles é erro de saber a regra. Todos são erro de <b>parar cedo</b>.</p>`,
+     chave:`Não é a regra que falha. É a frase que acaba antes de você.`},
+    {ico:"👣", tit:"Por que o segundo escapa",
+     txt:`Porque o cérebro dá a tarefa por encerrada assim que a primeira palavra muda.
+       Ele sente que <i>fez</i>, e para.
+       <p>É exatamente o mesmo escorregão do problema de matemática de duas etapas: calcula
+       o gasto, sente que resolveu, e esquece de calcular o troco.</p>
+       <p>A boa notícia: como é sempre o mesmo escorregão, tem sempre a mesma cura.</p>`,
+     chave:`A cabeça acha que terminou quando muda a primeira palavra. Ela mente.`},
+    {ico:"✅", tit:"A regra do ponto final",
+     txt:`Aqui está a cura, e é uma só. Depois de mudar a primeira palavra:
+       <div class="destaque">Leia a frase <b>inteira</b>, em voz alta,<br>até o <b>ponto final</b>.</div>
+       <p>Ler em voz alta é o segredo. "Um animal das florestas do Brasil" <b>soa errado</b>
+       quando você escuta — o ouvido pega o que o olho deixou passar.</p>
+       <p>E procure especialmente <b>depois do "e"</b>, <b>depois do verbo</b> e
+       <b>dentro do complemento</b> ("<i>d</i>a floresta", "<i>d</i>o Brasil"). É onde o
+       segundo buraco costuma se esconder.</p>`,
+     chave:`Leia até o ponto final, em voz alta. Sempre.`},
+    {ico:"🌉", tit:"Como funciona esta ponte",
+     txt:`Nesta missão a frase vira uma <b>ponte de duas ou três tábuas</b>. Cada lugar que
+       precisa ser arrumado é uma tábua.
+       <p><b>A ponte não deixa você passar com uma tábua só.</b> Eu não vou te deixar
+       atravessar até todas estarem no lugar — nem que você tente.</p>
+       <p>É de propósito, {NOME}. Na prova ninguém vai te avisar que faltou uma.
+       Aqui eu aviso.</p>`,
+     chave:`Uma tábua faltando = ponte que não atravessa.`}
+  ],
+
+  /* ---- 7 · ortografia ---- */
+  [
+    {ico:"✍️", tit:"Ortografia é escutar com atenção",
+     txt:`Quase toda dúvida de ortografia se resolve <b>falando a palavra devagar</b> e
+       escutando o que sai.
+       <p>Nesta oficina a gente vai ver os quatro grupos que mais aparecem nas suas folhas —
+       e um deles a sua professora já corrigiu com a caneta dela.</p>`,
+     chave:`Fale devagar. A boca sabe coisas que o olho esquece.`},
+    {ico:"🐺", tit:"mau × mal — o campeão",
+     txt:`Numa folha sua apareceu <i>"a história do lobo ____"</i> e saiu <b class="errado">mal</b>.
+       O certo é <b class="certo">mau</b>. E na mesma questão você acertou "passou <b>mal</b>"!
+       Ou seja: você <b>conhece</b> as duas — o que falta é o teste na hora.
+       <p>O teste é este, e nunca falha:</p>
+       <table class="mini-tab">
+       <tr><td><b>mau</b></td><td>contrário de <b>bom</b></td><td>o lobo <b>mau</b> / um dia <b>mau</b></td></tr>
+       <tr><td><b>mal</b></td><td>contrário de <b>bem</b></td><td>passou <b>mal</b> / dormiu <b>mal</b></td></tr>
+       </table>
+       <div class="destaque">Trocou por <b>bom</b> e a frase ficou de pé? Escreve <b>mau</b>.<br>
+       Trocou por <b>bem</b>? Escreve <b>mal</b>.</div>`,
+     chave:`ma<b>U</b> ↔ b<b>O</b>m (as duas com vogal) · ma<b>L</b> ↔ be<b>M</b>`},
+    {ico:"👂", tit:"-au, -eu, -ou",
+     txt:`Outra folha sua pedia palavras terminadas em <b>AU</b> e entraram <i>mostrou</i> (OU)
+       e <i>correu</i> (EU). A professora escreveu <b>degrau</b> por cima.
+       <p>As três soam parecidas quando a gente fala rápido. Falando <b>devagar</b> elas se
+       separam sozinhas:</p>
+       <table class="mini-tab">
+       <tr><td><b>AU</b></td><td>degr<b>au</b> · p<b>au</b> · gr<b>au</b> · c<b>au</b>sa</td></tr>
+       <tr><td><b>EU</b></td><td>corr<b>eu</b> · chap<b>éu</b> · trof<b>éu</b> · v<b>eu</b></td></tr>
+       <tr><td><b>OU</b></td><td>most<b>rou</b> · fal<b>ou</b> · vo<b>u</b> · o<b>u</b>ro</td></tr>
+       </table>
+       <p>Dica de verbo: se a palavra é uma <b>ação que já aconteceu</b> (mostrou, falou,
+       pulou, chegou), é quase sempre <b>-ou</b>.</p>`,
+     chave:`Ação que já aconteceu termina em <b>-ou</b>. Fale devagar para as outras.`},
+    {ico:"🅻", tit:"L ou U no fim da sílaba",
+     txt:`Também soam iguais. O truque é <b>passar para o plural</b>:
+       <ul class="lista">
+       <li>se o plural faz <b>-is</b>, era <b>L</b>: anima<b>l</b> → anima<b>is</b> ·
+       papé<b>l</b> → papé<b>is</b> · so<b>l</b> → so<b>is</b></li>
+       <li>se o plural faz <b>-us</b>, era <b>U</b>: chap<b>éu</b> → chap<b>éus</b> ·
+       trof<b>éu</b> → trof<b>éus</b> · céu → céus</li>
+       </ul>
+       <div class="destaque">sa<b>l</b> → sa<b>is</b> ✓ (com L)</div>`,
+     chave:`Plural em <b>-is</b> = escrevia com <b>L</b>.`},
+    {ico:"🔤", tit:"Ç, C e SS — o grupo que mais te pega",
+     txt:`Olhei as suas folhas todas e este grupo aparece bastante. Sem susto:
+       são poucas palavras e elas se repetem.
+       <table class="mini-tab">
+       <tr><td><span class="errado">infânsia</span></td><td><span class="certo">infân<b>c</b>ia</span></td></tr>
+       <tr><td><span class="errado">disionário</span></td><td><span class="certo">di<b>c</b>ionário</span></td></tr>
+       <tr><td><span class="errado">emação</span></td><td><span class="certo">emo<b>ç</b>ão</span></td></tr>
+       <tr><td><span class="errado">carrosel</span></td><td><span class="certo">carro<b>ss</b>el</span></td></tr>
+       <tr><td><span class="errado">bibliotica</span></td><td><span class="certo">bibli<b>o</b>teca</span></td></tr>
+       </table>
+       <p><b>A regra que resolve metade:</b> palavra terminada em <b>-ção</b> é
+       <b>sempre com ç</b>. Emoção, atenção, coração, canção, informação.</p>`,
+     chave:`Terminou em <b>-ção</b>? É com <b>ç</b>. Sem exceção.`}
+  ],
+
+  /* ---- 8 · antes da prova ---- */
+  [
+    {ico:"🏆", tit:"Chegou a hora, {NOME}",
+     txt:`Cidade inteira conferida. Agora vem a <b>Prova da Cidade</b>: primeiro um arcade
+       contra o relógio, valendo pontos, e depois a <b>prova final</b>, valendo as estrelas.
+       <p class="mini">O relógio nunca decide a sua nota. As estrelas vêm do que você
+       <b>sabe</b>, não da rapidez do dedo.</p>`,
+     chave:`Pode abrir a colinha no meio do arcade. O cronômetro para.`},
+    {ico:"🎯", tit:"O que eu anotei sobre você",
+     txt:`{FRACAS}`,
+     chave:`O que você mais errou vai aparecer mais vezes. De propósito.`},
+    {ico:"🧘", tit:"Como se sai bem numa prova de Português",
+     txt:`Quatro coisas que valem mais do que decorar a matéria toda:
+       <ul class="lista">
+       <li><b>Leia a pergunta duas vezes</b> — e confira se respondeu <b>o que ela pediu</b>.</li>
+       <li><b>Pergunta de classe?</b> Responda substantivo, artigo, adjetivo ou numeral.
+       <b>Pergunta de classificação?</b> Aí sim próprio, definido, cardinal…</li>
+       <li><b>Mudou uma palavra na frase?</b> Leia até o ponto final procurando a segunda.</li>
+       <li><b>Nunca decida a classe pela palavra sozinha.</b> Leia a frase inteira: o lugar
+       da palavra é quem manda.</li>
+       </ul>`,
+     chave:`Pensar devagar é permitido. É o que faz quem vai bem.`}
+  ]
+];
+
+let A = null;
+function nomear(txt){
+  return String(txt)
+    .replace(/\{NOME\}/g, NOME())
+    .replace(/\{FRACAS\}/g, textoFracas());
+}
+function textoFracas(){
+  const fracas = listaFracas(5);
+  if(!fracas.length){
+    return `<p>Até agora você <b>não escorregou em nada</b> — ou ainda não jogou o suficiente
+      para eu ter o que anotar. Vamos descobrir na prova!</p>
+      <p>A prova final vai passar por <b>todos os sete assuntos</b> do roteiro, sem dó.</p>`;
+  }
+  return `<p>Eu fui anotando cada escorregão. Estes são os assuntos em que você mais tropeçou —
+    dê uma olhada neles antes de começar:</p>
+    <div class="destaque">${fracas.map(h => NOME_HAB[h] || h).join("<br>")}</div>
+    <p>Eles vão aparecer <b>mais vezes</b> na prova final, de propósito. É a última chance de
+    virar o jogo antes de segunda.</p>`;
+}
+
+function abrirAula(i, revendo){
+  somClique(); pararArcade();
+  A = { missao:i, slide:0, revendo:!!revendo };
+  S.cena = "a"+i;
+  render();
+}
+window.abrirAula = abrirAula;
+function reverAula(i){ abrirAula(i, true); }
+window.reverAula = reverAula;
+
+function telaAula(i){
+  const slides = AULAS[i], s = slides[A.slide], ultimo = A.slide === slides.length-1;
+  const m = MISSOES[i];
+  app.innerHTML = hud() + `
+    <h2 style="text-align:center">${m.ico} Aula ${i+1} · ${m.tit}</h2>
+    <div class="aula">
+      <div class="guia">
+        <span class="robo">🦜</span>
+        <span>Sou o <b>Eco</b>, o papagaio da cidade.
+        ${A.slide===0 ? `Antes de você sair por aí, ${NOME()}, olha só.`
+                      : `Continuando, ${NOME()}…`}</span>
+      </div>
+      <div class="ico">${s.ico}</div>
+      <h2>${nomear(s.tit)}</h2>
+      ${s.txt.trim().startsWith("<") ? nomear(s.txt) : `<p>${nomear(s.txt)}</p>`}
+      ${s.chave ? `<div class="chave"><span class="rot">🔑 Grave isso</span>${nomear(s.chave)}</div>` : ``}
+      <div class="pontos">
+        ${slides.map((_,k)=>`<i class="${k===A.slide?"aqui":(k<A.slide?"vista":"")}"></i>`).join("")}
+      </div>
+    </div>
+    <div class="acoes">
+      ${A.slide>0 ? `<button class="btn aula fraco" onclick="aulaVolta()">← Voltar</button>` : ``}
+      ${ultimo
+        ? `<button class="btn" onclick="aulaFim()">🚀 Começar a missão ${i+1}</button>`
+        : `<button class="btn aula" onclick="aulaProx()">Próximo →</button>`}
+    </div>
+    <p class="centro mini" style="margin-top:14px">
+      ${ultimo ? `` : `<button class="chip" onclick="aulaFim()" style="cursor:pointer">Pular a aula e ir direto para a missão →</button>`}
+    </p>`;
+}
+function aulaProx(){ somClique(); A.slide++; telaAula(A.missao); scrollTo(0,0); }
+window.aulaProx = aulaProx;
+function aulaVolta(){ somClique(); A.slide--; telaAula(A.missao); scrollTo(0,0); }
+window.aulaVolta = aulaVolta;
+function aulaFim(){
+  somClique();
+  S.aulas[A.missao] = true; salvar();
+  S.cena = "m"+A.missao; render();
+}
+window.aulaFim = aulaFim;
+
+/* ============================================================
+   QUIZ GENÉRICO
+   ============================================================ */
+let Q = null;
+function embaralhaOpcoes(perguntas){
+  return perguntas.map(q=>{
+    if(q.fixo) return { ...q };                 /* ordem fixa: escalas e sequências */
+    const ordem = embaralha(q.o.map((_,i)=>i));
+    return { ...q, o: ordem.map(i=>q.o[i]), c: ordem.indexOf(q.c) };
+  });
+}
+function quizGenerico(missaoIdx, titulo, perguntas, acertosIniciais, totalInicial){
+  Q = { i:0, ac:acertosIniciais||0, tot:(totalInicial||0)+perguntas.length,
+        lista:embaralhaOpcoes(perguntas), missao:missaoIdx, titulo:titulo,
+        respondida:false };
+  desenhaQuiz();
+}
+function desenhaQuiz(){
+  const q = Q.lista[Q.i];
+  const classe = q.grade ? "grade" : (q.quatro ? "quatro" : "");
+  app.innerHTML = hud(Q.titulo) + `
+    <div class="card">
+      <p class="mini">Pergunta ${Q.i+1} de ${Q.lista.length}</p>
+      <div class="progresso"><i style="width:${Q.i/Q.lista.length*100}%"></i></div>
+      ${q.arte || ``}
+      ${q.enun ? `<div class="enunciado">${nomear(q.enun)}</div>` : ``}
+      ${q.frase ? `<div class="frase">${q.frase}</div>` : ``}
+      ${q.conta ? `<div class="conta">${q.conta}</div>` : ``}
+      ${q.p ? `<div class="pergunta">${nomear(q.p)}</div>` : ``}
+      <div class="opcoes ${classe}" id="ops">
+        ${q.o.map((t,k)=>`<button class="op" onclick="respQuiz(${k})">
+          ${classe?``:`<span class="letra">${"ABCD"[k]}</span>`}<span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fbq"></div>
+      <div class="acoes esconde" id="proxBox">
+        <button class="btn" onclick="proxQuiz()" id="btnProx">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respQuiz(k){
+  if(Q.respondida) return;
+  Q.respondida = true;
+  const q = Q.lista[Q.i];
+  document.querySelectorAll("#ops .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===q.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbq");
+  if(k===q.c){
+    Q.ac++; somAcerto(); ganha(10);
+    marcaAcerto(q.hab);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${nomear(q.e)}`;
+  } else {
+    somErro();
+    marcaErro(q.hab);
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Quase, ${NOME()}! A resposta certa é <b>${q.o[q.c]}</b>.</div>${nomear(q.e)}`;
+  }
+  $("#proxBox").classList.remove("esconde");
+  $("#btnProx").textContent = (Q.i === Q.lista.length-1) ? "Terminar missão 🏁" : "Continuar →";
+  $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respQuiz = respQuiz;
+function proxQuiz(){
+  somClique();
+  Q.i++; Q.respondida = false;
+  if(Q.i >= Q.lista.length){ concluiMissao(Q.missao, Q.ac, Q.tot); return; }
+  desenhaQuiz();
+}
+window.proxQuiz = proxQuiz;
+
+
+/* ============================================================
+   TEXTOS — todos vindos das folhas da escola
+   ============================================================ */
+const TXT_LEAO = `<div class="enunciado texto"><b>O LEÃO E O RATINHO</b> <span class="mini">· Fábulas de Esopo</span>
+<p>Um <b>leão</b>, cansado de tanto caçar, dormia espichado debaixo da sombra boa de uma
+<b>árvore</b>. Vieram uns ratinhos passear em cima dele e ele acordou. Todos conseguiram fugir,
+menos um, que o leão prendeu debaixo da pata. Tanto o <b>ratinho</b> pediu e implorou que o leão
+desistiu de esmagá-lo e deixou que fosse embora.</p>
+<p>Algum tempo depois, o leão ficou preso na <b>rede</b> de uns <b>caçadores</b>. Não conseguindo
+se soltar, fazia a floresta inteira tremer com seus urros de raiva. Nisso apareceu o ratinho, e
+com seus dentes afiados roeu as <b>cordas</b> e soltou o leão.</p>
+<p style="margin:0"><i>Moral: uma boa ação ganha outra; ou amigos pequenos podem ser grandes amigos.</i></p></div>`;
+
+const TXT_VOVO = `<div class="enunciado texto"><b>A CADEIRA DE BALANÇO DA VOVÓ ROSA</b>
+<p>Vovó Rosa morava em uma casinha com jardim florido, bem no final da rua. Ela usava vestidos
+coloridos, fazia bolos que cheiravam a céu e tinha uma cadeira de balanço que todos adoravam.</p>
+<p>Todo sábado, Bia e seu irmão João iam passar o dia com a vovó. Assim que chegavam, eram
+recebidos com abraços apertados, biscoitos quentinhos e o cheirinho do bolo de laranja.</p>
+<p>— Uma vez, seu bisavô me ensinou a pescar! — contou ela certa vez, sorrindo. — Eu achei que ia
+pegar um peixe enorme… e acabei pescando um sapato velho!</p>
+<p style="margin:0">— Lembrem-se, meus amores: as melhores histórias moram dentro da gente.</p></div>`;
+
+/* ============================================================
+   MISSÃO 1 — SALA DE LEITURA
+   ============================================================ */
+function faseLeitura(){
+  const perguntas = [
+    { arte: TXT_LEAO, hab:"leitura", quatro:true,
+      p:"Por que o leão soltou o ratinho no começo da história?",
+      o:["Porque o ratinho pediu e implorou muito",
+         "Porque o ratinho roeu as cordas",
+         "Porque o leão estava com medo dos caçadores",
+         "Porque o leão não tinha fome"], c:0,
+      e:`Está escrito no texto: <i>"Tanto o ratinho pediu e implorou que o leão desistiu de
+         esmagá-lo"</i>. Roer as cordas veio <b>depois</b>, na segunda parte.` },
+
+    { arte: TXT_LEAO, hab:"leitura", quatro:true,
+      p:"A pergunta é: <b>o que o ratinho usou</b> para soltar o leão?",
+      o:["Os dentes afiados","A rede dos caçadores","Os urros de raiva","A sombra da árvore"], c:0,
+      e:`<i>"com seus <b>dentes afiados</b> roeu as cordas"</i>.
+         <br>Cuidado com a armadilha: "cordas" é <b>o que ele roeu</b>, não <b>o que ele usou</b>.
+         Duas perguntas parecidas, respostas diferentes.` },
+
+    { arte: TXT_LEAO, hab:"leitura", quatro:true,
+      p:"O que a <b>moral</b> da fábula quer dizer?",
+      o:["Que quem faz o bem acaba recebendo o bem de volta",
+         "Que leões são mais fortes que ratos",
+         "Que não se deve dormir debaixo de árvores",
+         "Que caçadores usam redes"], c:0,
+      e:`<i>"Uma boa ação ganha outra; amigos pequenos podem ser grandes amigos."</i>
+         As outras três estão no texto, mas são <b>detalhes</b> — a moral é o
+         <b>ensinamento</b> da história inteira.` },
+
+    { arte: TXT_VOVO, hab:"sinonimo", quatro:true,
+      p:'No texto, <b>"abraços apertados"</b>. Qual palavra é <b>sinônima</b> de <b>apertado</b>?',
+      o:["estreito","largo","solto","frio"], c:0,
+      e:`<b>Apertado</b> e <b>estreito</b> têm significados <b>parecidos</b> → sinônimos.
+         Largo e solto são o contrário: seriam <b>antônimos</b>.` },
+
+    { arte: TXT_VOVO, hab:"sinonimo", quatro:true,
+      p:'A vovó disse que achou que ia pegar um peixe <b>enorme</b>. Qual é um <b>antônimo</b> de <b>enorme</b>?',
+      o:["minúsculo","gigante","grande","imenso"], c:0,
+      e:`Antônimo é o <b>oposto</b>: enorme × <b>minúsculo</b>.
+         <br>Gigante, grande e imenso querem dizer quase a mesma coisa que enorme —
+         esses seriam <b>sinônimos</b>.` },
+
+    { hab:"sinonimo", quatro:true,
+      p:'As palavras <b>"esquecer"</b> e <b>"lembrar"</b> são…',
+      o:["antônimas, porque têm sentidos opostos",
+         "sinônimas, porque têm o mesmo sentido",
+         "sinônimas, porque começam com a mesma letra",
+         "nem uma coisa nem outra"], c:0,
+      e:`Esquecer é o <b>contrário</b> de lembrar → <b>antônimas</b>.
+         <br>Não é a letra nem o tamanho que decide: é o <b>significado</b>.` },
+
+    { hab:"sinonimo", quatro:true,
+      p:'"As <b>melhores</b> histórias moram dentro da gente." Qual é o <b>antônimo</b> de <b>melhores</b>?',
+      o:["piores","ótimas","boas","maiores"], c:0,
+      e:`melhores × <b>piores</b>. Este par cai muito, e ele volta no grau comparativo:
+         <b>bom → melhor</b>, <b>mau → pior</b>.` },
+
+    { arte: TXT_VOVO, hab:"leitura", quatro:true,
+      p:'A pergunta pede: <b>"responda com um trecho do texto"</b> — em que dia Bia e João iam à vovó?',
+      o:['"Todo sábado, Bia e seu irmão João iam passar o dia com a vovó."',
+         "Eles iam no fim de semana visitar ela",
+         "Aos sábados",
+         "Todo dia depois da escola"], c:0,
+      e:`"Responda com um trecho do texto" quer dizer <b>copiar as palavras do texto</b>.
+         <br>"Aos sábados" está certo como informação, mas <b>não é um trecho</b> — e a
+         questão pediu o trecho.` },
+
+    { arte: TXT_VOVO, hab:"leitura", quatro:true,
+      p:"Que <b>sentimento</b> o texto da vovó Rosa desperta em quem lê?",
+      o:["Saudade e carinho","Medo e susto","Raiva","Nojo"], c:0,
+      e:`O texto todo fala de lembranças boas, abraços e histórias — desperta
+         <b>saudade</b>. Perguntas de sentimento pedem que você olhe o texto <b>inteiro</b>,
+         não uma frase só.` },
+
+    { hab:"leitura", quatro:true,
+      enun:`Num dicionário, os verbetes da letra A aparecem nesta ordem:
+        <b>abecedário · adoçar · alfabeto · alimentar</b>.`,
+      p:"Que verbete vem <b>logo depois</b> de <i>alfabeto</i>?",
+      o:["alimentar","abecedário","adoçar","o conjunto de letras que usamos para escrever"], c:0,
+      e:`A pergunta é sobre a <b>posição na lista</b>: depois de <i>alfabeto</i> vem
+         <b>alimentar</b>.
+         <br>"O conjunto de letras…" é o <b>significado</b> de alfabeto — resposta certa
+         para uma pergunta que ninguém fez. <b>Essa é a armadilha mais comum da prova.</b>` }
+  ];
+  quizGenerico(0, "📖 Sala de Leitura", perguntas, 0, 0);
+}
+
+/* ============================================================
+   MISSÃO 2 — CARTÓRIO DOS NOMES
+   ============================================================ */
+function faseCartorio(){
+  const perguntas = [
+    { hab:"substantivo", quatro:true,
+      frase:`Vovó <span class="foco">Rosa</span> morava em uma casinha.`,
+      p:"Que carimbo <b>Rosa</b> recebe no cartório?",
+      o:["Substantivo próprio","Substantivo comum","Substantivo coletivo","Adjetivo"], c:0,
+      e:`<b>Rosa</b> nomeia <b>uma pessoa específica</b> e vai de letra maiúscula →
+         substantivo <b>próprio</b>.` },
+
+    { hab:"substantivo", quatro:true,
+      frase:`Um <span class="foco">leão</span> dormia debaixo de uma árvore.`,
+      p:"Que carimbo <b>leão</b> recebe?",
+      o:["Substantivo comum","Substantivo próprio","Substantivo coletivo","Numeral"], c:0,
+      e:`<b>Leão</b> nomeia <b>qualquer</b> leão, de forma geral → substantivo <b>comum</b>.
+         <br>Se fosse o nome dele — <i>Simba</i> — aí seria próprio.` },
+
+    { hab:"substantivo", quatro:true,
+      p:"Qual destas palavras é um substantivo <b>concreto</b>?",
+      o:["fada","alegria","saudade","amor"], c:0,
+      e:`Pegadinha clássica! Concreto é o que tem <b>existência própria, real
+         <u>ou imaginária</u></b>. <b>Fada</b> não existe de verdade, mas existe como
+         <b>ser</b> → é concreto.
+         <br>Alegria, saudade e amor são <b>sentimentos</b>.` },
+
+    { hab:"coletivo", quatro:true,
+      p:"Qual é o coletivo de <b>peixes</b>?",
+      o:["cardume","enxame","rebanho","ninhada"], c:0,
+      e:`<b>Cardume</b> de peixes · enxame de <b>abelhas</b> · rebanho de <b>ovelhas</b> ·
+         ninhada de <b>filhotes</b>.` },
+
+    { hab:"coletivo", quatro:true,
+      p:"O agricultor observou um <b>________</b> de ovelhas pastando no campo.",
+      o:["rebanho","cardume","ramalhete","enxoval"], c:0,
+      e:`<b>Rebanho</b> de ovelhas (e de cabras).
+         <br>Repare: <i>rebanho</i> está no <b>singular</b> e indica <b>muitas</b> ovelhas —
+         é isso que faz dele um coletivo.` },
+
+    { hab:"coletivo", quatro:true,
+      p:"Uma <b>biblioteca</b> é o coletivo de…",
+      o:["livros","letras","estrelas","navios"], c:0,
+      e:`<b>Biblioteca</b> = livros · <b>alfabeto</b> = letras · <b>constelação</b> = estrelas ·
+         <b>frota</b> = navios.` },
+
+    { hab:"formacao", quatro:true,
+      p:"A palavra <b>floricultura</b> é um substantivo…",
+      o:["derivado, porque nasceu de flor","primitivo, porque é uma palavra grande",
+         "coletivo, porque tem muitas flores","próprio, porque é o nome de uma loja"], c:0,
+      e:`Tire o fim e veja o que sobra: <b>flor</b>icultura → sobra <b>flor</b>, que é uma
+         palavra que existe sozinha. Então floricultura é <b>derivada</b> de flor.` },
+
+    { hab:"formacao", quatro:true,
+      p:"Qual destas é a palavra <b>primitiva</b> do grupo?",
+      o:["papel","papelaria","papelão","papelada"], c:0,
+      e:`<b>Papel</b> não vem de nenhuma outra palavra — é a raiz. As outras três
+         <b>nasceram dela</b>: papel<b>aria</b>, papel<b>ão</b>, papel<b>ada</b>.` },
+
+    { hab:"formacao", grade:true,
+      p:"De qual palavra primitiva nasceu <b>carteiro</b>?",
+      o:["carta","carro","carteira","cartaz"], c:0,
+      e:`<b>Carteiro</b> é quem entrega <b>carta</b>. Do mesmo jeito: chuvisco ← chuva ·
+         saleiro ← sal · banqueiro ← banco · arvoredo ← árvore · dentista ← dente.` },
+
+    { hab:"substantivo", quatro:true,
+      frase:`O agricultor viu a <span class="foco">boiada</span> no campo.`,
+      p:"Quais carimbos <b>boiada</b> recebe ao mesmo tempo?",
+      o:["comum, concreto, coletivo e derivado",
+         "só coletivo",
+         "próprio e primitivo",
+         "comum e primitivo"], c:0,
+      e:`Todos de uma vez: é <b>comum</b> (geral), <b>concreto</b> (existe),
+         <b>coletivo</b> (muitos bois numa palavra só) e <b>derivado</b> (nasceu de <b>boi</b>).
+         <br>Na prova, marque <b>todos</b> os que couberem — não escolha só um.` },
+
+    { hab:"substantivo", quatro:true,
+      p:"E <b>ninhada</b>?",
+      o:["Coletivo e derivado (de ninho)","Só primitivo","Próprio e concreto","Adjetivo"], c:0,
+      e:`<b>Coletiva</b> (muitos filhotes) e <b>derivada</b> — tire o fim e sobra
+         <b>ninho</b>. É o mesmo par de carimbos da boiada.` },
+
+    { hab:"substantivo", quatro:true,
+      frase:`<span class="foco">Renata</span> chegou cedo à escola.`,
+      p:"Classifique <b>Renata</b> como no exemplo do caderno:",
+      o:["substantivo próprio, feminino, singular",
+         "substantivo comum, feminino, singular",
+         "substantivo próprio, masculino, plural",
+         "substantivo coletivo, feminino, singular"], c:0,
+      e:`<b>Próprio</b> (nome de uma pessoa, com maiúscula) · <b>feminino</b> (cabe "a
+         Renata") · <b>singular</b> (é uma só).
+         <br>Este é exatamente o formato que a sua prova usa.` }
+  ];
+  quizGenerico(1, "🗂️ Cartório dos Nomes", perguntas, 0, 0);
+}
+
+
+/* ============================================================
+   MISSÃO 3 — PORTARIA DOS ARTIGOS
+   Fase própria de DOIS DEGRAUS: primeiro a CLASSE, depois a
+   CLASSIFICAÇÃO. Nasceu da correção da professora numa folha
+   dela — ela respondeu "definida e indefinida" para a pergunta
+   da classe, e a professora escreveu "Artigo" ao lado.
+   ============================================================ */
+const CLASSES = ["Substantivo","Artigo","Adjetivo","Numeral"];
+
+/* cada item: frase, palavra em foco, classe certa, opções e resposta da classificação */
+const PORTARIA = [
+  { frase:['Ah, ', 'o', ' cachorro que eu perdi!'], classe:1,
+     clasP:"E qual é a <b>classificação</b> desse artigo?",
+     clasO:["Definido","Indefinido","Próprio","Cardinal"], clasC:0,
+     eClasse:`<b>o</b> é um <b>artigo</b> — essa é a <b>classe gramatical</b>.
+       "Definido" seria a resposta da <i>outra</i> pergunta.`,
+     eClas:`<b>Definido</b>: a menina está falando de <b>um cachorro específico</b>, o dela.` },
+
+  { frase:['Coitadinho, ', 'um', ' cachorro vagando na rua…'], classe:1,
+     clasP:"E qual é a <b>classificação</b> desse artigo?",
+     clasO:["Indefinido","Definido","Coletivo","Ordinal"], clasC:0,
+     eClasse:`<b>um</b> é <b>artigo</b>. Mesma classe do "o" da frase anterior —
+       o que muda entre eles é a <b>classificação</b>.`,
+     eClas:`<b>Indefinido</b>: o menino <b>não conhece</b> esse cachorro. É qualquer um.` },
+
+  { frase:['O ', 'jovem', ' atleta venceu a maratona.'], classe:2,
+     clasP:"E o que <b>jovem</b> está fazendo aqui?",
+     clasO:["Dizendo como é o atleta","Dizendo quem venceu",
+            "Contando quantos atletas","Anunciando o substantivo"], clasC:0,
+     eClasse:`Aqui <b>jovem</b> descreve o atleta → <b>adjetivo</b>.
+       <br>Cuidado: em outra frase a mesma palavra pode ser substantivo.`,
+     eClas:`Ele diz <b>como é</b> o atleta. Quem venceu foi o <b>atleta</b> — esse é o substantivo.` },
+
+  { frase:['O jovem ', 'cantor', ' venceu o concurso.'], classe:0,
+     clasP:"E qual é a <b>classificação</b> desse substantivo?",
+     clasO:["Comum","Próprio","Coletivo","Definido"], clasC:0,
+     eClasse:`Agora é <b>cantor</b> quem venceu → <b>substantivo</b>.
+       <br>Repare: <b>jovem</b> continua adjetivo, mas mudou de dono.
+       <b>É o lugar na frase que manda</b>, nunca a palavra sozinha.`,
+     eClas:`<b>Comum</b>: nomeia <b>qualquer</b> cantor, de forma geral.
+       "Definido" nem entra — isso é classificação de <b>artigo</b>.` },
+
+  { frase:['Vovó ', 'Rosa', ' fazia bolo de laranja.'], classe:0,
+     clasP:"E qual é a <b>classificação</b> desse substantivo?",
+     clasO:["Próprio","Comum","Coletivo","Indefinido"], clasC:0,
+     eClasse:`<b>Rosa</b> nomeia uma pessoa → <b>substantivo</b>.`,
+     eClas:`<b>Próprio</b>: é <b>uma</b> vovó específica, e vai de letra maiúscula.` },
+
+  { frase:['Foram ', 'quatro', ' jarros de flores.'], classe:3,
+     clasP:"E qual é a <b>classificação</b> desse numeral?",
+     clasO:["Cardinal","Ordinal","Definido","Derivado"], clasC:0,
+     eClasse:`<b>quatro</b> conta → <b>numeral</b>.`,
+     eClas:`<b>Cardinal</b>, porque indica <b>quantidade</b>.
+       Se fosse <i>"o <b>quarto</b> jarro"</i>, aí seria <b>ordinal</b> — ordem ou posição.` },
+
+  { frase:['', 'Primeiro', ', era a rosa do deserto.'], classe:3,
+     clasP:"E qual é a <b>classificação</b> desse numeral?",
+     clasO:["Ordinal","Cardinal","Coletivo","Comum"], clasC:0,
+     eClasse:`<b>Primeiro</b> é <b>numeral</b> — a classe é a mesma de "quatro".`,
+     eClas:`<b>Ordinal</b>, porque indica <b>ordem ou posição</b> — foi o primeiro da fila,
+       não "um" jarro.` },
+
+  { frase:['As ', 'unhas', ' afiadas da onça.'], classe:0,
+     clasP:"E qual palavra dessa frase é o <b>adjetivo</b>?",
+     clasO:["afiadas","unhas","As","onça"], clasC:0,
+     eClasse:`<b>unhas</b> é quem existe ali → <b>substantivo</b>.`,
+     eClas:`<b>afiadas</b> diz <b>como são</b> as unhas → adjetivo.
+       <br>E ele repete o gênero e o número: unha<b>s</b> afiada<b>s</b>.` }
+];
+
+let P3 = null;
+function faseArtigos(){
+  P3 = { i:0, degrau:1, ac:0, tot:PORTARIA.length*2 + ARTIGO_QUIZ.length, respondida:false };
+  desenhaPortaria();
+}
+function desenhaPortaria(){
+  const it = PORTARIA[P3.i];
+  const noDegrau1 = P3.degrau === 1;
+  const frase = `${it.frase[0]}<span class="foco">${it.frase[1]}</span>${it.frase[2]}`;
+  /* no degrau 1 as opções são SEMPRE as quatro classes, na mesma ordem.
+     A ordem fixa é de propósito: a criança tem que aprender que a pergunta
+     "que classe?" só tem quatro respostas possíveis, sempre as mesmas. */
+  const opts = noDegrau1 ? CLASSES : it.clasO;
+  P3.opts = opts;
+  P3.certa = noDegrau1 ? it.classe : it.clasC;
+  app.innerHTML = hud("🚪 Portaria dos Artigos") + `
+    <div class="card">
+      <p class="mini">Palavra ${P3.i+1} de ${PORTARIA.length}</p>
+      <div class="progresso"><i style="width:${(P3.i*2 + (noDegrau1?0:1))/(PORTARIA.length*2)*100}%"></i></div>
+      <div class="degraus">
+        <span class="degrau ${noDegrau1?"aqui":"ok"}">1 · qual é a CLASSE</span>
+        <span class="degrau ${noDegrau1?"":"aqui"}">2 · qual é a CLASSIFICAÇÃO</span>
+      </div>
+      <div class="frase">${frase}</div>
+      <div class="pergunta">${noDegrau1
+        ? `Qual é a <b>classe gramatical</b> de <b>${it.frase[1]}</b>?`
+        : nomear(it.clasP)}</div>
+      ${noDegrau1?`<p class="mini centro" style="margin-top:-8px">
+        Só existem quatro respostas possíveis para esta pergunta.</p>`:``}
+      <div class="opcoes quatro" id="ops">
+        ${opts.map((t,k)=>`<button class="op" onclick="respPortaria(${k})">${t}</button>`).join("")}
+      </div>
+      <div class="feedback" id="fbq"></div>
+      <div class="acoes esconde" id="proxBox">
+        <button class="btn" onclick="proxPortaria()" id="btnProx">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respPortaria(k){
+  if(P3.respondida) return;
+  P3.respondida = true;
+  const it = PORTARIA[P3.i], noDegrau1 = P3.degrau === 1;
+  document.querySelectorAll("#ops .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===P3.certa) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbq");
+  const expl = noDegrau1 ? it.eClasse : it.eClas;
+  const hab  = noDegrau1 ? "classe" : (it.classe===1 ? "artigo" : "substantivo");
+  if(k === P3.certa){
+    P3.ac++; somAcerto(); ganha(10); marcaAcerto(hab);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${expl}`;
+  } else {
+    somErro(); marcaErro(hab);
+    fb.className = "feedback ruim show";
+    /* o erro clássico: responder a classificação quando perguntaram a classe */
+    const trocouAndar = noDegrau1 && it.clasO.includes(P3.opts[k]);
+    fb.innerHTML = `<div class="tt">❌ Quase, ${NOME()}! A resposta certa é <b>${P3.opts[P3.certa]}</b>.</div>
+      ${trocouAndar?`<p><b>Você subiu no andar errado.</b> "${P3.opts[k]}" é uma
+      <b>classificação</b> — ela responde à pergunta 2. A pergunta 1 quer a
+      <b>classe</b>: substantivo, artigo, adjetivo ou numeral.</p>`:``}${expl}`;
+  }
+  $("#proxBox").classList.remove("esconde");
+  const ultimo = (P3.i === PORTARIA.length-1) && !noDegrau1;
+  $("#btnProx").textContent = ultimo ? "Ir para as perguntas finais →"
+                                     : (noDegrau1 ? "Agora a pergunta 2 →" : "Próxima palavra →");
+  $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respPortaria = respPortaria;
+function proxPortaria(){
+  somClique(); P3.respondida = false;
+  if(P3.degrau === 1){ P3.degrau = 2; desenhaPortaria(); return; }
+  P3.degrau = 1; P3.i++;
+  if(P3.i >= PORTARIA.length){
+    quizGenerico(2, "🚪 Portaria dos Artigos", ARTIGO_QUIZ, P3.ac, PORTARIA.length*2);
+    return;
+  }
+  desenhaPortaria();
+}
+window.proxPortaria = proxPortaria;
+
+/* --- as perguntas de gênero e número que fecham a missão --- */
+const ARTIGO_QUIZ = [
+  { hab:"genero", grade:true,
+    p:"Complete com um <b>artigo definido masculino</b>: ____ coração",
+    o:["o","a","uma","as"], c:0,
+    e:`<b>o</b> coração. Definido masculino singular = <b>o</b>.
+       <br>"a" é definido, mas <b>feminino</b> — e a pergunta pediu masculino.` },
+
+  { hab:"numero", grade:true,
+    p:"Complete corretamente: ____ sapos",
+    o:["os","o","a","um"], c:0,
+    e:`Sapo<b>s</b> está no plural, então o artigo também: <b>os</b> sapos.
+       <br>Plural pede plural — o artigo é o eco do substantivo.` },
+
+  { hab:"artigo", grade:true,
+    p:"Complete com um artigo <b>indefinido</b>: ____ joaninhas",
+    o:["umas","as","uma","os"], c:0,
+    e:`Indefinido, feminino, plural = <b>umas</b>.
+       <br>"as" também é feminino plural, mas é <b>definido</b> — outra classificação.` },
+
+  { hab:"artigo", quatro:true,
+    p:"Passe para os <b>indefinidos</b>: “<b>As</b> crianças chegaram.”",
+    o:["Umas crianças chegaram","Uns crianças chegaram",
+       "Uma criança chegou","A criança chegou"], c:0,
+    e:`<b>Umas</b> crianças — feminino e plural, igual ao "as" que saiu.
+       <br>"Uma criança chegou" mudou o <b>número</b> também, e ninguém pediu isso.` },
+
+  { hab:"genero", quatro:true,
+    p:"Em qual opção o artigo mostra que o substantivo é <b>feminino</b>?",
+    o:["a alface","o grampeador","um dente","os pires"], c:0,
+    e:`Cabe <b>a</b> → feminino. Este é o atalho: quando você não sabe o gênero,
+       ponha o artigo na frente e escute qual cabe.` },
+
+  { hab:"artigo", quatro:true,
+    enun:`“Uma menina chamada Ana foi visitar um sítio com <b>os</b> pais.”`,
+    p:"O artigo <b>os</b> é…",
+    o:["definido, masculino, plural","indefinido, masculino, plural",
+       "definido, feminino, plural","definido, masculino, singular"], c:0,
+    e:`<b>os</b> = definido (o, a, os, as), masculino, plural.
+       <br>São <b>três</b> informações numa palavrinha de duas letras.` },
+
+  { hab:"classe", quatro:true,
+    p:"“Qual é a <b>classe gramatical</b> das palavras que acompanham o substantivo?” A resposta é:",
+    o:["Artigo","Definido e indefinido","Classificação","Substantivo comum"], c:0,
+    e:`<b>Artigo</b> — a pergunta é sobre a <b>classe</b>.
+       <br>"Definido e indefinido" é a <b>classificação</b>, que é o outro andar.
+       Esta é a pergunta que a sua professora corrigiu com caneta na sua folha.` }
+];
+
+
+/* ============================================================
+   MISSÃO 4 — BALCÃO DA CONTAGEM (número, grau e numeral)
+   ============================================================ */
+function faseContagem(){
+  const perguntas = [
+    { hab:"numero", grade:true, p:"Qual é o plural de <b>nariz</b>?",
+      o:["narizes","narizs","narises","nariz"], c:0,
+      e:`Termina em <b>z</b> → acrescenta <b>-es</b>: nariz<b>es</b>.
+         Mesma regra de luz→luz<b>es</b>, cantor→cantor<b>es</b>, mês→mes<b>es</b>.` },
+
+    { hab:"numero", grade:true, p:"Qual é o plural de <b>pincel</b>?",
+      o:["pincéis","pincels","pincelas","pincéus"], c:0,
+      e:`Termina em <b>el</b> → troca o <b>l</b> por <b>is</b>: pincé<b>is</b>.
+         Igual a animal→anima<b>is</b> e girassol→girassó<b>is</b>.` },
+
+    { hab:"numero", grade:true, p:"Qual é o plural de <b>nuvem</b>?",
+      o:["nuvens","nuvems","nuveis","nuveines"], c:0,
+      e:`Termina em <b>m</b> → troca o <b>m</b> por <b>ns</b>: nuve<b>ns</b>.
+         Igual a trem→tre<b>ns</b> e bombom→bombo<b>ns</b>.` },
+
+    { hab:"numero", quatro:true, p:"Como fica no plural: <b>o pires</b>?",
+      o:["os pires","os pireses","os pirs","as pires"], c:0,
+      e:`<b>Pires</b> não muda! Quem avisa o plural é o <b>artigo</b>:
+         <b>o</b> pires → <b>os</b> pires.
+         <br>Acontece o mesmo com lápis, ônibus e tênis.` },
+
+    { hab:"numero", quatro:true,
+      p:"Passe para o <b>singular</b>: “Uns animais das florestas do Brasil.”",
+      o:["Um animal da floresta do Brasil","Um animal das florestas do Brasil",
+         "Uns animal da floresta do Brasil","Um animais da floresta do Brasil"], c:0,
+      e:`São <b>três</b> mudanças: uns→<b>um</b>, animais→<b>animal</b>,
+         das florestas→<b>da floresta</b>.
+         <br>A segunda opção arrumou só o começo e parou — é o escorregão mais comum.
+         Leia sempre até o <b>ponto final</b>.` },
+
+    { hab:"grau", grade:true, p:"Qual é o <b>diminutivo</b> de <b>pé</b>?",
+      o:["pezinho","peinho","pézito","pequeno pé"], c:0,
+      e:`<b>pezinho</b>. Palavrinhas curtas costumam pedir <b>-zinho</b>:
+         pé→pe<b>zinho</b>, cão→cão<b>zinho</b>, flor→flor<b>zinha</b>.` },
+
+    { hab:"grau", grade:true, p:"Qual é o <b>aumentativo</b> de <b>casa</b>?",
+      o:["casarão","casinha","casona","casal"], c:0,
+      e:`<b>casarão</b>. Aumentativos: <b>-ão, -ona, -zão</b>.
+         <br>"Casinha" é o <b>diminutivo</b>, e "casal" é outra palavra inteira.` },
+
+    { hab:"grau", quatro:true,
+      p:"Em qual palavra o <b>-ão</b> é mesmo um <b>aumentativo</b>?",
+      o:["narigão","coração","limão","mamão"], c:0,
+      e:`O teste: tire o <b>-ão</b> e veja se sobra uma palavra.
+         <br>Narig<b>ão</b> → sobra <b>nariz</b> ✓ aumentativo.
+         <br>Cora<b>ção</b> → sobra "cora" ✗ · Li<b>mão</b> → sobra "li" ✗.
+         Essas só <b>terminam</b> em -ão.` },
+
+    { hab:"grau", quatro:true,
+      p:"“A vovó fazia <b>bolinhos</b> quentinhos.” As duas palavras em destaque estão no…",
+      o:["diminutivo","aumentativo","plural apenas","grau comparativo"], c:0,
+      e:`Bol<b>inhos</b> e quent<b>inhos</b> → <b>diminutivo</b> (terminação -inho).
+         <br>Repare que aqui o diminutivo é <b>carinho</b>, não tamanho — mas a
+         classificação continua sendo diminutivo.` },
+
+    { hab:"numeral", quatro:true,
+      enun:`“<b>Primeiro</b>, era a rosa do deserto; em seguida, os <b>quatro</b> jarros de flores.”`,
+      p:"Como se classificam <b>Primeiro</b> e <b>quatro</b>, nessa ordem?",
+      o:["ordinal e cardinal","cardinal e ordinal","ambos cardinais","ambos ordinais"], c:0,
+      e:`<b>Primeiro</b> indica <b>ordem ou posição</b> → ordinal.
+         <br><b>Quatro</b> indica <b>quantidade</b> → cardinal.` },
+
+    { hab:"numeral", grade:true, p:"Como se escreve o numeral ordinal <b>7º</b>?",
+      o:["sétimo","sete","setésimo","seteno"], c:0,
+      e:`7º = <b>sétimo</b>. Os que mais escorregam: 6º sexto · 7º sétimo · 9º nono ·
+         10º décimo · 20º vigésimo.` },
+
+    { hab:"numeral", quatro:true,
+      p:"Em “Maflany ficou em <b>terceiro</b> lugar com <b>oito</b> pontos”, quem é o cardinal?",
+      o:["oito","terceiro","lugar","pontos"], c:0,
+      e:`<b>Oito</b> conta quantos pontos → <b>cardinal</b>.
+         <br><b>Terceiro</b> diz a posição → ordinal.
+         <br>Lugar e pontos não são numerais: são substantivos.` }
+  ];
+  quizGenerico(3, "🔢 Balcão da Contagem", perguntas, 0, 0);
+}
+
+/* ============================================================
+   MISSÃO 5 — ATELIÊ DO ADJETIVO
+   Os pares de frases com a MESMA palavra em papéis diferentes
+   vêm da folha 441011 Q01, onde ela trocou exatamente esses dois.
+   ============================================================ */
+function faseAdjetivo(){
+  const perguntas = [
+    { hab:"adjetivo", quatro:true,
+      frase:`O <span class="foco">jovem</span> atleta venceu a maratona.`,
+      p:"A palavra em destaque é…",
+      o:["Adjetivo — diz <i>como é</i> o atleta","Substantivo — é <i>quem</i> venceu",
+         "Artigo","Numeral"], c:0,
+      e:`Aqui <b>jovem</b> caracteriza o atleta → <b>adjetivo</b>.
+         <br>Quem venceu foi o <b>atleta</b>; esse é o substantivo da frase.` },
+
+    { hab:"adjetivo", quatro:true,
+      frase:`O jovem <span class="foco">cantor</span> venceu o concurso.`,
+      p:"E agora? A palavra em destaque é…",
+      o:["Substantivo — é <i>quem</i> venceu","Adjetivo — diz <i>como é</i>",
+         "Artigo","Numeral"], c:0,
+      e:`<b>Cantor</b> é <b>quem</b> venceu → <b>substantivo</b>.
+         <br>É a armadilha favorita da prova: <b>jovem</b> aparece nas duas frases e é
+         adjetivo nas duas; quem mudou de emprego foi a palavra <b>ao lado</b>.
+         <b>Nunca decida pela palavra — decida pelo lugar dela na frase.</b>` },
+
+    { hab:"adjetivo", quatro:true,
+      frase:`A <span class="foco">geladeira</span> estava cheia de comidas gostosas.`,
+      p:"A palavra em destaque é…",
+      o:["Substantivo","Adjetivo","Artigo","Numeral"], c:0,
+      e:`<b>Geladeira</b> é uma <b>coisa</b> → substantivo.
+         <br>Teste rápido: cabe artigo na frente? "<b>a</b> geladeira" ✓ → substantivo.` },
+
+    { hab:"adjetivo", quatro:true,
+      frase:`A água do mar estava <span class="foco">gelada</span>.`,
+      p:"E esta?",
+      o:["Adjetivo","Substantivo","Artigo","Numeral"], c:0,
+      e:`<b>Gelada</b> diz <b>como estava</b> a água → adjetivo.
+         <br>"a gelada" não cabe naturalmente — mais um sinal de que não é substantivo.
+         <br>Repare que <i>geladeira</i> e <i>gelada</i> são parentes, mas fazem trabalhos
+         diferentes.` },
+
+    { hab:"adjetivo", quatro:true,
+      frase:`Unhas <span class="foco">afiadas</span>, bigodes elétricos: é uma pantera.`,
+      p:"<b>Afiadas</b> está no…",
+      o:["feminino plural, porque unhas é feminino plural",
+         "masculino plural","feminino singular","masculino singular"], c:0,
+      e:`O adjetivo é o meu eco: <b>unha<u>s</u></b> (fem. plural) → <b>afiada<u>s</u></b>
+         (fem. plural). Já <i>bigodes</i> é masculino plural, e por isso o adjetivo dele é
+         <b>elétricos</b>.` },
+
+    { hab:"adjetivo", quatro:true,
+      p:"Complete fazendo a concordância: “Os meninos estão ______ e as meninas ______.”",
+      o:["elegantes / belas","elegante / bela","elegantes / belos","elegante / belas"], c:0,
+      e:`Meninos → <b>elegantes</b> (masc. plural). Meninas → <b>belas</b> (fem. plural).
+         <br><b>São dois lugares para arrumar na mesma frase.</b> Arrumar só o primeiro é
+         o escorregão nº 1 desta cidade.` },
+
+    { hab:"comparativo", quatro:true,
+      p:"“Ana é <b>tão</b> alta <b>quanto</b> Bia.” Qual é o grau comparativo?",
+      o:["Igualdade","Superioridade","Inferioridade","Diminutivo"], c:0,
+      e:`<b>tão … quanto</b> = <b>igualdade</b>. As duas têm a mesma altura.` },
+
+    { hab:"comparativo", quatro:true,
+      p:"Como se diz que a caixa azul pesa <b>menos</b> que a vermelha?",
+      o:["A caixa azul é menos pesada do que a vermelha",
+         "A caixa azul é tão pesada quanto a vermelha",
+         "A caixa azul é mais pesada do que a vermelha",
+         "A caixa azul é pesadíssima"], c:0,
+      e:`<b>menos … do que</b> = comparativo de <b>inferioridade</b>.
+         <br>A fórmula tem <b>duas partes</b>: "menos" na frente e "do que" no meio.
+         Uma sem a outra não fecha.` },
+
+    { hab:"comparativo", quatro:true,
+      p:"Qual frase está <b>correta</b>?",
+      o:["Este bolo é melhor do que aquele","Este bolo é mais bom do que aquele",
+         "Este bolo é mais melhor que aquele","Este bolo é o mais bom"], c:0,
+      e:`<b>bom</b> não aceita "mais": vira <b>melhor (do) que</b>.
+         <br>O irmão dele é <b>mau → pior (do) que</b>. Nunca "mais bom", nunca "mais mau".` },
+
+    { hab:"comparativo", quatro:true,
+      p:"“Meu dia foi ______ do que o seu.” (contrário de melhor)",
+      o:["pior","mais mau","mais pior","malzinho"], c:0,
+      e:`<b>pior do que</b>. É o comparativo irregular de <b>mau</b> —
+         o par do <b>melhor</b>.` },
+
+    { hab:"adjetivo", quatro:true,
+      frase:`Vovó Rosa usava vestidos <span class="foco">coloridos</span>.`,
+      p:"Passe a frase para o singular. Como fica o adjetivo?",
+      o:["colorido — “um vestido colorido”","coloridos — não muda",
+         "colorida","colorid"], c:0,
+      e:`Vestido<b>s</b> colorido<b>s</b> → vestido colorido.
+         <br>Mudou o substantivo, <b>muda o adjetivo junto</b>. Sempre.` },
+
+    { hab:"adjetivo", quatro:true,
+      p:"Qual palavra é o <b>adjetivo</b> em “O sapato de Manuela é brilhoso”?",
+      o:["brilhoso","sapato","Manuela","de"], c:0,
+      e:`<b>Brilhoso</b> diz <b>como é</b> o sapato → adjetivo.
+         <br>Sapato é substantivo comum, Manuela é substantivo próprio.` }
+  ];
+  quizGenerico(4, "🎨 Ateliê do Adjetivo", perguntas, 0, 0);
+}
+
+
+/* ============================================================
+   MISSÃO 6 — PONTE DA CONCORDÂNCIA
+   A ponte só é atravessada quando TODAS as tábuas estão postas.
+   Existe por causa de quatro erros medidos nas folhas dela, todos
+   iguais: a primeira mudança sai certa e a segunda fica para trás.
+   ============================================================ */
+/* partes: string = texto fixo · objeto = lacuna {o:[...], c:índice} */
+const PONTE = [
+  { pedido:"Passe para o <b>singular</b>:",
+    origem:"Uns animais das florestas do Brasil.",
+    partes:[ {o:["Um","Uns","Uma"], c:0}, " ",
+             {o:["animal","animais","animalzinho"], c:0}, " ",
+             {o:["da floresta","das florestas","de floresta"], c:0}, " do Brasil." ],
+    e:`<b>Três</b> tábuas: uns→<b>um</b>, animais→<b>animal</b>,
+       das florestas→<b>da floresta</b>.
+       <br>Esta é a frase da sua folha em que a terceira tábua ficou faltando.` },
+
+  { pedido:"Troque os artigos <b>definidos</b> por <b>indefinidos</b>:",
+    origem:"A menina comprou o sorvete.",
+    partes:[ {o:["Uma","Um","A"], c:0}, " menina comprou ",
+             {o:["um","o","uns"], c:0}, " sorvete." ],
+    e:`<b>Duas</b> tábuas: A→<b>Uma</b> e o→<b>um</b>.
+       <br>Na sua folha a segunda sumiu — a frase ficou "Uma menina comprou sorvete".
+       O artigo não pode simplesmente desaparecer.` },
+
+  { pedido:"Passe os substantivos para o <b>masculino</b> (e o resto que precisar):",
+    origem:"A cabra e a galinha são animais úteis.",
+    partes:[ {o:["O","A","Os"], c:0}, " ",
+             {o:["bode","cabra","boi"], c:0}, " ",
+             {o:["e o","e a","e"], c:0}, " ",
+             {o:["galo","galinha","frango"], c:0}, " são animais úteis." ],
+    e:`<b>Quatro</b> tábuas. O enunciado até avisava: <i>"faça também outras alterações
+       necessárias"</i>.
+       <br>Na sua folha saiu "O bode <b>e a</b> galo" — o segundo artigo ficou no feminino.` },
+
+  { pedido:"Passe para o <b>plural</b>:",
+    origem:"O pássaro canta na árvore.",
+    partes:[ {o:["Os","O","As"], c:0}, " ",
+             {o:["pássaros","pássaro","pássaroes"], c:0}, " cantam ",
+             {o:["nas árvores","na árvore","nas árvore"], c:0}, "." ],
+    e:`Os pássaros cantam <b>nas árvores</b>. Repare que o "na" virou "nas" —
+       a preposição também acompanha.` },
+
+  { pedido:"Passe para o <b>feminino</b>:",
+    origem:"O aluno novo é muito estudioso.",
+    partes:[ {o:["A","O","As"], c:0}, " ",
+             {o:["aluna","aluno","alunas"], c:0}, " ",
+             {o:["nova","novo","novas"], c:0}, " é muito ",
+             {o:["estudiosa","estudioso","estudiosas"], c:0}, "." ],
+    e:`<b>Quatro</b> tábuas — e duas delas são adjetivos.
+       <br>O adjetivo é o meu eco: mudou o substantivo, ele muda junto.
+       "A aluna nova é muito estudiosa."` },
+
+  { pedido:"Passe para o <b>singular</b>:",
+    origem:"Umas toalhas macias e uns lençóis limpos.",
+    partes:[ {o:["Uma","Umas","Um"], c:0}, " ",
+             {o:["toalha","toalhas","toalhinha"], c:0}, " ",
+             {o:["macia","macias","macio"], c:0}, " e ",
+             {o:["um","uns","uma"], c:0}, " ",
+             {o:["lençol","lençóis","lençoles"], c:0}, " ",
+             {o:["limpo","limpos","limpa"], c:0}, "." ],
+    e:`<b>Seis</b> tábuas! A frase tem duas metades ligadas por "e", e a segunda metade
+       costuma ser esquecida inteira.
+       <br>lençóis → <b>lençol</b> (o plural é que trocava o L por IS).` },
+
+  { pedido:"Passe para o <b>plural</b>:",
+    origem:"A criança feliz achou o lápis azul.",
+    partes:[ {o:["As","A","Os"], c:0}, " ",
+             {o:["crianças","criança","criançs"], c:0}, " ",
+             {o:["felizes","feliz","felices"], c:0}, " acharam ",
+             {o:["os","o","as"], c:0}, " ",
+             {o:["lápis","lápises","lápiss"], c:0}, " ",
+             {o:["azuis","azul","azules"], c:0}, "." ],
+    e:`Duas pegadinhas juntas: <b>feliz</b> termina em Z → felizes; e <b>lápis</b>
+       <b>não muda</b> — quem avisa o plural é o artigo (<b>os</b> lápis).
+       <br>E azul → <b>azuis</b> (troca o L por IS).` }
+];
+
+let PT = null;
+function totalTabuas(){
+  return PONTE.reduce((a,it)=> a + it.partes.filter(p=>typeof p !== "string").length, 0);
+}
+function fasePonte(){
+  PT = { i:0, sel:[], ac:0, tot:totalTabuas(), conferido:false };
+  zeraSelPonte();
+  desenhaPonte();
+}
+function zeraSelPonte(){
+  const it = PONTE[PT.i];
+  PT.sel = it.partes.map(p => typeof p === "string" ? null : -1);
+  PT.alvo = PT.sel.findIndex(v => v === -1);
+  PT.conferido = false;
+}
+function lacunasDe(i){
+  return PONTE[i].partes.map((p,k)=>({p,k})).filter(x=>typeof x.p !== "string");
+}
+function pontesSVG(total, postas){
+  /* uma tábua por lacuna; ela só acende quando a resposta está certa */
+  const larg = 320, alt = 78, x0 = 26, x1 = larg - 26;
+  const passo = (x1 - x0) / total;
+  let tabuas = "";
+  for(let k=0;k<total;k++){
+    const x = x0 + k*passo;
+    tabuas += `<rect class="tabua ${k<postas?"posta":""}" x="${x+2}" y="34" width="${passo-4}" height="11" rx="3"></rect>`;
+  }
+  return `<svg class="ponte" viewBox="0 0 ${larg} ${alt}" role="img"
+      aria-label="Ponte com ${total} tábuas, ${postas} colocadas">
+    <rect class="agua" x="0" y="52" width="${larg}" height="26" rx="6"></rect>
+    <rect class="pilar" x="4" y="30" width="22" height="34" rx="4"></rect>
+    <rect class="pilar" x="${larg-26}" y="30" width="22" height="34" rx="4"></rect>
+    ${tabuas}
+    <text class="bicho" x="10" y="26">🦜</text>
+    <text class="bicho" x="${larg-32}" y="26">🏁</text>
+  </svg>`;
+}
+function desenhaPonte(){
+  const it = PONTE[PT.i];
+  const lac = lacunasDe(PT.i);
+  const nLac = lac.length;
+  const escolhidas = lac.filter(x => PT.sel[x.k] >= 0).length;
+  const certas = PT.conferido ? lac.filter(x => PT.sel[x.k] === x.p.c).length : 0;
+
+  const frase = it.partes.map((p,k)=>{
+    if(typeof p === "string") return p;
+    const v = PT.sel[k];
+    let cls = "lac";
+    if(PT.conferido) cls += (v === p.c) ? " certa" : " errada";
+    else if(v < 0) cls += (k === PT.alvo ? " lac alvo vazia" : " vazia");
+    else cls += " pronta";
+    const txt = v >= 0 ? p.o[v] : "______";
+    return `<span class="${cls}" onclick="${PT.conferido?"":`miraLacuna(${k})`}">${txt}</span>`;
+  }).join("");
+
+  /* o grupo de opções da lacuna que está na mira */
+  const alvo = PT.alvo;
+  const grupo = (alvo >= 0 && !PT.conferido) ? (()=> {
+    const p = it.partes[alvo];
+    const nAlvo = lac.findIndex(x=>x.k===alvo) + 1;
+    return `<p class="pergunta centro" style="margin-bottom:8px">Tábua ${nAlvo}: qual palavra encaixa?</p>
+      <div class="opcoes quatro">
+        ${p.o.map((t,j)=>`<button class="op" onclick="poeTabua(${alvo},${j})">${t}</button>`).join("")}
+      </div>`;
+  })() : ``;
+
+  app.innerHTML = hud("🔗 Ponte da Concordância") + `
+    <div class="card">
+      <p class="mini">Ponte ${PT.i+1} de ${PONTE.length}</p>
+      <div class="progresso"><i style="width:${PT.i/PONTE.length*100}%"></i></div>
+      ${pontesSVG(nLac, PT.conferido ? certas : escolhidas)}
+      <p class="contadorTabuas">${PT.conferido
+        ? `${certas} de ${nLac} tábuas <b>certas</b>`
+        : `${escolhidas} de ${nLac} tábuas colocadas`}</p>
+      <div class="enunciado">${it.pedido}<br>
+        <span style="font-size:1.08em">“${it.origem}”</span></div>
+      <div class="frase">${frase}</div>
+      ${grupo}
+      ${(!PT.conferido && alvo < 0) ? `<div class="acoes">
+        <button class="btn" onclick="conferePonte()">🦜 Atravessar a ponte</button>
+        <button class="btn sec" onclick="refazPonte()">↺ Refazer esta frase</button>
+      </div>
+      <p class="mini centro" style="margin-top:10px">Antes de atravessar: leia a frase inteira
+      em voz alta, até o <b>ponto final</b>.</p>` : ``}
+      ${(!PT.conferido && alvo >= 0 && escolhidas > 0) ? `<p class="mini centro" style="margin-top:12px">
+        Ainda faltam tábuas — toque nos espaços em branco da frase.</p>` : ``}
+      <div class="feedback" id="fbp"></div>
+      <div class="acoes esconde" id="proxBoxP">
+        <button class="btn" onclick="proxPonte()" id="btnProxP">Continuar →</button>
+      </div>
+    </div>`;
+}
+function miraLacuna(k){
+  if(PT.conferido) return;
+  somClique(); PT.alvo = k; desenhaPonte();
+}
+window.miraLacuna = miraLacuna;
+function poeTabua(k, j){
+  somPop();
+  PT.sel[k] = j;
+  /* a mira vai sozinha para a próxima tábua vazia — nunca para o botão de atravessar */
+  PT.alvo = PT.sel.findIndex(v => v === -1);
+  desenhaPonte();
+}
+window.poeTabua = poeTabua;
+function refazPonte(){ somClique(); zeraSelPonte(); desenhaPonte(); }
+window.refazPonte = refazPonte;
+
+function conferePonte(){
+  const it = PONTE[PT.i], lac = lacunasDe(PT.i);
+  const erradas = lac.filter(x => PT.sel[x.k] !== x.p.c);
+  const certas  = lac.length - erradas.length;
+  PT.conferido = true;
+  PT.ac += certas;
+  if(erradas.length){
+    somErro(); marcaErro("concordancia");
+    for(let k=0;k<Math.min(erradas.length,2);k++) marcaErro("concordancia");
+  } else {
+    somAcerto(); ganha(15); marcaAcerto("concordancia");
+  }
+  salvar();
+  desenhaPonte();
+  const fb = $("#fbp");
+  if(!erradas.length){
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ Atravessou, ${NOME()}! ${lac.length} de ${lac.length} tábuas.</div>${it.e}`;
+  } else {
+    fb.className = "feedback ruim show";
+    const quais = erradas.map(x => {
+      const n = lac.findIndex(y=>y.k===x.k) + 1;
+      return `<li>tábua ${n}: era <b>${x.p.o[x.p.c]}</b>, você pôs
+        <b>${PT.sel[x.k]>=0 ? x.p.o[PT.sel[x.k]] : "nada"}</b></li>`;
+    }).join("");
+    fb.innerHTML = `<div class="tt">❌ A ponte caiu, ${NOME()}: faltou ${erradas.length===1
+      ? `<b>1 tábua</b>` : `<b>${erradas.length} tábuas</b>`}.</div>
+      <ul style="margin:6px 0 10px">${quais}</ul>${it.e}`;
+  }
+  $("#proxBoxP").classList.remove("esconde");
+  $("#btnProxP").textContent = (PT.i === PONTE.length-1) ? "Terminar missão 🏁" : "Próxima ponte →";
+  $("#btnProxP").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.conferePonte = conferePonte;
+function proxPonte(){
+  somClique(); PT.i++;
+  if(PT.i >= PONTE.length){ concluiMissao(5, PT.ac, PT.tot); return; }
+  zeraSelPonte(); desenhaPonte(); scrollTo(0,0);
+}
+window.proxPonte = proxPonte;
+
+/* ============================================================
+   MISSÃO 7 — OFICINA DA ESCRITA (ortografia)
+   ============================================================ */
+function faseOrtografia(){
+  const perguntas = [
+    { hab:"ortografia", grade:true,
+      p:"Você conhece a história do lobo ____?",
+      o:["mau","mal","mao","maul"], c:0,
+      e:`<b>Mau</b> é o contrário de <b>bom</b> — e "o lobo <b>bom</b>" faz sentido,
+         então é <b>mau</b>.
+         <br>Esta é a palavra que escapou na sua folha: você acertou "passou <b>mal</b>"
+         na mesma questão.` },
+
+    { hab:"ortografia", grade:true,
+      p:"Meu primo passou ____ e mamãe chamou o médico.",
+      o:["mal","mau","mall","maul"], c:0,
+      e:`<b>Mal</b> é o contrário de <b>bem</b>: "passou <b>bem</b>" ↔ "passou <b>mal</b>".` },
+
+    { hab:"ortografia", quatro:true,
+      p:"Qual palavra termina em <b>AU</b>?",
+      o:["degrau","mostrou","correu","chapéu"], c:0,
+      e:`<b>degrau</b> (AU) · mostrou (<b>OU</b>) · correu (<b>EU</b>) · chapéu (<b>ÉU</b>).
+         <br>Foi exatamente aqui que a sua professora escreveu "degrau" por cima.` },
+
+    { hab:"ortografia", quatro:true,
+      p:"Qual está escrita <b>corretamente</b>?",
+      o:["infância","infânsia","enfância","infancia"], c:0,
+      e:`<b>infância</b> — com <b>C</b> e com acento circunflexo no A.` },
+
+    { hab:"ortografia", quatro:true,
+      p:"Qual está escrita <b>corretamente</b>?",
+      o:["dicionário","disionário","dicionario","dissionário"], c:0,
+      e:`<b>dicionário</b> — <b>c</b> no começo e acento no A.` },
+
+    { hab:"ortografia", quatro:true,
+      p:"Qual está escrita <b>corretamente</b>?",
+      o:["emoção","emação","emossão","emoçao"], c:0,
+      e:`<b>emoção</b>. E vale a regra que resolve metade das dúvidas:
+         palavra terminada em <b>-ção</b> é <b>sempre com ç</b>.` },
+
+    { hab:"ortografia", quatro:true,
+      p:"Qual está escrita <b>corretamente</b>?",
+      o:["carrossel","carrosel","carroçel","carrocel"], c:0,
+      e:`<b>carrossel</b> — com <b>dois S</b>. Entre duas vogais, o som de /s/
+         pede <b>ss</b>.` },
+
+    { hab:"ortografia", quatro:true,
+      p:"Qual está escrita <b>corretamente</b>?",
+      o:["biblioteca","bibliotica","bibiloteca","biblioteka"], c:0,
+      e:`<b>biblioteca</b>. Fale devagar: bi-bli-o-<b>te</b>-ca.` },
+
+    { hab:"ortografia", grade:true,
+      p:"Sal, no plural, fica…",
+      o:["sais","saus","sales","sal"], c:0,
+      e:`<b>sais</b> — o plural em <b>-is</b> prova que a palavra tinha <b>L</b> no fim.
+         <br>Compare com troféu → troféu<b>s</b>, que tinha <b>U</b>.` },
+
+    { hab:"ortografia", grade:true,
+      p:"Troféu, no plural, fica…",
+      o:["troféus","troféis","trofés","troféuses"], c:0,
+      e:`<b>troféus</b>. Terminava em <b>U</b>, então o plural é só acrescentar <b>s</b>.` },
+
+    { hab:"ortografia", quatro:true,
+      p:"Qual frase está <b>toda</b> correta?",
+      o:["A emoção da infância mora no coração.",
+         "A emação da infânsia mora no coração.",
+         "A emoção da infância mora no corasão.",
+         "A emassão da infância mora no coração."], c:0,
+      e:`Três palavras em <b>-ção</b> e uma em <b>-cia</b>, todas juntas:
+         emo<b>ç</b>ão · infân<b>c</b>ia · cora<b>ç</b>ão.` },
+
+    { hab:"ortografia", quatro:true,
+      p:"Complete: “João ____ todas as caixas de presente.”",
+      o:["abriu","abril","abrio","abriul"], c:0,
+      e:`<b>abriu</b> — é uma <b>ação</b> que já aconteceu.
+         <br><b>Abril</b> é o <b>mês</b>: "Bianca faz aniversário no mês de abril."
+         Duas palavras parecidas, empregos diferentes.` }
+  ];
+  quizGenerico(6, "✍️ Oficina da Escrita", perguntas, 0, 0);
+}
+
+
+/* ============================================================
+   MISSÃO 8 — PROVA DA CIDADE (arcade + prova final)
+   ============================================================ */
+const BANCO = [
+  {hab:"classe",      q:"Classe gramatical de <b>“o”</b> em “o cachorro”", o:["artigo","definido","substantivo","adjetivo"], c:0},
+  {hab:"classe",      q:"Classe gramatical de <b>“três”</b> em “três gatos”", o:["numeral","cardinal","substantivo","artigo"], c:0},
+  {hab:"classe",      q:"Classificação de <b>“um”</b> em “um cachorro”", o:["indefinido","artigo","comum","ordinal"], c:0},
+  {hab:"substantivo", q:"<b>Fortaleza</b> é substantivo…", o:["próprio","comum","coletivo","derivado"], c:0},
+  {hab:"substantivo", q:"<b>Fada</b> é substantivo…", o:["concreto","abstrato","próprio","coletivo"], c:0},
+  {hab:"coletivo",    q:"Coletivo de <b>abelhas</b>", o:["enxame","cardume","boiada","frota"], c:0},
+  {hab:"coletivo",    q:"Coletivo de <b>estrelas</b>", o:["constelação","alfabeto","enxoval","ninhada"], c:0},
+  {hab:"coletivo",    q:"Coletivo de <b>navios</b>", o:["frota","banda","classe","turma"], c:0},
+  {hab:"formacao",    q:"<b>Pedreiro</b> vem de…", o:["pedra","pedir","pé","padre"], c:0},
+  {hab:"formacao",    q:"Qual é <b>primitivo</b>?", o:["flor","florista","floricultura","floreira"], c:0},
+  {hab:"formacao",    q:"<b>Dentista</b> é substantivo…", o:["derivado","primitivo","coletivo","próprio"], c:0},
+  {hab:"artigo",      q:"Artigo definido, feminino, plural", o:["as","umas","a","os"], c:0},
+  {hab:"artigo",      q:"Artigo indefinido, masculino, plural", o:["uns","os","um","umas"], c:0},
+  {hab:"genero",      q:"Feminino de <b>carneiro</b>", o:["ovelha","carneira","cabra","vaca"], c:0},
+  {hab:"genero",      q:"Feminino de <b>cirurgião</b>", o:["cirurgiã","cirurgiona","cirurgianta","cirurgioa"], c:0},
+  {hab:"numero",      q:"Plural de <b>animal</b>", o:["animais","animals","animales","animalis"], c:0},
+  {hab:"numero",      q:"Plural de <b>trem</b>", o:["trens","trems","trenes","treis"], c:0},
+  {hab:"numero",      q:"Plural de <b>lápis</b>", o:["lápis","lápises","lápiss","lapises"], c:0},
+  {hab:"grau",        q:"<b>Cãozinho</b> está no grau…", o:["diminutivo","aumentativo","comparativo","plural"], c:0},
+  {hab:"grau",        q:"Aumentativo de <b>nariz</b>", o:["narigão","narizinho","narizão","narigona"], c:0},
+  {hab:"grau",        q:"Em qual o <b>-ão</b> é aumentativo?", o:["gatão","limão","mamão","coração"], c:0},
+  {hab:"numeral",     q:"<b>Quatro</b> é numeral…", o:["cardinal","ordinal","coletivo","comum"], c:0},
+  {hab:"numeral",     q:"<b>Décimo</b> é numeral…", o:["ordinal","cardinal","derivado","próprio"], c:0},
+  {hab:"numeral",     q:"Como se escreve <b>9º</b>?", o:["nono","novo","nove","nónimo"], c:0},
+  {hab:"adjetivo",    q:"Em “água <b>gelada</b>”, gelada é…", o:["adjetivo","substantivo","artigo","numeral"], c:0},
+  {hab:"adjetivo",    q:"Em “o jovem <b>cantor</b>”, cantor é…", o:["substantivo","adjetivo","artigo","numeral"], c:0},
+  {hab:"comparativo", q:"“tão … quanto” é comparativo de…", o:["igualdade","superioridade","inferioridade","aumento"], c:0},
+  {hab:"comparativo", q:"Comparativo correto de <b>bom</b>", o:["melhor que","mais bom que","mais melhor","boníssimo que"], c:0},
+  {hab:"comparativo", q:"Comparativo correto de <b>mau</b>", o:["pior que","mais mau que","mais pior","maus que"], c:0},
+  {hab:"concordancia",q:"“As meninas estão ____” (belo)", o:["belas","belos","bela","belo"], c:0},
+  {hab:"concordancia",q:"“Os raios ____ ” (solar)", o:["solares","solar","solaras","solaris"], c:0},
+  {hab:"ortografia",  q:"O lobo ____", o:["mau","mal","mao","maul"], c:0},
+  {hab:"ortografia",  q:"Passou ____ e foi ao médico", o:["mal","mau","mall","maul"], c:0},
+  {hab:"ortografia",  q:"Escrita certa", o:["emoção","emação","emossão","emoçao"], c:0},
+  {hab:"ortografia",  q:"Escrita certa", o:["infância","infânsia","infancia","enfância"], c:0},
+  {hab:"sinonimo",    q:"Sinônimo de <b>apertado</b>", o:["estreito","largo","solto","frouxo"], c:0},
+  {hab:"sinonimo",    q:"Antônimo de <b>lembrar</b>", o:["esquecer","recordar","pensar","guardar"], c:0},
+  {hab:"sinonimo",    q:"Antônimo de <b>melhores</b>", o:["piores","ótimos","bons","maiores"], c:0}
+];
+let arc = null, cronoT = null, cronoPausa = false;
+function pararArcade(){ if(cronoT){ clearInterval(cronoT); cronoT = null; } arc = null; }
+function pausaCrono(v){ cronoPausa = !!v; }
+
+function faseFinal(){
+  app.innerHTML = hud("🏆 Prova da Cidade") + `
+    <div class="card centro">
+      <div style="font-size:60px">🏆</div>
+      <h2>Última parada, ${NOME()}</h2>
+      <p>Esta missão tem <b>duas partes</b>, e só a segunda vale estrelas:</p>
+      <div class="enunciado" style="text-align:left">
+        <p><b>1 · Arcade da cidade</b> — 60 segundos de perguntas rápidas de todos os
+        assuntos. Vale <b>pontos</b>, não estrelas. Serve para aquecer.</p>
+        <p style="margin:0"><b>2 · Prova final</b> — sem relógio nenhum. É ela que vale as
+        <b>${POR_MISSAO} estrelas</b>, e ela puxa mais do que você errou.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn chama" onclick="iniciaArcade()">⏱️ Começar o arcade</button>
+        <button class="btn uva" onclick="provaFinal()">🎓 Ir direto para a prova final</button>
+      </div>
+    </div>`;
+}
+function bancoOrdenado(){
+  const lista = [];
+  for(const item of BANCO){
+    lista.push(item);
+    const peso = S.erros[item.hab] || 0;
+    for(let k=0; k<Math.min(peso,3); k++) lista.push(item);   /* o que ela erra aparece mais */
+  }
+  return lista;
+}
+function iniciaArcade(){
+  ac(); somClique();
+  arc = { pontos:0, acertos:0, erros:0, combo:0, tempo:60, usadas:[], banco:bancoOrdenado() };
+  sorteiaArcade();
+  cronoT = setInterval(()=>{
+    if(cronoPausa) return;
+    arc.tempo -= 0.1;
+    const b = document.getElementById("cronoBarra");
+    if(b) b.style.width = Math.max(0, arc.tempo/60*100) + "%";
+    if(arc.tempo <= 0) fimArcade();
+  }, 100);
+}
+window.iniciaArcade = iniciaArcade;
+function sorteiaArcade(){
+  /* trava anti-repetição: nunca repete uma das 6 últimas enquanto houver alternativa */
+  let item = null, voltas = 0;
+  do { item = sorteio(arc.banco); voltas++; }
+  while(arc.usadas.includes(item.q) && voltas < 60);
+  arc.usadas.push(item.q);
+  if(arc.usadas.length > 6) arc.usadas.shift();
+  arc.atual = item;
+  desenhaArcade();
+}
+function desenhaArcade(){
+  const it = arc.atual;
+  const ordem = embaralha(it.o.map((_,i)=>i));
+  const opts  = ordem.map(i=>it.o[i]);
+  arc.certa = ordem.indexOf(it.c);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <div class="placar">
+        <span>⭐ ${arc.pontos}</span>
+        <span>✅ ${arc.acertos}</span>
+        <span class="combo">🔥 ${arc.combo}</span>
+      </div>
+      <div class="cronometro"><i id="cronoBarra" style="width:${Math.max(0,arc.tempo/60*100)}%"></i></div>
+      <p class="mini centro">Responda o máximo que conseguir. Errar não tira estrela nenhuma.</p>
+      <div class="conta">${it.q}</div>
+      <div class="opcoes quatro" id="ops">
+        ${opts.map((t,k)=>`<button class="op" onclick="respArcade(${k})">${t}</button>`).join("")}
+      </div>
+      <div class="acoes"><button class="btn sec" onclick="fimArcade()">Parar e ir para a prova →</button></div>
+    </div>`;
+}
+function respArcade(k){
+  if(!arc) return;
+  if(k === arc.certa){
+    arc.combo++; arc.acertos++;
+    const p = 10 + arc.combo*2;
+    arc.pontos += p; S.pontos += p;
+    marcaAcerto(arc.atual.hab);
+    somAcerto(); toast("+" + p + (arc.combo>2 ? " 🔥 combo " + arc.combo : ""));
+  } else {
+    arc.combo = 0; arc.erros++;
+    marcaErro(arc.atual.hab);
+    somErro(); toast("Era " + arc.atual.o[arc.atual.c], true);
+  }
+  salvar();
+  sorteiaArcade();
+}
+window.respArcade = respArcade;
+function fimArcade(){
+  if(cronoT){ clearInterval(cronoT); cronoT = null; }
+  const r = arc || {pontos:0,acertos:0,erros:0};
+  arc = null;
+  somVitoria(); salvar();
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">⏱️</div>
+      <h2>Arcade encerrado!</h2>
+      <p>Você acertou <b>${r.acertos}</b> e ganhou <b>${r.pontos} pontos</b>.</p>
+      <p class="mini">Agora vem o que vale as estrelas — <b>sem relógio</b>.</p>
+      <div class="acoes">
+        <button class="btn" onclick="provaFinal()">🎓 Fazer a prova final</button>
+        <button class="btn sec" onclick="iniciaArcade()">🔁 Jogar o arcade de novo</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+window.fimArcade = fimArcade;
+
+/* --- prova final: cobre os 7 assuntos, puxando o que ela mais errou --- */
+const FINAL = [
+  { hab:"leitura", arte: TXT_LEAO, quatro:true,
+    p:"O que o ratinho usou para libertar o leão?",
+    o:["Os dentes afiados","As cordas","A rede","Os urros"], c:0,
+    e:`<i>"com seus <b>dentes afiados</b> roeu as cordas"</i>. As cordas são o que ele
+       <b>roeu</b>, não o que ele <b>usou</b>.` },
+
+  { hab:"sinonimo", quatro:true,
+    p:"As palavras <b>“esquecer”</b> e <b>“lembrar”</b> são:",
+    o:["antônimas, pois têm sentidos opostos","sinônimas, pois têm o mesmo sentido",
+       "sinônimas, pois são parecidas","nenhuma das duas"], c:0,
+    e:`Sentidos <b>opostos</b> → antônimas. anTÔnimo tem <b>O</b> de <b>Oposto</b>.` },
+
+  { hab:"substantivo", quatro:true,
+    frase:`O agricultor observou a <span class="foco">boiada</span>.`,
+    p:"Classifique <b>boiada</b>:",
+    o:["comum, concreto, coletivo e derivado","apenas coletivo",
+       "próprio e primitivo","comum e primitivo"], c:0,
+    e:`Todos ao mesmo tempo: comum, concreto, <b>coletivo</b> (muitos bois) e
+       <b>derivado</b> (de boi). Na prova, marque <b>todos</b> os que couberem.` },
+
+  { hab:"formacao", quatro:true,
+    p:"Qual é o substantivo <b>primitivo</b> de <b>papelaria</b>?",
+    o:["papel","papelão","papeleiro","pá"], c:0,
+    e:`Tire o fim: papel<b>aria</b> → sobra <b>papel</b>, palavra que existe sozinha.` },
+
+  { hab:"coletivo", quatro:true,
+    p:"“O rapaz tirou uma flor do ______ e entregou à sua mãe.”",
+    o:["ramalhete","cardume","enxame","rebanho"], c:0,
+    e:`<b>Ramalhete</b> é o coletivo de flores.` },
+
+  { hab:"classe", quatro:true,
+    frase:`Ah, <span class="foco">o</span> cachorro que eu perdi!`,
+    p:"Qual é a <b>classe gramatical</b> da palavra em destaque?",
+    o:["Artigo","Definido","Substantivo","Adjetivo"], c:0,
+    e:`A pergunta é de <b>classe</b> → <b>artigo</b>.
+       <br>"Definido" é a <b>classificação</b>, que responde à outra pergunta.
+       Não confunda os dois andares.` },
+
+  { hab:"artigo", quatro:true,
+    frase:`Coitadinho, <span class="foco">um</span> cachorro vagando na rua…`,
+    p:"Agora sim: qual é a <b>classificação</b> desse artigo?",
+    o:["Indefinido","Definido","Próprio","Cardinal"], c:0,
+    e:`<b>Indefinido</b>: o menino não conhece esse cachorro — é qualquer um.` },
+
+  { hab:"genero", grade:true,
+    p:"Complete com um artigo <b>definido masculino</b>: ____ coração",
+    o:["o","a","um","uma"], c:0,
+    e:`<b>o</b> coração. "a" é definido, mas feminino; "um" é masculino, mas indefinido.
+       A pergunta pediu as <b>duas</b> coisas.` },
+
+  { hab:"numero", quatro:true,
+    p:"Passe para o <b>singular</b>: “Uns animais das florestas do Brasil.”",
+    o:["Um animal da floresta do Brasil","Um animal das florestas do Brasil",
+       "Uns animal da floresta do Brasil","Um animais da floresta do Brasil"], c:0,
+    e:`<b>Três</b> mudanças, não uma. Quem escreve "das florestas" parou na primeira.
+       Leia até o <b>ponto final</b>.` },
+
+  { hab:"grau", quatro:true,
+    p:"Em qual palavra o <b>-ão</b> indica <b>aumentativo</b>?",
+    o:["casarão","coração","limão","leão"], c:0,
+    e:`Casa<b>rão</b> → sobra <b>casa</b> ✓. Nas outras, tirar o -ão não deixa
+       palavra nenhuma.` },
+
+  { hab:"numeral", quatro:true,
+    enun:`“<b>Primeiro</b>, era a rosa do deserto; em seguida, os <b>quatro</b> jarros.”`,
+    p:"Classifique os dois numerais, nessa ordem:",
+    o:["ordinal e cardinal","cardinal e ordinal","ambos ordinais","ambos cardinais"], c:0,
+    e:`<b>Primeiro</b> = ordem ou posição → ordinal.
+       <b>Quatro</b> = quantidade → cardinal.` },
+
+  { hab:"adjetivo", quatro:true,
+    frase:`O <span class="foco">jovem</span> atleta venceu a maratona.`,
+    p:"A palavra em destaque é:",
+    o:["Adjetivo","Substantivo","Artigo","Numeral"], c:0,
+    e:`Aqui <b>jovem</b> diz <b>como é</b> o atleta → adjetivo.
+       <br>Em "o jovem <b>cantor</b>", quem é substantivo é <b>cantor</b>.
+       O lugar na frase é quem manda.` },
+
+  { hab:"comparativo", quatro:true,
+    p:"Qual frase está <b>correta</b>?",
+    o:["Este bolo é melhor do que aquele","Este bolo é mais bom do que aquele",
+       "Este bolo é mais melhor","Este bolo é tão bom do que aquele"], c:0,
+    e:`<b>bom → melhor (do) que</b>. E "tão" só combina com "quanto":
+       <i>tão bom <b>quanto</b></i>.` },
+
+  { hab:"concordancia", quatro:true,
+    p:"Passe para o <b>masculino</b>: “A cabra e a galinha são animais úteis.”",
+    o:["O bode e o galo são animais úteis","O bode e a galo são animais úteis",
+       "A bode e o galo são animais úteis","O bode e a galinha são animais úteis"], c:0,
+    e:`<b>Quatro</b> mudanças: A→O, cabra→bode, a→<b>o</b>, galinha→galo.
+       <br>A segunda opção esqueceu o segundo artigo — é o erro que esta cidade
+       inteira serve para curar.` },
+
+  { hab:"concordancia", quatro:true,
+    p:"Complete: “Os meninos estão ______ e as meninas ______.” (elegante / belo)",
+    o:["elegantes / belas","elegante / bela","elegantes / belos","elegante / belas"], c:0,
+    e:`Dois lugares para arrumar: <b>elegantes</b> (masc. pl.) e <b>belas</b> (fem. pl.).` },
+
+  { hab:"ortografia", grade:true,
+    p:"Você conhece a história do lobo ____?",
+    o:["mau","mal","mao","maul"], c:0,
+    e:`Dá para trocar por "bom"? Então é <b>mau</b>.` },
+
+  { hab:"ortografia", quatro:true,
+    p:"Qual frase está <b>toda</b> correta?",
+    o:["A emoção da infância mora no coração.","A emação da infânsia mora no coração.",
+       "A emoção da infância mora no corasão.","A emassão da infânsia mora no corassão."], c:0,
+    e:`emo<b>ç</b>ão · infân<b>c</b>ia · cora<b>ç</b>ão.
+       Terminou em <b>-ção</b>? É com <b>ç</b>, sempre.` },
+
+  { hab:"numero", quatro:true,
+    p:"Qual opção mostra o plural <b>correto</b> dos três?",
+    o:["pincéis · trens · narizes","pincels · trems · narizs",
+       "pincéis · trenes · narises","pinceis · trens · narizes"], c:0,
+    e:`pincel→pincé<b>is</b> (al/el/ol trocam L por IS) · trem→tre<b>ns</b> (m vira ns) ·
+       nariz→nariz<b>es</b> (r/s/z ganham -es).` }
+];
+function provaFinal(){
+  pararArcade();
+  const pool = FINAL.map(q => ({q, peso: 1 + Math.min(S.erros[q.hab]||0, 3)}));
+  /* sorteio sem repetir, com peso: quem ela erra mais tem mais chance de ser puxada */
+  const escolhidas = [];
+  const resto = pool.slice();
+  while(escolhidas.length < 12 && resto.length){
+    const soma = resto.reduce((a,b)=>a+b.peso,0);
+    let r = Math.random()*soma, k = 0;
+    while(k < resto.length-1 && r > resto[k].peso){ r -= resto[k].peso; k++; }
+    escolhidas.push(resto[k].q);
+    resto.splice(k,1);
+  }
+  quizGenerico(N_MISSOES-1, "🎓 Prova Final", embaralha(escolhidas), 0, 0);
+}
+window.provaFinal = provaFinal;
+
+/* ============================================================
+   DIPLOMA
+   ============================================================ */
+function telaDiploma(){
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(3);
+  app.innerHTML = hud() + `
+    <div class="diploma">
+      <div class="selo">🏅</div>
+      <h2>${g("PRONTA","PRONTO")} PARA A PROVA<br>DE LÍNGUA PORTUGUESA</h2>
+      <p>A Cidade das Palavras certifica que</p>
+      <div class="nome">${NOME()}</div>
+      <p>visitou os <b>${N_MISSOES-1} lugares</b> do roteiro da 3ª etapa: interpretação de texto,
+      sinônimo e antônimo, substantivo, artigo, adjetivo, concordância, numeral e ortografia.</p>
+      <p class="fila-estrelas">${"⭐".repeat(totalEstrelas)}</p>
+      <p><b>${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas</b> · <b>${S.pontos} pontos</b></p>
+      <p style="margin-top:18px;font-style:italic">Língua Portuguesa · 3º ano · 3ª etapa</p>
+    </div>
+    <div class="acoes">
+      <button class="btn" onclick="irMapa()">🗺️ Voltar à cidade</button>
+      <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      <button class="btn uva" onclick="window.print()">🖨️ Imprimir diploma</button>
+    </div>
+    ${fracas.length?`<div class="card centro">
+      <p class="mini">Ainda escorregando em: <b>${fracas.map(h=>NOME_HAB[h]||h).join(" · ")}</b>.
+      Refaça a <b>Prova da Cidade</b> — esses assuntos vão aparecer bastante.</p></div>`:``}
+    ${totalEstrelas<TOTAL_ESTRELAS?`<div class="card centro">
+      <p class="mini">Faltam <b>${TOTAL_ESTRELAS-totalEstrelas}</b> estrelas para a nota máxima, ${NOME()}.
+      Dá para refazer qualquer missão pelo mapa — e as estrelas só sobem!</p></div>`:`
+    <div class="card destaque centro"><div style="font-size:50px">👑</div>
+      <p><b>PERFEIÇÃO, ${NOME()}!</b> Todas as <b>${TOTAL_ESTRELAS} estrelas</b>.
+      Pode ir para a prova de cabeça erguida.</p></div>`}`;
+}
+
+/* ============================================================
+   INÍCIO
+   ============================================================ */
+if(carregar()){
+  S.cena = S.missoes.some(Boolean) ? "mapa" : "inicio";
+} else {
+  S.cena = "nome";
+}
+render();
+
+</script>
+</body>
+</html>
