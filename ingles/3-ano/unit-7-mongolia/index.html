@@ -1613,7 +1613,11 @@ function totalTabuas(){
   return RIO.reduce((a,it)=> a + it.partes.filter(p=>typeof p !== "string").length, 0);
 }
 function faseRio(){
-  PT_ = { i:0, sel:[], ac:0, tot:totalTabuas(), conferido:false };
+  PT_ = { i:0, sel:[], ac:0, tot:totalTabuas(), conferido:false,
+          /* a ordem dos botões de cada lacuna é sorteada: sem isso a resposta certa
+             fica sempre no mesmo lugar e dá para atravessar o rio no chute. */
+          perm: RIO.map(it => it.partes.map(p =>
+                  typeof p === "string" ? null : embaralha(p.o.map((_,j)=>j)))) };
   zeraSelRio();
   desenhaRio();
 }
@@ -1668,9 +1672,10 @@ function desenhaRio(){
   const grupo = (alvo >= 0 && !PT_.conferido) ? (()=> {
     const p = it.partes[alvo];
     const nAlvo = lac.findIndex(x=>x.k===alvo) + 1;
+    const ordem = PT_.perm[PT_.i][alvo];
     return `<p class="pergunta centro" style="margin-bottom:8px">Tábua ${nAlvo}: qual palavra encaixa?</p>
       <div class="opcoes quatro">
-        ${p.o.map((t,j)=>`<button class="op" onclick="poeTabua(${alvo},${j})">${t}</button>`).join("")}
+        ${ordem.map(j=>`<button class="op" onclick="poeTabua(${alvo},${j})">${p.o[j]}</button>`).join("")}
       </div>`;
   })() : ``;
 
