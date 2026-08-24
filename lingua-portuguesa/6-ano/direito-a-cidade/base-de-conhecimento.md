@@ -143,7 +143,7 @@ O caderno separa **dois tipos** e pergunta por cada um separadamente:
 ## 3. Os quatro gêneros, pelo objetivo de produção
 
 O caderno usa **as mesmas quatro alternativas** nas páginas 15 e 23 — é a pergunta-chave da
-unidade, e ela reaparece na prova. Vale decorar o par gênero → objetivo:
+unidade, feita três vezes com textos diferentes. Vale decorar o par gênero → objetivo:
 
 | Gênero | Objetivo de produção | Onde está |
 |---|---|---|
@@ -245,15 +245,18 @@ Blocos conceituais distintos encontrados nas 21 fotos:
   opostas dessa mesma lista (defender × ensinar; pessoal × impessoal). Separá-los faria duas
   missões perguntando a mesma coisa.
 
-**Resultado: 7 blocos + 1 prova final = 8 missões.** No teto, e por contagem.
+**Resultado: 7 blocos + 1 desafio final = 8 missões.** No teto, e por contagem.
 
 ---
 
 ## 6. O que NÃO foi medido — suposições declaradas
 
-1. **A prova.** Não há foto de roteiro de prova, data nem ementa. As 21 fotos são de
-   **caderno de aula**. O jogo é revisão da **unidade**, não de uma prova marcada.
-   Se aparecer o roteiro, conferir e podar.
+1. **Não existe prova neste material — e o jogo não promete nenhuma.** Não há foto de
+   roteiro, data nem ementa: as 21 fotos são de **caderno de aula**. Isto é **estudo da
+   matéria**, não preparação para avaliação. Enquadrar como "revisão para a prova" seria
+   afirmar o que não foi medido; a primeira versão do jogo fazia exatamente isso e foi
+   corrigida (Daouda, 23/08/2026 à noite). Hoje uma asserção da suíte reprova qualquer
+   ocorrência de "prova" que não seja o verbo.
 2. **De quem é o caderno.** As fotos não trazem o nome da criança. O jogo pergunta o nome
    na primeira tela, como os outros.
 3. **A carta lida.** A carta de reivindicação em si (a folha com o texto da carta sobre a casa
@@ -264,5 +267,5 @@ Blocos conceituais distintos encontrados nas 21 fotos:
 4. **As respostas ilegíveis da p. 97.** Sei que levaram X rosa; não sei o que dizia. O desenho
    da missão 6 se apoia no **enunciado impresso** (que é legível), não na resposta dela.
 5. **Coesão sequencial** aparece definida na p. 98 mas **nenhuma questão fotografada a
-   exercita**. Entra no jogo como conteúdo da colinha e uma pergunta da prova final — não
+   exercita**. Entra no jogo como conteúdo da colinha e uma pergunta do desafio final — não
    ganha missão própria.

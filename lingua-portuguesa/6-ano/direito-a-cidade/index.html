@@ -415,7 +415,7 @@ table.grade2 td.marca{color:var(--menta);font-weight:bold}
     <p>Os <b>4 papéis do ouvidor</b>: parceiro e mediador · certificador da qualidade ·
     agregador de valor à organização · agente de mudança.</p>
 
-    <h3>🎯 O erro que mais custou pontos</h3>
+    <h3>🎯 O erro que mais apareceu nas folhas</h3>
     <div class="ex">
       <p style="margin:0">A pergunta era "<b>Quais</b> argumentos são baseados em exemplos?" e
       a resposta foi "<b>Não</b>, pois não teriam argumentos".</p>
@@ -444,7 +444,7 @@ const MISSOES = [
   {ico:"⚖️", tit:"Sala da Lei",         sub:"Argumento por exemplo × argumento por lei",     hab:"argumento"},
   {ico:"🔗", tit:"Fio da Meada",        sub:"Coesão referencial: o que retoma o quê",        hab:"coesao"},
   {ico:"📣", tit:"Balcão da Ouvidoria", sub:"Canais do cidadão · Fala.BR e portais",         hab:"canais"},
-  {ico:"🏆", tit:"Prova da Praça",      sub:"Arcade + prova final",                          hab:"final"}
+  {ico:"🏆", tit:"Desafio da Praça",    sub:"Arcade + desafio final",                        hab:"final"}
 ];
 const N_MISSOES  = MISSOES.length;
 const POR_MISSAO = 3;                        /* estrelas por missão */
@@ -458,7 +458,7 @@ const S = {
   missoes:  vazio(false),
   estrelas: vazio(0),
   aulas:    vazio(false),
-  erros: {},          /* habilidade -> quantas vezes escorregou. Alimenta a prova final. */
+  erros: {},          /* habilidade -> quantas vezes escorregou. Alimenta o desafio final. */
   cena: "nome"
 };
 
@@ -681,7 +681,7 @@ function telaNome(){
       <h1 style="background:linear-gradient(90deg,var(--uva),var(--turbo),var(--chama));-webkit-background-clip:text;background-clip:text;color:transparent">
         VOZ DA PRAÇA
       </h1>
-      <p style="font-size:1.1em">Revisão de <b>Língua Portuguesa</b></p>
+      <p style="font-size:1.1em">Estudo de <b>Língua Portuguesa</b></p>
       <p class="mini">6º ano · Direito à cidade e Espaços de direito</p>
       <div class="card" style="text-align:left;background:rgba(8,25,15,.85);margin-top:18px">
         <p><b>🏙️ Toda praça tem uma voz — e ela é feita de texto.</b></p>
@@ -752,11 +752,11 @@ function telaInicio(){
         <p><b>🎯 O combinado é este:</b></p>
         <p>Este jogo não foi inventado no chute: cada parada é <b>um assunto do seu caderno</b>,
         com os textos, as leis e as palavras que estão nas suas próprias páginas.
-        São <b>${N_MISSOES-1} paradas</b> e, no fim, a prova da praça.</p>
+        São <b>${N_MISSOES-1} paradas</b> e, no fim, o desafio da praça.</p>
         <p><b>📚 Cada parada começa com uma aula rapidinha</b> da <b>Linha Fina</b>, a pomba da
         praça. Ela explica primeiro; você põe a mão na massa depois.</p>
         <p class="mini">⭐ Cada parada vale até ${POR_MISSAO} estrelas. Errar faz parte: o jogo mostra o porquê
-        e <b>anota em que assunto você escorregou</b>, para cobrar de novo na prova final.</p>
+        e <b>anota em que assunto você escorregou</b>, para pedir de novo no desafio final.</p>
       </div>
       <div class="acoes">
         <button class="btn" onclick="comecar()">🏙️ Entrar na praça</button>
@@ -804,7 +804,7 @@ function telaMapa(){
     ${fracas.length?`<div class="card">
       <h2>🎯 Onde você está escorregando</h2>
       <p class="mini">A Linha Fina foi anotando. Estes assuntos aparecem <b>mais vezes</b> na
-      Prova da Praça — é assim que a gente vira o jogo.</p>
+      Desafio da Praça — é assim que a gente fecha o buraco.</p>
       <div class="tags">${fracas.map(h=>
         `<span class="tag" style="border-color:var(--chama);color:var(--chama);font-size:1em">${NOME_HAB[h]||h}</span>`
       ).join("")}</div>
@@ -826,14 +826,14 @@ const AULAS = [
   /* ---- 1 · espaço público, urbanidade, direito à cidade ---- */
   [
     {ico:"🕊️", tit:"Oi, {NOME}. Eu sou a Linha Fina.",
-     txt:`Sou a pomba desta praça, e o meu nome não é apelido — é <b>matéria da sua prova</b>.
+     txt:`Sou a pomba desta praça, e o meu nome não é apelido — é <b>matéria do seu caderno</b>.
        <p><b>Linha fina</b> é aquele subtítulo que vem <b>debaixo do título</b> da reportagem e
        <b>adianta</b> o que o texto vai dizer. É exatamente o meu trabalho aqui: chegar antes e
        adiantar o assunto.</p>
        <p>Vamos percorrer <b>sete paradas</b> desta praça. Uma de cada vez.</p>`,
-     chave:`Título dá o fato. Linha fina adianta o resto. Guarde este par — ele cai.`},
+     chave:`Título dá o fato. Linha fina adianta o resto. É um par só, sempre junto.`},
     {ico:"🏙️", tit:"O que é, afinal, um espaço público",
-     txt:`O seu caderno define com quatro palavras, e são essas quatro que a prova cobra:
+     txt:`O seu caderno define com quatro palavras, e são essas quatro que decidem tudo:
        <div class="destaque">acessível · gratuito · sem fins lucrativos · de uso coletivo</div>
        <p>Se cobra entrada, não é. Se é de um dono, não é. Se só um grupo pode entrar, não é.</p>
        <ul class="lista">
@@ -984,7 +984,7 @@ const AULAS = [
 
   /* ---- 5 · argumentos e leis ---- */
   [
-    {ico:"⚖️", tit:"Existem dois tipos de argumento, e a prova separa os dois",
+    {ico:"⚖️", tit:"Existem dois tipos de argumento, e o caderno separa os dois",
      txt:`Na página 94 há <b>duas perguntas seguidas</b>, e cada uma quer um tipo diferente:
        <div class="chave"><span class="rot">a) por exemplo</span>
          Um caso concreto: "no bairro já existem grupos de dança, capoeira, circo e bandas —
@@ -1038,7 +1038,7 @@ const AULAS = [
        <p>As três fazem a mesma coisa: apontam para trás, para algo que já apareceu.</p>`,
      chave:`Toda retomada aponta para <b>trás</b>. Se você não achou o dono da palavra,
        é porque olhou para a frente.`},
-    {ico:"👉", tit:"Os três tipos de pronome que o caderno cobra",
+    {ico:"👉", tit:"Os três tipos de pronome que o caderno traz",
      txt:`<table class="mini-tab">
          <tr><th>Tipo</th><th>Exemplos</th></tr>
          <tr><td><b>Pessoais</b></td><td>eu, tu, ele, ela, nós, vós, eles, elas<br>
@@ -1109,16 +1109,16 @@ const AULAS = [
        da solução.`}
   ],
 
-  /* ---- 8 · prova da praça ---- */
+  /* ---- 8 · desafio da praça ---- */
   [
-    {ico:"🏆", tit:"Chegou a Prova da Praça, {NOME}",
+    {ico:"🏆", tit:"Chegou o Desafio da Praça, {NOME}",
      txt:`Esta última parada tem <b>duas partes</b>, e só a segunda vale estrelas:
        <ul class="lista">
          <li><b>Arcade</b> — 60 segundos de perguntas rápidas de tudo. Vale <b>pontos</b>.
            É aquecimento; errar aqui não tira nada.</li>
-         <li><b>Prova final</b> — <b>sem relógio</b>. É ela que vale as ${POR_MISSAO} estrelas.</li>
+         <li><b>Desafio final</b> — <b>sem relógio</b>. É ele que vale as ${POR_MISSAO} estrelas.</li>
        </ul>`,
-     chave:`No arcade, velocidade. Na prova, calma. Estrela nunca vem de dedo rápido.`},
+     chave:`No arcade, velocidade. No desafio, calma. Estrela nunca vem de dedo rápido.`},
     {ico:"🎯", tit:"O que eu anotei de você",
      txt:`{FRACAS}`,
      chave:`Errar e saber <b>onde</b> errou já é meio caminho. O outro meio é refazer.`}
@@ -1136,14 +1136,14 @@ function textoFracas(){
   const fracas = listaFracas(5);
   if(!fracas.length){
     return `<p>Até agora você <b>não escorregou em nada</b> — ou ainda não jogou o suficiente
-      para eu ter o que anotar. Vamos descobrir na prova!</p>
-      <p>A prova final passa pelos <b>sete assuntos</b> da unidade, sem dó.</p>`;
+      para eu ter o que anotar. Vamos descobrir no desafio!</p>
+      <p>O desafio final passa pelos <b>sete assuntos</b> da unidade, sem dó.</p>`;
   }
   return `<p>Eu fui anotando cada escorregão. Estes são os assuntos em que você mais tropeçou —
     dê uma olhada neles antes de começar:</p>
     <div class="destaque">${fracas.map(h => NOME_HAB[h] || h).join("<br>")}</div>
-    <p>Eles vão aparecer <b>mais vezes</b> na prova final, de propósito. É a última chance de
-    virar o jogo.</p>`;
+    <p>Eles vão aparecer <b>mais vezes</b> no desafio final, de propósito. É onde dá para
+    fechar o buraco.</p>`;
 }
 
 function abrirAula(i, revendo){
@@ -1432,7 +1432,7 @@ function faseBanca(){
       o:["Carta Capital · 12 de abril de 2019","Blog Quindim · 18 de junho de 2019",
          "Agência Brasil · 15 de abril de 2014","Funarte · 30 de outubro de 2023"], c:0,
       e:`A fonte fica sempre no fim do texto, em letrinha miúda: <b>Carta Capital,
-         12 abr. 2019</b>. Na prova, é lá que se procura — não no meio do texto.` },
+         12 abr. 2019</b>. É sempre lá que se procura — não no meio do texto.` },
 
     { hab:"objetivo", arte: TXT_NOTICIA, quatro:true,
       p:"E <b>este</b> texto — qual é o objetivo de produção dele?",
@@ -1856,7 +1856,7 @@ function faseOuvidoria(){
 }
 
 /* ============================================================
-   PARADA 8 — PROVA DA PRAÇA (arcade + prova final)
+   PARADA 8 — DESAFIO DA PRAÇA (arcade + desafio final)
    ============================================================ */
 const BANCO = [
   {hab:"objetivo",  q:"<b>Notícia</b> serve para…", o:["relatar fato recente","defender uma tese","ensinar o que é","reivindicar"]},
@@ -1902,7 +1902,7 @@ function pararArcade(){ if(cronoT){ clearInterval(cronoT); cronoT = null; } arc 
 function pausaCrono(v){ cronoPausa = !!v; }
 
 function faseFinal(){
-  app.innerHTML = hud("🏆 Prova da Praça") + `
+  app.innerHTML = hud("🏆 Desafio da Praça") + `
     <div class="card centro">
       <div style="font-size:60px">🏆</div>
       <h2>Última parada, ${NOME()}</h2>
@@ -1910,12 +1910,12 @@ function faseFinal(){
       <div class="enunciado" style="text-align:left">
         <p><b>1 · Arcade da praça</b> — 60 segundos de perguntas rápidas de todos os
         assuntos. Vale <b>pontos</b>, não estrelas. Serve para aquecer.</p>
-        <p style="margin:0"><b>2 · Prova final</b> — sem relógio nenhum. É ela que vale as
+        <p style="margin:0"><b>2 · Desafio final</b> — sem relógio nenhum. É ele que vale as
         <b>${POR_MISSAO} estrelas</b>, e ela puxa mais do que você errou.</p>
       </div>
       <div class="acoes">
         <button class="btn chama" onclick="iniciaArcade()">⏱️ Começar o arcade</button>
-        <button class="btn uva" onclick="provaFinal()">🎓 Ir direto para a prova final</button>
+        <button class="btn uva" onclick="desafioFinal()">🎓 Ir direto para o desafio final</button>
       </div>
     </div>`;
 }
@@ -1969,7 +1969,7 @@ function desenhaArcade(){
       <div class="opcoes quatro" id="ops">
         ${opts.map((t,k)=>`<button class="op" onclick="respArcade(${k})">${t}</button>`).join("")}
       </div>
-      <div class="acoes"><button class="btn sec" onclick="fimArcade()">Parar e ir para a prova →</button></div>
+      <div class="acoes"><button class="btn sec" onclick="fimArcade()">Parar e ir para o desafio →</button></div>
     </div>`;
 }
 function respArcade(k){
@@ -2001,7 +2001,7 @@ function fimArcade(){
       <p>Você acertou <b>${r.acertos}</b> e ganhou <b>${r.pontos} pontos</b>.</p>
       <p class="mini">Agora vem o que vale as estrelas — <b>sem relógio</b>.</p>
       <div class="acoes">
-        <button class="btn" onclick="provaFinal()">🎓 Fazer a prova final</button>
+        <button class="btn" onclick="desafioFinal()">🎓 Fazer o desafio final</button>
         <button class="btn sec" onclick="iniciaArcade()">🔁 Jogar o arcade de novo</button>
       </div>
     </div>`;
@@ -2009,7 +2009,7 @@ function fimArcade(){
 }
 window.fimArcade = fimArcade;
 
-/* --- prova final: cobre as sete paradas, puxando o que ela mais errou --- */
+/* --- desafio final: cobre as sete paradas, puxando o que ela mais errou --- */
 const FINAL = [
   { hab:"objetivo", arte: TXT_REPORT, quatro:true,
     p:"Qual é o objetivo de produção deste texto?",
@@ -2148,7 +2148,7 @@ const FINAL = [
        "pelo art. 215 apenas","desde 1968"], c:0,
     e:`<b>Constituição de 1988</b>: planejamento, deliberação, fiscalização e projetos de lei.` }
 ];
-function provaFinal(){
+function desafioFinal(){
   pararArcade();
   const pool = FINAL.map(q => ({q, peso: 1 + Math.min(S.erros[q.hab]||0, 3)}));
   /* sorteio sem repetir, com peso: quem ela erra mais tem mais chance de ser puxada */
@@ -2161,9 +2161,9 @@ function provaFinal(){
     escolhidas.push(resto[k].q);
     resto.splice(k,1);
   }
-  quizGenerico(N_MISSOES-1, "🎓 Prova Final", embaralha(escolhidas), 0, 0);
+  quizGenerico(N_MISSOES-1, "🎓 Desafio Final", embaralha(escolhidas), 0, 0);
 }
-window.provaFinal = provaFinal;
+window.desafioFinal = desafioFinal;
 
 /* ============================================================
    DIPLOMA
@@ -2174,7 +2174,7 @@ function telaDiploma(){
   app.innerHTML = hud() + `
     <div class="diploma">
       <div class="selo">🏅</div>
-      <h2>${g("PRONTA","PRONTO")} PARA A PROVA<br>DE LÍNGUA PORTUGUESA</h2>
+      <h2>PERCORREU A PRAÇA<br>DE PONTA A PONTA</h2>
       <p>A Voz da Praça certifica que</p>
       <div class="nome">${NOME()}</div>
       <p>percorreu as <b>${N_MISSOES-1} paradas</b> da unidade: espaço público e urbanidade,
@@ -2191,13 +2191,13 @@ function telaDiploma(){
     </div>
     ${fracas.length?`<div class="card centro">
       <p class="mini">Ainda escorregando em: <b>${fracas.map(h=>NOME_HAB[h]||h).join(" · ")}</b>.
-      Refaça a <b>Prova da Praça</b> — esses assuntos vão aparecer bastante.</p></div>`:``}
+      Refaça o <b>Desafio da Praça</b> — esses assuntos vão aparecer bastante.</p></div>`:``}
     ${totalEstrelas<TOTAL_ESTRELAS?`<div class="card centro">
       <p class="mini">Faltam <b>${TOTAL_ESTRELAS-totalEstrelas}</b> estrelas para a nota máxima, ${NOME()}.
       Dá para refazer qualquer parada pelo mapa — e as estrelas só sobem!</p></div>`:`
     <div class="card destaque centro"><div style="font-size:50px">👑</div>
       <p><b>PERFEIÇÃO, ${NOME()}!</b> Todas as <b>${TOTAL_ESTRELAS} estrelas</b>.
-      Pode ir para a prova de cabeça erguida.</p></div>`}`;
+      Você conhece esta praça de ponta a ponta.</p></div>`}`;
 }
 
 /* ============================================================
