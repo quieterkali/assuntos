@@ -1,0 +1,2215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Voz da Praça</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%95%8A%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#07160f; --bg2:#0c2318; --panel:#123023; --panel2:#1a4531;
+  --ink:#f2fff8; --muted:#9dc9b0;
+  --turbo:#fbbf24; --chama:#fb7185; --menta:#4ade80; --uva:#2dd4bf;
+  --vermelho:#ff6b81; --ouro:#ffd166;
+  --borda:#1e5138; --borda2:#2a6b4b; --fundo2:#08190f; --fundo3:#123626; --fundo4:#164231;
+  --tintaBtn:#2a1a02; --sombraBtn:#7c5205;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1000px 700px at 10% -12%, #14532d 0%, transparent 55%),
+    radial-gradient(900px 600px at 92% 0%, #78350f 0%, transparent 50%),
+    radial-gradient(900px 700px at 50% 114%, #134e4a 0%, transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px; line-height:1.5;
+  overflow-x:hidden;
+}
+#estrelas{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:16px 14px 60px}
+
+h1,h2,h3{margin:0 0 10px;line-height:1.15}
+h1{font-size:clamp(28px,7vw,46px)}
+h2{font-size:clamp(22px,5vw,32px)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;font-weight:bold;
+  background:linear-gradient(135deg,var(--turbo),#d97706);color:var(--tintaBtn);
+  box-shadow:0 6px 0 var(--sombraBtn), 0 12px 24px rgba(0,0,0,.45);
+  transition:transform .08s, box-shadow .08s; font-size:1.05em;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--sombraBtn),0 6px 14px rgba(0,0,0,.35)}
+.btn.sec{background:linear-gradient(135deg,#1e5138,#0e2a1c);color:var(--ink);box-shadow:0 6px 0 #04120a,0 10px 20px rgba(0,0,0,.35)}
+.btn.uva{background:linear-gradient(135deg,var(--uva),#0f766e);color:#fff;box-shadow:0 6px 0 #0b4f47,0 12px 24px rgba(0,0,0,.35)}
+.btn.chama{background:linear-gradient(135deg,var(--chama),#e11d48);color:#fff;box-shadow:0 6px 0 #881337,0 12px 24px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ---------- HUD ---------- */
+.hud{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:rgba(18,48,35,.88);border:2px solid var(--borda);border-radius:var(--r);
+  padding:10px 14px;margin-bottom:14px;backdrop-filter:blur(6px);
+}
+.hud .nome{font-weight:bold;color:var(--turbo)}
+.chip{
+  background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;
+  padding:9px 14px;font-size:.9em;font-weight:bold;white-space:nowrap;color:var(--ink);
+  line-height:1.2;min-height:42px;display:inline-flex;align-items:center
+}
+.chip.pts{color:var(--ouro);border-color:#8a6a13}
+.hud .espaco{flex:1}
+
+/* ---------- cartões ---------- */
+.card{
+  background:linear-gradient(160deg,rgba(26,69,49,.92),rgba(7,22,15,.94));
+  border:2px solid var(--borda);border-radius:var(--r);padding:20px;margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45)
+}
+.card.destaque{border-color:var(--ouro);box-shadow:0 0 0 3px rgba(255,209,102,.18),0 10px 30px rgba(0,0,0,.5)}
+
+/* ---------- mapa ---------- */
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.missao{
+  position:relative;text-align:left;width:100%;
+  background:linear-gradient(160deg,var(--fundo4),#08190f);
+  border:2px solid var(--borda2);border-radius:var(--r);padding:16px 16px 14px;
+  color:var(--ink);transition:transform .12s,border-color .12s;
+}
+.missao:not(.trancada):hover{transform:translateY(-4px);border-color:var(--turbo)}
+.missao.trancada{opacity:.5;filter:grayscale(.6);cursor:not-allowed}
+.missao.feita{border-color:var(--menta)}
+.missao .num{
+  position:absolute;top:-12px;left:14px;background:var(--turbo);color:var(--tintaBtn);
+  width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  font-weight:bold;box-shadow:0 3px 0 var(--sombraBtn)
+}
+.missao.feita .num{background:var(--menta);color:#04231a;box-shadow:0 3px 0 #0f6b4a}
+.missao .ico{font-size:34px;line-height:1;margin:6px 0 6px}
+.missao .tit{font-weight:bold;font-size:1.08em;margin-bottom:3px}
+.missao .sub{font-size:.85em;color:var(--muted)}
+.missao .estrelas{margin-top:8px;font-size:1.05em;letter-spacing:2px}
+
+/* ---------- quiz ---------- */
+.pergunta{font-size:1.14em;font-weight:bold;margin-bottom:14px}
+.enunciado{
+  background:var(--fundo2);border-left:6px solid var(--turbo);border-radius:12px;
+  padding:14px 16px;margin-bottom:14px;font-size:1.06em;line-height:1.55
+}
+.enunciado.texto{font-size:1.02em;max-height:none}
+.conta{
+  font-size:clamp(24px,6.5vw,40px);font-weight:bold;text-align:center;
+  margin:6px 0 16px;color:var(--ouro);overflow-wrap:anywhere;line-height:1.25
+}
+.opcoes{display:grid;gap:10px}
+.opcoes.grade{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.opcoes.quatro{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.op{
+  text-align:left;background:var(--fundo3);border:2px solid var(--borda);border-radius:14px;
+  padding:13px 16px;color:var(--ink);transition:border-color .1s,background .1s,transform .1s;
+  display:flex;gap:10px;align-items:center
+}
+.opcoes.grade .op{justify-content:center;font-size:1.15em;font-weight:bold;padding:16px 10px;text-align:center}
+.opcoes.quatro .op{justify-content:center;font-size:1.05em;font-weight:bold;padding:16px 10px;text-align:center}
+.op:not(:disabled):hover{border-color:var(--turbo);transform:translateY(-2px)}
+.op .letra{
+  flex:0 0 26px;height:26px;border-radius:8px;background:var(--borda2);color:#fff;
+  display:grid;place-items:center;font-weight:bold;font-size:.85em
+}
+.op.certa{border-color:var(--menta);background:#0f4a36}
+.op.certa .letra{background:var(--menta);color:#04231a}
+.op.errada{border-color:var(--vermelho);background:#4b1524}
+.op.errada .letra{background:var(--vermelho);color:#3d0a16}
+.op:disabled{cursor:default}
+
+.feedback{margin-top:14px;border-radius:14px;padding:14px 16px;border-left:6px solid;display:none}
+.feedback.show{display:block;animation:sobe .25s}
+.feedback.bom{background:rgba(74,222,128,.15);border-color:var(--menta)}
+.feedback.ruim{background:rgba(255,107,129,.15);border-color:var(--vermelho)}
+.feedback .tt{font-weight:bold;margin-bottom:5px;font-size:1.05em}
+@keyframes sobe{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.progresso{height:9px;background:var(--fundo2);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.progresso i{display:block;height:100%;background:linear-gradient(90deg,var(--uva),var(--turbo));transition:width .3s}
+
+/* ---------- frase com palavra em foco (missão do adjetivo) ---------- */
+.frase{
+  background:#fbf7ee;color:#2a1f10;border-radius:14px;padding:18px 16px;margin:10px 0 16px;
+  font-size:clamp(18px,4.8vw,25px);line-height:1.6;text-align:center;
+  border:3px solid var(--turbo);box-shadow:0 8px 24px rgba(0,0,0,.45)
+}
+.frase .foco{
+  background:var(--turbo);color:var(--tintaBtn);border-radius:8px;padding:1px 8px;font-weight:bold;
+  box-shadow:0 3px 0 var(--sombraBtn)
+}
+.frase .lac{
+  display:inline-block;min-width:74px;border-bottom:4px solid var(--uva);
+  color:#0f766e;font-weight:bold;padding:0 8px;cursor:pointer;border-radius:6px 6px 0 0
+}
+.frase .lac.vazia{color:#9dc9b0}
+.frase .lac.pronta{background:rgba(45,212,191,.22)}
+.frase .lac.alvo{background:rgba(251,191,36,.35);border-bottom-color:var(--turbo)}
+.frase .lac.certa{background:rgba(74,222,128,.3);border-bottom-color:#16a34a;color:#166534}
+.frase .lac.errada{background:rgba(255,107,129,.3);border-bottom-color:#dc2626;color:#991b1b}
+
+/* ---------- ponte da concordância ---------- */
+.ponte{display:block;margin:6px auto 2px;max-width:420px;width:100%;height:auto}
+.ponte .agua{fill:#0a2418}
+.ponte .pilar{fill:#1e5138}
+.ponte .tabua{fill:var(--borda2);stroke:#04120a;stroke-width:2}
+.ponte .tabua.posta{fill:var(--menta)}
+.ponte .bicho{font-size:22px}
+.contadorTabuas{
+  text-align:center;font-weight:bold;color:var(--turbo);margin:4px 0 12px;font-size:1.05em
+}
+
+/* ---------- fichas / grade de classificação ---------- */
+.rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
+table.grade2{border-collapse:collapse;margin:0 auto;font-size:.93em}
+table.grade2 th,table.grade2 td{border:2px solid var(--borda2);padding:8px 11px;text-align:center}
+table.grade2 th{background:var(--fundo4);color:var(--turbo);font-size:.82em}
+table.grade2 th.linha{background:var(--fundo3);color:var(--ink);text-align:left;font-weight:normal}
+table.grade2 td{background:var(--fundo2)}
+table.grade2 td.marca{color:var(--menta);font-weight:bold}
+
+/* ---------- duas perguntas em degrau (classe → classificação) ---------- */
+.degraus{display:flex;gap:10px;justify-content:center;margin:0 0 14px;flex-wrap:wrap}
+.degrau{
+  background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;
+  padding:7px 16px;font-size:.88em;font-weight:bold;color:var(--muted)
+}
+.degrau.aqui{border-color:var(--turbo);color:var(--turbo)}
+.degrau.ok{border-color:var(--menta);color:var(--menta)}
+
+/* ---------- arcade ---------- */
+.cronometro{
+  height:16px;background:var(--fundo2);border-radius:99px;overflow:hidden;margin:10px 0 4px;
+  border:2px solid var(--borda)
+}
+.cronometro i{display:block;height:100%;background:linear-gradient(90deg,var(--menta),var(--ouro),var(--vermelho));transition:width .2s linear}
+.placar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.placar span{background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;padding:4px 14px;font-weight:bold}
+.combo{color:var(--chama)}
+
+/* ---------- aula ---------- */
+.aula{
+  background:#fbfdf8;
+  background-image:linear-gradient(rgba(13,148,136,.09) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(13,148,136,.09) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:#2a1f10;border:3px solid var(--turbo);border-radius:var(--r);
+  padding:24px 22px 20px;margin-bottom:14px;box-shadow:0 14px 40px rgba(0,0,0,.55)
+}
+.aula b{color:#0f766e}
+.aula .guia{
+  display:flex;gap:10px;align-items:center;font-size:.86em;color:#5b4a2e;
+  border-bottom:2px dashed #d8e8d2;padding-bottom:10px;margin-bottom:16px
+}
+.aula .guia .robo{font-size:30px;line-height:1}
+.aula .ico{font-size:60px;line-height:1;text-align:center;margin-bottom:6px}
+.aula h2{color:#0f766e;text-align:center;font-size:clamp(21px,5.2vw,30px)}
+.aula p{font-size:1.06em;margin:0 0 12px}
+.aula .chave{
+  background:#fff;border-left:6px solid #d97706;border-radius:10px;
+  padding:12px 14px;margin-top:14px;font-size:1.03em
+}
+.aula .chave .rot{display:block;font-weight:bold;color:#b45309;font-size:.82em;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.aula .lista{margin:10px 0 0;padding-left:20px}
+.aula .lista li{margin-bottom:6px}
+.aula .destaque{
+  text-align:center;font-size:clamp(18px,4.6vw,26px);font-weight:bold;color:#0f766e;
+  background:#fff;border-radius:12px;padding:12px 10px;margin:12px 0;
+  overflow-wrap:anywhere;line-height:1.35
+}
+.aula .errado{color:#b91c1c;text-decoration:line-through}
+.aula .certo{color:#15803d}
+.aula table.mini-tab{border-collapse:collapse;margin:10px auto;font-size:.92em}
+.aula table.mini-tab th,.aula table.mini-tab td{border:1px solid #d8e8d2;padding:6px 10px;text-align:center}
+.aula table.mini-tab th{background:#e3f6ea;color:#b45309}
+.pontos{display:flex;gap:7px;justify-content:center;margin:18px 0 4px;flex-wrap:wrap}
+.pontos i{width:9px;height:9px;border-radius:50%;background:#d8e8d2;display:block}
+.pontos i.aqui{background:#d97706;transform:scale(1.35)}
+.pontos i.vista{background:#d97706;opacity:.45}
+.btn.aula{background:linear-gradient(135deg,#0f766e,#5eead4);color:#fff;box-shadow:0 6px 0 #0b4f47,0 10px 20px rgba(0,0,0,.35)}
+.btn.aula.fraco{background:linear-gradient(135deg,#93b8a5,#6a8d7a);box-shadow:0 6px 0 #365448,0 10px 20px rgba(0,0,0,.3)}
+
+/* ---------- diversos ---------- */
+.centro{text-align:center}
+.mini{font-size:.88em;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{background:var(--fundo2);border:1px solid var(--borda);border-radius:999px;padding:3px 11px;font-size:.8em;color:var(--muted)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.esconde{display:none!important}
+.campo{
+  width:100%;max-width:340px;padding:14px 18px;border-radius:14px;border:3px solid var(--turbo);
+  background:var(--fundo2);color:var(--ink);font-size:1.15em;font-family:inherit;text-align:center;margin:6px 0 4px
+}
+.campo:focus{outline:none;border-color:var(--uva);box-shadow:0 0 0 4px rgba(251,191,36,.2)}
+
+/* colinha */
+.colinha{position:fixed;inset:0;background:rgba(5,17,11,.98);z-index:50;overflow-y:auto;padding:20px 14px 60px;display:none}
+.colinha.aberta{display:block}
+.colinha .in{max-width:760px;margin:0 auto}
+.colinha h3{color:var(--ouro);margin-top:26px;border-bottom:2px solid var(--borda);padding-bottom:6px}
+.colinha ul,.colinha ol{padding-left:20px}
+.colinha li{margin-bottom:7px}
+.colinha b{color:var(--turbo)}
+.colinha .ex{background:var(--fundo2);border-left:5px solid var(--uva);border-radius:10px;padding:10px 14px;margin:10px 0}
+.fechar{position:sticky;top:0;float:right;background:var(--turbo);color:var(--tintaBtn);border-radius:999px;
+  width:44px;height:44px;font-size:22px;font-weight:bold;box-shadow:0 4px 0 var(--sombraBtn);z-index:2}
+
+/* diploma */
+.diploma{
+  background:linear-gradient(160deg,#fffdf7,#eefaf3);color:#2a1f10;border-radius:20px;
+  padding:28px 22px;text-align:center;border:8px double var(--turbo);box-shadow:0 20px 50px rgba(0,0,0,.6)
+}
+.diploma h2{color:#0f766e;font-size:clamp(24px,6vw,36px)}
+.diploma .nome{
+  font-size:clamp(24px,6.4vw,40px);font-weight:bold;color:#b45309;
+  border-bottom:3px solid var(--uva);display:inline-block;padding:4px 22px;margin:10px 0 14px;
+  overflow-wrap:anywhere;max-width:100%
+}
+.diploma .selo{font-size:56px}
+.fila-estrelas{font-size:clamp(15px,4.4vw,24px);line-height:1.7;letter-spacing:1px;
+  overflow-wrap:anywhere;word-break:break-word;max-width:100%;margin:12px 0}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;top:80px;transform:translateX(-50%);
+  background:var(--menta);color:#04231a;font-weight:bold;padding:10px 22px;border-radius:999px;
+  z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transition:opacity .25s,top .25s;
+  pointer-events:none;max-width:90vw;text-align:center
+}
+.toast.show{opacity:1;top:100px}
+.toast.mau{background:var(--vermelho);color:#3d0a16}
+
+@media(max-width:520px){
+  body{font-size:16px}
+  .card{padding:16px 14px}
+  .wrap{padding:12px 10px 50px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{ body{background:#fff} #estrelas,.hud,.acoes,.card:not(.diploma){display:none!important} }
+</style>
+</head>
+<body>
+<canvas id="estrelas"></canvas>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<div class="colinha" id="colinha">
+  <div class="in">
+    <button class="fechar" onclick="fecharColinha()">×</button>
+    <h2 style="color:var(--ouro)">📖 Colinha da Praça</h2>
+    <p class="mini">Os sete assuntos da unidade, num lugar só. Pode abrir a qualquer hora —
+    inclusive no meio do arcade, que o cronômetro para.</p>
+
+    <h3>📰 Os quatro gêneros, pelo objetivo</h3>
+    <p>Esta é <b>a</b> pergunta da unidade. O caderno usa as <b>mesmas quatro alternativas</b>
+    nas páginas 15, 23 e 33 — quem decora o par gênero → objetivo acerta as três.</p>
+    <div class="ex">
+      <p style="margin:0"><b>Notícia</b> → <i>relatar um fato ocorrido recentemente.</i></p>
+      <p style="margin:8px 0 0"><b>Reportagem</b> → <i>abordar um tema, com informações,
+      com certo aprofundamento — e opiniões.</i></p>
+      <p style="margin:8px 0 0"><b>Artigo de opinião</b> → <i>expor um ponto de vista e
+      apresentar argumentos para sustentá-lo e defendê-lo.</i></p>
+      <p style="margin:8px 0 0"><b>Verbete enciclopédico</b> → <i>ensinar ao leitor o que
+      uma coisa é, com linguagem objetiva e impessoal.</i></p>
+    </div>
+    <p><b>Notícia × reportagem:</b> a notícia conta <b>o que aconteceu</b>; a reportagem
+    <b>aprofunda o tema</b> e deixa opiniões aparecerem. Tamanho não decide — <b>objetivo</b> decide.</p>
+
+    <h3>🧵 Título e linha fina</h3>
+    <p>A <b>linha fina</b> é o subtítulo que vem <b>debaixo do título</b> e adianta o que o
+    texto vai dizer. Na reportagem da página 13:</p>
+    <div class="ex">
+      <p style="margin:0"><b>Título</b> (o fato): "A retomada do espaço público como caminho
+      para as cidades"</p>
+      <p style="margin:8px 0 0"><b>Linha fina</b> (a tendência, a opinião): "A tendência nas
+      metrópoles é a busca da rua como um ponto de encontro, diversão e expressão cultural
+      e política"</p>
+    </div>
+
+    <h3>🏙️ Espaço público</h3>
+    <p>Lugares <b>acessíveis, gratuitos, sem fins lucrativos e de uso coletivo</b>.</p>
+    <ul>
+      <li><b>Abertos</b>: ruas, calçadas, praças, jardins, parques.</li>
+      <li><b>Fechados</b>: bibliotecas e escolas públicas, museus, clubes públicos.</li>
+    </ul>
+    <p><b>Urbanidade</b> = o modo como os espaços <b>acolhem</b> as pessoas. O contrário é um
+    lugar <b>inóspito</b>: não acolhedor, o oposto de hospitaleiro — grades, muros, abandono.</p>
+    <p><b>Direito à cidade</b>: expressão criada pelo francês <b>Henri Lefebvre</b>, em
+    <b>1968</b>. É um direito <b>humano e coletivo</b> — vale para quem mora aqui hoje e para
+    quem vai morar depois.</p>
+
+    <h3>✉️ Carta de reivindicação — os 8 elementos</h3>
+    <p>A ordem é esta, de cima para baixo:</p>
+    <ol>
+      <li><b>Local e data</b> — "São Paulo, 30 de outubro de 2023."</li>
+      <li><b>Destinatário</b> — a quem se envia: "À Subprefeitura de Itaquera".</li>
+      <li><b>Assunto</b> — uma linha: "Criação de casa de cultura no Jardim Brasília".</li>
+      <li><b>Vocativo</b> — o <b>chamamento</b>: "Prezado Senhor Subprefeito,".</li>
+      <li><b>Resumo da contextualização</b> — o problema: por que a carta existe.</li>
+      <li><b>Reivindicação</b> — o <b>pedido</b>: o que se quer que seja feito.</li>
+      <li><b>Fórmula de finalização</b> — "Certos de sua atenção, aguardamos retorno."</li>
+      <li><b>Assinatura/subscrição</b> — quem assina.</li>
+    </ol>
+    <div class="ex">
+      <p style="margin:0">⚠️ <b>As duas confusões que a professora marcou:</b><br>
+      <b>Vocativo</b> não é "a carta enviada" — é <b>como você chama</b> o destinatário.<br>
+      <b>Reivindicação</b> não é "a carta" — é <b>o pedido</b> que está dentro dela.</p>
+    </div>
+
+    <h3>⚖️ Os dois tipos de argumento</h3>
+    <ul>
+      <li><b>Argumento por exemplo</b> — um caso concreto: "no bairro já há grupos de dança,
+      capoeira e bandas, mas nenhum lugar para ensaiar".</li>
+      <li><b>Argumento por direito garantido em lei</b> — a citação do artigo:
+      "o <b>art. 6º</b> da Constituição garante o <b>lazer</b> como direito social".</li>
+    </ul>
+    <p><b>Art. 6º</b> — direitos sociais: educação, saúde, alimentação, trabalho, moradia,
+    transporte, <b>lazer</b>, segurança, previdência social, proteção à maternidade e à
+    infância, assistência aos desamparados.<br>
+    <b>Art. 215</b> — o Estado garante a todos o pleno exercício dos <b>direitos culturais</b>
+    e o acesso às fontes da cultura nacional.</p>
+
+    <h3>🔗 Coesão referencial — o que retoma o quê</h3>
+    <p>Para não repetir a mesma palavra o tempo todo, o texto <b>retoma</b> o termo com:</p>
+    <ul>
+      <li><b>sinônimo ou expressão correlata</b>: "casa de cultura" → "o equipamento público",
+      "o espaço";</li>
+      <li><b>pronome pessoal</b>: eu, tu, ele, ela, nós, vós, eles, elas · me, mim, comigo,
+      te, ti, contigo, se, si, consigo, o, a, lhe, nos, vos, os, as, lhes;</li>
+      <li><b>pronome demonstrativo</b>: este, esta, isto · esse, essa, <b>isso</b> ·
+      aquele, aquela, aquilo;</li>
+      <li><b>pronome possessivo</b>: meu, minha, teu, tua, seu, sua, nosso, nossa, vosso, vossa.</li>
+    </ul>
+    <div class="ex">
+      <p style="margin:0">🔑 <b>O truque:</b> para achar o que um "isso" retoma, leia
+      <b>a frase de antes</b> inteira e pergunte: <i>isso o quê?</i> A resposta é sempre um
+      pedaço de texto que já passou — nunca um que ainda vai vir.</p>
+    </div>
+    <p><b>Coesão sequencial</b> é outra coisa: são os <b>articuladores</b> que ligam as ideias —
+    <i>além disso</i> (adição), <i>ou</i> (alternância), <i>por isso</i> (causa),
+    <i>no entanto</i> (oposição), <i>portanto</i> (conclusão), <i>para que</i> (finalidade),
+    <i>ou seja</i> (explicação).</p>
+
+    <h3>📣 Como o cidadão fala com o poder público</h3>
+    <ul>
+      <li><b>Ouvidoria</b> — intermedia o diálogo entre o cidadão e a administração. Recebe
+      dúvidas, reclamações e denúncias.</li>
+      <li><b>Fala.BR</b> — a plataforma do governo federal. Sete opções: Acesso à Informação,
+      Denúncia, Elogio, Reclamação, Simplifique, Solicitação, Sugestão.</li>
+      <li><b>Portal de atendimento ao cidadão</b> — solicitar serviços e acompanhar processos.</li>
+      <li><b>Portal da transparência</b> — ver receita, despesas, licitações, quadro funcional.</li>
+      <li><b>Mídias sociais</b> — diálogo rápido, em tempo real.</li>
+      <li><b>Meios tradicionais</b> — telefone, e-mail, carta, fax e pessoalmente.</li>
+    </ul>
+    <p>Os <b>4 papéis do ouvidor</b>: parceiro e mediador · certificador da qualidade ·
+    agregador de valor à organização · agente de mudança.</p>
+
+    <h3>🎯 O erro que mais custou pontos</h3>
+    <div class="ex">
+      <p style="margin:0">A pergunta era "<b>Quais</b> argumentos são baseados em exemplos?" e
+      a resposta foi "<b>Não</b>, pois não teriam argumentos".</p>
+      <p style="margin:8px 0 0">Pergunta que começa com <b>QUAIS</b> pede uma <b>lista</b>.
+      Pergunta que começa com <b>HÁ</b>, <b>É</b> ou <b>SERIA</b> aceita sim ou não. Olhe a
+      <b>primeira palavra</b> do comando antes de escrever.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const CHAVE = "vozDaPraca.v1";
+
+/* A lista de missões é a única fonte da verdade. Nenhum número de missão
+   ou de estrela aparece cravado no código — tudo sai de MISSOES.length. */
+const MISSOES = [
+  {ico:"🏙️", tit:"Praça Central",       sub:"Espaço público, urbanidade e direito à cidade", hab:"espaco"},
+  {ico:"📰", tit:"Banca de Jornal",     sub:"Notícia e reportagem · título e linha fina",    hab:"noticia"},
+  {ico:"💬", tit:"Palanque",            sub:"Artigo de opinião × verbete enciclopédico",     hab:"opiniao"},
+  {ico:"✉️", tit:"Mesa da Carta",       sub:"Os 8 elementos da carta de reivindicação",      hab:"carta"},
+  {ico:"⚖️", tit:"Sala da Lei",         sub:"Argumento por exemplo × argumento por lei",     hab:"argumento"},
+  {ico:"🔗", tit:"Fio da Meada",        sub:"Coesão referencial: o que retoma o quê",        hab:"coesao"},
+  {ico:"📣", tit:"Balcão da Ouvidoria", sub:"Canais do cidadão · Fala.BR e portais",         hab:"canais"},
+  {ico:"🏆", tit:"Prova da Praça",      sub:"Arcade + prova final",                          hab:"final"}
+];
+const N_MISSOES  = MISSOES.length;
+const POR_MISSAO = 3;                        /* estrelas por missão */
+const TOTAL_ESTRELAS = N_MISSOES * POR_MISSAO;
+const vazio = v => Array.from({length:N_MISSOES}, () => v);
+
+const S = {
+  nome: "",
+  genero: "f",
+  pontos: 0,
+  missoes:  vazio(false),
+  estrelas: vazio(0),
+  aulas:    vazio(false),
+  erros: {},          /* habilidade -> quantas vezes escorregou. Alimenta a prova final. */
+  cena: "nome"
+};
+
+function esc(x){
+  return String(x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function g(fem, masc){ return S.genero === "f" ? fem : masc; }
+const NOME = () => esc(S.nome);
+
+function salvar(){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify({
+      nome:S.nome, genero:S.genero, pontos:S.pontos,
+      missoes:S.missoes, estrelas:S.estrelas, aulas:S.aulas, erros:S.erros
+    }));
+  }catch(e){/* sem localStorage o jogo roda igual, só não guarda */}
+}
+function carregar(){
+  try{
+    const d = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if(d && d.nome){
+      S.nome = d.nome; S.genero = d.genero === "m" ? "m" : "f";
+      S.pontos = d.pontos|0;
+      if(Array.isArray(d.missoes)  && d.missoes.length===N_MISSOES)  S.missoes  = d.missoes.map(Boolean);
+      if(Array.isArray(d.estrelas) && d.estrelas.length===N_MISSOES) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(POR_MISSAO,n|0)));
+      if(Array.isArray(d.aulas)    && d.aulas.length===N_MISSOES)    S.aulas    = d.aulas.map(Boolean);
+      if(d.erros && typeof d.erros === "object") S.erros = d.erros;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+/* registro por HABILIDADE, não por questão: o que importa é qual assunto
+   escorrega, não qual exemplo apareceu. */
+const NOME_HAB = {
+  espaco:"o que é espaço público",          urbanidade:"urbanidade e inóspito",
+  cidade:"direito à cidade",                genero_txt:"reconhecer o gênero do texto",
+  objetivo:"o objetivo de produção do texto", linhafina:"título e linha fina",
+  opiniao:"artigo de opinião: tese e argumento",
+  fatopiniao:"separar fato de opinião",     contexto:"veículo, data e leitor previsto",
+  verbete:"verbete enciclopédico",          carta:"os elementos da carta",
+  vocativo:"vocativo × destinatário",       pedido:"qual é a reivindicação",
+  argumento:"argumento por exemplo × por lei", lei:"art. 6º e art. 215",
+  coesao:"o que retoma o quê",              pronome:"tipo de pronome",
+  sequencial:"articuladores de sequência",  canais:"canais do cidadão",
+  ouvidoria:"ouvidoria e Fala.BR",          comando:"responder o que o comando pediu"
+};
+function marcaErro(hab){ if(!hab) return; S.erros[hab] = (S.erros[hab]||0) + 1; salvar(); }
+function marcaAcerto(hab){
+  if(!hab || !S.erros[hab]) return;
+  S.erros[hab]--; if(S.erros[hab] <= 0) delete S.erros[hab];
+  salvar();
+}
+function listaFracas(n){
+  return Object.entries(S.erros).sort((x,y)=>y[1]-x[1]).slice(0, n||4).map(e=>e[0]);
+}
+
+/* ============================================================
+   SOM
+   ============================================================ */
+let AC = null;
+function ac(){ if(!AC){ try{AC = new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function bip(freq, dur, tipo, vol){
+  const c = ac(); if(!c) return;
+  if(c.state === "suspended") c.resume();
+  const o = c.createOscillator(), gn = c.createGain();
+  o.type = tipo || "sine"; o.frequency.value = freq;
+  gn.gain.setValueAtTime(vol||0.13, c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  o.connect(gn); gn.connect(c.destination);
+  o.start(); o.stop(c.currentTime + dur);
+}
+const somAcerto = ()=>{ bip(660,.09,"triangle"); setTimeout(()=>bip(880,.14,"triangle"),90); };
+const somErro   = ()=>{ bip(200,.18,"sawtooth",.09); };
+const somClique = ()=>{ bip(520,.05,"square",.05); };
+const somVitoria= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>bip(f,.2,"triangle"),i*110)); };
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+function embaralha(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function sorteio(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+let toastT = null;
+function toast(txt, mau){
+  const t = $("#toast");
+  t.innerHTML = txt;
+  t.className = "toast show" + (mau ? " mau" : "");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ t.className = "toast" + (mau?" mau":""); }, 1500);
+}
+function ganha(p){ S.pontos += p; toast("+" + p + " pontos!"); }
+
+function estrelasTxt(n){ return "⭐".repeat(n) + "☆".repeat(POR_MISSAO-n); }
+function estrelasPor(acertos, total){
+  const pct = total ? acertos/total : 0;
+  if(pct >= 0.99) return 3;
+  if(pct >= 0.7)  return 2;
+  if(pct >= 0.4)  return 1;
+  return 0;
+}
+const ELOGIOS = ["Isso, {n}!","Boa, {n}!","Mandou bem, {n}!","{n} arrasou!","Exatamente, {n}!","Perfeito, {n}!","É isso mesmo, {n}!"];
+function elogio(){ return sorteio(ELOGIOS).replace("{n}", NOME()); }
+
+function hud(titulo){
+  const emMissao = /^m\d+$/.test(S.cena);
+  return `<div class="hud">
+    <span class="nome">🕊️ ${NOME()}</span>
+    <span class="chip pts">⭐ ${S.pontos} pts</span>
+    <span class="espaco"></span>
+    ${emMissao ? `<button class="chip" onclick="reverAula(${S.cena.slice(1)})" style="cursor:pointer">📚 Aula</button>` : ``}
+    <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
+    <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
+  </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
+}
+
+function abrirColinha(){ somClique(); pausaCrono(true); $("#colinha").classList.add("aberta"); }
+function fecharColinha(){ somClique(); $("#colinha").classList.remove("aberta"); pausaCrono(false); }
+window.abrirColinha = abrirColinha; window.fecharColinha = fecharColinha;
+
+/* ============================================================
+   FUNDO — vaga-lumes da praça
+   ============================================================ */
+(function fundo(){
+  const cv = $("#estrelas"), cx = cv.getContext("2d");
+  let pcs = [];
+  function dim(){
+    cv.width = innerWidth; cv.height = innerHeight;
+    pcs = [];
+    const n = Math.min(110, Math.floor(innerWidth*innerHeight/12000));
+    for(let i=0;i<n;i++) pcs.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      r:Math.random()*1.6+.4, vy:Math.random()*.18+.04,
+      alfa:Math.random()*.6+.2, fase:Math.random()*6.28,
+      cor: Math.random()<.4 ? "#fcd34d" : "#a7f3d0"
+    });
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    const t = Date.now()/900;
+    for(const p of pcs){
+      p.y -= p.vy;
+      if(p.y < -4){ p.y = cv.height + 4; p.x = Math.random()*cv.width; }
+      cx.globalAlpha = p.alfa * (0.6 + 0.4*Math.sin(t + p.fase));
+      cx.fillStyle = p.cor;
+      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.2832); cx.fill();
+    }
+    cx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  addEventListener("resize", dim); dim(); loop();
+})();
+
+/* ============================================================
+   ROTEADOR
+   ============================================================ */
+function irMapa(){ somClique(); pararArcade(); S.cena="mapa"; render(); }
+window.irMapa = irMapa;
+
+function abrirMissao(i){
+  if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a parada anterior primeiro, " + NOME() + "!", true); return; }
+  pararArcade();
+  if(!S.aulas[i]){ abrirAula(i); return; }   /* a aula vem antes, na estreia da missão */
+  somClique(); S.cena = "m"+i; render();
+}
+window.abrirMissao = abrirMissao;
+
+function concluiMissao(i, acertos, total, bonus){
+  S.missoes[i] = true;
+  const est = estrelasPor(acertos, total);
+  S.estrelas[i] = Math.max(S.estrelas[i], est);
+  const pts = acertos*10 + est*25 + (bonus||0);
+  S.pontos += pts;
+  salvar();
+  somVitoria();
+  const tudoFeito = S.missoes.every(Boolean);
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:64px">${est===3?"🏆":est===2?"🎉":"👏"}</div>
+      <h2>Parada ${i+1} concluída, ${NOME()}!</h2>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${estrelasTxt(est)}</div>
+      <p>Você acertou <b>${acertos} de ${total}</b> e ganhou <b>${pts} pontos</b>.</p>
+      ${est<POR_MISSAO?`<p class="mini">Dá para refazer e buscar as ${POR_MISSAO} estrelas — elas só sobem, nunca descem.</p>`:``}
+      <div class="acoes">
+        ${tudoFeito
+          ? `<button class="btn" onclick="verDiploma()">🎓 Ver meu diploma!</button>`
+          : (i < N_MISSOES-1 ? `<button class="btn uva" onclick="abrirMissao(${i+1})">Próxima parada →</button>` : ``)}
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+        <button class="btn sec" onclick="abrirMissao(${i})">🔁 Refazer</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+
+const FASES = [fasePraca, faseBanca, fasePalanque, faseCarta,
+               faseLei, faseFio, faseOuvidoria, faseFinal];
+
+function render(){
+  scrollTo(0,0);
+  if(S.cena === "nome")    return telaNome();
+  if(S.cena === "inicio")  return telaInicio();
+  if(S.cena === "mapa")    return telaMapa();
+  if(S.cena === "diploma") return telaDiploma();
+  let m = /^m(\d+)$/.exec(S.cena);
+  if(m && FASES[+m[1]]) return FASES[+m[1]]();
+  m = /^a(\d+)$/.exec(S.cena);
+  if(m) return telaAula(+m[1]);
+}
+
+/* ============================================================
+   TELA DO NOME
+   ============================================================ */
+function telaNome(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--turbo)">
+      <div style="font-size:70px;line-height:1">🕊️</div>
+      <h1 style="background:linear-gradient(90deg,var(--uva),var(--turbo),var(--chama));-webkit-background-clip:text;background-clip:text;color:transparent">
+        VOZ DA PRAÇA
+      </h1>
+      <p style="font-size:1.1em">Revisão de <b>Língua Portuguesa</b></p>
+      <p class="mini">6º ano · Direito à cidade e Espaços de direito</p>
+      <div class="card" style="text-align:left;background:rgba(8,25,15,.85);margin-top:18px">
+        <p><b>🏙️ Toda praça tem uma voz — e ela é feita de texto.</b></p>
+        <p>Uma <b>notícia</b> conta o que aconteceu. Uma <b>reportagem</b> aprofunda.
+        Um <b>artigo de opinião</b> defende um lado. Um <b>verbete</b> explica.
+        E uma <b>carta de reivindicação</b> pede — com a lei do lado.</p>
+        <p style="margin:0">Hoje essa voz é sua. Só falta uma coisa: <b>como você se chama?</b></p>
+      </div>
+      <input class="campo" id="nomeInput" type="text" maxlength="18" autocomplete="off"
+             placeholder="Digite seu nome" onkeydown="if(event.key==='Enter')pedeGenero()">
+      <p class="mini" id="avisoNome" style="min-height:20px"></p>
+      <p style="margin-top:6px"><b>E como você quer ser ${g("chamada","chamado")} na praça?</b></p>
+      <div class="acoes">
+        <button class="btn" onclick="definir('f')">🎤 Sou a repórter</button>
+        <button class="btn uva" onclick="definir('m')">🎤 Sou o repórter</button>
+      </div>
+    </div>`;
+  const inp = $("#nomeInput");
+  if(inp){ inp.value = S.nome; setTimeout(()=>inp.focus(), 120); }
+}
+function definir(gen){
+  const inp = $("#nomeInput");
+  let v = (inp ? inp.value : "").trim().replace(/\s+/g," ");
+  if(v.length < 2){
+    somErro();
+    $("#avisoNome").innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`;
+    if(inp) inp.focus();
+    return;
+  }
+  v = v.split(" ").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" ");
+  S.nome = v;
+  if(gen === "f" || gen === "m") S.genero = gen;
+  ac(); somVitoria(); salvar();
+  S.cena = "inicio"; render();
+}
+window.definir = definir;
+function pedeGenero(){
+  const inp = $("#nomeInput"), aviso = $("#avisoNome");
+  if((inp ? inp.value : "").trim().length < 2){
+    somErro(); aviso.innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`; return;
+  }
+  somClique();
+  aviso.innerHTML = `<span style="color:var(--ouro)">Agora toque num dos dois botões aí embaixo 👇</span>`;
+}
+window.pedeGenero = pedeGenero;
+function trocarNome(){ somClique(); S.cena = "nome"; render(); }
+window.trocarNome = trocarNome;
+function zerar(){
+  if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
+  S.pontos = 0; S.missoes = vazio(false); S.estrelas = vazio(0); S.aulas = vazio(false); S.erros = {};
+  salvar(); somClique(); render();
+}
+window.zerar = zerar;
+
+/* ============================================================
+   TELA INICIAL
+   ============================================================ */
+function telaInicio(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--turbo)">
+      <div style="font-size:66px;line-height:1">🕊️</div>
+      <h1 style="background:linear-gradient(90deg,var(--uva),var(--turbo),var(--chama));-webkit-background-clip:text;background-clip:text;color:transparent">
+        OI, ${NOME()}!
+      </h1>
+      <p style="font-size:1.12em">Você é ${g("a repórter","o repórter")} da
+      <b style="color:var(--turbo)">Voz da Praça</b>.</p>
+      <div class="card" style="text-align:left;background:rgba(8,25,15,.85);margin-top:18px">
+        <p><b>🎯 O combinado é este:</b></p>
+        <p>Este jogo não foi inventado no chute: cada parada é <b>um assunto do seu caderno</b>,
+        com os textos, as leis e as palavras que estão nas suas próprias páginas.
+        São <b>${N_MISSOES-1} paradas</b> e, no fim, a prova da praça.</p>
+        <p><b>📚 Cada parada começa com uma aula rapidinha</b> da <b>Linha Fina</b>, a pomba da
+        praça. Ela explica primeiro; você põe a mão na massa depois.</p>
+        <p class="mini">⭐ Cada parada vale até ${POR_MISSAO} estrelas. Errar faz parte: o jogo mostra o porquê
+        e <b>anota em que assunto você escorregou</b>, para cobrar de novo na prova final.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn" onclick="comecar()">🏙️ Entrar na praça</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Ver a colinha</button>
+      </div>
+      <p class="mini" style="margin-top:14px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Não sou ${NOME()}, trocar nome</button>
+      </p>
+    </div>`;
+}
+function comecar(){ ac(); somVitoria(); S.cena="mapa"; render(); }
+window.comecar = comecar;
+
+/* ============================================================
+   MAPA
+   ============================================================ */
+function telaMapa(){
+  const feitas = S.missoes.filter(Boolean).length;
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(5);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <h2>🏙️ Praça ${g("da","do")} ${NOME()}</h2>
+      <p class="mini">${feitas} de ${N_MISSOES} paradas feitas · ${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas · ${S.pontos} pontos</p>
+      <div class="progresso"><i style="width:${feitas/N_MISSOES*100}%"></i></div>
+      <div class="missoes">
+        ${MISSOES.map((m,i)=>{
+          const trancada = i>0 && !S.missoes[i-1];
+          return `<button class="missao ${trancada?"trancada":""} ${S.missoes[i]?"feita":""}"
+                    onclick="abrirMissao(${i})" ${trancada?"disabled":""}>
+            <span class="num">${S.missoes[i]?"✓":i+1}</span>
+            <div class="ico">${trancada?"🔒":m.ico}</div>
+            <div class="tit">${m.tit}</div>
+            <div class="sub">${trancada?"Faça a parada anterior":m.sub}</div>
+            ${(!trancada && !S.aulas[i])?`<div class="tags" style="margin-top:8px"><span class="tag" style="border-color:var(--ouro);color:var(--ouro)">📚 começa com uma aula</span></div>`:``}
+            ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
+          </button>`;
+        }).join("")}
+      </div>
+      <p class="mini centro" style="margin-top:16px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Trocar nome</button>
+        <button class="chip" onclick="zerar()" style="cursor:pointer">🔄 Começar tudo de novo</button>
+      </p>
+    </div>
+    ${fracas.length?`<div class="card">
+      <h2>🎯 Onde você está escorregando</h2>
+      <p class="mini">A Linha Fina foi anotando. Estes assuntos aparecem <b>mais vezes</b> na
+      Prova da Praça — é assim que a gente vira o jogo.</p>
+      <div class="tags">${fracas.map(h=>
+        `<span class="tag" style="border-color:var(--chama);color:var(--chama);font-size:1em">${NOME_HAB[h]||h}</span>`
+      ).join("")}</div>
+    </div>`:``}
+    ${feitas===N_MISSOES?`<div class="card destaque centro">
+      <div style="font-size:56px">🎓</div>
+      <h2>Praça inteira percorrida, ${NOME()}!</h2>
+      <button class="btn" onclick="verDiploma()">Ver meu diploma</button>
+    </div>`:``}`;
+}
+function verDiploma(){ somVitoria(); S.cena="diploma"; render(); }
+window.verDiploma = verDiploma;
+
+
+/* ============================================================
+   AULAS — uma antes de cada parada, com a Linha Fina
+   ============================================================ */
+const AULAS = [
+  /* ---- 1 · espaço público, urbanidade, direito à cidade ---- */
+  [
+    {ico:"🕊️", tit:"Oi, {NOME}. Eu sou a Linha Fina.",
+     txt:`Sou a pomba desta praça, e o meu nome não é apelido — é <b>matéria da sua prova</b>.
+       <p><b>Linha fina</b> é aquele subtítulo que vem <b>debaixo do título</b> da reportagem e
+       <b>adianta</b> o que o texto vai dizer. É exatamente o meu trabalho aqui: chegar antes e
+       adiantar o assunto.</p>
+       <p>Vamos percorrer <b>sete paradas</b> desta praça. Uma de cada vez.</p>`,
+     chave:`Título dá o fato. Linha fina adianta o resto. Guarde este par — ele cai.`},
+    {ico:"🏙️", tit:"O que é, afinal, um espaço público",
+     txt:`O seu caderno define com quatro palavras, e são essas quatro que a prova cobra:
+       <div class="destaque">acessível · gratuito · sem fins lucrativos · de uso coletivo</div>
+       <p>Se cobra entrada, não é. Se é de um dono, não é. Se só um grupo pode entrar, não é.</p>
+       <ul class="lista">
+         <li><b>Abertos</b>: ruas, calçadas, praças, jardins, parques.</li>
+         <li><b>Fechados</b>: bibliotecas e escolas públicas, museus, clubes públicos.</li>
+       </ul>`,
+     chave:`Um shopping tem teto e é grande — mas é privado. Uma biblioteca pública tem teto
+       também, e é espaço público. O que decide não é o teto: é de quem é e para quem é.`},
+    {ico:"🤝", tit:"Urbanidade — e o contrário dela",
+     txt:`<b>Urbanidade</b> é o modo como os espaços <b>acolhem</b> as pessoas. Uma cidade com
+       urbanidade tem espaços hospitaleiros, ativos e diversos.
+       <p>E o contrário? O seu caderno até deu o glossário na margem:</p>
+       <div class="destaque"><span class="errado">acolhedor</span> ↔ <b>inóspito</b></div>
+       <p><b>Inóspito</b> = não acolhedor, o contrário de hospitaleiro. Grades nas fachadas,
+       muros compridos, terrenos abandonados — isso é uma cidade inóspita.</p>`,
+     chave:`Quanto <b>maior</b> a urbanidade, <b>maior</b> a qualidade de vida. É proporcional.`},
+    {ico:"🗽", tit:"Direito à cidade",
+     txt:`A expressão foi criada pelo filósofo e sociólogo francês <b>Henri Lefebvre</b>, em
+       <b>1968</b>, para reunir as reivindicações dos movimentos juvenis daquela época.
+       <p>Hoje quer dizer o direito de <b>interagir com a cidade, transformá-la e, ao mesmo
+       tempo, transformar a si mesmo</b>.</p>
+       <p>E é um direito <b>humano e coletivo</b>: vale para quem mora aqui hoje <b>e</b> para
+       quem vai morar depois.</p>`,
+     chave:`Lefebvre · 1968 · direito humano e coletivo. Três dados, uma linha.`}
+  ],
+
+  /* ---- 2 · notícia e reportagem ---- */
+  [
+    {ico:"📰", tit:"A pergunta que aparece três vezes",
+     txt:`Repare numa coisa, {NOME}: nas páginas <b>15</b>, <b>23</b> e <b>33</b> do seu caderno,
+       a primeira pergunta é <b>a mesma</b>, com <b>as mesmas quatro alternativas</b>. Só muda o
+       texto lido antes.
+       <div class="destaque">"Assinale a alternativa que corresponde<br>ao <b>objetivo de
+       produção</b> do texto."</div>
+       <p>Quem decora o par <b>gênero → objetivo</b> não erra nenhuma das três.</p>`,
+     chave:`As quatro alternativas são sempre: relatar · abordar com aprofundamento ·
+       expor ponto de vista · ensinar o que é.`},
+    {ico:"🔍", tit:"Notícia × reportagem",
+     txt:`As duas informam. A diferença é o <b>quanto</b> e o <b>para quê</b>.
+       <table class="mini-tab">
+         <tr><th>Notícia</th><th>Reportagem</th></tr>
+         <tr><td>Relatar um fato<br><b>ocorrido recentemente</b></td>
+             <td>Abordar um <b>tema</b>, com<br><b>certo aprofundamento</b> — e opiniões</td></tr>
+         <tr><td>"Jovens querem mais<br>espaços públicos" (p. 37)</td>
+             <td>"A retomada do espaço<br>público…" (p. 13)</td></tr>
+       </table>
+       <p>Não é o tamanho que decide. É o objetivo: <b>contar o que houve</b> ou
+       <b>destrinchar um assunto</b>.</p>`,
+     chave:`Notícia = fato recente. Reportagem = tema aprofundado, com vozes e opiniões dentro.`},
+    {ico:"🧵", tit:"O título dá o fato. A linha fina dá a opinião.",
+     txt:`Olhe a reportagem da página 13 do seu caderno:
+       <div class="chave"><span class="rot">Título</span>
+         "A retomada do espaço público como caminho para as cidades"</div>
+       <div class="chave" style="border-color:#0f766e"><span class="rot" style="color:#0f766e">Linha fina</span>
+         "A tendência nas metrópoles é a busca da rua como um ponto de encontro, diversão e
+         expressão cultural e política"</div>
+       <p>O <b>fato</b> é que as pessoas estão retomando o espaço público. A <b>opinião</b>
+       antecipada é que isso é um <b>caminho</b>, uma <b>tendência</b> — e que é bom.</p>`,
+     chave:`Fato = o que dá para conferir. Opinião = o que alguém acha. Num título só,
+       cabem os dois.`},
+    {ico:"🗂️", tit:"Contexto de produção — quatro perguntas",
+     txt:`Isto aqui você já acertou na folha, {NOME}. É para <b>não perder</b>:
+       <ul class="lista">
+         <li><b>Onde</b> foi publicado? → o veículo (o blog, o jornal, o site)</li>
+         <li><b>Quando</b>? → a data que aparece na fonte</li>
+         <li><b>Quem</b> escreveu? → e se a fonte não cita autor, a resposta é
+           <b>"não dá para saber, porque a fonte não cita autor"</b> — isso é resposta certa,
+           não é desistir</li>
+         <li><b>Para quem</b>? → o leitor previsto, que se descobre pelo veículo</li>
+       </ul>`,
+     chave:`Blog na internet → leitor previsto é usuário de internet interessado no assunto.
+       O veículo entrega o leitor.`}
+  ],
+
+  /* ---- 3 · artigo de opinião e verbete ---- */
+  [
+    {ico:"💬", tit:"Artigo de opinião: alguém quer te convencer",
+     txt:`O objetivo é <b>expor um ponto de vista</b> sobre um tema e apresentar
+       <b>argumentos</b> para <b>sustentá-lo e defendê-lo</b>.
+       <p>O da sua página 22 é da <b>Marilia Lopes</b>, no <b>Blog Quindim</b>, de
+       <b>18 de junho de 2019</b>: "Crianças e ocupação do espaço público: por que é importante
+       levar seu filho à rua".</p>
+       <p>Repare no título: ele já <b>toma um lado</b> — "por que é <b>importante</b>". Notícia
+       nenhuma faz isso.</p>`,
+     chave:`Achou uma tese sendo defendida? Artigo de opinião. Achou um fato sendo contado?
+       Notícia.`},
+    {ico:"📚", tit:"Verbete enciclopédico: ninguém quer te convencer de nada",
+     txt:`O verbete é o oposto do artigo de opinião. Ele <b>ensina o que uma coisa é</b>, com
+       <b>linguagem objetiva e impessoal</b> — sem "eu acho", sem "na minha opinião".
+       <p>Pode ter definições, subdivisões, imagens e gráficos.</p>
+       <table class="mini-tab">
+         <tr><th>Colaborativa</th><th>Não colaborativa</th></tr>
+         <tr><td><b>Wikipédia</b><br>qualquer um edita, numa página <i>wiki</i></td>
+             <td><b>Britannica Escola</b><br>só a equipe dela escreve</td></tr>
+       </table>`,
+     chave:`Impessoal quer dizer: o texto não fala de quem escreveu. "É", nunca "eu acho que é".`},
+    {ico:"🎯", tit:"Os quatro, lado a lado",
+     txt:`Guarde este quadro inteiro, {NOME}. Ele responde à pergunta das páginas 15, 23 e 33.
+       <table class="mini-tab">
+         <tr><th>Gênero</th><th>Objetivo</th></tr>
+         <tr><td>Notícia</td><td>relatar fato recente</td></tr>
+         <tr><td>Reportagem</td><td>abordar tema com aprofundamento e opiniões</td></tr>
+         <tr><td>Artigo de opinião</td><td>expor ponto de vista e argumentar</td></tr>
+         <tr><td>Verbete</td><td>ensinar o que é, de modo impessoal</td></tr>
+       </table>`,
+     chave:`Quatro gêneros, quatro verbos: <b>relatar · abordar · defender · ensinar</b>.`}
+  ],
+
+  /* ---- 4 · carta de reivindicação ---- */
+  [
+    {ico:"✉️", tit:"A carta tem oito peças, e cada uma tem lugar",
+     txt:`De cima para baixo, sempre nesta ordem:
+       <ul class="lista">
+         <li><b>1. Local e data</b> — São Paulo, 30 de outubro de 2023.</li>
+         <li><b>2. Destinatário</b> — À Subprefeitura de Itaquera.</li>
+         <li><b>3. Assunto</b> — Criação de casa de cultura no Jardim Brasília.</li>
+         <li><b>4. Vocativo</b> — Prezado Senhor Subprefeito,</li>
+         <li><b>5. Resumo da contextualização</b> — o problema.</li>
+         <li><b>6. Reivindicação</b> — o pedido.</li>
+         <li><b>7. Fórmula de finalização</b> — Certos de sua atenção, aguardamos retorno.</li>
+         <li><b>8. Assinatura/subscrição</b> — Nora dos Santos Silva.</li>
+       </ul>`,
+     chave:`Destinatário é <b>a quem</b>. Vocativo é <b>como você o chama</b>. São peças
+       diferentes, em linhas diferentes.`},
+    {ico:"⚠️", tit:"As duas peças que a professora marcou",
+     txt:`Estas duas foram para o quadro erradas, {NOME}. Vale parar aqui.
+       <div class="destaque"><span class="errado">Vocativo: "a carta enviada"</span><br>
+       <span class="certo">Vocativo: "Prezado Senhor Subprefeito,"</span></div>
+       <p>Vocativo é <b>chamamento</b>. É a palavra com que você <b>chama</b> quem vai ler.
+       Vem sozinha numa linha e termina em vírgula.</p>
+       <div class="destaque"><span class="errado">Reivindicação: "a carta"</span><br>
+       <span class="certo">Reivindicação: "a criação de uma casa de cultura no Jardim Brasília"</span></div>
+       <p>A reivindicação é <b>o pedido que está dentro da carta</b> — nunca a carta.</p>`,
+     chave:`Se a resposta puder ser "a carta", ela está errada: <b>tudo ali é a carta</b>.
+       A pergunta é qual <b>pedaço</b>.`},
+    {ico:"🧱", tit:"Os quatro parágrafos do corpo",
+     txt:`Quando for a sua vez de escrever uma (página 99), o miolo tem quatro parágrafos:
+       <ul class="lista">
+         <li><b>1º</b> — quem você é e o que está pedindo.</li>
+         <li><b>2º</b> — a situação-problema: o que está faltando e por quê.</li>
+         <li><b>3º</b> — a justificativa, com a <b>lei</b> que sustenta o pedido.</li>
+         <li><b>4º</b> — a despedida e o pedido de resposta.</li>
+       </ul>
+       <p>É por isso que o terceiro parágrafo é o mais importante: sem lei, o pedido vira
+       vontade.</p>`,
+     chave:`Pedido sem lei é desejo. Pedido com artigo citado é reivindicação.`}
+  ],
+
+  /* ---- 5 · argumentos e leis ---- */
+  [
+    {ico:"⚖️", tit:"Existem dois tipos de argumento, e a prova separa os dois",
+     txt:`Na página 94 há <b>duas perguntas seguidas</b>, e cada uma quer um tipo diferente:
+       <div class="chave"><span class="rot">a) por exemplo</span>
+         Um caso concreto: "no bairro já existem grupos de dança, capoeira, circo e bandas —
+         e nenhum lugar para ensaiar".</div>
+       <div class="chave" style="border-color:#0f766e"><span class="rot" style="color:#0f766e">b) por direito de lei</span>
+         A citação: "o <b>art. 6º</b> da Constituição garante o <b>lazer</b> como direito social".</div>
+       <p>Um mostra a realidade. O outro mostra a <b>obrigação</b>. Os dois juntos é que
+       convencem.</p>`,
+     chave:`Exemplo prova que o problema existe. Lei prova que resolvê-lo é dever.`},
+    {ico:"🔤", tit:"O erro mais caro não foi de conteúdo",
+     txt:`Olhe o que aconteceu na questão 4a, {NOME}:
+       <div class="destaque">Pergunta: "<b>Quais</b> argumentos são baseados em exemplos?"<br>
+       <span class="errado">Resposta: "Não, pois não teriam argumentos."</span></div>
+       <p>Você <b>sabia</b> o conteúdo — acertou o art. 6º duas questões depois. O que aconteceu
+       é que a pergunta começava com <b>QUAIS</b> e a resposta começou com <b>NÃO</b>.</p>
+       <p><b>QUAIS</b> pede uma <b>lista</b>. Só <b>HÁ…?</b>, <b>É…?</b> e <b>SERIA…?</b> aceitam
+       sim ou não.</p>`,
+     chave:`Antes de escrever, leia <b>a primeira palavra</b> do comando. Ela diz o formato da
+       resposta.`},
+    {ico:"📜", tit:"Os dois artigos que aparecem no caderno",
+     txt:`<div class="chave"><span class="rot">Art. 6º — direitos sociais</span>
+       educação, saúde, alimentação, trabalho, moradia, transporte, <b>lazer</b>, segurança,
+       previdência social, proteção à maternidade e à infância, assistência aos desamparados.</div>
+       <div class="chave" style="border-color:#0f766e"><span class="rot" style="color:#0f766e">Art. 215 — direitos culturais</span>
+       O Estado garante a todos o <b>pleno exercício dos direitos culturais</b> e o acesso às
+       fontes da cultura nacional.</div>
+       <p>Casa de cultura, teatro, oficina de dança: cabem nos <b>dois</b> — é lazer <b>e</b>
+       é cultura.</p>`,
+     chave:`Art. 6º tem o <b>lazer</b>. Art. 215 tem a <b>cultura</b>. Ambos de 1988.`}
+  ],
+
+  /* ---- 6 · coesão referencial ---- */
+  [
+    {ico:"🔗", tit:"Por que ninguém repete a mesma palavra",
+     txt:`Leia esta frase, {NOME}:
+       <div class="destaque"><span class="errado">O bairro pediu uma casa de cultura. A casa de
+       cultura seria no Jardim Brasília. A casa de cultura atenderia a casa de cultura do
+       bairro.</span></div>
+       <p>Insuportável, né? Por isso o texto <b>retoma</b> o termo em vez de repeti-lo:</p>
+       <div class="destaque"><span class="certo">O bairro pediu uma casa de cultura.
+       <b>O equipamento</b> ficaria no Jardim Brasília, e <b>ele</b> atenderia toda a região.</span></div>
+       <p>Isso se chama <b>coesão referencial</b>: costurar o texto retomando o que já foi dito.</p>`,
+     chave:`Retomar não é repetir. É trocar por outra coisa que aponta para a mesma.`},
+    {ico:"🧰", tit:"As três ferramentas de retomada",
+     txt:`<ul class="lista">
+         <li><b>Sinônimo</b> — "bairro" → "região"; "carta" → "documento".</li>
+         <li><b>Expressão correlata</b> — "casa de cultura" → "o equipamento público",
+           "o espaço", "o local".</li>
+         <li><b>Pronome</b> — "casa de cultura" → "<b>ela</b>"; toda uma ideia → "<b>isso</b>".</li>
+       </ul>
+       <p>As três fazem a mesma coisa: apontam para trás, para algo que já apareceu.</p>`,
+     chave:`Toda retomada aponta para <b>trás</b>. Se você não achou o dono da palavra,
+       é porque olhou para a frente.`},
+    {ico:"👉", tit:"Os três tipos de pronome que o caderno cobra",
+     txt:`<table class="mini-tab">
+         <tr><th>Tipo</th><th>Exemplos</th></tr>
+         <tr><td><b>Pessoais</b></td><td>eu, tu, ele, ela, nós, vós, eles, elas<br>
+           me, mim, te, ti, se, si, o, a, lhe, nos, vos, os, as, lhes</td></tr>
+         <tr><td><b>Demonstrativos</b></td><td>este, esta, isto · esse, essa, <b>isso</b> ·
+           aquele, aquela, aquilo</td></tr>
+         <tr><td><b>Possessivos</b></td><td>meu, minha, teu, tua, seu, sua,<br>
+           nosso, nossa, vosso, vossa</td></tr>
+       </table>
+       <p>Possessivo diz <b>de quem é</b>. Demonstrativo <b>aponta</b>. Pessoal <b>substitui</b>
+       a pessoa ou a coisa.</p>`,
+     chave:`"Isso" e "isto" são demonstrativos — e são os campeões de retomar <b>ideias
+       inteiras</b>, não só palavras.`},
+    {ico:"🔑", tit:"O truque para achar o que o \"isso\" retoma",
+     txt:`Foi aqui que a professora marcou duas vezes, {NOME}. O truque é curto:
+       <div class="destaque">Leia a frase de <b>antes</b> inteira<br>e pergunte:
+       <b>isso o quê?</b></div>
+       <p>Exemplo da sua página 98. O texto diz: <i>"Disso tudo, resultou um levantamento de
+       diferentes atividades culturais já existentes no bairro, de forma isolada, e a
+       necessidade de um espaço comunitário."</i></p>
+       <p><b>Disso tudo</b> o quê? Do que veio antes: as <b>análises e discussões com líderes
+       comunitários, artistas e ativistas culturais</b>. A resposta está sempre <b>acima</b>
+       da palavra.</p>`,
+     chave:`Um pronome nunca inventa. Ele só devolve o que o texto já disse antes.`}
+  ],
+
+  /* ---- 7 · canais do cidadão ---- */
+  [
+    {ico:"📜", tit:"1988: a Constituição abriu a porta",
+     txt:`A <b>Constituição federal de 1988</b> garante o direito de <b>participação social</b>
+       da população nas ações do poder público — no planejamento, na deliberação, na
+       fiscalização e até nos projetos de lei.
+       <p>Traduzindo: <b>reclamar, reivindicar e solicitar</b> não é favor que te fazem. É
+       direito, e existem canais oficiais para isso.</p>`,
+     chave:`Participação social = poder opinar e cobrar. Está na Constituição desde 1988.`},
+    {ico:"📣", tit:"Ouvidoria e Fala.BR",
+     txt:`<b>Ouvidoria</b> é o espaço aberto que <b>intermedia o diálogo</b> entre o cidadão e a
+       administração pública ou privada, para avaliar os serviços prestados.
+       <p>O <b>Fala.BR</b> é a plataforma do governo federal que liga o cidadão a órgãos de
+       estados, municípios e empresas públicas. Na tela dele há <b>sete</b> caminhos:</p>
+       <div class="destaque" style="font-size:1em">Acesso à Informação · Denúncia · Elogio ·
+       Reclamação · Simplifique · Solicitação · Sugestão</div>`,
+     chave:`<b>Denúncia</b> acusa algo errado. <b>Reclamação</b> aponta um serviço ruim.
+       <b>Solicitação</b> pede um serviço. <b>Sugestão</b> propõe melhorar. Não são sinônimos.`},
+    {ico:"💻", tit:"Os outros quatro canais",
+     txt:`<table class="mini-tab">
+         <tr><th>Canal</th><th>Serve para</th></tr>
+         <tr><td>Portal de<br>atendimento</td><td>solicitar serviços, acompanhar processos,
+           consultar débitos, pedir certidões</td></tr>
+         <tr><td>Portal da<br>transparência</td><td>ver receita, despesas, diárias,
+           licitações, quadro funcional</td></tr>
+         <tr><td>Mídias sociais</td><td>diálogo rápido, em tempo real</td></tr>
+         <tr><td>Meios<br>tradicionais</td><td>telefone, e-mail, carta, fax e pessoalmente</td></tr>
+       </table>
+       <p>Cuidado para não trocar os dois portais: um é para <b>pedir</b>, o outro é para
+       <b>ver o dinheiro</b>.</p>`,
+     chave:`Atendimento = eu peço algo. Transparência = eu vejo o que fizeram com o dinheiro.`},
+    {ico:"🧑‍💼", tit:"Os quatro papéis do ouvidor",
+     txt:`A página 88 do seu caderno lista quatro, e ela numerou:
+       <ul class="lista">
+         <li><b>1. Parceiro e mediador</b> — fica no meio, de forma neutra.</li>
+         <li><b>2. Certificador da qualidade</b> — atesta que o atendimento foi bom.</li>
+         <li><b>3. Agregador de valor à organização</b> — dá credibilidade e suporte.</li>
+         <li><b>4. Agente de mudança</b> — faz a organização mudar por dentro.</li>
+       </ul>
+       <p>O ouvidor <b>não julga</b> ninguém. Ele analisa, media e busca a solução.</p>`,
+     chave:`O ouvidor é <b>neutro</b>: não está do lado da empresa nem do cliente. Está do lado
+       da solução.`}
+  ],
+
+  /* ---- 8 · prova da praça ---- */
+  [
+    {ico:"🏆", tit:"Chegou a Prova da Praça, {NOME}",
+     txt:`Esta última parada tem <b>duas partes</b>, e só a segunda vale estrelas:
+       <ul class="lista">
+         <li><b>Arcade</b> — 60 segundos de perguntas rápidas de tudo. Vale <b>pontos</b>.
+           É aquecimento; errar aqui não tira nada.</li>
+         <li><b>Prova final</b> — <b>sem relógio</b>. É ela que vale as ${POR_MISSAO} estrelas.</li>
+       </ul>`,
+     chave:`No arcade, velocidade. Na prova, calma. Estrela nunca vem de dedo rápido.`},
+    {ico:"🎯", tit:"O que eu anotei de você",
+     txt:`{FRACAS}`,
+     chave:`Errar e saber <b>onde</b> errou já é meio caminho. O outro meio é refazer.`}
+  ]
+];
+
+
+let A = null;
+function nomear(txt){
+  return String(txt)
+    .replace(/\{NOME\}/g, NOME())
+    .replace(/\{FRACAS\}/g, textoFracas());
+}
+function textoFracas(){
+  const fracas = listaFracas(5);
+  if(!fracas.length){
+    return `<p>Até agora você <b>não escorregou em nada</b> — ou ainda não jogou o suficiente
+      para eu ter o que anotar. Vamos descobrir na prova!</p>
+      <p>A prova final passa pelos <b>sete assuntos</b> da unidade, sem dó.</p>`;
+  }
+  return `<p>Eu fui anotando cada escorregão. Estes são os assuntos em que você mais tropeçou —
+    dê uma olhada neles antes de começar:</p>
+    <div class="destaque">${fracas.map(h => NOME_HAB[h] || h).join("<br>")}</div>
+    <p>Eles vão aparecer <b>mais vezes</b> na prova final, de propósito. É a última chance de
+    virar o jogo.</p>`;
+}
+
+function abrirAula(i, revendo){
+  somClique(); pararArcade();
+  A = { missao:i, slide:0, revendo:!!revendo };
+  S.cena = "a"+i;
+  render();
+}
+window.abrirAula = abrirAula;
+function reverAula(i){ abrirAula(i, true); }
+window.reverAula = reverAula;
+
+function telaAula(i){
+  const slides = AULAS[i], s = slides[A.slide], ultimo = A.slide === slides.length-1;
+  const m = MISSOES[i];
+  app.innerHTML = hud() + `
+    <h2 style="text-align:center">${m.ico} Aula ${i+1} · ${m.tit}</h2>
+    <div class="aula">
+      <div class="guia">
+        <span class="robo">🕊️</span>
+        <span>Sou a <b>Linha Fina</b>, a pomba da praça.
+        ${A.slide===0 ? `Antes de você sair por aí, ${NOME()}, olha só.`
+                      : `Continuando, ${NOME()}…`}</span>
+      </div>
+      <div class="ico">${s.ico}</div>
+      <h2>${nomear(s.tit)}</h2>
+      ${s.txt.trim().startsWith("<") ? nomear(s.txt) : `<p>${nomear(s.txt)}</p>`}
+      ${s.chave ? `<div class="chave"><span class="rot">🔑 Grave isso</span>${nomear(s.chave)}</div>` : ``}
+      <div class="pontos">
+        ${slides.map((_,k)=>`<i class="${k===A.slide?"aqui":(k<A.slide?"vista":"")}"></i>`).join("")}
+      </div>
+    </div>
+    <div class="acoes">
+      ${A.slide>0 ? `<button class="btn aula fraco" onclick="aulaVolta()">← Voltar</button>` : ``}
+      ${ultimo
+        ? `<button class="btn" onclick="aulaFim()">🚀 Começar a parada ${i+1}</button>`
+        : `<button class="btn aula" onclick="aulaProx()">Próximo →</button>`}
+    </div>
+    <p class="centro mini" style="margin-top:14px">
+      ${ultimo ? `` : `<button class="chip" onclick="aulaFim()" style="cursor:pointer">Pular a aula e ir direto para a parada →</button>`}
+    </p>`;
+}
+function aulaProx(){ somClique(); A.slide++; telaAula(A.missao); scrollTo(0,0); }
+window.aulaProx = aulaProx;
+function aulaVolta(){ somClique(); A.slide--; telaAula(A.missao); scrollTo(0,0); }
+window.aulaVolta = aulaVolta;
+function aulaFim(){
+  somClique();
+  S.aulas[A.missao] = true; salvar();
+  S.cena = "m"+A.missao; render();
+}
+window.aulaFim = aulaFim;
+
+/* ============================================================
+   QUIZ GENÉRICO
+   ============================================================ */
+let Q = null;
+function embaralhaOpcoes(perguntas){
+  return perguntas.map(q=>{
+    if(q.fixo) return { ...q };                 /* ordem fixa: listas e sequências */
+    const ordem = embaralha(q.o.map((_,i)=>i));
+    return { ...q, o: ordem.map(i=>q.o[i]), c: ordem.indexOf(q.c) };
+  });
+}
+function quizGenerico(missaoIdx, titulo, perguntas, acertosIniciais, totalInicial){
+  Q = { i:0, ac:acertosIniciais||0, tot:(totalInicial||0)+perguntas.length,
+        lista:embaralhaOpcoes(perguntas), missao:missaoIdx, titulo:titulo,
+        respondida:false };
+  desenhaQuiz();
+}
+function desenhaQuiz(){
+  const q = Q.lista[Q.i];
+  const classe = q.grade ? "grade" : (q.quatro ? "quatro" : "");
+  app.innerHTML = hud(Q.titulo) + `
+    <div class="card">
+      <p class="mini">Pergunta ${Q.i+1} de ${Q.lista.length}</p>
+      <div class="progresso"><i style="width:${Q.i/Q.lista.length*100}%"></i></div>
+      ${q.arte || ``}
+      ${q.enun ? `<div class="enunciado">${nomear(q.enun)}</div>` : ``}
+      ${q.frase ? `<div class="frase">${q.frase}</div>` : ``}
+      ${q.conta ? `<div class="conta">${q.conta}</div>` : ``}
+      ${q.p ? `<div class="pergunta">${nomear(q.p)}</div>` : ``}
+      <div class="opcoes ${classe}" id="ops">
+        ${q.o.map((t,k)=>`<button class="op" onclick="respQuiz(${k})">
+          ${classe?``:`<span class="letra">${"ABCD"[k]}</span>`}<span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fbq"></div>
+      <div class="acoes esconde" id="proxBox">
+        <button class="btn" onclick="proxQuiz()" id="btnProx">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respQuiz(k){
+  if(Q.respondida) return;
+  Q.respondida = true;
+  const q = Q.lista[Q.i];
+  document.querySelectorAll("#ops .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===q.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbq");
+  if(k===q.c){
+    Q.ac++; somAcerto(); ganha(10);
+    marcaAcerto(q.hab);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${nomear(q.e)}`;
+  } else {
+    somErro();
+    marcaErro(q.hab);
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Quase, ${NOME()}! A resposta certa é <b>${q.o[q.c]}</b>.</div>${nomear(q.e)}`;
+  }
+  $("#proxBox").classList.remove("esconde");
+  $("#btnProx").textContent = (Q.i === Q.lista.length-1) ? "Terminar parada 🏁" : "Continuar →";
+  $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respQuiz = respQuiz;
+function proxQuiz(){
+  somClique();
+  Q.i++; Q.respondida = false;
+  if(Q.i >= Q.lista.length){ concluiMissao(Q.missao, Q.ac, Q.tot); return; }
+  desenhaQuiz();
+}
+window.proxQuiz = proxQuiz;
+
+
+/* ============================================================
+   TEXTOS — todos vindos das páginas do caderno
+   ============================================================ */
+const TXT_REPORT = `<div class="enunciado texto">
+<b>A RETOMADA DO ESPAÇO PÚBLICO COMO CAMINHO PARA AS CIDADES</b>
+<p style="font-style:italic;color:var(--ouro);margin:6px 0 10px">A tendência nas metrópoles é a
+busca da rua como um ponto de encontro, diversão e expressão cultural e política</p>
+<p>Pensar a relação com o espaço público é um dos caminhos para entendermos os rumos da cidade
+contemporânea. Afinal, se "o espaço público é um dos mais importantes elementos da experiência
+cidadã", como escreveu o sociólogo espanhol Manuel Castells no livro <i>A sociedade em rede</i>,
+é na rua que se forma muito de nossa cultura e identidade.</p>
+<p>A mudança é visível. A "Paulista Aberta", projeto que mantém a principal avenida de São Paulo
+aberta para as pessoas aos domingos, é um bom exemplo disso. O Carnaval de rua, no entanto,
+talvez seja o melhor exemplo da transformação em curso.</p>
+<p style="margin:0"><b>Parques urbanos</b> — Outro aspecto importante é a reivindicação por mais
+parques urbanos. Em São Paulo, três casos ilustram bem esse fenômeno: os parques Augusta,
+Minhocão e Bixiga, todos na região central.</p>
+<p class="mini" style="margin:10px 0 0">A VIDA NO CENTRO · <i>Carta Capital</i> · 12 abr. 2019</p></div>`;
+
+const TXT_NOTICIA = `<div class="enunciado texto">
+<b>JOVENS QUEREM MAIS ESPAÇOS PÚBLICOS, APOIO, DIVERSIDADE E DIVULGAÇÃO DE PRODUÇÕES ARTÍSTICAS</b>
+<p style="font-style:italic;color:var(--ouro);margin:6px 0 10px">Ao longo de três dias, jovens de
+todo o país se reuniram na Funarte em Brasília</p>
+<p>Os jovens querem mais espaços públicos para manifestações culturais: ocupar praças e
+anfiteatros. Ser parceiros em políticas públicas. Simplificação dos processos de participação
+em editais e mais financiamento para quem está começando a criar.</p>
+<p style="margin:0"><b>Curto Circuito</b> — Em três dias, 70 jovens de todas as regiões do país
+se reuniram no Complexo Cultural da Funarte, em Brasília, com uma pauta bem aberta. Vieram para
+falar. Escutando uns aos outros, acabaram descobrindo pontos comuns.</p>
+<p class="mini" style="margin:10px 0 0">BEVILAQUA, Monserrat · Secretaria Especial da Cultura · 15 abr. 2014</p></div>`;
+
+const TXT_ARTIGO = `<div class="enunciado texto">
+<b>CRIANÇAS E OCUPAÇÃO DO ESPAÇO PÚBLICO: POR QUE É IMPORTANTE LEVAR SEU FILHO À RUA</b>
+<p>Brincar na rua, curtir o parque na cidade, desbravar os pontos que construíram a nossa
+história ou só passear por aí. Tem uma série de ações que colocam as crianças em contato com o
+espaço urbano. De quebra, passam uma mensagem muito importante: a cidade também é das crianças.</p>
+<p>É preciso lembrar que o ambiente em que uma pessoa está inserida não é só um dado, mas se
+integra à formação do indivíduo: define relações, estimula ações e movimentos ou os restringe.
+"O ambiente é o terceiro professor da criança", no dizer de Loris Malaguzzi — para quem o
+primeiro são os pais e o segundo, os professores nas escolas.</p>
+<p style="margin:0">Por outro lado, o olhar da criança humaniza a cidade. Afinal, esse outro
+jeito de aproveitar os espaços estimula uma maior interação entre as pessoas, a criatividade e
+um jeito lúdico de aproveitar os espaços.</p>
+<p class="mini" style="margin:10px 0 0">LOPES, Marilia · <i>Blog Quindim</i> · 18 jun. 2019</p></div>`;
+
+const TXT_CARTA = `<div class="enunciado texto" style="font-size:.98em">
+<p style="text-align:right;margin:0 0 12px">São Paulo, 30 de outubro de 2023.</p>
+<p style="margin:0 0 2px">À Subprefeitura de Itaquera</p>
+<p style="margin:0 0 12px"><b>Assunto:</b> criação de casa de cultura no Jardim Brasília</p>
+<p style="margin:0 0 12px">Prezado Senhor Subprefeito,</p>
+<p>Eu, Nora dos Santos Silva, moradora do Jardim Brasília, venho reivindicar a criação de casa
+de cultura no bairro, visto que não há qualquer equipamento público para produção, promoção e
+difusão de bens culturais nesta localidade.</p>
+<p>Como é de conhecimento do senhor, o bairro possui inúmeros estabelecimentos comerciais,
+especialmente próximos à avenida Aricanduva, mas há poucas opções culturais para a população
+local. Em relação a isso, foram feitas análises e discussões com líderes comunitários, artistas
+e ativistas culturais locais de diferentes manifestações artísticas — grupos de danças
+folclóricas, de salão, urbanas e balé, bandas de músicos, cantores, atores, artistas de circo,
+grafiteiros, capoeiristas, entre outros — sobre o oferecimento de atividades de arte e educação
+para os moradores do bairro. Disso tudo, resultou um levantamento de diferentes atividades
+culturais já existentes no bairro, de forma isolada, e a necessidade de um espaço comunitário.</p>
+<p>Cabe lembrar que o artigo 6º da Constituição Federal garante o lazer como direito social, e
+que o artigo 215 determina que o Estado garanta a todos o pleno exercício dos direitos culturais.</p>
+<p>Certos de sua atenção, aguardamos retorno.</p>
+<p style="margin:0">Nora dos Santos Silva<br><span class="mini">Moradora do Jardim Brasília</span></p></div>`;
+
+/* ============================================================
+   PARADA 1 — PRAÇA CENTRAL
+   ============================================================ */
+function fasePraca(){
+  const perguntas = [
+    { hab:"espaco", quatro:true,
+      p:"Qual destes <b>não</b> é um espaço público?",
+      o:["O shopping do bairro","A praça da esquina","A biblioteca pública","A calçada da rua"], c:0,
+      e:`Espaço público é <b>acessível, gratuito, sem fins lucrativos e de uso coletivo</b>.
+         O shopping tem dono e existe para lucrar — é <b>privado</b>, mesmo sendo enorme e
+         cheio de gente.` },
+
+    { hab:"espaco", quatro:true,
+      p:"Museus, bibliotecas e escolas públicas são espaços públicos <b>de que tipo</b>?",
+      o:["Fechados","Abertos","Privados","Comerciais"], c:0,
+      e:`O caderno divide em dois: <b>abertos</b> (ruas, calçadas, praças, jardins, parques) e
+         <b>fechados</b> (bibliotecas e escolas públicas, museus, clubes públicos).
+         Ter parede não deixa de ser público.` },
+
+    { hab:"urbanidade", quatro:true,
+      p:"O que significa <b>urbanidade</b>, segundo o seu caderno?",
+      o:["O modo como os espaços acolhem os cidadãos",
+         "A quantidade de prédios de uma cidade",
+         "O tamanho da população urbana",
+         "As regras de trânsito da cidade"], c:0,
+      e:`Urbanidade é <b>acolhimento</b>: espaços públicos hospitaleiros, ativos e diversos.
+         Quanto <b>maior</b> a urbanidade, <b>maior</b> a qualidade de vida.` },
+
+    { hab:"urbanidade", quatro:true,
+      enun:`"As cidades brasileiras apresentam baixa urbanidade, uma vez que o espaço público é
+        marcado por lugares <b>inóspitos</b>, com grades nas fachadas, muros contornando
+        condomínios e áreas abandonadas."`,
+      p:"A palavra <b>inóspitos</b> quer dizer:",
+      o:["não acolhedores, contrários de hospitaleiros",
+         "muito antigos e mal cuidados",
+         "grandes demais para caminhar",
+         "cheios de gente o tempo todo"], c:0,
+      e:`O glossário está na margem da sua página 14: <b>inóspitos = não acolhedores,
+         contrários de hospitaleiros</b>. Repare que <i>inóspito</i> e <i>hospitaleiro</i> têm
+         a mesma raiz — o <b>in-</b> na frente é que vira do avesso.` },
+
+    { hab:"cidade", quatro:true,
+      p:"Quem criou a expressão <b>“direito à cidade”</b>, e quando?",
+      o:["Henri Lefebvre, em 1968","Manuel Castells, em 1968",
+         "Loris Malaguzzi, em 2010","Henri Lefebvre, em 1988"], c:0,
+      e:`<b>Henri Lefebvre</b>, filósofo e sociólogo <b>francês</b>, em <b>1968</b>.
+         <br>Castells é o sociólogo <b>espanhol</b> de <i>A sociedade em rede</i>; Malaguzzi é o
+         do "terceiro professor"; 1988 é o ano da <b>Constituição</b>. Três pegadinhas de uma vez.` },
+
+    { hab:"cidade", quatro:true,
+      p:"O “direito à cidade” é descrito como um direito:",
+      o:["humano e coletivo","apenas individual",
+         "só dos moradores atuais","garantido apenas em São Paulo"], c:0,
+      e:`<b>Humano e coletivo</b> — e o caderno faz questão de dizer que vale para os moradores
+         atuais <b>e para as futuras gerações</b>.` }
+  ];
+  quizGenerico(0, "🏙️ Praça Central", perguntas);
+}
+
+/* ============================================================
+   PARADA 2 — BANCA DE JORNAL
+   ============================================================ */
+function faseBanca(){
+  const perguntas = [
+    { hab:"objetivo", arte: TXT_REPORT, quatro:true,
+      p:"Qual é o <b>objetivo de produção</b> deste texto?",
+      o:["Abordar um tema sobre espaços públicos, apresentando informações com certo aprofundamento, e opiniões",
+         "Relatar um fato relacionado a um espaço público ocorrido recentemente",
+         "Expor um ponto de vista sobre espaços públicos e apresentar argumentos para defendê-lo",
+         "Ensinar ao leitor o que são espaços públicos"], c:0,
+      e:`É uma <b>reportagem</b>: ela pega um <b>tema</b> (a retomada do espaço público), traz
+         dados, exemplos e a voz de um sociólogo — <b>com certo aprofundamento</b>.
+         <br>Foi essa mesma alternativa que você marcou na folha, {NOME}. Continua valendo.` },
+
+    { hab:"linhafina", arte: TXT_REPORT, quatro:true,
+      p:"O trecho em itálico, logo abaixo do título, chama-se:",
+      o:["linha fina (ou subtítulo)","legenda","citação","glossário"], c:0,
+      e:`<b>Linha fina</b> — o subtítulo que vem debaixo do título e <b>antecipa</b> o assunto.
+         É de onde eu tirei o meu nome, aliás. 🕊️` },
+
+    { hab:"fatopiniao", arte: TXT_REPORT, quatro:true,
+      p:"No título e na linha fina, o que é <b>fato</b> e o que é <b>opinião</b>?",
+      o:["Fato: as pessoas estão retomando o espaço público · Opinião: isso é um caminho para as cidades",
+         "Fato: isso é um caminho para as cidades · Opinião: as pessoas estão retomando o espaço público",
+         "Os dois são fatos, porque saíram num jornal",
+         "Os dois são opiniões, porque o texto não traz números"], c:0,
+      e:`<b>Fato</b> é o que dá para conferir: as pessoas <b>estão</b> voltando às ruas.
+         <b>Opinião</b> é o julgamento de que isso é o <b>caminho</b>, a <b>tendência</b> boa.
+         Num título só, cabem os dois.` },
+
+    { hab:"contexto", arte: TXT_REPORT, quatro:true,
+      p:"Em que <b>veículo</b> e em que <b>data</b> a reportagem foi publicada?",
+      o:["Carta Capital · 12 de abril de 2019","Blog Quindim · 18 de junho de 2019",
+         "Agência Brasil · 15 de abril de 2014","Funarte · 30 de outubro de 2023"], c:0,
+      e:`A fonte fica sempre no fim do texto, em letrinha miúda: <b>Carta Capital,
+         12 abr. 2019</b>. Na prova, é lá que se procura — não no meio do texto.` },
+
+    { hab:"objetivo", arte: TXT_NOTICIA, quatro:true,
+      p:"E <b>este</b> texto — qual é o objetivo de produção dele?",
+      o:["Relatar um fato ocorrido recentemente",
+         "Abordar um tema com certo aprofundamento e opiniões",
+         "Expor um ponto de vista e defendê-lo com argumentos",
+         "Ensinar o que são produções artísticas"], c:0,
+      e:`É uma <b>notícia</b>: conta <b>o que aconteceu</b> — 70 jovens se reuniram na Funarte
+         durante três dias. Não aprofunda o tema nem defende um lado.` },
+
+    { hab:"genero_txt", arte: TXT_NOTICIA, quatro:true,
+      p:"Qual informação está na <b>linha fina</b> desta notícia, e não no título?",
+      o:["Que os jovens se reuniram por três dias na Funarte, em Brasília",
+         "Que os jovens querem mais espaços públicos",
+         "Que os jovens querem divulgação de produções artísticas",
+         "Que os jovens querem apoio e diversidade"], c:0,
+      e:`O <b>título</b> diz <b>o que eles querem</b>. A <b>linha fina</b> acrescenta
+         <b>onde e por quanto tempo</b>: três dias, na Funarte, em Brasília.
+         A linha fina completa o título — nunca o repete.` },
+
+    { hab:"genero_txt", quatro:true,
+      p:"Qual é a diferença entre <b>notícia</b> e <b>reportagem</b>?",
+      o:["A notícia relata um fato recente; a reportagem aprofunda um tema e traz opiniões",
+         "A notícia é curta e a reportagem é longa",
+         "A notícia sai em jornal e a reportagem sai na internet",
+         "A notícia tem título e a reportagem tem linha fina"], c:0,
+      e:`O que separa as duas é o <b>objetivo</b>, não o tamanho nem o lugar de publicação.
+         Existe notícia longa e reportagem curta.` }
+  ];
+  quizGenerico(1, "📰 Banca de Jornal", perguntas);
+}
+
+/* ============================================================
+   PARADA 3 — PALANQUE
+   ============================================================ */
+function fasePalanque(){
+  const perguntas = [
+    { hab:"objetivo", arte: TXT_ARTIGO, quatro:true,
+      p:"Qual é o <b>objetivo de produção</b> deste texto?",
+      o:["Expor um ponto de vista sobre um tema e apresentar argumentos para sustentá-lo e defendê-lo",
+         "Relatar um fato relacionado a um espaço público ocorrido recentemente",
+         "Abordar um tema, apresentando informações, sem revelar um ponto de vista",
+         "Ensinar ao leitor o que significa espaço público"], c:0,
+      e:`É um <b>artigo de opinião</b>. Repare que o próprio título já toma um lado:
+         "<b>por que é importante</b> levar seu filho à rua". Notícia nenhuma faz isso.` },
+
+    { hab:"contexto", arte: TXT_ARTIGO, quatro:true,
+      p:"Quem escreveu este texto, e onde ele foi publicado?",
+      o:["Marilia Lopes · Blog Quindim","Monserrat Bevilaqua · Agência Brasil",
+         "Manuel Castells · A sociedade em rede","Loris Malaguzzi · Reggio Emilia"], c:0,
+      e:`<b>Marilia Lopes</b>, no <b>Blog Quindim</b>, em 18 de junho de 2019.
+         <br>Diferente da reportagem da Carta Capital, aqui <b>dá</b> para saber o autor — e
+         num artigo de opinião isso importa, porque o ponto de vista é <b>dele</b>.` },
+
+    { hab:"opiniao", arte: TXT_ARTIGO, quatro:true,
+      p:"Qual destes trechos é um <b>argumento</b> que a autora usa para defender sua tese?",
+      o:["O ambiente se integra à formação do indivíduo: define relações e estimula ações",
+         "Brincar na rua, curtir o parque, passear por aí",
+         "Crianças e ocupação do espaço público",
+         "Blog Quindim, 18 de junho de 2019"], c:0,
+      e:`Argumento é o que <b>sustenta</b> a tese. A tese é "leve seu filho à rua"; o argumento é
+         que <b>o ambiente forma a pessoa</b> — e ela ainda cita Malaguzzi para reforçar.
+         <br>As outras são: exemplos soltos, o título e a fonte.` },
+
+    { hab:"verbete", quatro:true,
+      p:"Qual é o objetivo de um <b>verbete enciclopédico</b>?",
+      o:["Apresentar definições e informações sobre um assunto, com linguagem objetiva e impessoal",
+         "Defender um ponto de vista com argumentos",
+         "Relatar um acontecimento recente",
+         "Reivindicar algo ao poder público"], c:0,
+      e:`Verbete <b>ensina o que uma coisa é</b>. Linguagem <b>objetiva e impessoal</b>:
+         sem "eu acho", sem "na minha opinião". É o oposto do artigo de opinião.` },
+
+    { hab:"verbete", quatro:true,
+      p:"Qual destas é uma enciclopédia digital <b>colaborativa</b>?",
+      o:["Wikipédia","Britannica Escola","Carta Capital","Fala.BR"], c:0,
+      e:`<b>Wikipédia</b> — qualquer pessoa pode editar e fornecer conteúdo, numa página do tipo
+         <i>wiki</i>. A <b>Britannica Escola</b> é enciclopédia digital, mas <b>não</b>
+         colaborativa: só a equipe dela escreve.` },
+
+    { hab:"verbete", quatro:true,
+      enun:`Duas frases sobre o mesmo assunto:<br>
+        <b>I.</b> "Praça é um espaço público aberto, geralmente cercado por ruas, destinado ao
+        convívio e ao lazer."<br>
+        <b>II.</b> "Eu acho que toda praça devia ter mais árvores, porque sombra faz falta."`,
+      p:"Qual delas tem a linguagem de um <b>verbete</b>?",
+      o:["Só a I","Só a II","As duas","Nenhuma das duas"], c:0,
+      e:`A <b>I</b> define, sem aparecer quem escreveu → <b>impessoal e objetiva</b>.
+         A <b>II</b> diz "eu acho" e "devia" → é ponto de vista, coisa de artigo de opinião.` },
+
+    { hab:"genero_txt", quatro:true,
+      p:"Ligue certo: <b>relatar · abordar com aprofundamento · defender · ensinar</b>. Qual sequência corresponde a <b>notícia · reportagem · artigo de opinião · verbete</b>?",
+      o:["relatar · abordar · defender · ensinar","ensinar · defender · abordar · relatar",
+         "abordar · relatar · ensinar · defender","defender · ensinar · relatar · abordar"], c:0, fixo:true,
+      e:`Quatro gêneros, quatro verbos, nesta ordem:
+         <b>notícia = relatar</b> · <b>reportagem = abordar</b> ·
+         <b>artigo de opinião = defender</b> · <b>verbete = ensinar</b>.` }
+  ];
+  quizGenerico(2, "💬 Palanque", perguntas);
+}
+
+/* ============================================================
+   PARADA 4 — MESA DA CARTA
+   ============================================================ */
+function faseCarta(){
+  const perguntas = [
+    { hab:"carta", arte: TXT_CARTA, quatro:true,
+      p:"Que gênero textual é este?",
+      o:["Carta de reivindicação","Artigo de opinião","Notícia","Verbete enciclopédico"], c:0,
+      e:`<b>Carta de reivindicação</b>: alguém <b>pede</b> algo ao poder público e
+         <b>sustenta o pedido</b> com a lei. Tem local e data, destinatário, vocativo e
+         assinatura — nenhum outro gênero tem esse conjunto.` },
+
+    { hab:"vocativo", arte: TXT_CARTA, quatro:true,
+      p:"Qual trecho é o <b>vocativo</b> desta carta?",
+      o:["“Prezado Senhor Subprefeito,”","“À Subprefeitura de Itaquera”",
+         "“São Paulo, 30 de outubro de 2023.”","“Nora dos Santos Silva”"], c:0,
+      e:`<b>Vocativo é o chamamento</b> — a palavra com que você <b>chama</b> quem vai ler.
+         Vem sozinha na linha e termina em vírgula.
+         <br>"À Subprefeitura de Itaquera" é o <b>destinatário</b>: diz <b>a quem</b> se envia.
+         São peças diferentes, em linhas diferentes.` },
+
+    { hab:"pedido", arte: TXT_CARTA, quatro:true,
+      p:"Qual é a <b>reivindicação</b> feita nesta carta?",
+      o:["A criação de uma casa de cultura no Jardim Brasília",
+         "A carta enviada à subprefeitura",
+         "A abertura de mais estabelecimentos comerciais",
+         "O asfaltamento da avenida Aricanduva"], c:0,
+      e:`A reivindicação é <b>o pedido</b> que está dentro da carta — a <b>casa de cultura</b>.
+         <br>⚠️ Se a resposta puder ser "a carta", ela está errada: <b>tudo ali é a carta</b>.
+         A pergunta é qual <b>pedaço</b> dela.` },
+
+    { hab:"carta", arte: TXT_CARTA, quatro:true,
+      p:"Qual é a <b>fórmula de finalização</b>?",
+      o:["“Certos de sua atenção, aguardamos retorno.”",
+         "“Nora dos Santos Silva”",
+         "“Moradora do Jardim Brasília”",
+         "“Cabe lembrar que o artigo 6º…”"], c:0,
+      e:`A fórmula de finalização é a <b>despedida formal</b>, completa.
+         O nome que vem depois já é a <b>assinatura/subscrição</b> — outra peça.` },
+
+    { hab:"carta", quatro:true, fixo:true,
+      p:"Qual é a <b>ordem</b> correta das quatro primeiras peças de uma carta de reivindicação?",
+      o:["local e data · destinatário · assunto · vocativo",
+         "vocativo · local e data · destinatário · assunto",
+         "destinatário · assunto · local e data · vocativo",
+         "assunto · vocativo · destinatário · local e data"], c:0,
+      e:`De cima para baixo: <b>local e data</b> (canto direito) → <b>destinatário</b> →
+         <b>assunto</b> → <b>vocativo</b>. Só então começa o corpo da carta.` },
+
+    { hab:"carta", quatro:true,
+      p:"Numa carta de reivindicação, o que entra no <b>resumo da contextualização</b>?",
+      o:["A explicação do problema: o que falta no bairro e por quê",
+         "O pedido que está sendo feito",
+         "O nome e o cargo de quem assina",
+         "A citação da lei que garante o direito"], c:0,
+      e:`A contextualização <b>apresenta o problema</b>. O pedido é a <b>reivindicação</b>; a lei
+         entra na <b>justificativa</b>; o nome é a <b>assinatura</b>. Cada coisa no seu lugar.` },
+
+    { hab:"pedido", quatro:true,
+      enun:`Um colega escreveu, no quadro de análise da carta:
+        <br>“<b>Reivindicação:</b> a carta.” · “<b>Vocativo:</b> a carta enviada.”`,
+      p:"O que está errado nessas duas respostas?",
+      o:["As duas responderam “a carta” — mas a pergunta pedia qual PARTE da carta é cada peça",
+         "Nada: as duas estão certas",
+         "Só o vocativo está errado",
+         "Faltou apenas colocar as aspas"], c:0,
+      e:`Este é o erro exato que apareceu na sua folha, {NOME}. A pergunta do quadro é
+         <b>"qual trecho é esta peça?"</b>. Responder "a carta" é responder o nome do todo
+         quando a pergunta pediu <b>a parte</b>.` }
+  ];
+  quizGenerico(3, "✉️ Mesa da Carta", perguntas);
+}
+
+/* ============================================================
+   PARADA 5 — SALA DA LEI
+   ============================================================ */
+function faseLei(){
+  const perguntas = [
+    { hab:"comando", quatro:true,
+      enun:`Pergunta da folha: “<b>Quais</b> argumentos são baseados em exemplos?”
+        <br>Resposta dada: “<b>Não</b>, pois não teriam argumentos.”`,
+      p:"Por que essa resposta foi marcada como errada?",
+      o:["Porque a pergunta começa com “Quais” e pede uma lista, não um sim ou não",
+         "Porque a resposta ficou curta demais",
+         "Porque a carta não tem argumentos mesmo",
+         "Porque faltou citar o artigo da Constituição"], c:0,
+      e:`Não foi falta de conteúdo — duas questões depois você acertou o art. 6º.
+         Foi o <b>formato</b>: <b>QUAIS</b> pede lista. Só <b>HÁ…?</b>, <b>É…?</b> e
+         <b>SERIA…?</b> aceitam sim ou não.
+         <br>🔑 Leia <b>a primeira palavra</b> do comando antes de escrever.` },
+
+    { hab:"comando", quatro:true,
+      p:"Qual destes comandos pede que você <b>aponte trechos</b> do texto — uma lista, e não um sim ou não?",
+      o:["“Quais argumentos representam direitos garantidos por lei?”",
+         "“Há citação de leis na carta?”",
+         "“A reivindicação realizada é coletiva?”",
+         "“O texto está isento de problemas de ortografia?”"], c:0,
+      e:`Só o comando com <b>QUAIS</b> pede lista. Os outros três começam com <b>Há…?</b> e
+         <b>É…?</b> — esses aceitam sim ou não (e depois o porquê, se o comando pedir).
+         <br>🔑 A <b>primeira palavra</b> do comando diz o formato da resposta.` },
+
+    { hab:"argumento", arte: TXT_CARTA, quatro:true,
+      p:"Qual trecho da carta é um argumento <b>baseado em exemplo</b>?",
+      o:["Os grupos de dança, bandas, atores, artistas de circo e capoeiristas que já existem no bairro",
+         "O artigo 6º da Constituição Federal",
+         "O artigo 215 da Constituição Federal",
+         "“Certos de sua atenção, aguardamos retorno.”"], c:0,
+      e:`Argumento por <b>exemplo</b> mostra a realidade concreta: <b>já existe gente fazendo
+         cultura ali</b>, sem lugar para isso. Os artigos são argumentos <b>de lei</b>, e a
+         despedida não é argumento nenhum.` },
+
+    { hab:"lei", arte: TXT_CARTA, quatro:true,
+      p:"Qual argumento da carta representa um <b>direito garantido por lei</b>?",
+      o:["O art. 6º da Constituição, que garante o lazer como direito social",
+         "A opinião de todos os moradores do bairro",
+         "A proximidade da avenida Aricanduva",
+         "O número de estabelecimentos comerciais do bairro"], c:0,
+      e:`<b>Art. 6º</b> — e é exatamente o que você já tinha escrito certo na questão 2d da sua
+         folha, {NOME}. <br>"A opinião de todos" não é direito garantido por lei; é opinião.` },
+
+    { hab:"lei", quatro:true,
+      p:"O que o <b>art. 6º</b> da Constituição Federal garante?",
+      o:["Os direitos sociais: educação, saúde, moradia, transporte, lazer, segurança…",
+         "O pleno exercício dos direitos culturais",
+         "O direito de reclamar em ouvidorias",
+         "A criação de subprefeituras nos bairros"], c:0,
+      e:`<b>Art. 6º = direitos sociais</b>, e o <b>lazer</b> está na lista.
+         <br>O <b>pleno exercício dos direitos culturais</b> é o <b>art. 215</b> — o outro
+         artigo do seu caderno. Não troque os dois.` },
+
+    { hab:"lei", quatro:true,
+      p:"E o <b>art. 215</b>?",
+      o:["Garante a todos o pleno exercício dos direitos culturais e o acesso à cultura nacional",
+         "Garante o lazer como direito social",
+         "Cria a plataforma Fala.BR",
+         "Define o que é espaço público"], c:0,
+      e:`<b>Art. 215 = cultura</b>. Uma casa de cultura cabe nos <b>dois</b> artigos: é
+         <b>lazer</b> (art. 6º) <b>e</b> é <b>cultura</b> (art. 215). Citar os dois deixa a
+         carta mais forte.` },
+
+    { hab:"argumento", quatro:true,
+      p:"Por que uma carta de reivindicação <b>cita leis</b>?",
+      o:["Porque um pedido apoiado em lei deixa de ser vontade e passa a ser direito a cumprir",
+         "Porque toda carta formal precisa ter pelo menos uma citação",
+         "Porque a lei deixa a carta mais comprida e mais séria",
+         "Porque sem lei o destinatário não entende o assunto"], c:0,
+      e:`Sem lei, o pedido é <b>desejo</b>. Com o artigo citado, ele vira <b>obrigação do
+         Estado</b> — e aí o destinatário precisa responder.` }
+  ];
+  quizGenerico(4, "⚖️ Sala da Lei", perguntas);
+}
+
+/* ============================================================
+   PARADA 6 — FIO DA MEADA
+   ============================================================ */
+const TRECHO_1 = `<div class="enunciado texto">
+<p style="margin:0">"[…] venho reivindicar a criação de <b>casa de cultura</b> no Jardim Brasília,
+visto que não há qualquer <u>equipamento público</u> para produção, promoção e difusão de bens
+culturais nesta <u>localidade</u>."</p></div>`;
+
+const TRECHO_2 = `<div class="enunciado texto">
+<p style="margin:0">"Em relação a isso, foram feitas <b>análises e discussões com líderes
+comunitários, artistas e ativistas culturais locais de diferentes manifestações artísticas</b>
+[…] sobre o oferecimento de atividades de arte e educação para os moradores do bairro.
+<u>Disso tudo</u>, resultou um levantamento de diferentes atividades culturais já existentes no
+bairro, de forma isolada, e a necessidade de um espaço comunitário."</p></div>`;
+
+const TRECHO_3 = `<div class="enunciado texto">
+<p style="margin:0">"Como é de conhecimento do senhor, o bairro possui inúmeros
+<b>estabelecimentos comerciais</b>, especialmente próximos à avenida Aricanduva, mas há poucas
+opções culturais para a <b>população local</b>."</p></div>`;
+
+function faseFio(){
+  const perguntas = [
+    { hab:"coesao", arte: TRECHO_1, quatro:true,
+      p:"Que expressão, nesse trecho, <b>retoma</b> o termo “casa de cultura”?",
+      o:["“equipamento público”","“Jardim Brasília”","“bens culturais”","“produção e difusão”"], c:0,
+      e:`<b>Equipamento público</b> é uma <b>expressão correlata</b>: aponta para a mesma coisa
+         sem repetir a palavra. É assim que o texto evita ficar dizendo "casa de cultura,
+         casa de cultura, casa de cultura".` },
+
+    { hab:"coesao", arte: TRECHO_1, quatro:true,
+      p:"E o que “<b>nesta localidade</b>” retoma?",
+      o:["“Jardim Brasília”","“casa de cultura”","“bens culturais”","“equipamento público”"], c:0,
+      e:`<b>Localidade</b> é sinônimo de bairro, lugar — retoma o <b>Jardim Brasília</b>.
+         <br>Note que num trecho só há <b>duas</b> retomadas diferentes, cada uma apontando
+         para um termo. Sempre pergunte: <i>esta palavra está no lugar de quê?</i>` },
+
+    { hab:"coesao", arte: TRECHO_2, quatro:true,
+      p:"A expressão “<b>Disso tudo</b>” retoma o quê?",
+      o:["As análises e discussões com líderes comunitários, artistas e ativistas culturais",
+         "O levantamento das atividades culturais do bairro",
+         "A necessidade de um espaço comunitário",
+         "As atividades de arte e educação para os moradores"], c:0,
+      e:`🔑 O truque: leia a frase de <b>antes</b> e pergunte <b>"disso tudo o quê?"</b>.
+         <br>As duas últimas alternativas estão <b>depois</b> do "Disso tudo" — são o
+         <b>resultado</b>, não o que foi retomado. <b>Um pronome sempre aponta para trás.</b>` },
+
+    { hab:"coesao", arte: TRECHO_3, quatro:true,
+      p:"Que expressão pode <b>substituir</b> “população local” sem mudar o sentido?",
+      o:["“os moradores do bairro”","“os estabelecimentos comerciais”",
+         "“a avenida Aricanduva”","“as opções culturais”"], c:0,
+      e:`<b>Moradores do bairro</b> — mesma gente, outras palavras. Também caberia
+         "os habitantes" ou "os cidadãos do bairro".` },
+
+    { hab:"coesao", arte: TRECHO_3, quatro:true,
+      p:"E “estabelecimentos comerciais” pode ser substituído por:",
+      o:["“comércios” ou “lojas”","“moradias”","“praças”","“equipamentos culturais”"], c:0,
+      e:`<b>Comércios</b> ou <b>lojas</b> — sinônimos. Cuidado: "equipamentos culturais" é
+         justamente <b>o que falta</b> no bairro, não o que sobra.` },
+
+    { hab:"pronome", quatro:true,
+      p:"Em “A casa de cultura seria no bairro, e <b>ela</b> atenderia toda a região”, a palavra <b>ela</b> é um pronome:",
+      o:["pessoal","demonstrativo","possessivo","de tratamento"], c:0,
+      e:`<b>Ela</b> está na lista dos pronomes <b>pessoais</b> do caso reto:
+         eu, tu, ele, <b>ela</b>, nós, vós, eles, elas.` },
+
+    { hab:"pronome", quatro:true,
+      p:"E em “<b>Isso</b> mostra que o bairro precisa de um espaço”, a palavra <b>isso</b> é pronome:",
+      o:["demonstrativo","pessoal","possessivo","numeral"], c:0,
+      e:`<b>Demonstrativo</b> — da família este/esta/isto · esse/essa/<b>isso</b> ·
+         aquele/aquela/aquilo. São os campeões de retomar <b>ideias inteiras</b>,
+         não só uma palavra.` },
+
+    { hab:"pronome", quatro:true,
+      p:"“<b>Nosso</b> bairro merece uma casa de cultura.” O pronome <b>nosso</b> é:",
+      o:["possessivo","demonstrativo","pessoal","interrogativo"], c:0,
+      e:`<b>Possessivo</b>: diz <b>de quem é</b>. meu, minha, teu, tua, seu, sua,
+         <b>nosso</b>, nossa, vosso, vossa.` },
+
+    { hab:"sequencial", quatro:true,
+      p:"“O bairro tem muitos comércios; <b>no entanto</b>, tem poucas opções culturais.” O articulador <b>no entanto</b> indica ideia de:",
+      o:["oposição","conclusão","adição","finalidade"], c:0,
+      e:`<b>Oposição</b> — como "mas", "porém", "entretanto", "contudo".
+         <br>Isso é <b>coesão sequencial</b>: ligar ideias. Diferente da <b>coesão
+         referencial</b>, que é retomar termos.` },
+
+    { hab:"sequencial", quatro:true,
+      p:"“Não há espaço para ensaiar; <b>portanto</b>, os grupos se dispersam.” <b>Portanto</b> indica:",
+      o:["conclusão","oposição","alternância","explicação"], c:0,
+      e:`<b>Conclusão</b> — como "logo", "por isso", "assim". O que vem depois é a
+         <b>consequência</b> do que veio antes.` }
+  ];
+  quizGenerico(5, "🔗 Fio da Meada", perguntas);
+}
+
+/* ============================================================
+   PARADA 7 — BALCÃO DA OUVIDORIA
+   ============================================================ */
+function faseOuvidoria(){
+  const perguntas = [
+    { hab:"ouvidoria", quatro:true,
+      p:"O que é uma <b>ouvidoria</b>?",
+      o:["Um espaço aberto que intermedeia o diálogo entre o cidadão e a administração pública ou privada",
+         "Um tribunal que julga quem presta mau serviço",
+         "Um jornal que publica reclamações de moradores",
+         "Uma lei que obriga órgãos públicos a responder"], c:0,
+      e:`Ouvidoria <b>intermedeia o diálogo</b> — ela fica no meio, para avaliar a prestação dos
+         serviços. Não julga, não pune: <b>media e busca solução</b>.` },
+
+    { hab:"ouvidoria", quatro:true,
+      p:"O que é o <b>Fala.BR</b>?",
+      o:["A plataforma do governo federal que liga o cidadão a ouvidorias de órgãos públicos",
+         "O portal onde se consultam as despesas do governo",
+         "Uma rede social criada por prefeituras",
+         "O nome do documento que garante a participação social"], c:0,
+      e:`<b>Fala.BR</b> é a plataforma integrada de ouvidoria e acesso à informação. Ela
+         interliga o cidadão a órgãos de estados, municípios e empresas públicas.` },
+
+    { hab:"ouvidoria", quatro:true,
+      enun:`Uma moradora quer <b>pedir</b> que a prefeitura conserte a iluminação da praça.`,
+      p:"No Fala.BR, qual opção ela deve escolher?",
+      o:["Solicitação","Denúncia","Elogio","Acesso à Informação"], c:0,
+      e:`<b>Solicitação</b> = pedir um serviço.
+         <br><b>Denúncia</b> acusa algo errado · <b>Reclamação</b> aponta serviço ruim ·
+         <b>Sugestão</b> propõe melhoria · <b>Acesso à Informação</b> pede dados.
+         Não são sinônimos.` },
+
+    { hab:"canais", quatro:true,
+      p:"Em qual canal o cidadão consulta <b>despesas, licitações e o quadro funcional</b> de um órgão?",
+      o:["Portal da transparência","Portal de atendimento ao cidadão",
+         "Ouvidoria","Mídias sociais"], c:0,
+      e:`<b>Transparência</b> = ver o que fizeram com o dinheiro público.
+         <br>O <b>portal de atendimento</b> é o outro: é onde se <b>pede</b> serviço e se
+         acompanha processo. Os dois portais fazem coisas diferentes.` },
+
+    { hab:"canais", quatro:true,
+      p:"E para <b>solicitar um serviço</b> e acompanhar o processo em tempo real?",
+      o:["Portal de atendimento ao cidadão","Portal da transparência",
+         "Meios tradicionais","Mídias sociais"], c:0,
+      e:`<b>Portal de atendimento ao cidadão</b>: solicitar serviços, acompanhar trâmites,
+         consultar débitos, pedir certidões. Eu <b>peço</b> aqui; eu <b>vejo</b> na
+         transparência.` },
+
+    { hab:"canais", quatro:true,
+      p:"Quais são os <b>meios tradicionais</b> de atendimento ao cidadão?",
+      o:["Telefone, e-mail, carta, fax e pessoalmente",
+         "Instagram, Facebook e X","Portais e aplicativos do governo",
+         "Ouvidoria e Fala.BR"], c:0,
+      e:`O caderno lista assim mesmo: <b>telefone, e-mail, carta, fax e até pessoalmente</b>.
+         São "tradicionais" por contraste com os canais digitais — mas continuam valendo.` },
+
+    { hab:"canais", quatro:true,
+      p:"Desde quando o cidadão brasileiro tem garantido o direito de <b>participação social</b> nas ações do poder público?",
+      o:["Desde a Constituição federal de 1988","Desde 1968, com Henri Lefebvre",
+         "Desde a criação do Fala.BR","Desde a Lei de Acesso à Informação"], c:0,
+      e:`<b>Constituição federal de 1988</b>. Participação no planejamento, na deliberação, na
+         fiscalização e até nos projetos de lei.
+         <br>1968 é o ano da expressão "direito à cidade" — outro assunto, outro ano.` },
+
+    { hab:"ouvidoria", quatro:true,
+      p:"Qual destes <b>não</b> é um dos quatro papéis do ouvidor?",
+      o:["Juiz das reclamações","Parceiro e mediador",
+         "Certificador da qualidade","Agente de mudança"], c:0,
+      e:`Os quatro são: <b>parceiro e mediador</b>, <b>certificador da qualidade</b>,
+         <b>agregador de valor à organização</b> e <b>agente de mudança</b>.
+         <br>O ouvidor é <b>neutro</b> — ele não julga ninguém.` }
+  ];
+  quizGenerico(6, "📣 Balcão da Ouvidoria", perguntas);
+}
+
+/* ============================================================
+   PARADA 8 — PROVA DA PRAÇA (arcade + prova final)
+   ============================================================ */
+const BANCO = [
+  {hab:"objetivo",  q:"<b>Notícia</b> serve para…", o:["relatar fato recente","defender uma tese","ensinar o que é","reivindicar"]},
+  {hab:"objetivo",  q:"<b>Reportagem</b> serve para…", o:["aprofundar um tema","relatar em uma linha","pedir ao prefeito","definir palavras"]},
+  {hab:"objetivo",  q:"<b>Artigo de opinião</b> serve para…", o:["defender um ponto de vista","relatar fato recente","ensinar o que é","listar leis"]},
+  {hab:"objetivo",  q:"<b>Verbete</b> serve para…", o:["ensinar o que uma coisa é","defender uma tese","relatar um fato","fazer um pedido"]},
+  {hab:"linhafina", q:"O subtítulo abaixo do título é a…", o:["linha fina","legenda","fonte","citação"]},
+  {hab:"verbete",   q:"Enciclopédia digital <b>colaborativa</b>", o:["Wikipédia","Britannica Escola","Carta Capital","Fala.BR"]},
+  {hab:"verbete",   q:"A linguagem do verbete é…", o:["objetiva e impessoal","emotiva e pessoal","informal","poética"]},
+  {hab:"espaco",    q:"Espaço público é… (uso)", o:["coletivo","particular","comercial","familiar"]},
+  {hab:"espaco",    q:"NÃO é espaço público", o:["shopping","praça","parque","biblioteca pública"]},
+  {hab:"espaco",    q:"Museu é espaço público…", o:["fechado","aberto","privado","comercial"]},
+  {hab:"urbanidade",q:"<b>Inóspito</b> quer dizer", o:["não acolhedor","muito antigo","muito grande","barulhento"]},
+  {hab:"urbanidade",q:"<b>Urbanidade</b> é", o:["como o espaço acolhe","o número de prédios","o trânsito","o tamanho da cidade"]},
+  {hab:"cidade",    q:"Criou “direito à cidade”", o:["Henri Lefebvre","Manuel Castells","Loris Malaguzzi","Marilia Lopes"]},
+  {hab:"cidade",    q:"Ano do “direito à cidade”", o:["1968","1988","2010","2019"]},
+  {hab:"carta",     q:"“Prezado Senhor Subprefeito,” é o…", o:["vocativo","destinatário","assunto","assinatura"]},
+  {hab:"carta",     q:"“À Subprefeitura de Itaquera” é o…", o:["destinatário","vocativo","assunto","local"]},
+  {hab:"carta",     q:"“Aguardamos retorno.” é a…", o:["fórmula de finalização","reivindicação","contextualização","assinatura"]},
+  {hab:"pedido",    q:"A <b>reivindicação</b> é…", o:["o pedido feito","a carta inteira","o destinatário","a data"]},
+  {hab:"argumento", q:"Citar o art. 6º é argumento…", o:["de direito por lei","por exemplo","de opinião","de autoridade pessoal"]},
+  {hab:"argumento", q:"Citar os grupos de dança do bairro é argumento…", o:["por exemplo","por lei","por decreto","por opinião"]},
+  {hab:"lei",       q:"O <b>lazer</b> está garantido no art.", o:["6º","215","1º","5º"]},
+  {hab:"lei",       q:"Os <b>direitos culturais</b> estão no art.", o:["215","6º","1988","70"]},
+  {hab:"comando",   q:"Pergunta que começa com <b>QUAIS</b> pede", o:["uma lista","sim ou não","um desenho","uma data"]},
+  {hab:"coesao",    q:"Um pronome sempre aponta para…", o:["trás","frente","fora do texto","o título"]},
+  {hab:"coesao",    q:"“casa de cultura” → “equipamento público” é", o:["expressão correlata","pronome","articulador","antônimo"]},
+  {hab:"pronome",   q:"<b>Ela</b> é pronome", o:["pessoal","demonstrativo","possessivo","relativo"]},
+  {hab:"pronome",   q:"<b>Isso</b> é pronome", o:["demonstrativo","pessoal","possessivo","numeral"]},
+  {hab:"pronome",   q:"<b>Nosso</b> é pronome", o:["possessivo","demonstrativo","pessoal","interrogativo"]},
+  {hab:"sequencial",q:"<b>No entanto</b> indica", o:["oposição","conclusão","adição","causa"]},
+  {hab:"sequencial",q:"<b>Portanto</b> indica", o:["conclusão","oposição","adição","finalidade"]},
+  {hab:"sequencial",q:"<b>Além disso</b> indica", o:["adição","oposição","conclusão","alternância"]},
+  {hab:"ouvidoria", q:"A ouvidoria serve para", o:["intermediar o diálogo","julgar culpados","publicar notícias","criar leis"]},
+  {hab:"ouvidoria", q:"Pedir um serviço no Fala.BR é", o:["Solicitação","Denúncia","Elogio","Reclamação"]},
+  {hab:"canais",    q:"Ver despesas do governo:", o:["portal da transparência","portal de atendimento","ouvidoria","mídias sociais"]},
+  {hab:"canais",    q:"Participação social garantida desde", o:["1988","1968","2014","2019"]},
+  {hab:"contexto",  q:"A fonte do texto fica", o:["no fim, em letra miúda","no título","na linha fina","na primeira linha"]}
+].map(it => ({...it, c:0}));
+
+let arc = null, cronoT = null, cronoPausa = false;
+function pararArcade(){ if(cronoT){ clearInterval(cronoT); cronoT = null; } arc = null; }
+function pausaCrono(v){ cronoPausa = !!v; }
+
+function faseFinal(){
+  app.innerHTML = hud("🏆 Prova da Praça") + `
+    <div class="card centro">
+      <div style="font-size:60px">🏆</div>
+      <h2>Última parada, ${NOME()}</h2>
+      <p>Esta parada tem <b>duas partes</b>, e só a segunda vale estrelas:</p>
+      <div class="enunciado" style="text-align:left">
+        <p><b>1 · Arcade da praça</b> — 60 segundos de perguntas rápidas de todos os
+        assuntos. Vale <b>pontos</b>, não estrelas. Serve para aquecer.</p>
+        <p style="margin:0"><b>2 · Prova final</b> — sem relógio nenhum. É ela que vale as
+        <b>${POR_MISSAO} estrelas</b>, e ela puxa mais do que você errou.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn chama" onclick="iniciaArcade()">⏱️ Começar o arcade</button>
+        <button class="btn uva" onclick="provaFinal()">🎓 Ir direto para a prova final</button>
+      </div>
+    </div>`;
+}
+function bancoOrdenado(){
+  const lista = [];
+  for(const item of BANCO){
+    lista.push(item);
+    const peso = S.erros[item.hab] || 0;
+    for(let k=0; k<Math.min(peso,3); k++) lista.push(item);   /* o que ela erra aparece mais */
+  }
+  return lista;
+}
+function iniciaArcade(){
+  ac(); somClique();
+  arc = { pontos:0, acertos:0, erros:0, combo:0, tempo:60, usadas:[], banco:bancoOrdenado() };
+  sorteiaArcade();
+  cronoT = setInterval(()=>{
+    if(cronoPausa) return;
+    arc.tempo -= 0.1;
+    const b = document.getElementById("cronoBarra");
+    if(b) b.style.width = Math.max(0, arc.tempo/60*100) + "%";
+    if(arc.tempo <= 0) fimArcade();
+  }, 100);
+}
+window.iniciaArcade = iniciaArcade;
+function sorteiaArcade(){
+  /* trava anti-repetição: nunca repete uma das 6 últimas enquanto houver alternativa */
+  let item = null, voltas = 0;
+  do { item = sorteio(arc.banco); voltas++; }
+  while(arc.usadas.includes(item.q) && voltas < 60);
+  arc.usadas.push(item.q);
+  if(arc.usadas.length > 6) arc.usadas.shift();
+  arc.atual = item;
+  desenhaArcade();
+}
+function desenhaArcade(){
+  const it = arc.atual;
+  const ordem = embaralha(it.o.map((_,i)=>i));
+  const opts  = ordem.map(i=>it.o[i]);
+  arc.certa = ordem.indexOf(it.c);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <div class="placar">
+        <span>⭐ ${arc.pontos}</span>
+        <span>✅ ${arc.acertos}</span>
+        <span class="combo">🔥 ${arc.combo}</span>
+      </div>
+      <div class="cronometro"><i id="cronoBarra" style="width:${Math.max(0,arc.tempo/60*100)}%"></i></div>
+      <p class="mini centro">Responda o máximo que conseguir. Errar não tira estrela nenhuma.</p>
+      <div class="conta">${it.q}</div>
+      <div class="opcoes quatro" id="ops">
+        ${opts.map((t,k)=>`<button class="op" onclick="respArcade(${k})">${t}</button>`).join("")}
+      </div>
+      <div class="acoes"><button class="btn sec" onclick="fimArcade()">Parar e ir para a prova →</button></div>
+    </div>`;
+}
+function respArcade(k){
+  if(!arc) return;
+  if(k === arc.certa){
+    arc.combo++; arc.acertos++;
+    const p = 10 + arc.combo*2;
+    arc.pontos += p; S.pontos += p;
+    marcaAcerto(arc.atual.hab);
+    somAcerto(); toast("+" + p + (arc.combo>2 ? " 🔥 combo " + arc.combo : ""));
+  } else {
+    arc.combo = 0; arc.erros++;
+    marcaErro(arc.atual.hab);
+    somErro(); toast("Era " + arc.atual.o[arc.atual.c], true);
+  }
+  salvar();
+  sorteiaArcade();
+}
+window.respArcade = respArcade;
+function fimArcade(){
+  if(cronoT){ clearInterval(cronoT); cronoT = null; }
+  const r = arc || {pontos:0,acertos:0,erros:0};
+  arc = null;
+  somVitoria(); salvar();
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">⏱️</div>
+      <h2>Arcade encerrado!</h2>
+      <p>Você acertou <b>${r.acertos}</b> e ganhou <b>${r.pontos} pontos</b>.</p>
+      <p class="mini">Agora vem o que vale as estrelas — <b>sem relógio</b>.</p>
+      <div class="acoes">
+        <button class="btn" onclick="provaFinal()">🎓 Fazer a prova final</button>
+        <button class="btn sec" onclick="iniciaArcade()">🔁 Jogar o arcade de novo</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+window.fimArcade = fimArcade;
+
+/* --- prova final: cobre as sete paradas, puxando o que ela mais errou --- */
+const FINAL = [
+  { hab:"objetivo", arte: TXT_REPORT, quatro:true,
+    p:"Qual é o objetivo de produção deste texto?",
+    o:["Abordar um tema, com informações, com certo aprofundamento — e opiniões",
+       "Relatar um fato ocorrido recentemente",
+       "Expor um ponto de vista e defendê-lo com argumentos",
+       "Ensinar ao leitor o que é espaço público"], c:0,
+    e:`Reportagem: tema aprofundado, com dados, exemplos e a voz de um sociólogo.` },
+
+  { hab:"linhafina", quatro:true,
+    p:"O que é a <b>linha fina</b> de um texto jornalístico?",
+    o:["O subtítulo, abaixo do título, que antecipa o assunto",
+       "A legenda que explica a fotografia",
+       "A fonte, no fim do texto","A primeira frase do primeiro parágrafo"], c:0,
+    e:`É o subtítulo que <b>adianta</b> o que vem. Título dá o fato; linha fina completa.` },
+
+  { hab:"fatopiniao", quatro:true,
+    enun:`Título: "A retomada do espaço público como <b>caminho</b> para as cidades".`,
+    p:"A palavra <b>caminho</b>, no título, indica:",
+    o:["uma opinião: o autor acha que essa retomada leva a algo bom",
+       "um fato que pode ser conferido","o nome de uma rua da reportagem",
+       "a fonte de onde o texto foi tirado"], c:0,
+    e:`"Caminho" é <b>julgamento</b>: alguém decidiu que isso leva a um lugar melhor.
+       Fato é o que dá para conferir; isto é opinião.` },
+
+  { hab:"verbete", quatro:true,
+    p:"Que gênero usa linguagem <b>objetiva e impessoal</b> para apresentar definições?",
+    o:["Verbete enciclopédico","Artigo de opinião","Carta de reivindicação","Notícia"], c:0,
+    e:`<b>Verbete</b>. Impessoal quer dizer: o texto não fala de quem escreveu.` },
+
+  { hab:"genero_txt", quatro:true,
+    p:"Um texto que <b>relata</b> um fato ocorrido recentemente é:",
+    o:["uma notícia","uma reportagem","um artigo de opinião","um verbete"], c:0,
+    e:`<b>Notícia = relatar</b>. Reportagem aprofunda; artigo defende; verbete ensina.` },
+
+  { hab:"espaco", quatro:true,
+    p:"Quais são as quatro características de um espaço público?",
+    o:["acessível, gratuito, sem fins lucrativos e de uso coletivo",
+       "grande, movimentado, iluminado e seguro",
+       "aberto, cercado, arborizado e limpo",
+       "municipal, estadual, federal e privado"], c:0,
+    e:`São essas quatro, e é assim que o caderno define. Shopping falha em duas.` },
+
+  { hab:"urbanidade", quatro:true,
+    p:"“As grandes cidades apresentam baixa urbanidade, com lugares <b>inóspitos</b>.” Inóspito é:",
+    o:["não acolhedor, o contrário de hospitaleiro","muito antigo",
+       "cheio demais","longe do centro"], c:0,
+    e:`<b>In-</b> na frente de <b>hospitaleiro</b> vira do avesso: não acolhedor.` },
+
+  { hab:"cidade", quatro:true,
+    p:"O “direito à cidade” foi criado por Henri Lefebvre em que ano?",
+    o:["1968","1988","2010","2019"], c:0,
+    e:`<b>1968</b>. Não confunda com <b>1988</b>, o ano da Constituição.` },
+
+  { hab:"vocativo", arte: TXT_CARTA, quatro:true,
+    p:"Qual é o <b>vocativo</b> desta carta?",
+    o:["“Prezado Senhor Subprefeito,”","“À Subprefeitura de Itaquera”",
+       "“Nora dos Santos Silva”","“São Paulo, 30 de outubro de 2023.”"], c:0,
+    e:`Vocativo é o <b>chamamento</b>. Destinatário é <b>a quem</b> se envia — outra linha,
+       outra peça.` },
+
+  { hab:"pedido", arte: TXT_CARTA, quatro:true,
+    p:"Qual é a <b>reivindicação</b> desta carta?",
+    o:["A criação de uma casa de cultura no Jardim Brasília","A carta enviada à subprefeitura",
+       "A resposta do subprefeito","O respeito ao artigo 6º"], c:0,
+    e:`É <b>o pedido</b>. Se a resposta puder ser "a carta", está errada — tudo ali é a carta.` },
+
+  { hab:"carta", quatro:true, fixo:true,
+    p:"Ordem correta das quatro primeiras peças da carta:",
+    o:["local e data · destinatário · assunto · vocativo",
+       "destinatário · local e data · vocativo · assunto",
+       "vocativo · assunto · local e data · destinatário",
+       "assunto · destinatário · vocativo · local e data"], c:0,
+    e:`Local e data → destinatário → assunto → vocativo. Só então o corpo.` },
+
+  { hab:"argumento", quatro:true,
+    p:"“No bairro já há bandas, capoeiristas e grupos de dança, mas nenhum lugar para ensaiar.” Este é um argumento:",
+    o:["baseado em exemplo","baseado em direito garantido por lei",
+       "baseado em opinião pessoal","de despedida formal"], c:0,
+    e:`Caso concreto → argumento <b>por exemplo</b>. Se citasse um artigo, seria por lei.` },
+
+  { hab:"lei", quatro:true,
+    p:"Qual artigo da Constituição garante o <b>lazer</b> como direito social?",
+    o:["Art. 6º","Art. 215","Art. 1º","Art. 1988"], c:0,
+    e:`<b>Art. 6º</b> = direitos sociais, e o lazer está na lista.
+       <b>Art. 215</b> = direitos culturais.` },
+
+  { hab:"comando", quatro:true,
+    enun:`Comando: “<b>Quais</b> argumentos são baseados em exemplos?”`,
+    p:"Qual resposta tem o <b>formato</b> certo?",
+    o:["“Os grupos de dança, as bandas e os capoeiristas que já existem no bairro.”",
+       "“Não, pois não teriam argumentos.”","“Sim, há argumentos.”","“Porque a lei garante.”"], c:0,
+    e:`<b>QUAIS</b> pede <b>lista</b>. Sim/não só serve para comandos que começam com
+       <b>Há…?</b> ou <b>É…?</b>` },
+
+  { hab:"coesao", arte: TRECHO_2, quatro:true,
+    p:"“Disso tudo” retoma:",
+    o:["As análises e discussões com líderes comunitários, artistas e ativistas",
+       "O levantamento das atividades culturais","A necessidade de um espaço comunitário",
+       "Os moradores do bairro"], c:0,
+    e:`Pronome aponta para <b>trás</b>. As outras opções vêm <b>depois</b> — são resultado,
+       não referente.` },
+
+  { hab:"coesao", quatro:true,
+    p:"Em “A casa de cultura ficaria no bairro; <b>o equipamento</b> atenderia toda a região”, a expressão destacada é:",
+    o:["uma retomada por expressão correlata","um articulador de oposição",
+       "um pronome possessivo","um exemplo"], c:0,
+    e:`Aponta para a mesma coisa com outras palavras → <b>coesão referencial</b> por
+       expressão correlata.` },
+
+  { hab:"pronome", quatro:true,
+    p:"Classifique, nesta ordem: “<b>ela</b>”, “<b>isso</b>”, “<b>nosso</b>”.",
+    o:["pessoal · demonstrativo · possessivo","possessivo · pessoal · demonstrativo",
+       "demonstrativo · possessivo · pessoal","pessoal · possessivo · demonstrativo"], c:0, fixo:true,
+    e:`<b>ela</b> pessoal · <b>isso</b> demonstrativo · <b>nosso</b> possessivo.` },
+
+  { hab:"sequencial", quatro:true,
+    p:"“O bairro tem comércios; <b>no entanto</b>, faltam opções culturais.” O articulador indica:",
+    o:["oposição","conclusão","adição","finalidade"], c:0,
+    e:`<b>Oposição</b>, como "mas" e "porém". Isso é coesão <b>sequencial</b>, não referencial.` },
+
+  { hab:"ouvidoria", quatro:true,
+    p:"No Fala.BR, para <b>pedir um serviço</b> ao poder público, escolhe-se:",
+    o:["Solicitação","Denúncia","Elogio","Acesso à Informação"], c:0,
+    e:`<b>Solicitação</b> pede serviço · Denúncia acusa · Reclamação aponta serviço ruim ·
+       Sugestão propõe melhoria.` },
+
+  { hab:"canais", quatro:true,
+    p:"Onde o cidadão consulta despesas, licitações e quadro funcional de um órgão público?",
+    o:["Portal da transparência","Portal de atendimento ao cidadão","Ouvidoria","Fala.BR"], c:0,
+    e:`<b>Transparência</b> = ver o dinheiro. <b>Atendimento</b> = pedir serviço.` },
+
+  { hab:"canais", quatro:true,
+    p:"A participação social do cidadão nas ações do poder público é garantida:",
+    o:["pela Constituição federal de 1988","pela criação do Fala.BR",
+       "pelo art. 215 apenas","desde 1968"], c:0,
+    e:`<b>Constituição de 1988</b>: planejamento, deliberação, fiscalização e projetos de lei.` }
+];
+function provaFinal(){
+  pararArcade();
+  const pool = FINAL.map(q => ({q, peso: 1 + Math.min(S.erros[q.hab]||0, 3)}));
+  /* sorteio sem repetir, com peso: quem ela erra mais tem mais chance de ser puxada */
+  const escolhidas = [];
+  const resto = pool.slice();
+  while(escolhidas.length < 12 && resto.length){
+    const soma = resto.reduce((a,b)=>a+b.peso,0);
+    let r = Math.random()*soma, k = 0;
+    while(k < resto.length-1 && r > resto[k].peso){ r -= resto[k].peso; k++; }
+    escolhidas.push(resto[k].q);
+    resto.splice(k,1);
+  }
+  quizGenerico(N_MISSOES-1, "🎓 Prova Final", embaralha(escolhidas), 0, 0);
+}
+window.provaFinal = provaFinal;
+
+/* ============================================================
+   DIPLOMA
+   ============================================================ */
+function telaDiploma(){
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(3);
+  app.innerHTML = hud() + `
+    <div class="diploma">
+      <div class="selo">🏅</div>
+      <h2>${g("PRONTA","PRONTO")} PARA A PROVA<br>DE LÍNGUA PORTUGUESA</h2>
+      <p>A Voz da Praça certifica que</p>
+      <div class="nome">${NOME()}</div>
+      <p>percorreu as <b>${N_MISSOES-1} paradas</b> da unidade: espaço público e urbanidade,
+      notícia e reportagem, artigo de opinião e verbete, carta de reivindicação, argumentos e
+      leis, coesão referencial e canais de participação do cidadão.</p>
+      <p class="fila-estrelas">${"⭐".repeat(totalEstrelas)}</p>
+      <p><b>${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas</b> · <b>${S.pontos} pontos</b></p>
+      <p style="margin-top:18px;font-style:italic">Língua Portuguesa · 6º ano · Direito à cidade</p>
+    </div>
+    <div class="acoes">
+      <button class="btn" onclick="irMapa()">🗺️ Voltar à praça</button>
+      <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      <button class="btn uva" onclick="window.print()">🖨️ Imprimir diploma</button>
+    </div>
+    ${fracas.length?`<div class="card centro">
+      <p class="mini">Ainda escorregando em: <b>${fracas.map(h=>NOME_HAB[h]||h).join(" · ")}</b>.
+      Refaça a <b>Prova da Praça</b> — esses assuntos vão aparecer bastante.</p></div>`:``}
+    ${totalEstrelas<TOTAL_ESTRELAS?`<div class="card centro">
+      <p class="mini">Faltam <b>${TOTAL_ESTRELAS-totalEstrelas}</b> estrelas para a nota máxima, ${NOME()}.
+      Dá para refazer qualquer parada pelo mapa — e as estrelas só sobem!</p></div>`:`
+    <div class="card destaque centro"><div style="font-size:50px">👑</div>
+      <p><b>PERFEIÇÃO, ${NOME()}!</b> Todas as <b>${TOTAL_ESTRELAS} estrelas</b>.
+      Pode ir para a prova de cabeça erguida.</p></div>`}`;
+}
+
+/* ============================================================
+   INÍCIO
+   ============================================================ */
+if(carregar()){
+  S.cena = S.missoes.some(Boolean) ? "mapa" : "inicio";
+} else {
+  S.cena = "nome";
+}
+render();
+
+</script>
+</body>
+</html>
