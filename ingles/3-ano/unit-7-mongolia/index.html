@@ -320,6 +320,10 @@ table.grade2 td{background:var(--fundo2)}
   .card{padding:16px 14px}
   .wrap{padding:12px 10px 50px}
 }
+/* foco de teclado visível — o anel padrão some contra o fundo escuro em alguns navegadores */
+:focus-visible{outline:3px solid var(--ouro);outline-offset:3px;border-radius:8px}
+.missao:focus-visible,.op:focus-visible,.pal:focus-visible,.pc:focus-visible{outline-offset:2px}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media print{ body{background:#fff} #estrelas,.hud,.acoes,.card:not(.diploma){display:none!important} }
 </style>
