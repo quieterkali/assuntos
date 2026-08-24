@@ -1,0 +1,2322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Next Station: Mongolia</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%90%B4%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#05121f; --bg2:#0a1e30; --panel:#123049; --panel2:#1a4260;
+  --ink:#f0f7ff; --muted:#93b4cc;
+  --ceu:#38bdf8; --estepe:#a3e635; --menta:#4ade80; --uva:#818cf8;
+  --turbo:#fbbf24; --chama:#fb923c; --vermelho:#fb7185; --ouro:#ffd166;
+  --borda:#1e4b6b; --borda2:#2a6188; --fundo2:#071827; --fundo3:#102c42; --fundo4:#16374f;
+  --tintaBtn:#3b2606; --sombraBtn:#8a5a08;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1000px 700px at 12% -12%, #0369a1 0%, transparent 55%),
+    radial-gradient(900px 600px at 90% 2%, #065f46 0%, transparent 50%),
+    radial-gradient(900px 700px at 50% 116%, #7c2d12 0%, transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px; line-height:1.5;
+  overflow-x:hidden;
+}
+#estrelas{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:16px 14px 60px}
+
+h1,h2,h3{margin:0 0 10px;line-height:1.15}
+h1{font-size:clamp(28px,7vw,46px)}
+h2{font-size:clamp(22px,5vw,32px)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;font-weight:bold;
+  background:linear-gradient(135deg,var(--turbo),#d97706);color:var(--tintaBtn);
+  box-shadow:0 6px 0 var(--sombraBtn), 0 12px 24px rgba(0,0,0,.45);
+  transition:transform .08s, box-shadow .08s; font-size:1.05em;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--sombraBtn),0 6px 14px rgba(0,0,0,.35)}
+.btn.sec{background:linear-gradient(135deg,#1e4b6b,#0a1e30);color:var(--ink);box-shadow:0 6px 0 #071827,0 10px 20px rgba(0,0,0,.35)}
+.btn.ceu{background:linear-gradient(135deg,var(--ceu),#0284c7);color:#04202f;box-shadow:0 6px 0 #075985,0 12px 24px rgba(0,0,0,.35)}
+.btn.chama{background:linear-gradient(135deg,var(--chama),#ea580c);color:#3b1704;box-shadow:0 6px 0 #9a3412,0 12px 24px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ---------- HUD ---------- */
+.hud{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:rgba(18,48,73,.88);border:2px solid var(--borda);border-radius:var(--r);
+  padding:10px 14px;margin-bottom:14px;backdrop-filter:blur(6px);
+}
+.hud .nome{font-weight:bold;color:var(--turbo)}
+.chip{
+  background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;
+  padding:9px 14px;font-size:.9em;font-weight:bold;white-space:nowrap;color:var(--ink);
+  line-height:1.2;min-height:42px;display:inline-flex;align-items:center
+}
+.chip.pts{color:var(--ouro);border-color:#8a6a13}
+.hud .espaco{flex:1}
+
+/* ---------- cartões ---------- */
+.card{
+  background:linear-gradient(160deg,rgba(26,66,96,.92),rgba(5,18,31,.94));
+  border:2px solid var(--borda);border-radius:var(--r);padding:20px;margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45)
+}
+.card.destaque{border-color:var(--ouro);box-shadow:0 0 0 3px rgba(255,209,102,.18),0 10px 30px rgba(0,0,0,.5)}
+
+/* ---------- mapa ---------- */
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.missao{
+  position:relative;text-align:left;width:100%;
+  background:linear-gradient(160deg,var(--fundo4),#061524);
+  border:2px solid var(--borda2);border-radius:var(--r);padding:16px 16px 14px;
+  color:var(--ink);transition:transform .12s,border-color .12s;
+}
+.missao:not(.trancada):hover{transform:translateY(-4px);border-color:var(--turbo)}
+.missao.trancada{opacity:.5;filter:grayscale(.6);cursor:not-allowed}
+.missao.feita{border-color:var(--menta)}
+.missao .num{
+  position:absolute;top:-12px;left:14px;background:var(--turbo);color:var(--tintaBtn);
+  width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  font-weight:bold;box-shadow:0 3px 0 var(--sombraBtn)
+}
+.missao.feita .num{background:var(--menta);color:#04231a;box-shadow:0 3px 0 #0f6b4a}
+.missao .ico{font-size:34px;line-height:1;margin:6px 0 6px}
+.missao .tit{font-weight:bold;font-size:1.08em;margin-bottom:3px}
+.missao .sub{font-size:.85em;color:var(--muted)}
+.missao .estrelas{margin-top:8px;font-size:1.05em;letter-spacing:2px}
+
+/* ---------- quiz ---------- */
+.pergunta{font-size:1.14em;font-weight:bold;margin-bottom:14px}
+.enunciado{
+  background:var(--fundo2);border-left:6px solid var(--ceu);border-radius:12px;
+  padding:14px 16px;margin-bottom:14px;font-size:1.06em;line-height:1.55
+}
+.conta{
+  font-size:clamp(22px,5.8vw,36px);font-weight:bold;text-align:center;
+  margin:6px 0 16px;color:var(--ouro);overflow-wrap:anywhere;line-height:1.3
+}
+.opcoes{display:grid;gap:10px}
+.opcoes.grade{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.opcoes.quatro{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.op{
+  text-align:left;background:var(--fundo3);border:2px solid var(--borda);border-radius:14px;
+  padding:13px 16px;color:var(--ink);transition:border-color .1s,background .1s,transform .1s;
+  display:flex;gap:10px;align-items:center;min-height:52px
+}
+.opcoes.grade .op{justify-content:center;font-size:1.15em;font-weight:bold;padding:16px 10px;text-align:center}
+.opcoes.quatro .op{justify-content:center;font-size:1.05em;font-weight:bold;padding:16px 10px;text-align:center}
+.op:not(:disabled):hover{border-color:var(--turbo);transform:translateY(-2px)}
+.op .letra{
+  flex:0 0 26px;height:26px;border-radius:8px;background:var(--borda2);color:#fff;
+  display:grid;place-items:center;font-weight:bold;font-size:.85em
+}
+.op.certa{border-color:var(--menta);background:#0f4a36}
+.op.certa .letra{background:var(--menta);color:#04231a}
+.op.errada{border-color:var(--vermelho);background:#4b1524}
+.op.errada .letra{background:var(--vermelho);color:#3d0a16}
+.op:disabled{cursor:default}
+
+.feedback{margin-top:14px;border-radius:14px;padding:14px 16px;border-left:6px solid;display:none}
+.feedback.show{display:block;animation:sobe .25s}
+.feedback.bom{background:rgba(74,222,128,.15);border-color:var(--menta)}
+.feedback.ruim{background:rgba(251,113,133,.15);border-color:var(--vermelho)}
+.feedback .tt{font-weight:bold;margin-bottom:5px;font-size:1.05em}
+@keyframes sobe{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.progresso{height:9px;background:var(--fundo2);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.progresso i{display:block;height:100%;background:linear-gradient(90deg,var(--ceu),var(--estepe));transition:width .3s}
+
+/* ---------- foto de vocabulário (emoji grande) ---------- */
+.foto{
+  text-align:center;background:var(--fundo2);border:2px solid var(--borda);border-radius:16px;
+  padding:16px 10px 12px;margin:2px 0 14px
+}
+.foto .big{font-size:clamp(60px,17vw,104px);line-height:1.1;display:block}
+.foto .leg{display:block;font-size:.86em;color:var(--muted);font-weight:bold;
+  letter-spacing:.1em;text-transform:uppercase;margin-top:8px}
+
+/* ---------- frase com lacunas (travessia do rio) ---------- */
+.frase{
+  background:#f6fbff;color:#062033;border-radius:14px;padding:18px 16px;margin:10px 0 16px;
+  font-size:clamp(18px,4.6vw,25px);line-height:1.7;text-align:center;
+  border:3px solid var(--ceu);box-shadow:0 8px 24px rgba(0,0,0,.45)
+}
+.frase .foco{
+  background:var(--turbo);color:var(--tintaBtn);border-radius:8px;padding:1px 8px;font-weight:bold;
+  box-shadow:0 3px 0 var(--sombraBtn)
+}
+.frase .lac{
+  display:inline-block;min-width:74px;border-bottom:4px solid var(--uva);
+  color:#4338ca;font-weight:bold;padding:0 8px;cursor:pointer;border-radius:6px 6px 0 0
+}
+.frase .lac.vazia{color:#93b4cc}
+.frase .lac.pronta{background:rgba(129,140,248,.22)}
+.frase .lac.alvo{background:rgba(251,191,36,.35);border-bottom-color:var(--turbo)}
+.frase .lac.certa{background:rgba(74,222,128,.32);border-bottom-color:#16a34a;color:#14532d}
+.frase .lac.errada{background:rgba(251,113,133,.32);border-bottom-color:#dc2626;color:#991b1b}
+
+/* ---------- ponte do rio ---------- */
+.ponte{display:block;margin:6px auto 2px;max-width:420px;width:100%;height:auto}
+.ponte .agua{fill:#0b3a55}
+.ponte .pilar{fill:#1e4b6b}
+.ponte .tabua{fill:var(--borda2);stroke:#051220;stroke-width:2}
+.ponte .tabua.posta{fill:var(--estepe)}
+.ponte .bicho{font-size:22px}
+.contadorTabuas{text-align:center;font-weight:bold;color:var(--turbo);margin:4px 0 12px;font-size:1.05em}
+
+/* ---------- montar a frase (word order) ---------- */
+.montada{
+  background:#f6fbff;color:#062033;border-radius:14px;padding:16px 12px;margin:10px 0 12px;
+  min-height:76px;border:3px solid var(--ouro);box-shadow:0 8px 24px rgba(0,0,0,.45);
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center
+}
+.montada .vazio{color:#7b96ab;font-size:.72em;font-weight:bold}
+.pc{
+  background:var(--ceu);color:#04202f;border-radius:10px;padding:8px 14px;font-weight:bold;
+  min-height:42px;display:inline-flex;align-items:center;font-size:clamp(15px,4vw,20px)
+}
+.pc.certo{background:#86efac;color:#14532d}
+.pc.errado{background:#fda4af;color:#7f1d1d}
+.bancoPal{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:6px 0 4px}
+.pal{
+  background:var(--fundo3);border:2px solid var(--borda2);border-radius:10px;padding:10px 16px;
+  color:var(--ink);font-weight:bold;min-height:42px;font-size:1.05em;
+  transition:transform .1s,border-color .1s
+}
+.pal:not(.usada):hover{border-color:var(--turbo);transform:translateY(-2px)}
+.pal.usada{opacity:.26;pointer-events:none}
+
+/* ---------- tabelas ---------- */
+.rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
+table.grade2{border-collapse:collapse;margin:0 auto;font-size:.93em}
+table.grade2 th,table.grade2 td{border:2px solid var(--borda2);padding:8px 11px;text-align:center}
+table.grade2 th{background:var(--fundo4);color:var(--turbo);font-size:.82em}
+table.grade2 th.linha{background:var(--fundo3);color:var(--ink);text-align:left;font-weight:normal}
+table.grade2 td{background:var(--fundo2)}
+
+/* ---------- arcade ---------- */
+.cronometro{
+  height:16px;background:var(--fundo2);border-radius:99px;overflow:hidden;margin:10px 0 4px;
+  border:2px solid var(--borda)
+}
+.cronometro i{display:block;height:100%;background:linear-gradient(90deg,var(--menta),var(--ouro),var(--vermelho));transition:width .2s linear}
+.placar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.placar span{background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;padding:4px 14px;font-weight:bold}
+.combo{color:var(--chama)}
+
+/* ---------- aula ---------- */
+.aula{
+  background:#fbfdff;
+  background-image:linear-gradient(rgba(56,189,248,.10) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(56,189,248,.10) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:#0b2436;border:3px solid var(--ceu);border-radius:var(--r);
+  padding:24px 22px 20px;margin-bottom:14px;box-shadow:0 14px 40px rgba(0,0,0,.55)
+}
+.aula b{color:#0369a1}
+.aula .guia{
+  display:flex;gap:10px;align-items:center;font-size:.86em;color:#3d5a6c;
+  border-bottom:2px dashed #cfe3ef;padding-bottom:10px;margin-bottom:16px
+}
+.aula .guia .robo{font-size:30px;line-height:1}
+.aula .ico{font-size:60px;line-height:1;text-align:center;margin-bottom:6px}
+.aula h2{color:#0369a1;text-align:center;font-size:clamp(21px,5.2vw,30px)}
+.aula p{font-size:1.06em;margin:0 0 12px}
+.aula .chave{
+  background:#fff;border-left:6px solid #d97706;border-radius:10px;
+  padding:12px 14px;margin-top:14px;font-size:1.03em
+}
+.aula .chave .rot{display:block;font-weight:bold;color:#b45309;font-size:.82em;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.aula .lista{margin:10px 0 0;padding-left:20px}
+.aula .lista li{margin-bottom:6px}
+.aula .destaque{
+  text-align:center;font-size:clamp(18px,4.6vw,26px);font-weight:bold;color:#0369a1;
+  background:#fff;border-radius:12px;padding:12px 10px;margin:12px 0;
+  overflow-wrap:anywhere;line-height:1.35
+}
+.aula .errado{color:#b91c1c;text-decoration:line-through}
+.aula .certo{color:#15803d}
+.aula table.mini-tab{border-collapse:collapse;margin:10px auto;font-size:.92em}
+.aula table.mini-tab th,.aula table.mini-tab td{border:1px solid #cfe3ef;padding:6px 10px;text-align:center}
+.aula table.mini-tab th{background:#e0f2fe;color:#0369a1}
+.aula .par{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0 4px
+}
+.aula .par span{
+  background:#fff;border:2px solid #cfe3ef;border-radius:10px;padding:7px 12px;
+  font-weight:bold;font-size:.95em
+}
+.pontos{display:flex;gap:7px;justify-content:center;margin:18px 0 4px;flex-wrap:wrap}
+.pontos i{width:9px;height:9px;border-radius:50%;background:#cfe3ef;display:block}
+.pontos i.aqui{background:#0284c7;transform:scale(1.35)}
+.pontos i.vista{background:#0284c7;opacity:.45}
+.btn.aula{background:linear-gradient(135deg,#0284c7,var(--ceu));color:#04202f;box-shadow:0 6px 0 #075985,0 10px 20px rgba(0,0,0,.35)}
+.btn.aula.fraco{background:linear-gradient(135deg,#8ba7ba,#647d8e);box-shadow:0 6px 0 #3c4d59,0 10px 20px rgba(0,0,0,.3)}
+
+/* ---------- diversos ---------- */
+.centro{text-align:center}
+.mini{font-size:.88em;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{background:var(--fundo2);border:1px solid var(--borda);border-radius:999px;padding:3px 11px;font-size:.8em;color:var(--muted)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.esconde{display:none!important}
+.campo{
+  width:100%;max-width:340px;padding:14px 18px;border-radius:14px;border:3px solid var(--turbo);
+  background:var(--fundo2);color:var(--ink);font-size:1.15em;font-family:inherit;text-align:center;margin:6px 0 4px
+}
+.campo:focus{outline:none;border-color:var(--ceu);box-shadow:0 0 0 4px rgba(251,191,36,.2)}
+
+/* colinha */
+.colinha{position:fixed;inset:0;background:rgba(3,12,20,.98);z-index:50;overflow-y:auto;padding:20px 14px 60px;display:none}
+.colinha.aberta{display:block}
+.colinha .in{max-width:760px;margin:0 auto}
+.colinha h3{color:var(--ouro);margin-top:26px;border-bottom:2px solid var(--borda);padding-bottom:6px}
+.colinha ul,.colinha ol{padding-left:20px}
+.colinha li{margin-bottom:7px}
+.colinha b{color:var(--ceu)}
+.colinha .ex{background:var(--fundo2);border-left:5px solid var(--estepe);border-radius:10px;padding:10px 14px;margin:10px 0}
+.fechar{position:sticky;top:0;float:right;background:var(--turbo);color:var(--tintaBtn);border-radius:999px;
+  width:44px;height:44px;font-size:22px;font-weight:bold;box-shadow:0 4px 0 var(--sombraBtn);z-index:2}
+
+/* diploma */
+.diploma{
+  background:linear-gradient(160deg,#fdfeff,#eef7ff);color:#0b2436;border-radius:20px;
+  padding:28px 22px;text-align:center;border:8px double var(--turbo);box-shadow:0 20px 50px rgba(0,0,0,.6)
+}
+.diploma h2{color:#0369a1;font-size:clamp(24px,6vw,36px)}
+.diploma .nome{
+  font-size:clamp(24px,6.4vw,40px);font-weight:bold;color:#b45309;
+  border-bottom:3px solid var(--ceu);display:inline-block;padding:4px 22px;margin:10px 0 14px;
+  overflow-wrap:anywhere;max-width:100%
+}
+.diploma .selo{font-size:56px}
+.fila-estrelas{font-size:clamp(15px,4.4vw,24px);line-height:1.7;letter-spacing:1px;
+  overflow-wrap:anywhere;word-break:break-word;max-width:100%;margin:12px 0}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;top:80px;transform:translateX(-50%);
+  background:var(--menta);color:#04231a;font-weight:bold;padding:10px 22px;border-radius:999px;
+  z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transition:opacity .25s,top .25s;
+  pointer-events:none;max-width:90vw;text-align:center
+}
+.toast.show{opacity:1;top:100px}
+.toast.mau{background:var(--vermelho);color:#3d0a16}
+
+@media(max-width:520px){
+  body{font-size:16px}
+  .card{padding:16px 14px}
+  .wrap{padding:12px 10px 50px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{ body{background:#fff} #estrelas,.hud,.acoes,.card:not(.diploma){display:none!important} }
+</style>
+</head>
+<body>
+<canvas id="estrelas"></canvas>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<div class="colinha" id="colinha">
+  <div class="in">
+    <button class="fechar" onclick="fecharColinha()">×</button>
+    <h2 style="color:var(--ouro)">📖 Colinha da Unit 7</h2>
+    <p class="mini">Tudo o que cai na prova de <b>25 de agosto</b> — Unit 7 (Mongolia),
+    Lessons 1, 2, 5 e 6. Pode abrir a qualquer hora, inclusive no meio do arcade,
+    que o cronômetro para.</p>
+
+    <h3>🏠 Lesson 1 · HOMES — onde se mora</h3>
+    <div class="rolagem">
+      <table class="grade2">
+        <tr><th>English</th><th>Português</th><th>Artigo</th></tr>
+        <tr><th class="linha">house</th><td>casa</td><td>a house</td></tr>
+        <tr><th class="linha">apartment</th><td>apartamento</td><td><b>an</b> apartment</td></tr>
+        <tr><th class="linha">castle</th><td>castelo</td><td>a castle</td></tr>
+        <tr><th class="linha">trailer</th><td>trailer (casa com rodas)</td><td>a trailer</td></tr>
+        <tr><th class="linha">cave</th><td>caverna</td><td>a cave</td></tr>
+        <tr><th class="linha">boat</th><td>barco</td><td>a boat</td></tr>
+      </table>
+    </div>
+
+    <h3>🔤 A ou AN?</h3>
+    <p>Toda moradia no singular pede <b>a</b> ou <b>an</b> na frente. Quem manda é o
+    <b>som</b> da primeira letra:</p>
+    <div class="ex">
+      <p style="margin:0"><b>a</b> — antes de som de consoante: <b>a</b> house · <b>a</b> castle ·
+      <b>a</b> trailer · <b>a</b> cave · <b>a</b> boat</p>
+      <p style="margin:8px 0 0"><b>an</b> — antes de som de vogal (a, e, i, o, u):
+      <b>an</b> apartment · <b>an</b> iguana</p>
+    </div>
+    <p>Das seis moradias da Unit 7, só <b>apartment</b> começa com vogal.
+    Ou seja: <b>an apartment</b> e mais nenhuma.</p>
+
+    <h3>👦 Lesson 2 · HE / SHE / IT LIVES</h3>
+    <p>Em inglês o verbo muda quando o assunto é <b>uma só pessoa (ou coisa) de fora</b>:</p>
+    <div class="rolagem">
+      <table class="grade2">
+        <tr><th>Quem</th><th>Verbo</th><th>Exemplo</th></tr>
+        <tr><th class="linha">I / You / We / They</th><td>live</td><td>I <b>live</b> in the city.</td></tr>
+        <tr><th class="linha">He / She / It</th><td>live<b>s</b></td><td>She <b>lives</b> in an apartment.</td></tr>
+      </table>
+    </div>
+    <ul>
+      <li><b>He</b> = ele (menino, homem) — "This is Nasan. <b>He lives</b> in a house."</li>
+      <li><b>She</b> = ela (menina, mulher) — "This is Tuli. <b>She lives</b> in an apartment."</li>
+      <li><b>It</b> = ele/ela para <b>bicho ou coisa</b> — "That is a spider. <b>It lives</b> in a cave."</li>
+    </ul>
+    <p><span style="color:var(--vermelho)">✗</span> He <b>live</b> in a house. &nbsp;·&nbsp;
+       <span style="color:var(--menta)">✓</span> He <b>lives</b> in a house.</p>
+
+    <h3>🌍 Lesson 5 · PLACES — os lugares</h3>
+    <div class="rolagem">
+      <table class="grade2">
+        <tr><th>English</th><th>Português</th><th>Quem mora lá (do livro)</th></tr>
+        <tr><th class="linha">ocean</th><td>oceano</td><td>the fish</td></tr>
+        <tr><th class="linha">desert</th><td>deserto</td><td>the iguana</td></tr>
+        <tr><th class="linha">jungle</th><td>selva</td><td>the monkey</td></tr>
+        <tr><th class="linha">woods</th><td>bosque, mata</td><td>the bear</td></tr>
+        <tr><th class="linha">city</th><td>cidade</td><td>the bird</td></tr>
+        <tr><th class="linha">country</th><td><b>campo</b> (o contrário de city)</td><td>the cow</td></tr>
+      </table>
+    </div>
+    <p><b>Cuidado com "country".</b> Ela tem dois sentidos: <i>país</i> e <i>campo</i>.
+    Nesta unidade é sempre <b>campo</b> — é o lugar da vaca, da fazenda, da estepe da Mongólia.
+    Repare que na abertura da Unit 7 a senhora mongol mora <b>in the country</b>, não in the city.</p>
+
+    <h3>🎯 IN A … × IN THE …</h3>
+    <p>Este é o pulo do gato da Unit 7, e o lugar onde mais se perde ponto:</p>
+    <div class="ex">
+      <p style="margin:0">🏠 <b>Moradia</b> → in <b>a</b> / in <b>an</b><br>
+      in a house · in a castle · in a trailer · in a cave · in a boat · in <b>an</b> apartment</p>
+      <p style="margin:10px 0 0">🌍 <b>Lugar</b> → in <b>the</b><br>
+      in the ocean · in the desert · in the jungle · in the woods · in the city · in the country</p>
+    </div>
+    <p>Regra de bolso: se dá para <b>entrar e fechar a porta</b>, é <b>a/an</b>.
+    Se é um lugar grande, do lado de fora, é <b>the</b>.</p>
+
+    <h3>❓ Lesson 6 · WHERE DO YOU LIVE?</h3>
+    <div class="ex">
+      <p style="margin:0"><b>Where do you live?</b> = Onde você mora?</p>
+      <p style="margin:8px 0 0"><b>I live in the city.</b> = Eu moro na cidade.</p>
+    </div>
+    <p>A ordem das palavras é <b>fixa</b> e não muda nunca:</p>
+    <p class="centro" style="font-size:1.12em"><b>Where</b> + <b>do</b> + <b>you</b> + <b>live</b> + <b>?</b></p>
+    <p><span style="color:var(--vermelho)">✗</span> Where you do live? &nbsp;·&nbsp;
+       <span style="color:var(--vermelho)">✗</span> Where live you? &nbsp;·&nbsp;
+       <span style="color:var(--menta)">✓</span> Where do you live?</p>
+    <p>A música da página 87 repete a resposta três vezes:
+    <i>I live in the desert · I live in the ocean · I live in the city.</i>
+    Sempre <b>I live in the …</b>.</p>
+    <p class="mini">🔎 <b>Extra, fora do que cai:</b> na abertura da unidade aparece
+    "<i>Where <b>does she</b> live?</i>". Quando entra o <b>does</b>, o verbo perde o S:
+    <i>Where does she <b>live</b>? — She <b>lives</b> in the country.</i>
+    Não precisa treinar isso agora; é só para não estranhar se aparecer.</p>
+
+    <h3>✍️ Escrever certo — as 12 palavras</h3>
+    <p>Em inglês não se escreve como se fala. Estas são as que mais escorregam:</p>
+    <ul>
+      <li><b>apartment</b> — a-p-a-r-t-<b>m</b>-e-n-t. Não tem "e" antes do M
+          (<span style="color:var(--vermelho)">apartement</span>).</li>
+      <li><b>country</b> — c-<b>ou</b>-n-t-r-<b>y</b>. Com <b>OU</b> e com <b>Y</b> no fim.</li>
+      <li><b>woods</b> — com <b>dois O</b> e <b>S</b> no fim. Ela quase sempre aparece no plural.</li>
+      <li><b>castle</b> — o <b>T é mudo</b>: fala-se "cássol", mas escreve-se cas<b>t</b>le.</li>
+      <li><b>desert</b> (deserto) tem <b>um S</b>. Com dois S, <b>dessert</b>, vira <b>sobremesa</b>!</li>
+      <li><b>jungle</b> — j-u-n-<b>g-l-e</b>, nessa ordem.</li>
+      <li><b>ocean</b> — o-<b>c</b>-e-a-n. O som é de S, mas a letra é <b>C</b>.</li>
+      <li><b>city</b> — com <b>C</b> no começo e <b>Y</b> no fim.</li>
+    </ul>
+    <p>As outras quatro são mais amigas: <b>house</b> · <b>boat</b> · <b>cave</b> · <b>trailer</b>.</p>
+
+    <h3>📋 Como a prova costuma perguntar</h3>
+    <ul>
+      <li><b>Look and write</b> — vem a figura, você escreve a palavra. Vale a escrita certinha.</li>
+      <li><b>Complete</b> — "The bear lives in the ______." Confira se é <b>a/an</b> ou <b>the</b>.</li>
+      <li><b>Write the words in order</b> — as palavras vêm embaralhadas e você monta a frase.
+          Comece por quem faz a ação (He, She, It, I) e termine no <b>ponto final</b>.</li>
+      <li><b>Circle the correct one</b> — live × lives, a × an, a × the.</li>
+    </ul>
+    <p><b>Antes de entregar:</b> leia cada frase inteira em voz baixa. O <b>S</b> do
+    <i>lives</i> e o <b>n</b> do <i>an</i> são os dois que mais somem.</p>
+
+    <div class="centro" style="margin-top:26px">
+      <button class="btn" onclick="fecharColinha()">Voltar ao jogo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const CHAVE = "nextStationMongolia.v1";
+
+/* A lista de missões é a única fonte da verdade. Nenhum número de missão
+   ou de estrela aparece cravado no código — tudo sai de MISSOES.length. */
+const MISSOES = [
+  {ico:"🏠", tit:"Homes Station",      sub:"As moradias · Lesson 1",          hab:"homes"},
+  {ico:"🔤", tit:"A or AN?",           sub:"O artigo certo antes da moradia", hab:"artigo"},
+  {ico:"👦", tit:"He · She · It",      sub:"live × lives · Lesson 2",         hab:"lives"},
+  {ico:"🌍", tit:"Places Station",     sub:"Os seis lugares · Lesson 5",      hab:"places"},
+  {ico:"🌉", tit:"River Crossing",     sub:"in a … × in the …",               hab:"inathe"},
+  {ico:"❓", tit:"Where do you live?", sub:"Montar a frase · Lesson 6",       hab:"ordem"},
+  {ico:"✍️", tit:"Spelling Workshop",  sub:"Escrever as 12 palavras",         hab:"spelling"},
+  {ico:"🏆", tit:"Final Test",         sub:"Arcade + prova final",            hab:"final"}
+];
+const N_MISSOES  = MISSOES.length;
+const POR_MISSAO = 3;                        /* estrelas por missão */
+const TOTAL_ESTRELAS = N_MISSOES * POR_MISSAO;
+const vazio = v => Array.from({length:N_MISSOES}, () => v);
+
+const S = {
+  nome: "",
+  genero: "f",
+  pontos: 0,
+  missoes:  vazio(false),
+  estrelas: vazio(0),
+  aulas:    vazio(false),
+  erros: {},          /* habilidade -> quantas vezes escorregou. Alimenta a prova final. */
+  cena: "nome"
+};
+
+function esc(x){
+  return String(x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function g(fem, masc){ return S.genero === "f" ? fem : masc; }
+const NOME = () => esc(S.nome);
+
+function salvar(){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify({
+      nome:S.nome, genero:S.genero, pontos:S.pontos,
+      missoes:S.missoes, estrelas:S.estrelas, aulas:S.aulas, erros:S.erros
+    }));
+  }catch(e){/* sem localStorage o jogo roda igual, só não guarda */}
+}
+function carregar(){
+  try{
+    const d = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if(d && d.nome){
+      S.nome = d.nome; S.genero = d.genero === "m" ? "m" : "f";
+      S.pontos = d.pontos|0;
+      if(Array.isArray(d.missoes)  && d.missoes.length===N_MISSOES)  S.missoes  = d.missoes.map(Boolean);
+      if(Array.isArray(d.estrelas) && d.estrelas.length===N_MISSOES) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(POR_MISSAO,n|0)));
+      if(Array.isArray(d.aulas)    && d.aulas.length===N_MISSOES)    S.aulas    = d.aulas.map(Boolean);
+      if(d.erros && typeof d.erros === "object") S.erros = d.erros;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+/* registro por HABILIDADE, não por palavra: numa revisão o que importa é
+   qual assunto escorrega, não qual exemplo apareceu. */
+const NOME_HAB = {
+  homes:"as moradias (Lesson 1)",        traducao:"o que a palavra quer dizer",
+  artigo:"a × an",                       lives:"live × lives",
+  pronome:"he, she ou it",               places:"os lugares (Lesson 5)",
+  inathe:"in a … × in the …",            ordem:"a ordem das palavras",
+  where:"Where do you live?",            spelling:"escrever a palavra certa"
+};
+function marcaErro(hab){ if(!hab) return; S.erros[hab] = (S.erros[hab]||0) + 1; salvar(); }
+function marcaAcerto(hab){
+  if(!hab || !S.erros[hab]) return;
+  S.erros[hab]--; if(S.erros[hab] <= 0) delete S.erros[hab];
+  salvar();
+}
+function listaFracas(n){
+  return Object.entries(S.erros).sort((x,y)=>y[1]-x[1]).slice(0, n||4).map(e=>e[0]);
+}
+
+/* ============================================================
+   SOM
+   ============================================================ */
+let AC = null;
+function ac(){ if(!AC){ try{AC = new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function bip(freq, dur, tipo, vol){
+  const c = ac(); if(!c) return;
+  if(c.state === "suspended") c.resume();
+  const o = c.createOscillator(), gn = c.createGain();
+  o.type = tipo || "sine"; o.frequency.value = freq;
+  gn.gain.setValueAtTime(vol||0.13, c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  o.connect(gn); gn.connect(c.destination);
+  o.start(); o.stop(c.currentTime + dur);
+}
+const somAcerto = ()=>{ bip(660,.09,"triangle"); setTimeout(()=>bip(880,.14,"triangle"),90); };
+const somErro   = ()=>{ bip(200,.18,"sawtooth",.09); };
+const somClique = ()=>{ bip(520,.05,"square",.05); };
+const somVitoria= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>bip(f,.2,"triangle"),i*110)); };
+const somPop    = ()=>{ bip(880,.06,"sine",.07); };
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+function embaralha(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function sorteio(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+let toastT = null;
+function toast(txt, mau){
+  const t = $("#toast");
+  t.innerHTML = txt;
+  t.className = "toast show" + (mau ? " mau" : "");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ t.className = "toast" + (mau?" mau":""); }, 1500);
+}
+function ganha(p){ S.pontos += p; toast("+" + p + " pontos!"); }
+
+function estrelasTxt(n){ return "⭐".repeat(n) + "☆".repeat(POR_MISSAO-n); }
+function estrelasPor(acertos, total){
+  const pct = total ? acertos/total : 0;
+  if(pct >= 0.99) return 3;
+  if(pct >= 0.7)  return 2;
+  if(pct >= 0.4)  return 1;
+  return 0;
+}
+const ELOGIOS = ["Isso, {n}!","Boa, {n}!","Very good, {n}!","{n} arrasou!","Exatamente, {n}!",
+                 "Perfect, {n}!","Excellent, {n}!","Mandou bem, {n}!"];
+function elogio(){ return sorteio(ELOGIOS).replace("{n}", NOME()); }
+
+function hud(titulo){
+  const emMissao = /^m\d+$/.test(S.cena);
+  return `<div class="hud">
+    <span class="nome">🐴 ${NOME()}</span>
+    <span class="chip pts">⭐ ${S.pontos} pts</span>
+    <span class="espaco"></span>
+    ${emMissao ? `<button class="chip" onclick="reverAula(${S.cena.slice(1)})" style="cursor:pointer">📚 Aula</button>` : ``}
+    <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
+    <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
+  </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
+}
+
+function abrirColinha(){ somClique(); pausaCrono(true); $("#colinha").classList.add("aberta"); }
+function fecharColinha(){ somClique(); $("#colinha").classList.remove("aberta"); pausaCrono(false); }
+window.abrirColinha = abrirColinha; window.fecharColinha = fecharColinha;
+
+/* ============================================================
+   FUNDO — o vento da estepe
+   ============================================================ */
+(function fundo(){
+  const cv = $("#estrelas"), cx = cv.getContext("2d");
+  let pcs = [];
+  function dim(){
+    cv.width = innerWidth; cv.height = innerHeight;
+    pcs = [];
+    const n = Math.min(110, Math.floor(innerWidth*innerHeight/12000));
+    for(let i=0;i<n;i++) pcs.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      r:Math.random()*1.7+.4, vx:Math.random()*.35+.08,
+      alfa:Math.random()*.6+.2, fase:Math.random()*6.28,
+      cor: Math.random()<.3 ? "#fcd34d" : "#dbeafe"
+    });
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    const t = Date.now()/900;
+    for(const p of pcs){
+      p.x += p.vx;                                  /* o vento sopra da esquerda para a direita */
+      if(p.x > cv.width + 4){ p.x = -4; p.y = Math.random()*cv.height; }
+      cx.globalAlpha = p.alfa * (0.6 + 0.4*Math.sin(t + p.fase));
+      cx.fillStyle = p.cor;
+      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.2832); cx.fill();
+    }
+    cx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  addEventListener("resize", dim); dim(); loop();
+})();
+
+/* ============================================================
+   ROTEADOR
+   ============================================================ */
+function irMapa(){ somClique(); pararArcade(); S.cena="mapa"; render(); }
+window.irMapa = irMapa;
+
+function abrirMissao(i){
+  if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a estação anterior primeiro, " + NOME() + "!", true); return; }
+  pararArcade();
+  if(!S.aulas[i]){ abrirAula(i); return; }   /* a aula vem antes, na estreia da missão */
+  somClique(); S.cena = "m"+i; render();
+}
+window.abrirMissao = abrirMissao;
+
+function concluiMissao(i, acertos, total, bonus){
+  S.missoes[i] = true;
+  const est = estrelasPor(acertos, total);
+  S.estrelas[i] = Math.max(S.estrelas[i], est);
+  const pts = acertos*10 + est*25 + (bonus||0);
+  S.pontos += pts;
+  salvar();
+  somVitoria();
+  const tudoFeito = S.missoes.every(Boolean);
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:64px">${est===3?"🏆":est===2?"🎉":"👏"}</div>
+      <h2>Estação ${i+1} concluída, ${NOME()}!</h2>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${estrelasTxt(est)}</div>
+      <p>Você acertou <b>${acertos} de ${total}</b> e ganhou <b>${pts} pontos</b>.</p>
+      ${est<POR_MISSAO?`<p class="mini">Dá para refazer e buscar as ${POR_MISSAO} estrelas — elas só sobem, nunca descem.</p>`:``}
+      <div class="acoes">
+        ${tudoFeito
+          ? `<button class="btn" onclick="verDiploma()">🎓 Ver meu diploma!</button>`
+          : (i < N_MISSOES-1 ? `<button class="btn ceu" onclick="abrirMissao(${i+1})">Próxima estação →</button>` : ``)}
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+        <button class="btn sec" onclick="abrirMissao(${i})">🔁 Refazer</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+
+const FASES = [faseHomes, faseArtigo, faseLives, famPlaces,
+               faseRio, faseOrdem, faseSpelling, faseFinal];
+
+function render(){
+  scrollTo(0,0);
+  if(S.cena === "nome")    return telaNome();
+  if(S.cena === "inicio")  return telaInicio();
+  if(S.cena === "mapa")    return telaMapa();
+  if(S.cena === "diploma") return telaDiploma();
+  let m = /^m(\d+)$/.exec(S.cena);
+  if(m && FASES[+m[1]]) return FASES[+m[1]]();
+  m = /^a(\d+)$/.exec(S.cena);
+  if(m) return telaAula(+m[1]);
+}
+
+/* ============================================================
+   TELA DO NOME
+   ============================================================ */
+function telaNome(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--turbo)">
+      <div style="font-size:70px;line-height:1">🐴</div>
+      <h1 style="background:linear-gradient(90deg,var(--ceu),var(--estepe),var(--turbo));-webkit-background-clip:text;background-clip:text;color:transparent">
+        NEXT STATION:<br>MONGOLIA
+      </h1>
+      <p style="font-size:1.1em">Revisão para a <b>prova de Língua Inglesa</b></p>
+      <p class="mini">3º ano · Unit 7 · Lessons 1, 2, 5 e 6 · prova em 25/08</p>
+      <div class="card" style="text-align:left;background:rgba(7,24,39,.85);margin-top:18px">
+        <p><b>🇲🇳 Bem-${g("vinda","vindo")} à Mongólia.</b></p>
+        <p>Aqui o céu é azul o ano inteiro, as casas são de feltro branco e todo mundo
+        anda a cavalo. É a viagem da <b>Unit 7</b> do seu livro — e a viagem toda
+        gira em torno de uma pergunta só: <b>Where do you live?</b></p>
+        <p style="margin:0">Antes de subir no cavalo: <b>como você se chama?</b></p>
+      </div>
+      <input class="campo" id="nomeInput" type="text" maxlength="18" autocomplete="off"
+             placeholder="Digite seu nome" onkeydown="if(event.key==='Enter')pedeGenero()">
+      <p class="mini" id="avisoNome" style="min-height:20px"></p>
+      <p style="margin-top:6px"><b>E como você quer ser ${g("chamada","chamado")} na estepe?</b></p>
+      <div class="acoes">
+        <button class="btn" onclick="definir('f')">🧭 Sou a exploradora</button>
+        <button class="btn ceu" onclick="definir('m')">🧭 Sou o explorador</button>
+      </div>
+    </div>`;
+  const inp = $("#nomeInput");
+  if(inp){ inp.value = S.nome; setTimeout(()=>inp.focus(), 120); }
+}
+function definir(gen){
+  const inp = $("#nomeInput");
+  let v = (inp ? inp.value : "").trim().replace(/\s+/g," ");
+  if(v.length < 2){
+    somErro();
+    $("#avisoNome").innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`;
+    if(inp) inp.focus();
+    return;
+  }
+  v = v.split(" ").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" ");
+  S.nome = v;
+  if(gen === "f" || gen === "m") S.genero = gen;
+  ac(); somVitoria(); salvar();
+  S.cena = "inicio"; render();
+}
+window.definir = definir;
+function pedeGenero(){
+  const inp = $("#nomeInput"), aviso = $("#avisoNome");
+  if((inp ? inp.value : "").trim().length < 2){
+    somErro(); aviso.innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`; return;
+  }
+  somClique();
+  aviso.innerHTML = `<span style="color:var(--ouro)">Agora toque num dos dois botões aí embaixo 👇</span>`;
+}
+window.pedeGenero = pedeGenero;
+function trocarNome(){ somClique(); S.cena = "nome"; render(); }
+window.trocarNome = trocarNome;
+function zerar(){
+  if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
+  S.pontos = 0; S.missoes = vazio(false); S.estrelas = vazio(0); S.aulas = vazio(false); S.erros = {};
+  salvar(); somClique(); render();
+}
+window.zerar = zerar;
+
+/* ============================================================
+   TELA INICIAL
+   ============================================================ */
+function telaInicio(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--turbo)">
+      <div style="font-size:66px;line-height:1">🐴</div>
+      <h1 style="background:linear-gradient(90deg,var(--ceu),var(--estepe),var(--turbo));-webkit-background-clip:text;background-clip:text;color:transparent">
+        HELLO, ${NOME()}!
+      </h1>
+      <p style="font-size:1.12em">Você é ${g("a exploradora","o explorador")} da
+      <b style="color:var(--ceu)">Next Station: Mongolia</b>.</p>
+      <div class="card" style="text-align:left;background:rgba(7,24,39,.85);margin-top:18px">
+        <p><b>🎯 O combinado é este:</b></p>
+        <p>Este jogo não foi inventado no chute: cada estação é <b>uma parte da Unit 7</b>,
+        com as palavras e as frases que estão no seu <i>Student's Book</i> — páginas 82, 83,
+        86, 87 e o <i>Grammar Guide</i> da 132. São <b>${N_MISSOES-1} estações</b> e, no fim, o teste final.</p>
+        <p><b>📚 Cada estação começa com uma aula rapidinha</b> do <b>Mori</b>, o cavalo da estepe.
+        Ele explica primeiro; você põe a mão na massa depois.</p>
+        <p class="mini">⭐ Cada estação vale até ${POR_MISSAO} estrelas. Errar faz parte: o jogo mostra o porquê
+        e <b>anota em que assunto você escorregou</b>, para cobrar de novo no teste final.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn" onclick="comecar()">🐴 Subir no cavalo</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Ver a colinha</button>
+      </div>
+      <p class="mini" style="margin-top:14px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Não sou ${NOME()}, trocar nome</button>
+      </p>
+    </div>`;
+}
+function comecar(){ ac(); somVitoria(); S.cena="mapa"; render(); }
+window.comecar = comecar;
+
+/* ============================================================
+   MAPA
+   ============================================================ */
+function telaMapa(){
+  const feitas = S.missoes.filter(Boolean).length;
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(5);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <h2>🗺️ A rota ${g("da","do")} ${NOME()}</h2>
+      <p class="mini">${feitas} de ${N_MISSOES} estações · ${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas · ${S.pontos} pontos</p>
+      <div class="progresso"><i style="width:${feitas/N_MISSOES*100}%"></i></div>
+      <div class="missoes">
+        ${MISSOES.map((m,i)=>{
+          const trancada = i>0 && !S.missoes[i-1];
+          return `<button class="missao ${trancada?"trancada":""} ${S.missoes[i]?"feita":""}"
+                    onclick="abrirMissao(${i})" ${trancada?"disabled":""}>
+            <span class="num">${S.missoes[i]?"✓":i+1}</span>
+            <div class="ico">${trancada?"🔒":m.ico}</div>
+            <div class="tit">${m.tit}</div>
+            <div class="sub">${trancada?"Passe pela estação anterior":m.sub}</div>
+            ${(!trancada && !S.aulas[i])?`<div class="tags" style="margin-top:8px"><span class="tag" style="border-color:var(--ouro);color:var(--ouro)">📚 começa com uma aula</span></div>`:``}
+            ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
+          </button>`;
+        }).join("")}
+      </div>
+      <p class="mini centro" style="margin-top:16px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Trocar nome</button>
+        <button class="chip" onclick="zerar()" style="cursor:pointer">🔄 Começar tudo de novo</button>
+      </p>
+    </div>
+    ${fracas.length?`<div class="card">
+      <h2>🎯 Onde você está escorregando</h2>
+      <p class="mini">O Mori foi anotando. Estes assuntos aparecem <b>mais vezes</b> no
+      teste final — é assim que a gente vira o jogo antes da prova de verdade.</p>
+      <div class="tags">${fracas.map(h=>
+        `<span class="tag" style="border-color:var(--chama);color:var(--chama);font-size:1em">${NOME_HAB[h]||h}</span>`
+      ).join("")}</div>
+    </div>`:``}
+    ${feitas===N_MISSOES?`<div class="card destaque centro">
+      <div style="font-size:56px">🎓</div>
+      <h2>Rota inteira percorrida, ${NOME()}!</h2>
+      <button class="btn" onclick="verDiploma()">Ver meu diploma</button>
+    </div>`:``}`;
+}
+function verDiploma(){ somVitoria(); S.cena="diploma"; render(); }
+window.verDiploma = verDiploma;
+
+
+/* ============================================================
+   AULAS — uma antes de cada estação, com o Mori
+   ============================================================ */
+const AULAS = [
+  /* ---- 1 · HOMES ---- */
+  [
+    {ico:"🐴", tit:"Oi, {NOME}. Eu sou o Mori.",
+     txt:`Sou o cavalo da estepe da Mongólia, e o meu nome quer dizer exatamente isso:
+       <b>mori</b> é "cavalo" em mongol. Aqui a gente vai de cavalo para tudo.
+       <p>Você abriu a <b>Unit 7</b> do seu livro e caiu bem no meio da Mongólia — o país
+       do céu azul, das casas redondas de feltro e das planícies sem fim.</p>
+       <p>Nas próximas estações eu vou revisar com você <b>as quatro lições que caem na prova</b>:
+       a 1, a 2, a 5 e a 6. Uma estação por vez, sem pressa.</p>`,
+     chave:`Nada aqui é matéria nova. É o que você já viu no livro, olhado com calma.`},
+    {ico:"🏠", tit:"Lesson 1 — as seis moradias",
+     txt:`Na página 82 aparecem seis lugares onde se pode morar. Estas são as palavras:
+       <table class="mini-tab">
+         <tr><th>English</th><th>Português</th></tr>
+         <tr><td>🏠 house</td><td>casa</td></tr>
+         <tr><td>🏢 apartment</td><td>apartamento</td></tr>
+         <tr><td>🏰 castle</td><td>castelo</td></tr>
+         <tr><td>🚐 trailer</td><td>trailer</td></tr>
+         <tr><td>🕳️ cave</td><td>caverna</td></tr>
+         <tr><td>⛵ boat</td><td>barco</td></tr>
+       </table>`,
+     chave:`Seis palavras. Fale cada uma em voz alta duas vezes — a boca ajuda a memória.`},
+    {ico:"🧐", tit:"As três que enganam",
+     txt:`<ul class="lista">
+       <li><b>trailer</b> — em inglês não é o trailer do filme! É a <b>casa com rodas</b>,
+       aquela que o carro puxa. Tem gente que mora nela o ano inteiro.</li>
+       <li><b>cave</b> — é <b>caverna</b>. No livro, quem mora numa cave é a aranha
+       (<i>the spider</i>).</li>
+       <li><b>boat</b> — é <b>barco</b>. E dá para morar num barco: o <i>Grammar Guide</i>
+       da página 132 chama isso de <b>a house boat</b>, uma casa-barco.</li>
+       </ul>`,
+     chave:`trailer = casa com rodas · cave = caverna · boat = barco (dá para morar nele).`},
+    {ico:"👀", tit:"Como a prova pergunta isso",
+     txt:`Quase sempre de duas maneiras:
+       <p><b>1.</b> Vem a <b>figura</b> e você escreve a palavra embaixo.</p>
+       <p><b>2.</b> Vem a palavra e você liga na figura certa.</p>
+       <p>Nas duas, o que decide é você <b>reconhecer a palavra de cara</b>, sem
+       precisar traduzir na cabeça. É o que a gente vai treinar agora.</p>`,
+     chave:`Olhou a figura → a palavra tem que vir sozinha. Vamos treinar até vir.`}
+  ],
+
+  /* ---- 2 · A or AN ---- */
+  [
+    {ico:"🔤", tit:"Um detalhe que vale ponto: a ou an",
+     txt:`Em inglês, quando você fala de <b>uma</b> moradia qualquer, precisa pôr uma
+       palavrinha na frente. Ela tem duas formas: <b>a</b> e <b>an</b>.
+       <p>É a mesma coisa que o nosso "um / uma", só que em inglês não muda por causa
+       de menino ou menina. Muda por causa do <b>som</b>.</p>`,
+     chave:`Toda moradia no singular pede <b>a</b> ou <b>an</b> na frente.`},
+    {ico:"🅰️", tit:"A regra inteira em uma linha",
+     txt:`<div class="destaque"><b>an</b> antes de som de vogal<br><b>a</b> em todo o resto</div>
+       <p>Vogais são <b>a, e, i, o, u</b>. Se a palavra começa com o som de uma delas,
+       entra o <b>an</b> — porque "a apartment" trava a língua, e "an apartment" desliza.</p>`,
+     chave:`Vogal no começo → <b>an</b>. Consoante → <b>a</b>.`},
+    {ico:"🏢", tit:"Nas seis moradias, só uma leva AN",
+     txt:`<table class="mini-tab">
+         <tr><th>a</th><th>an</th></tr>
+         <tr><td>a house</td><td rowspan="5"><b>an apartment</b></td></tr>
+         <tr><td>a castle</td></tr>
+         <tr><td>a trailer</td></tr>
+         <tr><td>a cave</td></tr>
+         <tr><td>a boat</td></tr>
+       </table>
+       <p><b>apartment</b> começa com <b>A</b> — vogal. Todas as outras começam com consoante.</p>
+       <p>Outra que aparece no livro e também pede <b>an</b>: <b>an iguana</b>
+       (<i>The iguana lives in the desert</i>).</p>`,
+     chave:`Das seis moradias: <b>an apartment</b> e só ela.`},
+    {ico:"⚠️", tit:"O erro que a prova adora",
+     txt:`<p class="centro" style="font-size:1.1em">
+       <span class="errado">a apartment</span> &nbsp;→&nbsp; <span class="certo"><b>an apartment</b></span></p>
+       <p>É um <b>n</b> de nada, e é ele que some. Quando você terminar a prova, volte
+       nas frases com <i>apartment</i> e confira se o <b>n</b> está lá.</p>`,
+     chave:`Terminou? Volte e procure o <b>n</b> de <i>an apartment</i>.`}
+  ],
+
+  /* ---- 3 · HE / SHE / IT LIVES ---- */
+  [
+    {ico:"👦", tit:"Lesson 2 — o verbo que ganha um S",
+     txt:`Esta é <b>a</b> regra da Lesson 2, e ela vale para o resto do inglês inteiro.
+       <p>O verbo <b>live</b> (morar) muda de forma dependendo de quem mora:</p>
+       <table class="mini-tab">
+         <tr><th>Quem</th><th>Verbo</th></tr>
+         <tr><td>I · You · We · They</td><td>live</td></tr>
+         <tr><td><b>He · She · It</b></td><td><b>lives</b></td></tr>
+       </table>`,
+     chave:`He, She e It ganham um <b>S</b> no verbo. Os outros, não.`},
+    {ico:"🧍", tit:"He, She ou It?",
+     txt:`<ul class="lista">
+       <li><b>He</b> = ele — menino, homem, papai, o Nasan.</li>
+       <li><b>She</b> = ela — menina, mulher, mamãe, a Tuli.</li>
+       <li><b>It</b> = para <b>bicho ou coisa</b>. A aranha, o peixe, a vaca, o macaco —
+       tudo é <b>it</b> em inglês.</li>
+       </ul>
+       <p>Esse <b>it</b> não existe em português, e é por isso que ele foge da cabeça.
+       Se não é gente, é <b>it</b>.</p>`,
+     chave:`Não é gente? Então é <b>it</b>. E <b>it lives</b>, com S.`},
+    {ico:"📖", tit:"As três frases da página 83",
+     txt:`São exatamente estas, e elas mostram tudo de uma vez:
+       <div class="par">
+         <span>This is Nasan. <b>He lives</b> in <b>a</b> house.</span>
+         <span>This is Tuli. <b>She lives</b> in <b>an</b> apartment.</span>
+         <span>That is a spider. <b>It lives</b> in <b>a</b> cave.</span>
+       </div>
+       <p>Repare que cada uma junta as <b>duas</b> coisas que a gente já viu:
+       o <b>S</b> do <i>lives</i> e o <b>a/an</b> da moradia.</p>`,
+     chave:`Decore estas três frases. Elas são o modelo de todas as outras.`},
+    {ico:"⚠️", tit:"O S que some",
+     txt:`<p class="centro" style="font-size:1.1em">
+       <span class="errado">He live in a trailer.</span><br>
+       <span class="certo"><b>He lives in a trailer.</b></span></p>
+       <p>Em português a gente diz "ele mora" e "eu moro" — muda o fim do verbo e ninguém
+       esquece. Em inglês muda quase nada, só um <b>s</b> baixinho no fim. Por isso ele foge.</p>
+       <p>Truque: sempre que a frase começar com <b>He</b>, <b>She</b> ou <b>It</b>,
+       procure o <b>S</b> antes de seguir em frente.</p>`,
+     chave:`He / She / It na frente → <b>S</b> no fim do verbo. Sempre.`}
+  ],
+
+  /* ---- 4 · PLACES ---- */
+  [
+    {ico:"🌍", tit:"Lesson 5 — os seis lugares",
+     txt:`Agora não é mais a casa: é o <b>lugar do mundo</b> onde alguém vive.
+       Página 86 do livro:
+       <table class="mini-tab">
+         <tr><th>English</th><th>Português</th></tr>
+         <tr><td>🌊 ocean</td><td>oceano</td></tr>
+         <tr><td>🏜️ desert</td><td>deserto</td></tr>
+         <tr><td>🌴 jungle</td><td>selva</td></tr>
+         <tr><td>🌲 woods</td><td>bosque, mata</td></tr>
+         <tr><td>🏙️ city</td><td>cidade</td></tr>
+         <tr><td>🐄 country</td><td>campo</td></tr>
+       </table>`,
+     chave:`Seis lugares. Os dois últimos são um par: <b>city</b> × <b>country</b>.`},
+    {ico:"🐄", tit:"Cuidado com COUNTRY",
+     txt:`Esta palavra tem <b>dois sentidos</b> em inglês, e a prova sabe disso:
+       <ul class="lista">
+         <li><b>country</b> = <b>país</b> — "Mongolia is a country."</li>
+         <li><b>country</b> = <b>campo</b>, a zona rural — "The cow lives in the country."</li>
+       </ul>
+       <p>Na <b>Unit 7</b> é sempre o <b>segundo</b>: o campo, o contrário de <i>city</i>.
+       É onde vive a vaca, e é onde mora a senhora mongol da abertura da unidade.</p>`,
+     chave:`Nesta unidade, <b>country</b> = <b>campo</b>. O oposto de <b>city</b>.`},
+    {ico:"🌲", tit:"Woods × jungle",
+     txt:`As duas são cheias de árvore, mas não são a mesma coisa:
+       <ul class="lista">
+         <li><b>woods</b> — o <b>bosque</b>, a mata de clima frio, com pinheiros. É onde
+         vive o <b>urso</b> (<i>the bear</i>). Repare: quase sempre no <b>plural</b>, com <b>S</b>.</li>
+         <li><b>jungle</b> — a <b>selva</b>, quente e fechada, cheia de cipó. É onde vive
+         o <b>macaco</b> (<i>the monkey</i>).</li>
+       </ul>`,
+     chave:`Urso → woods. Macaco → jungle.`},
+    {ico:"🐾", tit:"Os seis bichos do exercício",
+     txt:`Na página 86 o exercício 3 liga cada bicho ao seu lugar. Vale decorar a lista
+       inteira, porque ela costuma voltar igualzinha na prova:
+       <div class="par">
+         <span>The fish → the <b>ocean</b></span>
+         <span>The iguana → the <b>desert</b></span>
+         <span>The monkey → the <b>jungle</b></span>
+         <span>The bear → the <b>woods</b></span>
+         <span>The bird → the <b>city</b></span>
+         <span>The cow → the <b>country</b></span>
+       </div>`,
+     chave:`Seis bichos, seis lugares. Este é o exercício que mais se repete.`}
+  ],
+
+  /* ---- 5 · IN A × IN THE ---- */
+  [
+    {ico:"🌉", tit:"A travessia mais difícil da unidade",
+     txt:`Você já sabe as moradias e já sabe os lugares. Agora vem a parte que separa
+       quem tirou 10 de quem tirou 8:
+       <p><b>moradia</b> e <b>lugar</b> não usam a mesma palavrinha antes.</p>`,
+     chave:`Uma pede <b>a/an</b>. A outra pede <b>the</b>. Nunca se misturam.`},
+    {ico:"🎯", tit:"A regra, lado a lado",
+     txt:`<table class="mini-tab">
+         <tr><th>🏠 Moradia → in <b>a</b> / in <b>an</b></th><th>🌍 Lugar → in <b>the</b></th></tr>
+         <tr><td>in a house</td><td>in the ocean</td></tr>
+         <tr><td>in <b>an</b> apartment</td><td>in the desert</td></tr>
+         <tr><td>in a castle</td><td>in the jungle</td></tr>
+         <tr><td>in a trailer</td><td>in the woods</td></tr>
+         <tr><td>in a cave</td><td>in the city</td></tr>
+         <tr><td>in a boat</td><td>in the country</td></tr>
+       </table>`,
+     chave:`Moradia = <b>a/an</b>. Lugar = <b>the</b>.`},
+    {ico:"🚪", tit:"Uma regra de bolso para não errar",
+     txt:`Quando bater a dúvida no meio da prova, faça esta pergunta:
+       <div class="destaque">Dá para <b>entrar e fechar a porta</b>?</div>
+       <ul class="lista">
+         <li><b>Dá</b> → é moradia → <b>in a</b> / <b>in an</b>.
+         (house, apartment, castle, trailer, cave, boat)</li>
+         <li><b>Não dá</b>, é grande demais e fica lá fora → <b>in the</b>.
+         (ocean, desert, jungle, woods, city, country)</li>
+       </ul>`,
+     chave:`Fecha a porta? <b>a/an</b>. Fica lá fora? <b>the</b>.`},
+    {ico:"⚠️", tit:"Os dois erros clássicos",
+     txt:`<p class="centro" style="font-size:1.08em">
+       <span class="errado">I live in a city.</span> → <span class="certo"><b>I live in the city.</b></span><br>
+       <span class="errado">She lives in the apartment.</span> → <span class="certo"><b>She lives in an apartment.</b></span></p>
+       <p>Nas frases da Unit 7 o par é <b>sempre</b> esse. Se você trocar, a professora
+       marca — mesmo que o resto da frase esteja perfeito.</p>`,
+     chave:`O par certo vale mais que a palavra certa. Confira os dois juntos.`}
+  ],
+
+  /* ---- 6 · WHERE DO YOU LIVE ---- */
+  [
+    {ico:"❓", tit:"Lesson 6 — a pergunta da unidade inteira",
+     txt:`<div class="destaque">Where do you live?<br><span style="font-size:.7em;color:#3d5a6c">Onde você mora?</span></div>
+       <p>E a resposta vem sempre no mesmo molde:</p>
+       <div class="destaque">I live in the city.<br><span style="font-size:.7em;color:#3d5a6c">Eu moro na cidade.</span></div>`,
+     chave:`Where do you live? → I live in the …`},
+    {ico:"🔢", tit:"A ordem das palavras é fixa",
+     txt:`Em inglês a ordem não pode mudar de lugar como em português. A pergunta é
+       sempre montada assim:
+       <div class="destaque">Where + do + you + live + <b>?</b></div>
+       <p class="centro">
+         <span class="errado">Where you do live?</span><br>
+         <span class="errado">Where live you?</span><br>
+         <span class="certo"><b>Where do you live?</b></span></p>
+       <p>E a resposta, assim:</p>
+       <div class="destaque">I + live + in the + <i>lugar</i> + <b>.</b></div>`,
+     chave:`Where · do · you · live · ? — nessa ordem, sempre.`},
+    {ico:"🎵", tit:"A música da página 87",
+     txt:`A canção repete a resposta três vezes, e é de propósito — para grudar:
+       <div class="par">
+         <span>Where do you live? / I live in the <b>desert</b>.</span>
+         <span>Where do you live? / I live in the <b>ocean</b>.</span>
+         <span>Where do you live? / I live in the <b>city</b>.</span>
+       </div>
+       <p>Sempre <b>I live in the …</b>. Nunca "I lives", nunca "I live in a city".</p>`,
+     chave:`A resposta nunca tem S: é <b>I live</b>, porque o quem é <b>I</b>.`},
+    {ico:"🧩", tit:"Write the words in order",
+     txt:`Na página 132 do livro tem um exercício com este nome: as palavras vêm
+       <b>embaralhadas</b> e você monta a frase.
+       <p>É exatamente o que a próxima estação vai treinar. O jeito de acertar sempre:</p>
+       <ul class="lista">
+         <li>Ache primeiro <b>quem</b> faz a ação: He, She, It, I, You.</li>
+         <li>Depois vem o <b>verbo</b>: live ou lives.</li>
+         <li>Depois <b>in</b>, depois <b>a / an / the</b>, e por último o lugar.</li>
+         <li>Se tiver <b>Where</b>, ele vai na <b>frente de tudo</b>.</li>
+       </ul>`,
+     chave:`Quem → verbo → in → a/an/the → lugar. E o ponto final no fim.`}
+  ],
+
+  /* ---- 7 · SPELLING ---- */
+  [
+    {ico:"✍️", tit:"Escrever em inglês é outra história",
+     txt:`Em português, quem fala devagar quase sempre escreve certo. Em inglês <b>não</b>:
+       a palavra tem letras que ninguém pronuncia e sons que não têm nada a ver com a letra.
+       <p>Por isso a única saída é <b>olhar a palavra escrita</b> várias vezes, e não só
+       ouvir. É o que vamos fazer agora com as 12 palavras da unidade.</p>`,
+     chave:`Em inglês, a escrita se aprende com o olho, não com o ouvido.`},
+    {ico:"🔍", tit:"As cinco que mais escorregam",
+     txt:`<ul class="lista">
+       <li><b>apartment</b> — não tem <b>e</b> no meio:
+       <span class="errado">apartement</span> → <span class="certo">apartment</span></li>
+       <li><b>country</b> — com <b>OU</b> e <b>Y</b>:
+       <span class="errado">cantry</span> → <span class="certo">country</span></li>
+       <li><b>woods</b> — dois <b>O</b> e um <b>S</b> no fim.</li>
+       <li><b>castle</b> — tem um <b>T mudo</b>. Fala-se "cássol", escreve-se cas<b>t</b>le.</li>
+       <li><b>desert</b> — um <b>S</b> só. Com dois, <b>dessert</b>, vira <b>sobremesa</b>! 🍰</li>
+       </ul>`,
+     chave:`apartment · country · woods · castle · desert — estas cinco, com carinho.`},
+    {ico:"📝", tit:"As doze, todas juntas",
+     txt:`Copie estas doze uma vez no caderno, olhando. É o melhor uso de cinco minutos
+       antes da prova:
+       <div class="par">
+         <span>house</span><span>apartment</span><span>castle</span><span>trailer</span>
+         <span>cave</span><span>boat</span><span>ocean</span><span>desert</span>
+         <span>jungle</span><span>woods</span><span>city</span><span>country</span>
+       </div>`,
+     chave:`Seis moradias + seis lugares = doze palavras. Nada além disso cai.`}
+  ],
+
+  /* ---- 8 · FINAL ---- */
+  [
+    {ico:"🏆", tit:"Última estação, {NOME}",
+     txt:`Você passou por todas as sete estações da Unit 7. Agora vem o teste final,
+       e ele tem <b>duas partes</b>:
+       <ul class="lista">
+         <li><b>Arcade</b> — 60 segundos de perguntas rápidas, de tudo. Vale <b>pontos</b>,
+         não estrelas. Serve para aquecer e para ver o que ainda está mole.</li>
+         <li><b>Final Test</b> — sem relógio nenhum. É ele que vale as <b>${POR_MISSAO} estrelas</b>.</li>
+       </ul>`,
+     chave:`O arcade não tira estrela nenhuma. Pode errar à vontade lá.`},
+    {ico:"🎯", tit:"O que o Mori anotou de você",
+     txt:`{FRACAS}`,
+     chave:`O teste final puxa mais o que você errou. É de propósito.`}
+  ]
+];
+
+let A = null;
+function nomear(txt){
+  return String(txt)
+    .replace(/\{NOME\}/g, NOME())
+    .replace(/\{FRACAS\}/g, textoFracas());
+}
+function textoFracas(){
+  const fracas = listaFracas(5);
+  if(!fracas.length){
+    return `<p>Até agora você <b>não escorregou em nada</b> — ou ainda não jogou o suficiente
+      para eu ter o que anotar. Vamos descobrir no teste!</p>
+      <p>O teste final passa por <b>tudo</b>: as moradias, os lugares, o a/an, o S do
+      <i>lives</i>, o in a × in the e a pergunta da Lesson 6.</p>`;
+  }
+  return `<p>Eu fui anotando cada escorregão. Estes são os assuntos em que você mais tropeçou —
+    dê uma olhada neles antes de começar:</p>
+    <div class="destaque">${fracas.map(h => NOME_HAB[h] || h).join("<br>")}</div>
+    <p>Eles vão aparecer <b>mais vezes</b> no teste final, de propósito. É a última chance de
+    virar o jogo antes da prova.</p>`;
+}
+
+function abrirAula(i, revendo){
+  somClique(); pararArcade();
+  A = { missao:i, slide:0, revendo:!!revendo };
+  S.cena = "a"+i;
+  render();
+}
+window.abrirAula = abrirAula;
+function reverAula(i){ abrirAula(i, true); }
+window.reverAula = reverAula;
+
+function telaAula(i){
+  const slides = AULAS[i], s = slides[A.slide], ultimo = A.slide === slides.length-1;
+  const m = MISSOES[i];
+  app.innerHTML = hud() + `
+    <h2 style="text-align:center">${m.ico} Aula ${i+1} · ${m.tit}</h2>
+    <div class="aula">
+      <div class="guia">
+        <span class="robo">🐴</span>
+        <span>Sou o <b>Mori</b>, o cavalo da estepe.
+        ${A.slide===0 ? `Antes de você sair cavalgando, ${NOME()}, olha só.`
+                      : `Continuando, ${NOME()}…`}</span>
+      </div>
+      <div class="ico">${s.ico}</div>
+      <h2>${nomear(s.tit)}</h2>
+      ${s.txt.trim().startsWith("<") ? nomear(s.txt) : `<p>${nomear(s.txt)}</p>`}
+      ${s.chave ? `<div class="chave"><span class="rot">🔑 Grave isso</span>${nomear(s.chave)}</div>` : ``}
+      <div class="pontos">
+        ${slides.map((_,k)=>`<i class="${k===A.slide?"aqui":(k<A.slide?"vista":"")}"></i>`).join("")}
+      </div>
+    </div>
+    <div class="acoes">
+      ${A.slide>0 ? `<button class="btn aula fraco" onclick="aulaVolta()">← Voltar</button>` : ``}
+      ${ultimo
+        ? `<button class="btn" onclick="aulaFim()">🚀 Começar a estação ${i+1}</button>`
+        : `<button class="btn aula" onclick="aulaProx()">Próximo →</button>`}
+    </div>
+    <p class="centro mini" style="margin-top:14px">
+      ${ultimo ? `` : `<button class="chip" onclick="aulaFim()" style="cursor:pointer">Pular a aula e ir direto para a estação →</button>`}
+    </p>`;
+}
+function aulaProx(){ somClique(); A.slide++; telaAula(A.missao); scrollTo(0,0); }
+window.aulaProx = aulaProx;
+function aulaVolta(){ somClique(); A.slide--; telaAula(A.missao); scrollTo(0,0); }
+window.aulaVolta = aulaVolta;
+function aulaFim(){
+  somClique();
+  S.aulas[A.missao] = true; salvar();
+  S.cena = "m"+A.missao; render();
+}
+window.aulaFim = aulaFim;
+
+/* ============================================================
+   QUIZ GENÉRICO
+   ============================================================ */
+let Q = null;
+function embaralhaOpcoes(perguntas){
+  return perguntas.map(q=>{
+    if(q.fixo) return { ...q };                 /* ordem fixa: escalas e sequências */
+    const ordem = embaralha(q.o.map((_,i)=>i));
+    return { ...q, o: ordem.map(i=>q.o[i]), c: ordem.indexOf(q.c) };
+  });
+}
+function quizGenerico(missaoIdx, titulo, perguntas, acertosIniciais, totalInicial){
+  Q = { i:0, ac:acertosIniciais||0, tot:(totalInicial||0)+perguntas.length,
+        lista:embaralhaOpcoes(perguntas), missao:missaoIdx, titulo:titulo,
+        respondida:false };
+  desenhaQuiz();
+}
+function desenhaQuiz(){
+  const q = Q.lista[Q.i];
+  const classe = q.grade ? "grade" : (q.quatro ? "quatro" : "");
+  app.innerHTML = hud(Q.titulo) + `
+    <div class="card">
+      <p class="mini">Pergunta ${Q.i+1} de ${Q.lista.length}</p>
+      <div class="progresso"><i style="width:${Q.i/Q.lista.length*100}%"></i></div>
+      ${q.foto ? `<div class="foto"><span class="big">${q.foto}</span>${q.leg?`<span class="leg">${q.leg}</span>`:``}</div>` : ``}
+      ${q.enun ? `<div class="enunciado">${nomear(q.enun)}</div>` : ``}
+      ${q.frase ? `<div class="frase">${q.frase}</div>` : ``}
+      ${q.conta ? `<div class="conta">${q.conta}</div>` : ``}
+      ${q.p ? `<div class="pergunta">${nomear(q.p)}</div>` : ``}
+      <div class="opcoes ${classe}" id="ops">
+        ${q.o.map((t,k)=>`<button class="op" onclick="respQuiz(${k})">
+          ${classe?``:`<span class="letra">${"ABCD"[k]}</span>`}<span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fbq"></div>
+      <div class="acoes esconde" id="proxBox">
+        <button class="btn" onclick="proxQuiz()" id="btnProx">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respQuiz(k){
+  if(Q.respondida) return;
+  Q.respondida = true;
+  const q = Q.lista[Q.i];
+  document.querySelectorAll("#ops .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===q.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbq");
+  if(k===q.c){
+    Q.ac++; somAcerto(); ganha(10);
+    marcaAcerto(q.hab);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${nomear(q.e)}`;
+  } else {
+    somErro();
+    marcaErro(q.hab);
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Quase, ${NOME()}! A resposta certa é <b>${q.o[q.c]}</b>.</div>${nomear(q.e)}`;
+  }
+  $("#proxBox").classList.remove("esconde");
+  $("#btnProx").textContent = (Q.i === Q.lista.length-1) ? "Terminar estação 🏁" : "Continuar →";
+  $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respQuiz = respQuiz;
+function proxQuiz(){
+  somClique();
+  Q.i++; Q.respondida = false;
+  if(Q.i >= Q.lista.length){ concluiMissao(Q.missao, Q.ac, Q.tot); return; }
+  desenhaQuiz();
+}
+window.proxQuiz = proxQuiz;
+
+
+/* ============================================================
+   ESTAÇÃO 1 — HOMES STATION (Lesson 1, p. 82)
+   ============================================================ */
+function faseHomes(){
+  const perguntas = [
+    { hab:"homes", grade:true, foto:"🏠", leg:"Look and choose",
+      p:"Qual é a palavra em inglês?",
+      o:["house","home town","hause","housy"], c:0,
+      e:`<b>house</b> = casa. É a nº 4 da página 82.` },
+
+    { hab:"homes", grade:true, foto:"🏢", leg:"Look and choose",
+      p:"Qual é a palavra em inglês?",
+      o:["apartment","apartament","department","apartaments"], c:0,
+      e:`<b>apartment</b> = apartamento. Repare: <b>não</b> tem <b>e</b> no meio.` },
+
+    { hab:"homes", grade:true, foto:"🏰", leg:"Look and choose",
+      p:"Qual é a palavra em inglês?",
+      o:["castle","castel","casle","castell"], c:0,
+      e:`<b>castle</b> = castelo. O <b>T</b> é mudo, mas está lá na escrita.` },
+
+    { hab:"homes", grade:true, foto:"🚐", leg:"Look and choose",
+      p:"Qual é a palavra em inglês?",
+      o:["trailer","traler","trailler","treiler"], c:0,
+      e:`<b>trailer</b> — em inglês é a <b>casa com rodas</b>, não o trailer do filme.` },
+
+    { hab:"homes", grade:true, foto:"🦇", leg:"Look and choose",
+      p:"Onde mora a aranha do livro?",
+      o:["a cave","a cav","a cage","a case"], c:0,
+      e:`<b>a cave</b> = uma caverna. No livro: <i>"That is a spider. It lives in a cave."</i>` },
+
+    { hab:"homes", grade:true, foto:"⛵", leg:"Look and choose",
+      p:"Qual é a palavra em inglês?",
+      o:["boat","bote","boot","boath"], c:0,
+      e:`<b>boat</b> = barco. Dá para morar num: o livro chama de <i>a house boat</i>.` },
+
+    { hab:"traducao", quatro:true,
+      p:"O que quer dizer <b>cave</b>?",
+      o:["caverna","cavalo","chave","cova"], c:0,
+      e:`<b>cave</b> = <b>caverna</b>. Nada a ver com "chave" (que é <i>key</i>).` },
+
+    { hab:"traducao", quatro:true,
+      p:"O que quer dizer <b>trailer</b> nesta unidade?",
+      o:["uma casa com rodas, puxada por um carro",
+         "o pedacinho do filme que passa antes",
+         "uma trilha no meio da mata",
+         "um trem de carga"], c:0,
+      e:`Em inglês, <b>trailer</b> é a <b>casa com rodas</b>. É a nº 2 da página 82.` },
+
+    { hab:"traducao", quatro:true,
+      p:"Como se diz <b>castelo</b> em inglês?",
+      o:["castle","castel","chateau","palace"], c:0,
+      e:`<b>castle</b>. Escreve-se com <b>T</b>, mesmo sem falar o T.` },
+
+    { hab:"traducao", quatro:true,
+      p:"Como se diz <b>apartamento</b> em inglês?",
+      o:["apartment","apartement","department","flatment"], c:0,
+      e:`<b>apartment</b>. Cuidado com o <b>e</b> extra — ele não existe.` },
+
+    { hab:"homes", quatro:true,
+      p:"Quais são as <b>seis moradias</b> da Lesson 1?",
+      o:["house · apartment · castle · trailer · cave · boat",
+         "house · apartment · city · country · cave · boat",
+         "house · castle · ocean · trailer · cave · jungle",
+         "house · apartment · castle · desert · cave · boat"], c:0,
+      e:`As seis da página 82: <b>castle, trailer, cave, house, boat, apartment</b>.
+         City, country, ocean, desert e jungle são <b>lugares</b>, da Lesson 5.` },
+
+    { hab:"homes", quatro:true,
+      p:"Qual destas <b>não</b> é uma moradia da Lesson 1?",
+      o:["ocean","cave","trailer","boat"], c:0,
+      e:`<b>ocean</b> (oceano) é um <b>lugar</b>, da Lesson 5 — página 86.
+         As outras três são moradias, da página 82.` }
+  ];
+  quizGenerico(0, "🏠 Homes Station", perguntas, 0, 0);
+}
+
+
+/* ============================================================
+   ESTAÇÃO 2 — A or AN? (Lessons 1 e 2)
+   ============================================================ */
+function faseArtigo(){
+  const perguntas = [
+    { hab:"artigo", grade:true, conta:"____ house",
+      p:"Complete:", o:["a","an","the","one"], c:0,
+      e:`<b>a house</b> — <b>h</b> é consoante, então é <b>a</b>.` },
+
+    { hab:"artigo", grade:true, conta:"____ apartment",
+      p:"Complete:", o:["an","a","the","some"], c:0,
+      e:`<b>an apartment</b> — começa com <b>A</b>, que é vogal. É a única das seis moradias
+         que leva <b>an</b>.` },
+
+    { hab:"artigo", grade:true, conta:"____ castle",
+      p:"Complete:", o:["a","an","the","any"], c:0,
+      e:`<b>a castle</b> — <b>c</b> é consoante.` },
+
+    { hab:"artigo", grade:true, conta:"____ cave",
+      p:"Complete:", o:["a","an","the","one"], c:0,
+      e:`<b>a cave</b> — <b>c</b> de novo, então <b>a</b>.` },
+
+    { hab:"artigo", grade:true, conta:"____ trailer",
+      p:"Complete:", o:["a","an","the","some"], c:0,
+      e:`<b>a trailer</b> — <b>t</b> é consoante.` },
+
+    { hab:"artigo", grade:true, conta:"____ boat",
+      p:"Complete:", o:["a","an","the","an the"], c:0,
+      e:`<b>a boat</b> — <b>b</b> é consoante.` },
+
+    { hab:"artigo", grade:true, conta:"____ iguana",
+      p:"Complete (o bicho da página 86):", o:["an","a","the","any"], c:0,
+      e:`<b>an iguana</b> — começa com <b>i</b>, vogal.
+         No livro: <i>"The iguana lives in the desert."</i>` },
+
+    { hab:"artigo", quatro:true,
+      p:"Por que se escreve <b>an</b> apartment, e não <b>a</b> apartment?",
+      o:["Porque apartment começa com som de vogal",
+         "Porque apartment é uma palavra grande",
+         "Porque apartamento é masculino",
+         "Porque apartment está no plural"], c:0,
+      e:`A regra é o <b>som</b>: vogal na frente → <b>an</b>. Em inglês o artigo não muda
+         por causa de masculino ou feminino.` },
+
+    { hab:"artigo", quatro:true,
+      p:"Qual frase está <b>correta</b>?",
+      o:["She lives in an apartment.","She lives in a apartment.",
+         "She lives in an house.","She live in an apartment."], c:0,
+      e:`<b>an</b> apartment (vogal) e <b>lives</b> com S, porque é <b>She</b>.
+         A terceira erra o artigo; a quarta perde o S.` },
+
+    { hab:"artigo", quatro:true,
+      p:"Qual está <b>errada</b>?",
+      o:["a apartment","a house","a boat","an iguana"], c:0,
+      e:`<span class="errado">a apartment</span> → o certo é <b>an apartment</b>.
+         As outras três estão perfeitas.` }
+  ];
+  quizGenerico(1, "🔤 A or AN?", perguntas, 0, 0);
+}
+
+
+/* ============================================================
+   ESTAÇÃO 3 — HE · SHE · IT (Lesson 2, p. 83)
+   ============================================================ */
+function faseLives(){
+  const perguntas = [
+    { hab:"pronome", grade:true, enun:`Nasan is a boy.`,
+      p:"____ lives in a house.", o:["He","She","It","They"], c:0,
+      e:`<b>He</b> = ele, para menino. É a frase da página 83:
+         <i>"This is Nasan. He lives in a house."</i>` },
+
+    { hab:"pronome", grade:true, enun:`Tuli is a girl.`,
+      p:"____ lives in an apartment.", o:["She","He","It","We"], c:0,
+      e:`<b>She</b> = ela, para menina.
+         <i>"And this is Tuli. She lives in an apartment."</i>` },
+
+    { hab:"pronome", grade:true, enun:`That is a spider.`,
+      p:"____ lives in a cave.", o:["It","He","She","You"], c:0,
+      e:`<b>It</b> — bicho ou coisa é sempre <b>it</b> em inglês.
+         <i>"That is a spider. It lives in a cave."</i>` },
+
+    { hab:"pronome", grade:true, enun:`The cow is an animal.`,
+      p:"Qual pronome usar para <b>the cow</b>?", o:["It","She","He","They"], c:0,
+      e:`<b>It</b>. Vaca é bicho — e todo bicho, em inglês, é <b>it</b>.` },
+
+    { hab:"lives", grade:true, conta:"I ____ in a house.",
+      p:"Complete:", o:["live","lives","living","lived"], c:0,
+      e:`<b>I live</b> — sem S. O S só entra com <b>he, she, it</b>.` },
+
+    { hab:"lives", grade:true, conta:"She ____ in a castle.",
+      p:"Complete:", o:["lives","live","living","liven"], c:0,
+      e:`<b>She lives</b> — com S, porque é <b>she</b>.` },
+
+    { hab:"lives", grade:true, conta:"We ____ in the city.",
+      p:"Complete:", o:["live","lives","living","lifes"], c:0,
+      e:`<b>We live</b> — <i>we</i> (nós) não leva S.` },
+
+    { hab:"lives", grade:true, conta:"The monkey ____ in the jungle.",
+      p:"Complete:", o:["lives","live","living","liveses"], c:0,
+      e:`<b>lives</b> — <i>the monkey</i> é um só bicho, ou seja, <b>it</b>. Leva S.` },
+
+    { hab:"lives", grade:true, conta:"You ____ in the country.",
+      p:"Complete:", o:["live","lives","living","livy"], c:0,
+      e:`<b>You live</b> — <i>you</i> nunca leva S.` },
+
+    { hab:"lives", quatro:true,
+      p:"Qual frase está <b>correta</b>?",
+      o:["He lives in a trailer.","He live in a trailer.",
+         "He living in a trailer.","He lives in trailer."], c:0,
+      e:`<b>He lives</b> (com S) <b>in a</b> trailer (com o artigo).
+         A última esqueceu o <b>a</b>.` },
+
+    { hab:"lives", quatro:true,
+      p:"Quem leva <b>S</b> no verbo?",
+      o:["He, She e It","I, You e We","They e We","Todos levam"], c:0,
+      e:`Só <b>He, She e It</b>. I, you, we e they usam o verbo do jeito que ele é: <b>live</b>.` },
+
+    { hab:"lives", quatro:true,
+      p:"Passe para o <b>She</b>: “I live in an apartment.”",
+      o:["She lives in an apartment.","She live in an apartment.",
+         "She lives in a apartment.","She lives in the apartment."], c:0,
+      e:`Duas coisas mudam de uma vez: <b>I → She</b> e <b>live → lives</b>.
+         O <b>an</b> continua igual, porque a palavra <i>apartment</i> não mudou.` }
+  ];
+  quizGenerico(2, "👦 He · She · It", perguntas, 0, 0);
+}
+
+
+/* ============================================================
+   ESTAÇÃO 4 — PLACES STATION (Lesson 5, p. 86)
+   ============================================================ */
+function famPlaces(){
+  const perguntas = [
+    { hab:"places", grade:true, foto:"🌊", leg:"Look and choose",
+      p:"Qual é a palavra em inglês?", o:["ocean","ossean","ocian","oshean"], c:0,
+      e:`<b>ocean</b> = oceano. O som é de S, mas a letra é <b>C</b>.` },
+
+    { hab:"places", grade:true, foto:"🏜️", leg:"Look and choose",
+      p:"Qual é a palavra em inglês?", o:["desert","dessert","disert","desertt"], c:0,
+      e:`<b>desert</b> = deserto, com <b>um S</b>.
+         Com dois S, <b>dessert</b>, a palavra vira <b>sobremesa</b>! 🍰` },
+
+    { hab:"places", grade:true, foto:"🌴", leg:"Look and choose",
+      p:"Qual é a palavra em inglês?", o:["jungle","jungla","jungel","junlge"], c:0,
+      e:`<b>jungle</b> = selva. As letras do fim são <b>g-l-e</b>, nessa ordem.` },
+
+    { hab:"places", grade:true, foto:"🌲", leg:"Look and choose",
+      p:"Qual é a palavra em inglês?", o:["woods","wods","wudes","woodz"], c:0,
+      e:`<b>woods</b> = bosque, mata. Dois <b>O</b> e um <b>S</b> no fim.` },
+
+    { hab:"places", grade:true, foto:"🏙️", leg:"Look and choose",
+      p:"Qual é a palavra em inglês?", o:["city","citi","sity","cyti"], c:0,
+      e:`<b>city</b> = cidade. Começa com <b>C</b> e termina com <b>Y</b>.` },
+
+    { hab:"places", grade:true, foto:"🐄", leg:"Look and choose",
+      p:"Qual é a palavra em inglês?", o:["country","cantry","contry","countri"], c:0,
+      e:`<b>country</b> = campo. Com <b>OU</b> e com <b>Y</b> no fim.` },
+
+    { hab:"places", grade:true, conta:"The fish lives in the ____.",
+      p:"Complete:", o:["ocean","jungle","desert","woods"], c:0,
+      e:`Peixe mora no <b>ocean</b>. É a frase 4 do exercício da página 86.` },
+
+    { hab:"places", grade:true, conta:"The iguana lives in the ____.",
+      p:"Complete:", o:["desert","jungle","city","ocean"], c:0,
+      e:`Iguana mora no <b>desert</b>. É a frase 1 do exercício da página 86.` },
+
+    { hab:"places", grade:true, conta:"The bear lives in the ____.",
+      p:"Complete:", o:["woods","jungle","country","city"], c:0,
+      e:`Urso mora nos <b>woods</b> (o bosque frio, dos pinheiros).
+         Na selva quente, <i>jungle</i>, mora o macaco.` },
+
+    { hab:"places", grade:true, conta:"The monkey lives in the ____.",
+      p:"Complete:", o:["jungle","woods","desert","ocean"], c:0,
+      e:`Macaco mora na <b>jungle</b> — a selva quente e fechada.` },
+
+    { hab:"places", grade:true, conta:"The bird lives in the ____.",
+      p:"Complete:", o:["city","ocean","desert","country"], c:0,
+      e:`No exercício da página 86, o pássaro da foto está voando sobre os prédios:
+         <b>the city</b>.` },
+
+    { hab:"places", grade:true, conta:"The cow lives in the ____.",
+      p:"Complete:", o:["country","city","jungle","ocean"], c:0,
+      e:`Vaca mora no <b>country</b> — o <b>campo</b>, o contrário de <i>city</i>.` },
+
+    { hab:"traducao", quatro:true,
+      p:"Nesta unidade, <b>country</b> quer dizer:",
+      o:["campo, a zona rural","país","condado","continente"], c:0,
+      e:`<b>country</b> tem dois sentidos: <i>país</i> e <i>campo</i>. Na Unit 7 é sempre
+         <b>campo</b> — o lugar da vaca, o oposto de <i>city</i>.
+         É onde mora a senhora mongol da abertura da unidade.` },
+
+    { hab:"traducao", quatro:true,
+      p:"O que quer dizer <b>woods</b>?",
+      o:["bosque, mata","madeira de construção","montanha","pântano"], c:0,
+      e:`<b>woods</b> = <b>bosque</b>. É verdade que <i>wood</i> sozinho quer dizer madeira —
+         mas no plural, <b>woods</b>, é o lugar cheio de árvores onde mora o urso.` },
+
+    { hab:"places", quatro:true,
+      p:"Qual destas <b>não</b> é um lugar da Lesson 5?",
+      o:["castle","ocean","woods","country"], c:0,
+      e:`<b>castle</b> é uma <b>moradia</b>, da Lesson 1. Os seis lugares da Lesson 5 são:
+         ocean, desert, jungle, woods, city, country.` }
+  ];
+  quizGenerico(3, "🌍 Places Station", perguntas, 0, 0);
+}
+
+
+/* ============================================================
+   ESTAÇÃO 5 — RIVER CROSSING (in a … × in the …)
+   ============================================================ */
+const RIO = [
+  { pedido:"Nasan é um menino e mora numa casa.",
+    origem:"Nasan · house",
+    partes:["Nasan ", {o:["lives","live","living"], c:0}, " in ",
+            {o:["a","an","the"], c:0}, " house."],
+    e:`<b>He lives</b> → verbo com <b>S</b>. E <b>house</b> é moradia → <b>in a</b>.` },
+
+  { pedido:"Tuli é uma menina e mora num apartamento.",
+    origem:"Tuli · apartment",
+    partes:["Tuli ", {o:["lives","live","living"], c:0}, " in ",
+            {o:["an","a","the"], c:0}, " apartment."],
+    e:`<b>She lives</b> → com <b>S</b>. E <b>apartment</b> começa com vogal → <b>an</b>.` },
+
+  { pedido:"A aranha mora numa caverna.",
+    origem:"the spider · cave",
+    partes:["The spider ", {o:["lives","live","liven"], c:0}, " in ",
+            {o:["a","an","the"], c:0}, " cave."],
+    e:`Bicho é <b>it</b> → <b>lives</b> com S. E <b>cave</b> é moradia → <b>in a</b>.` },
+
+  { pedido:"O peixe mora no oceano.",
+    origem:"the fish · ocean",
+    partes:["The fish lives ", {o:["in","on","at"], c:0}, " ",
+            {o:["the","a","an"], c:0}, " ocean."],
+    e:`Sempre <b>in</b> para dizer onde se mora. E <b>ocean</b> é um <b>lugar</b> → <b>the</b>.` },
+
+  { pedido:"A vaca mora no campo.",
+    origem:"the cow · country",
+    partes:["The cow lives in ", {o:["the","a","an"], c:0}, " ",
+            {o:["country","city","castle"], c:0}, "."],
+    e:`Lugar → <b>the</b>. E o campo, em inglês, é <b>country</b>.` },
+
+  { pedido:"Você mora na cidade. Fale de você mesmo.",
+    origem:"I · city",
+    partes:["I ", {o:["live","lives","living"], c:0}, " in ",
+            {o:["the","a","an"], c:0}, " city."],
+    e:`Com <b>I</b> o verbo <b>não</b> leva S: <b>I live</b>.
+       E <b>city</b> é lugar → <b>the</b>. É a resposta da música da página 87.` }
+];
+let PT_ = null;
+function totalTabuas(){
+  return RIO.reduce((a,it)=> a + it.partes.filter(p=>typeof p !== "string").length, 0);
+}
+function faseRio(){
+  PT_ = { i:0, sel:[], ac:0, tot:totalTabuas(), conferido:false };
+  zeraSelRio();
+  desenhaRio();
+}
+function zeraSelRio(){
+  const it = RIO[PT_.i];
+  PT_.sel = it.partes.map(p => typeof p === "string" ? null : -1);
+  PT_.alvo = PT_.sel.findIndex(v => v === -1);
+  PT_.conferido = false;
+}
+function lacunasDe(i){
+  return RIO[i].partes.map((p,k)=>({p,k})).filter(x=>typeof x.p !== "string");
+}
+function pontesSVG(total, postas){
+  /* uma tábua por lacuna; ela só acende quando a resposta está certa */
+  const larg = 320, alt = 78, x0 = 26, x1 = larg - 26;
+  const passo = (x1 - x0) / total;
+  let tabuas = "";
+  for(let k=0;k<total;k++){
+    const x = x0 + k*passo;
+    tabuas += `<rect class="tabua ${k<postas?"posta":""}" x="${x+2}" y="34" width="${passo-4}" height="11" rx="3"></rect>`;
+  }
+  return `<svg class="ponte" viewBox="0 0 ${larg} ${alt}" role="img"
+      aria-label="Ponte sobre o rio com ${total} tábuas, ${postas} colocadas">
+    <rect class="agua" x="0" y="52" width="${larg}" height="26" rx="6"></rect>
+    <rect class="pilar" x="4" y="30" width="22" height="34" rx="4"></rect>
+    <rect class="pilar" x="${larg-26}" y="30" width="22" height="34" rx="4"></rect>
+    ${tabuas}
+    <text class="bicho" x="10" y="26">🐴</text>
+    <text class="bicho" x="${larg-32}" y="26">⛺</text>
+  </svg>`;
+}
+function desenhaRio(){
+  const it = RIO[PT_.i];
+  const lac = lacunasDe(PT_.i);
+  const nLac = lac.length;
+  const escolhidas = lac.filter(x => PT_.sel[x.k] >= 0).length;
+  const certas = PT_.conferido ? lac.filter(x => PT_.sel[x.k] === x.p.c).length : 0;
+
+  const frase = it.partes.map((p,k)=>{
+    if(typeof p === "string") return p;
+    const v = PT_.sel[k];
+    let cls = "lac";
+    if(PT_.conferido) cls += (v === p.c) ? " certa" : " errada";
+    else if(v < 0) cls += (k === PT_.alvo ? " alvo vazia" : " vazia");
+    else cls += " pronta";
+    const txt = v >= 0 ? p.o[v] : "______";
+    return `<span class="${cls}" onclick="${PT_.conferido?"":`miraLacuna(${k})`}">${txt}</span>`;
+  }).join("");
+
+  /* o grupo de opções da lacuna que está na mira */
+  const alvo = PT_.alvo;
+  const grupo = (alvo >= 0 && !PT_.conferido) ? (()=> {
+    const p = it.partes[alvo];
+    const nAlvo = lac.findIndex(x=>x.k===alvo) + 1;
+    return `<p class="pergunta centro" style="margin-bottom:8px">Tábua ${nAlvo}: qual palavra encaixa?</p>
+      <div class="opcoes quatro">
+        ${p.o.map((t,j)=>`<button class="op" onclick="poeTabua(${alvo},${j})">${t}</button>`).join("")}
+      </div>`;
+  })() : ``;
+
+  app.innerHTML = hud("🌉 River Crossing") + `
+    <div class="card">
+      <p class="mini">Rio ${PT_.i+1} de ${RIO.length}</p>
+      <div class="progresso"><i style="width:${PT_.i/RIO.length*100}%"></i></div>
+      ${pontesSVG(nLac, PT_.conferido ? certas : escolhidas)}
+      <p class="contadorTabuas">${PT_.conferido
+        ? `${certas} de ${nLac} tábuas <b>certas</b>`
+        : `${escolhidas} de ${nLac} tábuas colocadas`}</p>
+      <div class="enunciado">${it.pedido}<br>
+        <span class="mini">${it.origem}</span></div>
+      <div class="frase">${frase}</div>
+      ${grupo}
+      ${(!PT_.conferido && alvo < 0) ? `<div class="acoes">
+        <button class="btn" onclick="confereRio()">🐴 Atravessar o rio</button>
+        <button class="btn sec" onclick="refazRio()">↺ Refazer esta frase</button>
+      </div>
+      <p class="mini centro" style="margin-top:10px">Antes de atravessar: leia a frase inteira
+      em voz baixa, até o <b>ponto final</b>.</p>` : ``}
+      ${(!PT_.conferido && alvo >= 0 && escolhidas > 0) ? `<p class="mini centro" style="margin-top:12px">
+        Ainda faltam tábuas — toque nos espaços em branco da frase.</p>` : ``}
+      <div class="feedback" id="fbp"></div>
+      <div class="acoes esconde" id="proxBoxP">
+        <button class="btn" onclick="proxRio()" id="btnProxP">Continuar →</button>
+      </div>
+    </div>`;
+}
+function miraLacuna(k){
+  if(PT_.conferido) return;
+  somClique(); PT_.alvo = k; desenhaRio();
+}
+window.miraLacuna = miraLacuna;
+function poeTabua(k, j){
+  somPop();
+  PT_.sel[k] = j;
+  /* a mira vai sozinha para a próxima tábua vazia — nunca para o botão de atravessar */
+  PT_.alvo = PT_.sel.findIndex(v => v === -1);
+  desenhaRio();
+}
+window.poeTabua = poeTabua;
+function refazRio(){ somClique(); zeraSelRio(); desenhaRio(); }
+window.refazRio = refazRio;
+
+function confereRio(){
+  const it = RIO[PT_.i], lac = lacunasDe(PT_.i);
+  const erradas = lac.filter(x => PT_.sel[x.k] !== x.p.c);
+  const certas  = lac.length - erradas.length;
+  PT_.conferido = true;
+  PT_.ac += certas;
+  if(erradas.length){
+    somErro();
+    for(let k=0;k<Math.min(erradas.length,2);k++) marcaErro("inathe");
+  } else {
+    somAcerto(); ganha(15); marcaAcerto("inathe");
+  }
+  salvar();
+  desenhaRio();
+  const fb = $("#fbp");
+  if(!erradas.length){
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ Atravessou, ${NOME()}! ${lac.length} de ${lac.length} tábuas.</div>${it.e}`;
+  } else {
+    fb.className = "feedback ruim show";
+    const quais = erradas.map(x => {
+      const n = lac.findIndex(y=>y.k===x.k) + 1;
+      return `<li>tábua ${n}: era <b>${x.p.o[x.p.c]}</b>, você pôs
+        <b>${PT_.sel[x.k]>=0 ? x.p.o[PT_.sel[x.k]] : "nada"}</b></li>`;
+    }).join("");
+    fb.innerHTML = `<div class="tt">❌ A ponte caiu, ${NOME()}: faltou ${erradas.length===1
+      ? `<b>1 tábua</b>` : `<b>${erradas.length} tábuas</b>`}.</div>
+      <ul style="margin:6px 0 10px">${quais}</ul>${it.e}`;
+  }
+  $("#proxBoxP").classList.remove("esconde");
+  $("#btnProxP").textContent = (PT_.i === RIO.length-1) ? "Terminar estação 🏁" : "Próximo rio →";
+  $("#btnProxP").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.confereRio = confereRio;
+function proxRio(){
+  somClique(); PT_.i++;
+  if(PT_.i >= RIO.length){ concluiMissao(4, PT_.ac, PT_.tot); return; }
+  zeraSelRio(); desenhaRio(); scrollTo(0,0);
+}
+window.proxRio = proxRio;
+
+
+/* ============================================================
+   ESTAÇÃO 6 — WRITE THE WORDS IN ORDER (Lesson 6 + p. 132)
+   ============================================================ */
+const ORDEM = [
+  { pedido:"She castle lives a in",
+    certa:["She","lives","in","a","castle","."],
+    dica:"Comece por <b>quem</b> mora.",
+    e:`<b>She lives in a castle.</b> — quem (She) → verbo com S (lives) → in →
+       artigo da moradia (a) → castle.` },
+
+  { pedido:"trailer a in He lives",
+    certa:["He","lives","in","a","trailer","."],
+    dica:"É o exercício 2 da página 132.",
+    e:`<b>He lives in a trailer.</b> — <i>trailer</i> é moradia, então <b>in a</b>.` },
+
+  { pedido:"in lives cave It a",
+    certa:["It","lives","in","a","cave","."],
+    dica:"O bicho é sempre <b>It</b>.",
+    e:`<b>It lives in a cave.</b> — a aranha da página 83.` },
+
+  { pedido:"you Where live do",
+    certa:["Where","do","you","live","?"],
+    dica:"<b>Where</b> vai na frente de tudo.",
+    e:`<b>Where do you live?</b> — a ordem nunca muda:
+       Where + do + you + live + <b>?</b>` },
+
+  { pedido:"the I in live city",
+    certa:["I","live","in","the","city","."],
+    dica:"Com <b>I</b>, o verbo não leva S.",
+    e:`<b>I live in the city.</b> — <i>city</i> é lugar, então <b>in the</b>.` },
+
+  { pedido:"an apartment in She lives",
+    certa:["She","lives","in","an","apartment","."],
+    dica:"Repare no <b>an</b>.",
+    e:`<b>She lives in an apartment.</b> — a frase da Tuli, na página 83.` },
+
+  { pedido:"in the I jungle live",
+    certa:["I","live","in","the","jungle","."],
+    dica:"É o exercício 4 da página 132.",
+    e:`<b>I live in the jungle.</b> — lugar → <b>the</b>, e com <b>I</b> o verbo fica <b>live</b>.` },
+
+  { pedido:"country the in lives cow The",
+    certa:["The","cow","lives","in","the","country","."],
+    dica:"Sete palavras. Vá com calma.",
+    e:`<b>The cow lives in the country.</b> — a vaca mora no campo.` }
+];
+let OR = null;
+function faseOrdem(){
+  OR = { i:0, ac:0, tot:ORDEM.length, postas:[], banco:[], conferido:false };
+  preparaOrdem();
+  desenhaOrdem();
+}
+function preparaOrdem(){
+  const it = ORDEM[OR.i];
+  OR.postas = [];
+  OR.conferido = false;
+  /* embaralha garantindo que a ordem sorteada não seja logo a resposta pronta */
+  let emb = embaralha(it.certa.map((t,i)=>({t,i})));
+  let voltas = 0;
+  while(emb.every((x,k)=>x.i===k) && voltas < 20){ emb = embaralha(emb); voltas++; }
+  OR.banco = emb;
+}
+function desenhaOrdem(){
+  const it = ORDEM[OR.i];
+  const montada = OR.postas.length
+    ? OR.postas.map((b,pos)=>{
+        let cls = "pc";
+        if(OR.conferido) cls += (b.i === pos) ? " certo" : " errado";
+        return `<button class="${cls}" onclick="${OR.conferido?"":`tiraPalavra(${pos})`}">${b.t}</button>`;
+      }).join("")
+    : `<span class="vazio">TOQUE NAS PALAVRAS AÍ EMBAIXO PARA MONTAR A FRASE</span>`;
+
+  const banco = OR.banco.map((b,k)=>{
+    const usada = OR.postas.includes(b);
+    return `<button class="pal ${usada?"usada":""}" onclick="poePalavra(${k})" ${usada?"disabled":""}>${b.t}</button>`;
+  }).join("");
+
+  const completa = OR.postas.length === it.certa.length;
+
+  app.innerHTML = hud("❓ Write the words in order") + `
+    <div class="card">
+      <p class="mini">Frase ${OR.i+1} de ${ORDEM.length}</p>
+      <div class="progresso"><i style="width:${OR.i/ORDEM.length*100}%"></i></div>
+      <div class="enunciado">
+        <b>Write the words in order.</b><br>
+        <span style="font-size:1.08em;letter-spacing:.04em">${it.pedido}</span><br>
+        <span class="mini">💡 ${it.dica}</span>
+      </div>
+      <div class="montada">${montada}</div>
+      ${OR.conferido ? `` : `<div class="bancoPal">${banco}</div>`}
+      ${(!OR.conferido && OR.postas.length) ? `<p class="mini centro">
+        Tocou na palavra errada? Toque nela lá em cima para tirar.</p>` : ``}
+      ${(!OR.conferido && completa) ? `<div class="acoes">
+        <button class="btn" onclick="confereOrdem()">✅ Conferir a frase</button>
+        <button class="btn sec" onclick="refazOrdem()">↺ Começar de novo</button>
+      </div>` : ``}
+      <div class="feedback" id="fbo"></div>
+      <div class="acoes esconde" id="proxBoxO">
+        <button class="btn" onclick="proxOrdem()" id="btnProxO">Continuar →</button>
+      </div>
+    </div>`;
+}
+function poePalavra(k){
+  if(OR.conferido) return;
+  const b = OR.banco[k];
+  if(OR.postas.includes(b)) return;
+  somPop(); OR.postas.push(b); desenhaOrdem();
+}
+window.poePalavra = poePalavra;
+function tiraPalavra(pos){
+  if(OR.conferido) return;
+  somClique(); OR.postas.splice(pos,1); desenhaOrdem();
+}
+window.tiraPalavra = tiraPalavra;
+function refazOrdem(){ somClique(); OR.postas = []; desenhaOrdem(); }
+window.refazOrdem = refazOrdem;
+
+function confereOrdem(){
+  const it = ORDEM[OR.i];
+  const certo = OR.postas.every((b,pos)=> b.i === pos);
+  OR.conferido = true;
+  if(certo){
+    OR.ac++; somAcerto(); ganha(15); marcaAcerto("ordem");
+  } else {
+    somErro(); marcaErro("ordem");
+  }
+  salvar();
+  desenhaOrdem();
+  const fb = $("#fbo");
+  if(certo){
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${it.e}`;
+  } else {
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Ainda não, ${NOME()}. A frase certa é:</div>
+      <p style="font-size:1.1em;margin:8px 0"><b>${it.certa.join(" ").replace(/ ([.?])/,"$1")}</b></p>
+      ${it.e}`;
+  }
+  $("#proxBoxO").classList.remove("esconde");
+  $("#btnProxO").textContent = (OR.i === ORDEM.length-1) ? "Terminar estação 🏁" : "Próxima frase →";
+  $("#btnProxO").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.confereOrdem = confereOrdem;
+function proxOrdem(){
+  somClique(); OR.i++;
+  if(OR.i >= ORDEM.length){ concluiMissao(5, OR.ac, OR.tot); return; }
+  preparaOrdem(); desenhaOrdem(); scrollTo(0,0);
+}
+window.proxOrdem = proxOrdem;
+
+
+/* ============================================================
+   ESTAÇÃO 7 — SPELLING WORKSHOP
+   ============================================================ */
+function faseSpelling(){
+  const perguntas = [
+    { hab:"spelling", quatro:true, p:"Qual está escrita <b>corretamente</b>?",
+      o:["apartment","apartement","apartmant","appartment"], c:0,
+      e:`<b>apartment</b>. Não tem <b>e</b> depois do T, e o P é só um.` },
+
+    { hab:"spelling", quatro:true, p:"Qual está escrita <b>corretamente</b>?",
+      o:["country","cantry","contry","countri"], c:0,
+      e:`<b>country</b> — <b>OU</b> no meio e <b>Y</b> no fim.` },
+
+    { hab:"spelling", quatro:true, p:"Qual está escrita <b>corretamente</b>?",
+      o:["woods","wods","wuds","woodz"], c:0,
+      e:`<b>woods</b> — dois <b>O</b>, e o <b>S</b> do plural no fim.` },
+
+    { hab:"spelling", quatro:true, p:"Qual está escrita <b>corretamente</b>?",
+      o:["castle","casle","castel","cassle"], c:0,
+      e:`<b>castle</b>. O <b>T</b> não se pronuncia, mas se escreve.` },
+
+    { hab:"spelling", quatro:true, p:"Qual quer dizer <b>deserto</b>?",
+      o:["desert","dessert","disert","desertt"], c:0,
+      e:`<b>desert</b>, com <b>um S</b> = deserto.
+         <b>dessert</b>, com dois S, é <b>sobremesa</b> — a prova adora essa pegadinha. 🍰` },
+
+    { hab:"spelling", quatro:true, p:"Qual está escrita <b>corretamente</b>?",
+      o:["jungle","jungel","jungla","junlge"], c:0,
+      e:`<b>jungle</b> — termina em <b>-gle</b>, igual a <i>single</i> e <i>eagle</i>.` },
+
+    { hab:"spelling", quatro:true, p:"Qual está escrita <b>corretamente</b>?",
+      o:["ocean","ossean","ocian","oshean"], c:0,
+      e:`<b>ocean</b>. O som é de "ó-chan", mas as letras são <b>o-c-e-a-n</b>.` },
+
+    { hab:"spelling", quatro:true, p:"Qual está escrita <b>corretamente</b>?",
+      o:["city","sity","citi","cyty"], c:0,
+      e:`<b>city</b> — <b>C</b> no começo (com som de S) e <b>Y</b> no fim.` },
+
+    { hab:"spelling", quatro:true, p:"Qual está escrita <b>corretamente</b>?",
+      o:["trailer","traler","treiler","trailler"], c:0,
+      e:`<b>trailer</b> — t-r-a-i-l-e-r.` },
+
+    { hab:"spelling", quatro:true, p:"Qual está escrita <b>corretamente</b>?",
+      o:["house","hause","houze","hous"], c:0,
+      e:`<b>house</b> — com <b>OU</b> e <b>SE</b> no fim.` },
+
+    { hab:"spelling", quatro:true, p:"Qual está escrita <b>corretamente</b>?",
+      o:["boat","bote","boot","boath"], c:0,
+      e:`<b>boat</b> — b-o-a-t. <i>Boot</i>, com dois O, é <b>bota</b>.` },
+
+    { hab:"spelling", quatro:true, p:"Qual está escrita <b>corretamente</b>?",
+      o:["cave","kave","caive","cav"], c:0,
+      e:`<b>cave</b> — c-a-v-e, com o <b>E</b> mudo no fim.` },
+
+    { hab:"spelling", quatro:true,
+      p:"Qual lista está <b>toda</b> escrita corretamente?",
+      o:["apartment · country · woods","apartement · country · woods",
+         "apartment · cantry · woods","apartment · country · wods"], c:0,
+      e:`As três juntas: <b>apartment</b> (sem e) · <b>country</b> (com ou e y) ·
+         <b>woods</b> (dois o). São exatamente as três que mais escorregam.` },
+
+    { hab:"spelling", quatro:true,
+      p:"Qual frase está <b>toda</b> correta?",
+      o:["The cow lives in the country.","The cow lives in the cantry.",
+         "The cow live in the country.","The cow lives in a country."], c:0,
+      e:`Três coisas certas ao mesmo tempo: <b>lives</b> (com S),
+         <b>in the</b> (é lugar) e <b>country</b> (escrita certa).` }
+  ];
+  quizGenerico(6, "✍️ Spelling Workshop", perguntas, 0, 0);
+}
+
+
+/* ============================================================
+   ESTAÇÃO 8 — FINAL TEST (arcade + prova final)
+   ============================================================ */
+const BANCO = [
+  {hab:"traducao", q:"<b>house</b> quer dizer", o:["casa","castelo","caverna","barco"], c:0},
+  {hab:"traducao", q:"<b>apartment</b> quer dizer", o:["apartamento","aposento","departamento","apartar"], c:0},
+  {hab:"traducao", q:"<b>castle</b> quer dizer", o:["castelo","casulo","cascata","caixa"], c:0},
+  {hab:"traducao", q:"<b>cave</b> quer dizer", o:["caverna","chave","cavalo","cova"], c:0},
+  {hab:"traducao", q:"<b>boat</b> quer dizer", o:["barco","bota","bode","bolo"], c:0},
+  {hab:"traducao", q:"<b>trailer</b> quer dizer", o:["casa com rodas","trilha","trem","trailer de filme"], c:0},
+  {hab:"traducao", q:"<b>ocean</b> quer dizer", o:["oceano","oásis","ilha","onda"], c:0},
+  {hab:"traducao", q:"<b>desert</b> quer dizer", o:["deserto","sobremesa","descampado","desenho"], c:0},
+  {hab:"traducao", q:"<b>jungle</b> quer dizer", o:["selva","junta","jaula","jardim"], c:0},
+  {hab:"traducao", q:"<b>woods</b> quer dizer", o:["bosque","lã","vento","parede"], c:0},
+  {hab:"traducao", q:"<b>city</b> quer dizer", o:["cidade","sítio","céu","cima"], c:0},
+  {hab:"traducao", q:"<b>country</b>, nesta unidade, quer dizer", o:["campo","país","condado","conto"], c:0},
+  {hab:"artigo",   q:"____ apartment", o:["an","a","the","some"], c:0},
+  {hab:"artigo",   q:"____ house", o:["a","an","the","any"], c:0},
+  {hab:"artigo",   q:"____ castle", o:["a","an","the","one"], c:0},
+  {hab:"artigo",   q:"____ iguana", o:["an","a","the","some"], c:0},
+  {hab:"artigo",   q:"____ boat", o:["a","an","the","any"], c:0},
+  {hab:"lives",    q:"He ____ in a house.", o:["lives","live","living","lifes"], c:0},
+  {hab:"lives",    q:"I ____ in the city.", o:["live","lives","living","lifes"], c:0},
+  {hab:"lives",    q:"She ____ in an apartment.", o:["lives","live","living","liven"], c:0},
+  {hab:"lives",    q:"They ____ in the country.", o:["live","lives","living","lifes"], c:0},
+  {hab:"lives",    q:"The monkey ____ in the jungle.", o:["lives","live","living","liveses"], c:0},
+  {hab:"pronome",  q:"Pronome para <b>the spider</b>", o:["It","He","She","They"], c:0},
+  {hab:"pronome",  q:"Pronome para <b>Nasan</b> (a boy)", o:["He","She","It","We"], c:0},
+  {hab:"pronome",  q:"Pronome para <b>Tuli</b> (a girl)", o:["She","He","It","You"], c:0},
+  {hab:"inathe",   q:"I live in ____ city.", o:["the","a","an","one"], c:0},
+  {hab:"inathe",   q:"She lives in ____ apartment.", o:["an","the","a","some"], c:0},
+  {hab:"inathe",   q:"The fish lives in ____ ocean.", o:["the","a","an","any"], c:0},
+  {hab:"inathe",   q:"He lives in ____ trailer.", o:["a","the","an","some"], c:0},
+  {hab:"inathe",   q:"The bear lives in ____ woods.", o:["the","a","an","one"], c:0},
+  {hab:"places",   q:"The fish lives in the ____", o:["ocean","jungle","desert","city"], c:0},
+  {hab:"places",   q:"The iguana lives in the ____", o:["desert","ocean","woods","city"], c:0},
+  {hab:"places",   q:"The monkey lives in the ____", o:["jungle","woods","desert","country"], c:0},
+  {hab:"places",   q:"The bear lives in the ____", o:["woods","jungle","ocean","city"], c:0},
+  {hab:"places",   q:"The bird lives in the ____", o:["city","country","ocean","desert"], c:0},
+  {hab:"places",   q:"The cow lives in the ____", o:["country","city","jungle","ocean"], c:0},
+  {hab:"where",    q:"Onde você mora? (em inglês)", o:["Where do you live?","Where you live?","Where live you?","Where do you living?"], c:0},
+  {hab:"where",    q:"Resposta certa para Where do you live?", o:["I live in the city.","I lives in the city.","I live in a city.","I am live in city."], c:0},
+  {hab:"spelling", q:"Escrita certa de <b>apartamento</b>", o:["apartment","apartement","apartmant","appartment"], c:0},
+  {hab:"spelling", q:"Escrita certa de <b>campo</b>", o:["country","cantry","contry","countrie"], c:0},
+  {hab:"spelling", q:"Escrita certa de <b>bosque</b>", o:["woods","wods","wuds","woodz"], c:0},
+  {hab:"spelling", q:"Escrita certa de <b>castelo</b>", o:["castle","casle","castel","cassle"], c:0},
+  {hab:"spelling", q:"Escrita certa de <b>selva</b>", o:["jungle","jungel","jungla","junlge"], c:0},
+  {hab:"spelling", q:"Escrita certa de <b>oceano</b>", o:["ocean","ossean","ocian","oshean"], c:0}
+];
+let arc = null, cronoT = null, cronoPausa = false;
+function pararArcade(){ if(cronoT){ clearInterval(cronoT); cronoT = null; } arc = null; }
+function pausaCrono(v){ cronoPausa = !!v; }
+
+function faseFinal(){
+  app.innerHTML = hud("🏆 Final Test") + `
+    <div class="card centro">
+      <div style="font-size:60px">🏆</div>
+      <h2>Última estação, ${NOME()}</h2>
+      <p>Esta missão tem <b>duas partes</b>, e só a segunda vale estrelas:</p>
+      <div class="enunciado" style="text-align:left">
+        <p><b>1 · Arcade da estepe</b> — 60 segundos de perguntas rápidas de toda a Unit 7.
+        Vale <b>pontos</b>, não estrelas. Serve para aquecer.</p>
+        <p style="margin:0"><b>2 · Final Test</b> — sem relógio nenhum. É ele que vale as
+        <b>${POR_MISSAO} estrelas</b>, e ele puxa mais do que você errou.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn chama" onclick="iniciaArcade()">⏱️ Começar o arcade</button>
+        <button class="btn ceu" onclick="provaFinal()">🎓 Ir direto para o Final Test</button>
+      </div>
+    </div>`;
+}
+function bancoOrdenado(){
+  const lista = [];
+  for(const item of BANCO){
+    lista.push(item);
+    const peso = S.erros[item.hab] || 0;
+    for(let k=0; k<Math.min(peso,3); k++) lista.push(item);   /* o que ela erra aparece mais */
+  }
+  return lista;
+}
+function iniciaArcade(){
+  ac(); somClique();
+  arc = { pontos:0, acertos:0, erros:0, combo:0, tempo:60, usadas:[], banco:bancoOrdenado() };
+  sorteiaArcade();
+  cronoT = setInterval(()=>{
+    if(cronoPausa) return;
+    arc.tempo -= 0.1;
+    const b = document.getElementById("cronoBarra");
+    if(b) b.style.width = Math.max(0, arc.tempo/60*100) + "%";
+    if(arc.tempo <= 0) fimArcade();
+  }, 100);
+}
+window.iniciaArcade = iniciaArcade;
+function sorteiaArcade(){
+  /* trava anti-repetição: nunca repete uma das 6 últimas enquanto houver alternativa */
+  let item = null, voltas = 0;
+  do { item = sorteio(arc.banco); voltas++; }
+  while(arc.usadas.includes(item.q) && voltas < 60);
+  arc.usadas.push(item.q);
+  if(arc.usadas.length > 6) arc.usadas.shift();
+  arc.atual = item;
+  desenhaArcade();
+}
+function desenhaArcade(){
+  const it = arc.atual;
+  const ordem = embaralha(it.o.map((_,i)=>i));
+  const opts  = ordem.map(i=>it.o[i]);
+  arc.certa = ordem.indexOf(it.c);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <div class="placar">
+        <span>⭐ ${arc.pontos}</span>
+        <span>✅ ${arc.acertos}</span>
+        <span class="combo">🔥 ${arc.combo}</span>
+      </div>
+      <div class="cronometro"><i id="cronoBarra" style="width:${Math.max(0,arc.tempo/60*100)}%"></i></div>
+      <p class="mini centro">Responda o máximo que conseguir. Errar não tira estrela nenhuma.</p>
+      <div class="conta">${it.q}</div>
+      <div class="opcoes quatro" id="ops">
+        ${opts.map((t,k)=>`<button class="op" onclick="respArcade(${k})">${t}</button>`).join("")}
+      </div>
+      <div class="acoes"><button class="btn sec" onclick="fimArcade()">Parar e ir para o teste →</button></div>
+    </div>`;
+}
+function respArcade(k){
+  if(!arc) return;
+  if(k === arc.certa){
+    arc.combo++; arc.acertos++;
+    const p = 10 + arc.combo*2;
+    arc.pontos += p; S.pontos += p;
+    marcaAcerto(arc.atual.hab);
+    somAcerto(); toast("+" + p + (arc.combo>2 ? " 🔥 combo " + arc.combo : ""));
+  } else {
+    arc.combo = 0; arc.erros++;
+    marcaErro(arc.atual.hab);
+    somErro(); toast("Era " + arc.atual.o[arc.atual.c], true);
+  }
+  salvar();
+  sorteiaArcade();
+}
+window.respArcade = respArcade;
+function fimArcade(){
+  if(cronoT){ clearInterval(cronoT); cronoT = null; }
+  const r = arc || {pontos:0,acertos:0,erros:0};
+  arc = null;
+  somVitoria(); salvar();
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">⏱️</div>
+      <h2>Arcade encerrado!</h2>
+      <p>Você acertou <b>${r.acertos}</b> e ganhou <b>${r.pontos} pontos</b>.</p>
+      <p class="mini">Agora vem o que vale as estrelas — <b>sem relógio</b>.</p>
+      <div class="acoes">
+        <button class="btn" onclick="provaFinal()">🎓 Fazer o Final Test</button>
+        <button class="btn sec" onclick="iniciaArcade()">🔁 Jogar o arcade de novo</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+window.fimArcade = fimArcade;
+
+/* --- Final Test: cobre as quatro lições, puxando o que ela mais errou --- */
+const FINAL = [
+  { hab:"homes", quatro:true, foto:"🏰", leg:"Look and write",
+    p:"Qual é a palavra em inglês?",
+    o:["castle","castel","casle","castell"], c:0,
+    e:`<b>castle</b> — com o <b>T</b> mudo no meio.` },
+
+  { hab:"homes", quatro:true, foto:"🚐", leg:"Look and write",
+    p:"Qual é a palavra em inglês?",
+    o:["trailer","traler","treiler","trail"], c:0,
+    e:`<b>trailer</b> — a casa com rodas, nº 2 da página 82.` },
+
+  { hab:"artigo", quatro:true,
+    p:"Complete: “Tuli lives in ____ apartment.”",
+    o:["an","a","the","one"], c:0,
+    e:`<b>an</b> apartment — vogal na frente pede <b>an</b>. É a frase da página 83.` },
+
+  { hab:"lives", quatro:true,
+    p:"Qual frase está <b>correta</b>?",
+    o:["He lives in a house.","He live in a house.",
+       "He lives in house.","He living in a house."], c:0,
+    e:`<b>He lives</b> (com S) <b>in a</b> house (com o artigo). As duas coisas juntas.` },
+
+  { hab:"pronome", quatro:true,
+    p:"“That is a spider. ____ lives in a cave.”",
+    o:["It","He","She","They"], c:0,
+    e:`Bicho é <b>it</b> em inglês. E <b>it lives</b>, com S.` },
+
+  { hab:"places", quatro:true, foto:"🐄", leg:"Look and write",
+    p:"Onde mora a vaca?",
+    o:["in the country","in the city","in the jungle","in a country"], c:0,
+    e:`<b>in the country</b> — o campo. Lugar pede <b>the</b>, nunca <b>a</b>.` },
+
+  { hab:"places", quatro:true,
+    p:"Complete: “The bear lives in the ____.”",
+    o:["woods","jungle","desert","ocean"], c:0,
+    e:`Urso → <b>woods</b>, o bosque. Macaco → jungle. Não troque os dois.` },
+
+  { hab:"inathe", quatro:true,
+    p:"Qual frase está <b>correta</b>?",
+    o:["I live in the city.","I live in a city.",
+       "I lives in the city.","I live in city."], c:0,
+    e:`<b>city</b> é lugar → <b>in the</b>. E com <b>I</b> o verbo não leva S.` },
+
+  { hab:"inathe", quatro:true,
+    p:"Qual frase está <b>correta</b>?",
+    o:["She lives in an apartment.","She lives in the apartment.",
+       "She lives in a apartment.","She live in an apartment."], c:0,
+    e:`Moradia pede <b>a/an</b>, e <i>apartment</i> começa com vogal → <b>an</b>.` },
+
+  { hab:"inathe", quatro:true,
+    p:"Onde vai <b>the</b> e onde vai <b>a/an</b>?",
+    o:["moradia → a/an · lugar → the","moradia → the · lugar → a/an",
+       "os dois usam the","os dois usam a/an"], c:0,
+    e:`A regra da unidade inteira: <b>in a house</b> / <b>in an apartment</b> ×
+       <b>in the city</b> / <b>in the ocean</b>.` },
+
+  { hab:"where", quatro:true,
+    p:"Como se pergunta “Onde você mora?” em inglês?",
+    o:["Where do you live?","Where you live?","Where live you?","Where does you live?"], c:0,
+    e:`<b>Where do you live?</b> — a ordem é fixa:
+       Where + do + you + live + <b>?</b>` },
+
+  { hab:"ordem", quatro:true,
+    p:"Ponha em ordem: <i>castle · a · She · in · lives</i>",
+    o:["She lives in a castle.","She in lives a castle.",
+       "She lives a in castle.","Lives she in a castle."], c:0,
+    e:`Quem (She) → verbo (lives) → in → a → castle.
+       É o exercício 1 do <i>Grammar Guide</i>, página 132.` },
+
+  { hab:"ordem", quatro:true,
+    p:"Ponha em ordem: <i>the · I · in · live · jungle</i>",
+    o:["I live in the jungle.","I lives in the jungle.",
+       "I live in a jungle.","In the jungle I live."], c:0,
+    e:`<b>I live in the jungle.</b> — com <b>I</b> não tem S, e <i>jungle</i> é lugar → <b>the</b>.` },
+
+  { hab:"spelling", quatro:true,
+    p:"Qual está escrita <b>corretamente</b>?",
+    o:["apartment","apartement","apartmant","apperment"], c:0,
+    e:`<b>apartment</b> — sem <b>e</b> depois do T.` },
+
+  { hab:"spelling", quatro:true,
+    p:"Qual está escrita <b>corretamente</b>?",
+    o:["country","cantry","contry","countrey"], c:0,
+    e:`<b>country</b> — <b>OU</b> e <b>Y</b>.` },
+
+  { hab:"spelling", quatro:true,
+    p:"Qual quer dizer <b>deserto</b>?",
+    o:["desert","dessert","desertt","disert"], c:0,
+    e:`<b>desert</b>, com um S. <b>dessert</b>, com dois, é <b>sobremesa</b>.` },
+
+  { hab:"traducao", quatro:true,
+    p:"Nesta unidade, <b>country</b> quer dizer:",
+    o:["campo","país","condado","cidade"], c:0,
+    e:`Na Unit 7 é o <b>campo</b>, o contrário de <i>city</i> — o lugar da vaca.` },
+
+  { hab:"homes", quatro:true,
+    p:"Qual destas <b>não</b> é uma moradia da Lesson 1?",
+    o:["desert","cave","boat","trailer"], c:0,
+    e:`<b>desert</b> é um <b>lugar</b>, da Lesson 5. As outras três são moradias.` },
+
+  { hab:"lives", quatro:true,
+    p:"Complete: “The fish ____ in the ocean.”",
+    o:["lives","live","living","lifes"], c:0,
+    e:`<i>The fish</i> é um bicho só → <b>it</b> → <b>lives</b>, com S.` },
+
+  { hab:"where", quatro:true,
+    p:"Qual é a resposta certa para <b>Where do you live?</b>",
+    o:["I live in the desert.","I lives in the desert.",
+       "You live in the desert.","I live in a desert."], c:0,
+    e:`<b>I live in the desert.</b> — é o verso da música da página 87.` }
+];
+function provaFinal(){
+  pararArcade();
+  const pool = FINAL.map(q => ({q, peso: 1 + Math.min(S.erros[q.hab]||0, 3)}));
+  /* sorteio sem repetir, com peso: quem ela erra mais tem mais chance de ser puxada */
+  const escolhidas = [];
+  const resto = pool.slice();
+  while(escolhidas.length < 12 && resto.length){
+    const soma = resto.reduce((a,b)=>a+b.peso,0);
+    let r = Math.random()*soma, k = 0;
+    while(k < resto.length-1 && r > resto[k].peso){ r -= resto[k].peso; k++; }
+    escolhidas.push(resto[k].q);
+    resto.splice(k,1);
+  }
+  quizGenerico(N_MISSOES-1, "🎓 Final Test", embaralha(escolhidas), 0, 0);
+}
+window.provaFinal = provaFinal;
+
+/* ============================================================
+   DIPLOMA
+   ============================================================ */
+function telaDiploma(){
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(3);
+  app.innerHTML = hud() + `
+    <div class="diploma">
+      <div class="selo">🏅</div>
+      <h2>${g("PRONTA","PRONTO")} PARA A PROVA<br>DE LÍNGUA INGLESA</h2>
+      <p>A estepe da Mongólia certifica que</p>
+      <div class="nome">${NOME()}</div>
+      <p>percorreu as <b>${N_MISSOES-1} estações</b> da <b>Unit 7</b>: as moradias (Lesson 1),
+      o <i>a / an</i>, o <i>He · She · It lives</i> (Lesson 2), os lugares (Lesson 5),
+      o <i>in a</i> × <i>in the</i>, o <i>Where do you live?</i> (Lesson 6) e a escrita
+      das doze palavras.</p>
+      <p class="fila-estrelas">${"⭐".repeat(totalEstrelas)}</p>
+      <p><b>${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas</b> · <b>${S.pontos} pontos</b></p>
+      <p style="margin-top:18px;font-style:italic">Língua Inglesa · 3º ano · Unit 7 · Mongolia</p>
+    </div>
+    <div class="acoes">
+      <button class="btn" onclick="irMapa()">🗺️ Voltar à rota</button>
+      <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      <button class="btn ceu" onclick="window.print()">🖨️ Imprimir diploma</button>
+    </div>
+    ${fracas.length?`<div class="card centro">
+      <p class="mini">Ainda escorregando em: <b>${fracas.map(h=>NOME_HAB[h]||h).join(" · ")}</b>.
+      Refaça o <b>Final Test</b> — esses assuntos vão aparecer bastante.</p></div>`:``}
+    ${totalEstrelas<TOTAL_ESTRELAS?`<div class="card centro">
+      <p class="mini">Faltam <b>${TOTAL_ESTRELAS-totalEstrelas}</b> estrelas para a nota máxima, ${NOME()}.
+      Dá para refazer qualquer estação pelo mapa — e as estrelas só sobem!</p></div>`:`
+    <div class="card destaque centro"><div style="font-size:50px">👑</div>
+      <p><b>PERFECT, ${NOME()}!</b> Todas as <b>${TOTAL_ESTRELAS} estrelas</b>.
+      Pode ir para a prova de cabeça erguida.</p></div>`}`;
+}
+
+/* ============================================================
+   INÍCIO
+   ============================================================ */
+if(carregar()){
+  S.cena = S.missoes.some(Boolean) ? "mapa" : "inicio";
+} else {
+  S.cena = "nome";
+}
+render();
+
+</script>
+</body>
+</html>

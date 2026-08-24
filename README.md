@@ -16,6 +16,7 @@ arquivo HTML: sem rede, sem dependências, funciona no celular e no computador.
 | História | 6º | Rios do Tempo — Mesopotâmia e Egito | currículo padrão (BNCC EF06HI06–09) | [6 missões](https://quieterkali.github.io/assuntos/historia/6-ano/civilizacoes-antigas/) |
 | Língua Portuguesa | 3º | Cidade das Palavras — revisão para a prova | roteiro da escola + 86 fotos das atividades | [8 missões](https://quieterkali.github.io/assuntos/lingua-portuguesa/3-ano/revisao-3a-etapa/) |
 | Língua Portuguesa | 6º | Voz da Praça — Direito à cidade e Espaços de direito | caderno SESI Linguagens, 21 fotos (p. 12–102) | [8 paradas](https://quieterkali.github.io/assuntos/lingua-portuguesa/6-ano/direito-a-cidade/) |
+| Língua Inglesa | 3º | Next Station: Mongolia — Unit 7, Lessons 1, 2, 5 e 6 | programação da escola + 10 fotos do *Next Station 2* | [8 estações](https://quieterkali.github.io/assuntos/ingles/3-ano/unit-7-mongolia/) |
 
 > Todos os jogos **perguntam o nome antes de começar** e personalizam tudo com ele — inclusive a
 > concordância de gênero escolhida pela criança e o diploma final. E **cada missão começa com uma
