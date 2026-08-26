@@ -1,0 +1,3023 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Caminho da Água</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%92%A7%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#04141f; --bg2:#062031; --panel:#0b2c40; --panel2:#0f3c56;
+  --ink:#eefaff; --muted:#95bdd2;
+  --turbo:#38bdf8; --chama:#fb7185; --menta:#4ade80; --uva:#22d3ee;
+  --vermelho:#ff6b81; --ouro:#fbbf24;
+  --borda:#12455f; --borda2:#1a5c7d; --fundo2:#062333; --fundo3:#0c3247; --fundo4:#0f3f59;
+  --tintaBtn:#022234; --sombraBtn:#0369a1;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1000px 700px at 10% -12%, #075985 0%, transparent 55%),
+    radial-gradient(900px 600px at 92% 0%, #0f766e 0%, transparent 50%),
+    radial-gradient(900px 700px at 50% 114%, #1e3a8a 0%, transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px; line-height:1.5;
+  overflow-x:hidden;
+}
+#estrelas{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:16px 14px 60px}
+
+h1,h2,h3{margin:0 0 10px;line-height:1.15}
+h1{font-size:clamp(28px,7vw,46px)}
+h2{font-size:clamp(22px,5vw,32px)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;font-weight:bold;
+  background:linear-gradient(135deg,var(--turbo),#0284c7);color:var(--tintaBtn);
+  box-shadow:0 6px 0 var(--sombraBtn), 0 12px 24px rgba(0,0,0,.45);
+  transition:transform .08s, box-shadow .08s; font-size:1.05em;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--sombraBtn),0 6px 14px rgba(0,0,0,.35)}
+.btn.sec{background:linear-gradient(135deg,#12455f,#062333);color:var(--ink);box-shadow:0 6px 0 #041824,0 10px 20px rgba(0,0,0,.35)}
+.btn.uva{background:linear-gradient(135deg,var(--uva),#0891b2);color:#03202a;box-shadow:0 6px 0 #0e7490,0 12px 24px rgba(0,0,0,.35)}
+.btn.chama{background:linear-gradient(135deg,var(--chama),#e11d48);color:#fff;box-shadow:0 6px 0 #881337,0 12px 24px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ---------- HUD ---------- */
+.hud{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:rgba(11,44,64,.88);border:2px solid var(--borda);border-radius:var(--r);
+  padding:10px 14px;margin-bottom:14px;backdrop-filter:blur(6px);
+}
+.hud .nome{font-weight:bold;color:var(--turbo)}
+.chip{
+  background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;
+  padding:9px 14px;font-size:.9em;font-weight:bold;white-space:nowrap;color:var(--ink);
+  line-height:1.2;min-height:42px;display:inline-flex;align-items:center
+}
+.chip.pts{color:var(--ouro);border-color:#8a6a13}
+.hud .espaco{flex:1}
+
+/* ---------- cartões ---------- */
+.card{
+  background:linear-gradient(160deg,rgba(15,60,86,.92),rgba(4,20,31,.94));
+  border:2px solid var(--borda);border-radius:var(--r);padding:20px;margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45)
+}
+.card.destaque{border-color:var(--ouro);box-shadow:0 0 0 3px rgba(251,191,36,.18),0 10px 30px rgba(0,0,0,.5)}
+
+/* ---------- mapa ---------- */
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.missao{
+  position:relative;text-align:left;width:100%;
+  background:linear-gradient(160deg,var(--fundo4),#04161f);
+  border:2px solid var(--borda2);border-radius:var(--r);padding:16px 16px 14px;
+  color:var(--ink);transition:transform .12s,border-color .12s;
+}
+.missao:not(.trancada):hover{transform:translateY(-4px);border-color:var(--turbo)}
+.missao.trancada{opacity:.5;filter:grayscale(.6);cursor:not-allowed}
+.missao.feita{border-color:var(--menta)}
+.missao .num{
+  position:absolute;top:-12px;left:14px;background:var(--turbo);color:var(--tintaBtn);
+  width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  font-weight:bold;box-shadow:0 3px 0 var(--sombraBtn)
+}
+.missao.feita .num{background:var(--menta);color:#04231a;box-shadow:0 3px 0 #0f6b4a}
+.missao .ico{font-size:34px;line-height:1;margin:6px 0 6px}
+.missao .tit{font-weight:bold;font-size:1.08em;margin-bottom:3px}
+.missao .sub{font-size:.85em;color:var(--muted)}
+.missao .estrelas{margin-top:8px;font-size:1.05em;letter-spacing:2px}
+
+/* ---------- quiz ---------- */
+.pergunta{font-size:1.14em;font-weight:bold;margin-bottom:14px}
+.enunciado{
+  background:var(--fundo2);border-left:6px solid var(--turbo);border-radius:12px;
+  padding:14px 16px;margin-bottom:14px;font-size:1.06em;line-height:1.55
+}
+.enunciado.texto{font-size:1.02em;max-height:none}
+.conta{
+  font-size:clamp(20px,5.4vw,32px);font-weight:bold;text-align:center;
+  margin:6px 0 16px;color:var(--ouro);overflow-wrap:anywhere;line-height:1.3
+}
+.opcoes{display:grid;gap:10px}
+.opcoes.grade{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.opcoes.quatro{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.op{
+  text-align:left;background:var(--fundo3);border:2px solid var(--borda);border-radius:14px;
+  padding:13px 16px;color:var(--ink);transition:border-color .1s,background .1s,transform .1s;
+  display:flex;gap:10px;align-items:center
+}
+.opcoes.grade .op{justify-content:center;font-size:1.15em;font-weight:bold;padding:16px 10px;text-align:center}
+.opcoes.quatro .op{justify-content:center;font-size:1.02em;font-weight:bold;padding:16px 10px;text-align:center}
+.op:not(:disabled):hover{border-color:var(--turbo);transform:translateY(-2px)}
+.op .letra{
+  flex:0 0 26px;height:26px;border-radius:8px;background:var(--borda2);color:#fff;
+  display:grid;place-items:center;font-weight:bold;font-size:.85em
+}
+.op.certa{border-color:var(--menta);background:#0f4a36}
+.op.certa .letra{background:var(--menta);color:#04231a}
+.op.errada{border-color:var(--vermelho);background:#4b1524}
+.op.errada .letra{background:var(--vermelho);color:#3d0a16}
+.op.marcada{border-color:var(--ouro);background:#3d3007}
+.op:disabled{cursor:default}
+
+.feedback{margin-top:14px;border-radius:14px;padding:14px 16px;border-left:6px solid;display:none}
+.feedback.show{display:block;animation:sobe .25s}
+.feedback.bom{background:rgba(74,222,128,.15);border-color:var(--menta)}
+.feedback.ruim{background:rgba(255,107,129,.15);border-color:var(--vermelho)}
+.feedback .tt{font-weight:bold;margin-bottom:5px;font-size:1.05em}
+@keyframes sobe{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.progresso{height:9px;background:var(--fundo2);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.progresso i{display:block;height:100%;background:linear-gradient(90deg,var(--uva),var(--turbo));transition:width .3s}
+
+/* ---------- quantas respostas (missão da represa) ---------- */
+.quantas{
+  display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;
+  background:var(--fundo2);border:2px dashed var(--ouro);border-radius:14px;
+  padding:10px 14px;margin-bottom:14px;font-weight:bold;color:var(--ouro)
+}
+.quantas .bolinhas{display:flex;gap:6px}
+.quantas .bolinhas i{width:14px;height:14px;border-radius:50%;background:var(--fundo4);
+  border:2px solid var(--ouro);display:block}
+.quantas .bolinhas i.cheia{background:var(--ouro)}
+
+/* ---------- peneira de escala (missão das regiões) ---------- */
+.fichas{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;margin:12px 0}
+.ficha{
+  background:var(--fundo3);border:2px solid var(--borda2);border-radius:14px;
+  padding:14px 10px;color:var(--ink);font-weight:bold;text-align:center;font-size:1em;
+  transition:transform .1s,border-color .1s,background .1s;line-height:1.25
+}
+.ficha .tipo{display:block;font-size:.74em;font-weight:normal;color:var(--muted);margin-top:4px}
+.ficha:not(:disabled):hover{transform:translateY(-2px);border-color:var(--turbo)}
+.ficha.pega{border-color:var(--menta);background:#0f4a36}
+.ficha.furada{border-color:var(--vermelho);background:#4b1524}
+.ficha.revelada{opacity:.55}
+
+/* ---------- ordenar (ciclo da água) ---------- */
+.trilha{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0 6px}
+.vagao{
+  background:var(--fundo2);border:2px dashed var(--borda2);border-radius:14px;
+  min-width:92px;min-height:64px;display:grid;place-items:center;padding:8px 10px;
+  font-weight:bold;font-size:.92em;text-align:center;color:var(--muted)
+}
+.vagao.cheio{border-style:solid;border-color:var(--turbo);color:var(--ink);background:var(--fundo4)}
+.vagao.certo{border-color:var(--menta);background:#0f4a36;color:#eafff5}
+.vagao.errado{border-color:var(--vermelho);background:#4b1524}
+.vagao .ord{display:block;font-size:.72em;color:var(--ouro);font-weight:bold}
+
+/* ---------- arte ---------- */
+.arte{display:block;margin:4px auto 14px;max-width:440px;width:100%;height:auto;
+  border-radius:14px;border:2px solid var(--borda2);background:#061e2c}
+.arte.larga{max-width:520px}
+.artes2{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:6px 0 14px}
+.artes2 figure{margin:0}
+.artes2 figcaption{text-align:center;font-weight:bold;margin-top:6px;font-size:.92em}
+.hot{cursor:pointer}
+.hot circle{transition:r .12s,fill .12s}
+.hot:hover circle{fill:var(--ouro)}
+
+/* ---------- arcade ---------- */
+.cronometro{
+  height:16px;background:var(--fundo2);border-radius:99px;overflow:hidden;margin:10px 0 4px;
+  border:2px solid var(--borda)
+}
+.cronometro i{display:block;height:100%;background:linear-gradient(90deg,var(--menta),var(--ouro),var(--vermelho));transition:width .2s linear}
+.placar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.placar span{background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;padding:4px 14px;font-weight:bold}
+.combo{color:var(--chama)}
+
+/* ---------- aula ---------- */
+.aula{
+  background:#f5fbff;
+  background-image:linear-gradient(rgba(2,132,199,.09) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(2,132,199,.09) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:#0f2833;border:3px solid var(--turbo);border-radius:var(--r);
+  padding:24px 22px 20px;margin-bottom:14px;box-shadow:0 14px 40px rgba(0,0,0,.55)
+}
+.aula b{color:#0369a1}
+.aula .guia{
+  display:flex;gap:10px;align-items:center;font-size:.86em;color:#3c5c6b;
+  border-bottom:2px dashed #bcdcea;padding-bottom:10px;margin-bottom:16px
+}
+.aula .guia .robo{font-size:30px;line-height:1}
+.aula .ico{font-size:60px;line-height:1;text-align:center;margin-bottom:6px}
+.aula h2{color:#0369a1;text-align:center;font-size:clamp(21px,5.2vw,30px)}
+.aula p{font-size:1.06em;margin:0 0 12px}
+.aula .chave{
+  background:#fff;border-left:6px solid #0284c7;border-radius:10px;
+  padding:12px 14px;margin-top:14px;font-size:1.03em
+}
+.aula .chave .rot{display:block;font-weight:bold;color:#0369a1;font-size:.82em;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.aula .lista{margin:10px 0 0;padding-left:20px}
+.aula .lista li{margin-bottom:6px}
+.aula .destaque{
+  text-align:center;font-size:clamp(18px,4.6vw,26px);font-weight:bold;color:#0369a1;
+  background:#fff;border-radius:12px;padding:12px 10px;margin:12px 0;
+  overflow-wrap:anywhere;line-height:1.35
+}
+.aula .errado{color:#b91c1c;text-decoration:line-through}
+.aula .certo{color:#15803d}
+.aula table.mini-tab{border-collapse:collapse;margin:10px auto;font-size:.92em}
+.aula table.mini-tab th,.aula table.mini-tab td{border:1px solid #bcdcea;padding:6px 10px;text-align:center}
+.aula table.mini-tab th{background:#e0f2fe;color:#0369a1}
+.aula .arte{border-color:#bcdcea;background:#eaf6fd}
+.pontos{display:flex;gap:7px;justify-content:center;margin:18px 0 4px;flex-wrap:wrap}
+.pontos i{width:9px;height:9px;border-radius:50%;background:#bcdcea;display:block}
+.pontos i.aqui{background:#0284c7;transform:scale(1.35)}
+.pontos i.vista{background:#0284c7;opacity:.45}
+.btn.aula{background:linear-gradient(135deg,#0891b2,#22d3ee);color:#03202a;box-shadow:0 6px 0 #0e7490,0 10px 20px rgba(0,0,0,.35)}
+.btn.aula.fraco{background:linear-gradient(135deg,#8aa7b3,#657f8c);box-shadow:0 6px 0 #3d525c,0 10px 20px rgba(0,0,0,.3)}
+
+/* ---------- diversos ---------- */
+.centro{text-align:center}
+.mini{font-size:.88em;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{background:var(--fundo2);border:1px solid var(--borda);border-radius:999px;padding:3px 11px;font-size:.8em;color:var(--muted)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.esconde{display:none!important}
+.campo{
+  width:100%;max-width:340px;padding:14px 18px;border-radius:14px;border:3px solid var(--turbo);
+  background:var(--fundo2);color:var(--ink);font-size:1.15em;font-family:inherit;text-align:center;margin:6px 0 4px
+}
+.campo:focus{outline:none;border-color:var(--uva);box-shadow:0 0 0 4px rgba(56,189,248,.2)}
+.rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
+table.grade2{border-collapse:collapse;margin:0 auto;font-size:.93em}
+table.grade2 th,table.grade2 td{border:2px solid var(--borda2);padding:8px 11px;text-align:center}
+table.grade2 th{background:var(--fundo4);color:var(--turbo);font-size:.82em}
+table.grade2 th.linha{background:var(--fundo3);color:var(--ink);text-align:left;font-weight:normal}
+table.grade2 td{background:var(--fundo2)}
+table.grade2 td.marca{color:var(--menta);font-weight:bold}
+
+/* colinha */
+.colinha{position:fixed;inset:0;background:rgba(2,12,20,.98);z-index:50;overflow-y:auto;padding:20px 14px 60px;display:none}
+.colinha.aberta{display:block}
+.colinha .in{max-width:760px;margin:0 auto}
+.colinha h3{color:var(--ouro);margin-top:26px;border-bottom:2px solid var(--borda);padding-bottom:6px}
+.colinha ul,.colinha ol{padding-left:20px}
+.colinha li{margin-bottom:7px}
+.colinha b{color:var(--turbo)}
+.colinha .ex{background:var(--fundo2);border-left:5px solid var(--uva);border-radius:10px;padding:10px 14px;margin:10px 0}
+.fechar{position:sticky;top:0;float:right;background:var(--turbo);color:var(--tintaBtn);border-radius:999px;
+  width:44px;height:44px;font-size:22px;font-weight:bold;box-shadow:0 4px 0 var(--sombraBtn);z-index:2}
+
+/* diploma */
+.diploma{
+  background:linear-gradient(160deg,#f7fdff,#e8f6ff);color:#0f2833;border-radius:20px;
+  padding:28px 22px;text-align:center;border:8px double var(--turbo);box-shadow:0 20px 50px rgba(0,0,0,.6)
+}
+.diploma h2{color:#0369a1;font-size:clamp(24px,6vw,36px)}
+.diploma .nome{
+  font-size:clamp(24px,6.4vw,40px);font-weight:bold;color:#0e7490;
+  border-bottom:3px solid var(--uva);display:inline-block;padding:4px 22px;margin:10px 0 14px;
+  overflow-wrap:anywhere;max-width:100%
+}
+.diploma .selo{font-size:56px}
+.fila-estrelas{font-size:clamp(15px,4.4vw,24px);line-height:1.7;letter-spacing:1px;
+  overflow-wrap:anywhere;word-break:break-word;max-width:100%;margin:12px 0}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;top:80px;transform:translateX(-50%);
+  background:var(--menta);color:#04231a;font-weight:bold;padding:10px 22px;border-radius:999px;
+  z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transition:opacity .25s,top .25s;
+  pointer-events:none;max-width:90vw;text-align:center
+}
+.toast.show{opacity:1;top:100px}
+.toast.mau{background:var(--vermelho);color:#3d0a16}
+
+@media(max-width:520px){
+  body{font-size:16px}
+  .card{padding:16px 14px}
+  .wrap{padding:12px 10px 50px}
+}
+/* foco de teclado visível — o anel padrão some contra o fundo escuro em alguns navegadores */
+:focus-visible{outline:3px solid var(--ouro);outline-offset:3px;border-radius:8px}
+.missao:focus-visible,.op:focus-visible,.ficha:focus-visible,.chip:focus-visible{outline-offset:2px}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{ body{background:#fff} #estrelas,.hud,.acoes,.card:not(.diploma){display:none!important} }
+</style>
+</head>
+<body>
+<canvas id="estrelas"></canvas>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+<div class="colinha" id="colinha">
+  <div class="in">
+    <button class="fechar" onclick="fecharColinha()">×</button>
+    <h2 style="color:var(--ouro)">📖 Colinha da Prova</h2>
+    <p class="mini">Tudo o que está no Volume 5 e na Atividade Unificada, num lugar só. Pode abrir
+    a qualquer hora — inclusive no meio do arcade, que o cronômetro para.</p>
+
+    <h3>🧭 Região não é cidade, nem estado, nem represa</h3>
+    <p>Esta é a pergunta que mais confunde. Quando o enunciado diz <b>"qual região"</b>, a resposta
+    é <b>uma das cinco</b> — e só pode ser uma destas:</p>
+    <div class="ex">
+      <p style="margin:0"><b>Norte · Nordeste · Centro-Oeste · Sudeste · Sul</b></p>
+    </div>
+    <p>São Paulo é uma <b>cidade</b> (e um estado). A Cantareira é uma <b>represa</b>. O Ceará é um
+    <b>estado</b>. O Amazonas é um <b>rio</b> — e também um estado. Nenhum deles é região.</p>
+    <p>Cada região é um <b>pedaço grande do mapa</b>, com vários estados dentro. O Nordeste tem
+    nove estados. O Norte tem sete. Uma represa cabe dentro de uma cidade, que cabe dentro de um
+    estado, que cabe dentro de uma região.</p>
+
+    <h3>🇧🇷 A água no Brasil — a tabela que a prova cobra</h3>
+    <p>O Brasil tem o <b>maior reservatório de água doce do mundo</b>: cerca de <b>12%</b> da água
+    doce do planeta e <b>53%</b> dos recursos hídricos da América do Sul. Cada brasileiro dispõe,
+    em média, de <b>42 milhões de litros por ano</b> (IBGE, 2022).</p>
+    <p>Só que a água é <b>mal distribuída</b>:</p>
+    <div class="rolagem">
+      <table class="grade2">
+        <tr><th>Região</th><th>Água</th><th>População</th><th>Densidade<br>(hab/km²)</th></tr>
+        <tr><th class="linha">Norte</th><td class="marca">68%</td><td>8,5%</td><td>4,51</td></tr>
+        <tr><th class="linha">Centro-Oeste</th><td>16%</td><td>8%</td><td>10,14</td></tr>
+        <tr><th class="linha">Sul</th><td>7%</td><td>14,7%</td><td>51,91</td></tr>
+        <tr><th class="linha">Sudeste</th><td>6%</td><td class="marca">41,9%</td><td class="marca">91,76</td></tr>
+        <tr><th class="linha">Nordeste</th><td class="marca">3%</td><td>26,9%</td><td>35,21</td></tr>
+      </table>
+    </div>
+    <ul>
+      <li><b>Mais água: Norte</b> (68%) — e é a <b>menos habitada</b> (4,51 hab/km²).</li>
+      <li><b>Menos água: Nordeste</b> (menos de 3%) — e grande parte é <b>subterrânea e salobra</b>,
+      com sal acima do limite para beber.</li>
+      <li><b>Mais gente: Sudeste</b> (41,9% da população, 91,76 hab/km²) — com só <b>6%</b> da água.</li>
+      <li><b>Sul + Sudeste</b> juntos: mais de <b>50% da população</b> e só <b>13%</b> dos recursos
+      hídricos.</li>
+      <li>Densidade do <b>Brasil</b> inteiro: <b>23,86</b> hab/km².</li>
+    </ul>
+
+    <h3>💧 A água do planeta</h3>
+    <ul>
+      <li><b>70%</b> da superfície da Terra é coberta por água líquida.</li>
+      <li>Desse total, <b>97% é salgada</b>, nos oceanos — imprópria para beber, para os animais e
+      para a agricultura.</li>
+      <li><b>Água doce: cerca de 3%.</b> E dentro desses 3%:
+        <ul>
+          <li><b>menos de 1%</b> está líquida em rios, lagos e fontes subterrâneas;</li>
+          <li>os <b>2% restantes</b> são <b>geleiras e calotas polares</b>.</li>
+        </ul>
+      </li>
+      <li>No gráfico da apostila: <b>97,5% salgada · 2,5% doce</b>. Dentro da doce:
+      <b>69,8% calotas · 29% águas subterrâneas · 0,9% outros · 0,3% rios e lagos</b>.</li>
+    </ul>
+    <div class="ex">
+      <p style="margin:0"><b>A pergunta que mais cai:</b> se 70% do planeta é água, por que ela é
+      escassa? <b>Porque quase toda é salgada.</b> A doce, própria para consumo, é só cerca de 3% —
+      e quase toda ela está congelada.</p>
+    </div>
+    <p>A <b>quantidade</b> de água do planeta é a mesma há milênios e <b>não vai acabar</b>. O que
+    diminui é a <b>água disponível para o consumo humano</b> — por causa das mudanças no clima
+    (secas e enchentes), da poluição e da degradação dos mananciais.</p>
+
+    <h3>🏔️ Como nasce um rio — e as partes dele</h3>
+    <ul>
+      <li><b>Nascente</b> — onde o rio começa, nas <b>partes mais elevadas do relevo</b>.
+      Geralmente o rio nasce a partir de <b>chuvas em áreas montanhosas</b>.</li>
+      <li><b>Área de manancial</b> — a área <b>onde o rio nasce</b>.</li>
+      <li><b>Afluente</b> — o rio menor que <b>desagua</b> no rio maior. (Cuidado: afluente
+      <b>não</b> é onde o rio nasce!)</li>
+      <li><b>Leito</b> — o fundo, o "chão" por onde a água corre.</li>
+      <li><b>Margem direita e margem esquerda</b> — fique <b>de costas para a nascente,
+      olhando para a foz</b>: a sua direita é a margem direita.</li>
+      <li><b>Foz</b> — o fim do caminho, onde o rio lança suas águas <b>no mar, num lago ou em
+      outro rio</b>.</li>
+      <li><b>Lençol freático</b> — a água da chuva que <b>infiltra no solo</b> forma uma espécie de
+      <b>rio subterrâneo</b>, que pode estar a <b>dezenas de metros de profundidade</b>. Se ele
+      encontrar uma saída para a superfície, <b>pode nascer um rio novo</b>.</li>
+    </ul>
+    <p>Rios brasileiros da apostila: <b>Amazonas</b>, <b>São Francisco</b> (o "Velho Chico"),
+    <b>Tietê</b> e <b>Paraná</b>. A <b>nascente do São Francisco</b> fica em <b>Minas Gerais</b>,
+    e ele atravessa Minas Gerais, Bahia, Pernambuco, Sergipe e Alagoas.</p>
+
+    <h3>🌳 Mata ciliar, erosão e assoreamento</h3>
+    <div class="ex">
+      <p style="margin:0"><b>Erosão</b> = <b>TIRA</b> terra do lugar. É o processo de
+      <b>desgaste, transporte e sedimentação</b> do solo, dos subsolos e das rochas.
+      Na foto: um <b>morro rasgado</b>, com barranco aberto e terra à mostra.</p>
+      <p style="margin:8px 0 0"><b>Assoreamento</b> = <b>PÕE</b> terra no rio. É o
+      <b>acúmulo de sedimentos</b> (areia, terra, rochas), lixo e outros materiais <b>no leito</b>
+      dos cursos d'água. Na foto: um <b>rio raso</b>, cheio de terra e pedras, quase sem água.</p>
+    </div>
+    <p>Os dois andam juntos: a erosão tira a terra do morro e o assoreamento é essa mesma terra
+    parando dentro do rio. O assoreamento <b>diminui a profundidade</b> do rio e prejudica a
+    <b>qualidade</b> e a <b>quantidade</b> de água disponível.</p>
+    <p><b>Mata ciliar</b> é a <b>vegetação que cresce às margens dos rios e lagos</b>. Ela
+    <b>protege o solo</b>, <b>evita deslizamentos de terra</b> e ajuda a <b>manter a água mais
+    limpa</b>. Quando é retirada, a chuva carrega a terra para dentro do rio — e vem o
+    assoreamento.</p>
+    <ul>
+      <li><b>Com</b> mata ciliar: conservação da água (filtragem natural) e biodiversidade.</li>
+      <li><b>Sem</b> mata ciliar: poluição, erosão, assoreamento e clima alterado.</li>
+    </ul>
+    <p><b>Degradação dos mananciais</b> — as causas da apostila: ocupação desordenada do solo;
+    falta de saneamento básico; <b>remoção da cobertura vegetal</b>; <b>uso de agrotóxicos</b>;
+    <b>erosão e assoreamento</b> de rios e córregos. O desenvolvimento urbano é uma das maiores
+    causas: loteamentos sem saneamento despejam esgoto nessas áreas.</p>
+    <p><b>Lençol freático:</b> é <b>mais difícil</b> de ser poluído — mas sofre com poços
+    irregulares, agrotóxicos, urbanização e <b>lixões e aterros</b>, de onde desce o
+    <b>chorume</b>. E a <b>impermeabilização do solo</b> (asfalto e concreto) impede a água de
+    entrar no solo — prejudica o lençol <b>e provoca enchentes</b>.</p>
+
+    <h3>☀️ O ciclo da água</h3>
+    <p>Chamado também de <b>ciclo hidrológico</b>: é o <b>movimento que a água faz na natureza</b>.
+    É ele que faz da água um recurso <b>renovável</b>.</p>
+    <ol>
+      <li><b>Evaporação</b> — o <b>calor do Sol</b> faz a água da superfície virar <b>gás</b> e subir.</li>
+      <li><b>Condensação</b> — lá em cima, nas <b>baixas temperaturas</b>, o gás volta a ser
+      <b>líquido</b> e forma as <b>nuvens</b>.</li>
+      <li><b>Precipitação</b> — carregadas de gotículas, as nuvens se desfazem em <b>chuva</b>.</li>
+      <li><b>Infiltração</b> — parte da água <b>entra no solo</b> e alimenta o lençol freático;
+      o resto escorre para rios e oceanos. E tudo <b>recomeça</b>.</li>
+    </ol>
+    <div class="ex">
+      <p style="margin:0"><b>Renovável, mas limitado.</b> É <b>impossível aumentar</b> a
+      quantidade de água do planeta — o ciclo só <b>repõe</b> a que já existe. Por isso é preciso
+      preservar, evitar o desperdício e a contaminação.</p>
+    </div>
+    <p>O ciclo depende do <b>clima</b>. Mudanças climáticas alteram o <b>regime de chuvas</b> e
+    aumentam os eventos extremos: <b>inundações</b> e <b>longos períodos de seca</b>. Isso afeta a
+    oferta de água e também a <b>produção de alimentos</b> — a agricultura e a pecuária.</p>
+
+    <h3>🏞️ Represas, racionamento e crise hídrica</h3>
+    <p><b>As represas servem para duas coisas</b>, as duas na folha:</p>
+    <ol>
+      <li><b>Armazenar</b> a água do <b>período chuvoso</b> para ser usada no <b>período seco</b> —
+      garantindo o abastecimento ao longo do ano.</li>
+      <li><b>Controlar as cheias</b> — retêm parte do volume que chegaria aos rios e às cidades,
+      <b>evitando inundações</b>.</li>
+    </ol>
+    <p>Represa <b>não</b> trata esgoto e <b>não</b> serve para conter minérios. Isso é pegadinha.</p>
+    <p><b>Racionamento</b> é a <b>distribuição moderada</b> de recursos, bens e serviços. Em
+    racionamento de água, o abastecimento das casas é <b>diminuído</b> e pode ocorrer em
+    <b>dias alternados</b>. <i>Pouca água no reservatório significa pouca água na torneira.</i></p>
+    <p><b>Sistema Cantareira</b>: o <b>maior</b> sistema de captação e tratamento de água da
+    <b>Grande São Paulo</b>, um dos maiores do mundo — abastece <b>8,8 milhões de habitantes</b>.</p>
+    <p>Não basta chover muito: tem que chover <b>onde estão os reservatórios</b>. Chover no
+    "lugar errado" não resolve o abastecimento.</p>
+    <p><b>Seca no Nordeste</b>: a longa estiagem faz perder plantações e rebanhos; a queda na
+    produção prejudica a reserva e a distribuição de alimentos e <b>provoca fome</b>. Muitos poços
+    da região dão <b>água salobra</b> — com sal demais para beber.</p>
+
+    <h3>🌧️ Enchentes urbanas</h3>
+    <p>As enchentes podem causar <b>danos materiais</b>, afetar a <b>infraestrutura</b>, provocar
+    <b>deslizamentos de terra</b> e colocar em <b>risco a vida das pessoas</b>.</p>
+    <p><b>Causas</b> — dos dois lados, ou os dois juntos:</p>
+    <ul>
+      <li><b>Naturais</b>: chuvas intensas.</li>
+      <li><b>Humanas</b>: <b>impermeabilização do solo</b>, destinação incorreta de resíduos,
+      problemas no sistema de drenagem, ocupação irregular do solo.</li>
+    </ul>
+    <p><b>Consequências:</b> moradores perdem móveis e bens · casas invadidas pela água ·
+    <b>doenças e infecções</b> · prejuízos financeiros para os comerciantes.</p>
+    <p><b>Como diminuir:</b> ampliar as <b>áreas verdes</b> · <b>telhados verdes</b> e jardins
+    verticais · <b>pavimentos permeáveis</b> (deixam a água passar) · <b>não jogar lixo na rua</b>.</p>
+
+    <h3>🚿 Usar bem a água</h3>
+    <p><b>Para que serve:</b> beber, preparar alimentos, tomar banho, lavar roupa, higiene;
+    <b>habitat</b> de animais; lazer; meio de <b>transporte</b>; <b>energia elétrica</b>;
+    <b>agricultura</b>; <b>indústria</b>.</p>
+    <p><b>As oito atitudes do cartaz:</b></p>
+    <ol>
+      <li>fechar a torneira ao <b>escovar os dentes</b>;</li>
+      <li><b>banhos rápidos</b> — 5 minutos é o suficiente;</li>
+      <li>fechar a torneira ao <b>ensaboar a louça</b>;</li>
+      <li><b>reutilizar a água</b> da máquina de lavar ou da chuva;</li>
+      <li>verificar e <b>consertar vazamentos</b>;</li>
+      <li><b>descarga consciente</b>;</li>
+      <li>lavar roupa com <b>carga cheia</b>;</li>
+      <li><b>vassoura, não mangueira</b>, para limpar o quintal.</li>
+    </ol>
+    <p><b>Combate à poluição</b> — com os números que a folha dá:</p>
+    <ul>
+      <li><b>1 litro de óleo</b> de cozinha pode contaminar até <b>20 mil litros de água</b>.
+      Guarde numa garrafa e leve ao ponto de coleta — nunca na pia.</li>
+      <li>Garrafas plásticas levam <b>no mínimo 100 anos</b> para se decompor. Reutilize.</li>
+      <li>Nada de papel, óleo, medicamentos ou cotonetes no vaso ou na pia.</li>
+      <li>Produtos de limpeza com moderação; prefira os <b>biodegradáveis</b>.</li>
+      <li>Use <b>sacolas retornáveis</b>.</li>
+    </ul>
+    <p><b>Derramamento de petróleo no mar</b>: produto <b>altamente poluente</b>, contamina as
+    águas, prejudica os <b>ecossistemas aquáticos</b> e pode causar a <b>morte de muitos animais
+    marinhos</b>.</p>
+
+    <h3>🦘 A abertura do volume — a Austrália</h3>
+    <p>A Aula 1 do volume não é sobre água, mas está no material:</p>
+    <ul>
+      <li>Um dos <b>seis maiores países do mundo</b>: cerca de <b>7 713 364 km²</b>.</li>
+      <li>Fica entre os oceanos <b>Pacífico</b> e <b>Índico</b>.</li>
+      <li><b>Não possui fronteiras terrestres</b> — por isso é classificada como
+      <b>arquipélago</b>. Suas fronteiras são <b>marítimas</b>.</li>
+      <li>É chamada de <b>país-continente</b> porque sua extensão territorial <b>abrange quase
+      toda a Oceania</b>.</li>
+    </ul>
+
+    <h3>📝 Três armadilhas da prova</h3>
+    <ol>
+      <li><b>"Qual região?"</b> → responda com uma das <b>cinco</b>: Norte, Nordeste,
+      Centro-Oeste, Sudeste, Sul. Nunca com uma cidade nem com uma represa.</li>
+      <li><b>"Assinale a alternativa"</b> → é <b>uma</b> resposta só. Se pedir para pintar
+      "a região que concentra a maior quantidade de água", é <b>uma</b> região, não três.</li>
+      <li><b>Foto na prova</b> → não basta saber a definição. Morro rasgado = <b>erosão</b>.
+      Rio raso e cheio de terra = <b>assoreamento</b>.</li>
+    </ol>
+  </div>
+</div>
+<script>
+"use strict";
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const CHAVE = "caminhoDaAgua.v1";
+
+/* A lista de missões é a única fonte da verdade. Nenhum número de missão
+   ou de estrela aparece cravado no código — tudo sai de MISSOES.length. */
+const MISSOES = [
+  {ico:"💧", tit:"Gota Rara",             sub:"A água do planeta: salgada e doce",  hab:"planeta"},
+  {ico:"🏔️", tit:"Da Nascente à Foz",     sub:"As partes do rio e o lençol",        hab:"rio"},
+  {ico:"🌳", tit:"Guardiões da Margem",   sub:"Mata ciliar, erosão e assoreamento", hab:"margem"},
+  {ico:"☀️", tit:"A Roda da Água",        sub:"O ciclo da água, passo a passo",     hab:"ciclo"},
+  {ico:"🇧🇷", tit:"Mapa das Cinco Regiões",sub:"A água no Brasil por região",        hab:"regiao"},
+  {ico:"🏞️", tit:"Represa e Racionamento",sub:"Guardar a água e dividir a água",    hab:"represa"},
+  {ico:"🌧️", tit:"Rua Alagada",           sub:"Enchentes, usos e desperdício",      hab:"cidade"},
+  {ico:"🏆", tit:"Prova da Bacia",        sub:"Arcade + prova final",               hab:"final"}
+];
+const N_MISSOES  = MISSOES.length;
+const POR_MISSAO = 3;                        /* estrelas por missão */
+const TOTAL_ESTRELAS = N_MISSOES * POR_MISSAO;
+const vazio = v => Array.from({length:N_MISSOES}, () => v);
+
+const S = {
+  nome: "",
+  genero: "f",
+  pontos: 0,
+  missoes:  vazio(false),
+  estrelas: vazio(0),
+  aulas:    vazio(false),
+  erros: {},          /* habilidade -> quantas vezes escorregou. Alimenta a prova final. */
+  cena: "nome"
+};
+
+function esc(x){
+  return String(x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function g(fem, masc){ return S.genero === "f" ? fem : masc; }
+const NOME = () => esc(S.nome);
+
+function salvar(){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify({
+      nome:S.nome, genero:S.genero, pontos:S.pontos,
+      missoes:S.missoes, estrelas:S.estrelas, aulas:S.aulas, erros:S.erros
+    }));
+  }catch(e){/* sem localStorage o jogo roda igual, só não guarda */}
+}
+function carregar(){
+  try{
+    const d = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if(d && d.nome){
+      S.nome = d.nome; S.genero = d.genero === "m" ? "m" : "f";
+      S.pontos = d.pontos|0;
+      if(Array.isArray(d.missoes)  && d.missoes.length===N_MISSOES)  S.missoes  = d.missoes.map(Boolean);
+      if(Array.isArray(d.estrelas) && d.estrelas.length===N_MISSOES) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(POR_MISSAO,n|0)));
+      if(Array.isArray(d.aulas)    && d.aulas.length===N_MISSOES)    S.aulas    = d.aulas.map(Boolean);
+      if(d.erros && typeof d.erros === "object") S.erros = d.erros;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+/* registro por HABILIDADE, não por pergunta: numa revisão o que importa é
+   qual assunto escorrega, não qual exemplo apareceu. */
+const NOME_HAB = {
+  planeta:"quanta água doce existe",      australia:"a abertura do volume (Austrália)",
+  rio:"as partes do rio",                 freatico:"lençol freático e manancial",
+  erosao:"erosão × assoreamento",         ciliar:"mata ciliar",
+  degradacao:"degradação dos mananciais", ciclo:"as etapas do ciclo da água",
+  renovavel:"renovável, mas limitado",    clima:"clima e regime de chuvas",
+  escala:"região × cidade × represa",     regiao:"a água por região do Brasil",
+  densidade:"densidade demográfica",      represa:"para que serve uma represa",
+  racionamento:"racionamento e crise hídrica", seca:"a seca no Nordeste",
+  enchente:"enchentes urbanas",           economia:"economizar água",
+  poluicao:"poluição da água",            quantas:"quantas respostas a pergunta pede"
+};
+function marcaErro(hab){ if(!hab) return; S.erros[hab] = (S.erros[hab]||0) + 1; salvar(); }
+function marcaAcerto(hab){
+  if(!hab || !S.erros[hab]) return;
+  S.erros[hab]--; if(S.erros[hab] <= 0) delete S.erros[hab];
+  salvar();
+}
+function listaFracas(n){
+  return Object.entries(S.erros).sort((x,y)=>y[1]-x[1]).slice(0, n||4).map(e=>e[0]);
+}
+
+/* ============================================================
+   SOM
+   ============================================================ */
+let AC = null;
+function ac(){ if(!AC){ try{AC = new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function bip(freq, dur, tipo, vol){
+  const c = ac(); if(!c) return;
+  if(c.state === "suspended") c.resume();
+  const o = c.createOscillator(), gn = c.createGain();
+  o.type = tipo || "sine"; o.frequency.value = freq;
+  gn.gain.setValueAtTime(vol||0.13, c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  o.connect(gn); gn.connect(c.destination);
+  o.start(); o.stop(c.currentTime + dur);
+}
+const somAcerto = ()=>{ bip(660,.09,"triangle"); setTimeout(()=>bip(880,.14,"triangle"),90); };
+const somErro   = ()=>{ bip(200,.18,"sawtooth",.09); };
+const somClique = ()=>{ bip(520,.05,"square",.05); };
+const somVitoria= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>bip(f,.2,"triangle"),i*110)); };
+const somPop    = ()=>{ bip(880,.06,"sine",.07); };
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+function embaralha(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function sorteio(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+let toastT = null;
+function toast(txt, mau){
+  const t = $("#toast");
+  t.innerHTML = txt;
+  t.className = "toast show" + (mau ? " mau" : "");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ t.className = "toast" + (mau?" mau":""); }, 1500);
+}
+function ganha(p){ S.pontos += p; toast("+" + p + " pontos!"); }
+
+function estrelasTxt(n){ return "⭐".repeat(n) + "☆".repeat(POR_MISSAO-n); }
+function estrelasPor(acertos, total){
+  const pct = total ? acertos/total : 0;
+  if(pct >= 0.99) return 3;
+  if(pct >= 0.7)  return 2;
+  if(pct >= 0.4)  return 1;
+  return 0;
+}
+const ELOGIOS = ["Isso, {n}!","Boa, {n}!","Mandou bem, {n}!","{n} arrasou!","Exatamente, {n}!","Perfeito, {n}!","Show, {n}!"];
+function elogio(){ return sorteio(ELOGIOS).replace("{n}", NOME()); }
+function nomear(txt){
+  return String(txt)
+    .replace(/\{NOME\}/g, NOME())
+    .replace(/\{A\}/g, g("a","o"))
+    .replace(/\{ELA\}/g, g("ela","ele"));
+}
+
+function hud(titulo){
+  const emMissao = /^m\d+$/.test(S.cena);
+  return `<div class="hud">
+    <span class="nome">🦫 ${NOME()}</span>
+    <span class="chip pts">⭐ ${S.pontos} pts</span>
+    <span class="espaco"></span>
+    ${emMissao ? `<button class="chip" onclick="reverAula(${S.cena.slice(1)})" style="cursor:pointer">📚 Aula</button>` : ``}
+    <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
+    <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
+  </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
+}
+
+function abrirColinha(){ somClique(); pausaCrono(true); $("#colinha").classList.add("aberta"); }
+function fecharColinha(){ somClique(); $("#colinha").classList.remove("aberta"); pausaCrono(false); }
+window.abrirColinha = abrirColinha; window.fecharColinha = fecharColinha;
+
+/* ============================================================
+   FUNDO — gotas de chuva subindo (evaporação)
+   ============================================================ */
+(function fundo(){
+  const cv = $("#estrelas"), cx = cv.getContext("2d");
+  let pcs = [];
+  function dim(){
+    cv.width = innerWidth; cv.height = innerHeight;
+    pcs = [];
+    const n = Math.min(110, Math.floor(innerWidth*innerHeight/12000));
+    for(let i=0;i<n;i++) pcs.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      r:Math.random()*1.7+.4, vy:Math.random()*.22+.05,
+      alfa:Math.random()*.55+.2, fase:Math.random()*6.28,
+      cor: Math.random()<.35 ? "#7dd3fc" : "#bae6fd"
+    });
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    const t = Date.now()/900;
+    for(const p of pcs){
+      p.y -= p.vy;                          /* as gotas SOBEM: é a evaporação */
+      if(p.y < -4){ p.y = cv.height + 4; p.x = Math.random()*cv.width; }
+      cx.globalAlpha = p.alfa * (0.6 + 0.4*Math.sin(t + p.fase));
+      cx.fillStyle = p.cor;
+      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.2832); cx.fill();
+    }
+    cx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  addEventListener("resize", dim); dim(); loop();
+})();
+
+/* ============================================================
+   ROTEADOR
+   ============================================================ */
+function irMapa(){ somClique(); pararArcade(); S.cena="mapa"; render(); }
+window.irMapa = irMapa;
+
+function abrirMissao(i){
+  if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a missão anterior primeiro, " + NOME() + "!", true); return; }
+  pararArcade();
+  if(!S.aulas[i]){ abrirAula(i); return; }   /* a aula vem antes, na estreia da missão */
+  somClique(); S.cena = "m"+i; render();
+}
+window.abrirMissao = abrirMissao;
+
+function concluiMissao(i, acertos, total, bonus){
+  S.missoes[i] = true;
+  const est = estrelasPor(acertos, total);
+  S.estrelas[i] = Math.max(S.estrelas[i], est);
+  const pts = acertos*10 + est*25 + (bonus||0);
+  S.pontos += pts;
+  salvar();
+  somVitoria();
+  const tudoFeito = S.missoes.every(Boolean);
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:64px">${est===3?"🏆":est===2?"🎉":"👏"}</div>
+      <h2>Missão ${i+1} concluída, ${NOME()}!</h2>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${estrelasTxt(est)}</div>
+      <p>Você acertou <b>${acertos} de ${total}</b> e ganhou <b>${pts} pontos</b>.</p>
+      ${est<POR_MISSAO?`<p class="mini">Dá para refazer e buscar as ${POR_MISSAO} estrelas — elas só sobem, nunca descem.</p>`:``}
+      <div class="acoes">
+        ${tudoFeito
+          ? `<button class="btn" onclick="verDiploma()">🎓 Ver meu diploma!</button>`
+          : (i < N_MISSOES-1 ? `<button class="btn uva" onclick="abrirMissao(${i+1})">Próxima missão →</button>` : ``)}
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+        <button class="btn sec" onclick="abrirMissao(${i})">🔁 Refazer</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+
+const FASES = [faseGota, faseRio, faseMargem, faseCiclo,
+               faseRegioes, faseRepresa, faseCidade, faseFinal];
+
+function render(){
+  scrollTo(0,0);
+  if(S.cena === "nome")    return telaNome();
+  if(S.cena === "inicio")  return telaInicio();
+  if(S.cena === "mapa")    return telaMapa();
+  if(S.cena === "diploma") return telaDiploma();
+  let m = /^m(\d+)$/.exec(S.cena);
+  if(m && FASES[+m[1]]) return FASES[+m[1]]();
+  m = /^a(\d+)$/.exec(S.cena);
+  if(m) return telaAula(+m[1]);
+}
+
+/* ============================================================
+   TELA DO NOME
+   ============================================================ */
+function telaNome(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--turbo)">
+      <div style="font-size:70px;line-height:1">💧</div>
+      <h1 style="background:linear-gradient(90deg,var(--uva),var(--turbo),#a5f3fc);-webkit-background-clip:text;background-clip:text;color:transparent">
+        CAMINHO DA ÁGUA
+      </h1>
+      <p style="font-size:1.1em">Revisão para a <b>prova de Geografia</b></p>
+      <p class="mini">3º ano · 3ª etapa · Volume 5 e a Atividade Unificada — A água</p>
+      <div class="card" style="text-align:left;background:rgba(6,35,51,.85);margin-top:18px">
+        <p><b>💧 Uma gota de chuva cai na montanha e some no chão.</b></p>
+        <p>Depois ela vira lençol, vira nascente, vira rio, passa pela represa, chega na
+        torneira da sua casa — e volta para a nuvem. Esse caminho todo é a matéria da sua prova.</p>
+        <p style="margin:0">Só falta uma coisa: <b>como você se chama?</b></p>
+      </div>
+      <input class="campo" id="nomeInput" type="text" maxlength="18" autocomplete="off"
+             placeholder="Digite seu nome" onkeydown="if(event.key==='Enter')pedeGenero()">
+      <p class="mini" id="avisoNome" style="min-height:20px"></p>
+      <p style="margin-top:6px"><b>E como você quer ser ${g("chamada","chamado")} no caminho?</b></p>
+      <div class="acoes">
+        <button class="btn" onclick="definir('f')">🧭 Sou a exploradora</button>
+        <button class="btn uva" onclick="definir('m')">🧭 Sou o explorador</button>
+      </div>
+    </div>`;
+  const inp = $("#nomeInput");
+  if(inp){ inp.value = S.nome; setTimeout(()=>inp.focus(), 120); }
+}
+function definir(gen){
+  const inp = $("#nomeInput");
+  let v = (inp ? inp.value : "").trim().replace(/\s+/g," ");
+  if(v.length < 2){
+    somErro();
+    $("#avisoNome").innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`;
+    if(inp) inp.focus();
+    return;
+  }
+  v = v.split(" ").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" ");
+  S.nome = v;
+  if(gen === "f" || gen === "m") S.genero = gen;
+  ac(); somVitoria(); salvar();
+  S.cena = "inicio"; render();
+}
+window.definir = definir;
+function pedeGenero(){
+  const inp = $("#nomeInput"), aviso = $("#avisoNome");
+  if((inp ? inp.value : "").trim().length < 2){
+    somErro(); aviso.innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`; return;
+  }
+  somClique();
+  aviso.innerHTML = `<span style="color:var(--ouro)">Agora toque num dos dois botões aí embaixo 👇</span>`;
+}
+window.pedeGenero = pedeGenero;
+function trocarNome(){ somClique(); S.cena = "nome"; render(); }
+window.trocarNome = trocarNome;
+function zerar(){
+  if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
+  S.pontos = 0; S.missoes = vazio(false); S.estrelas = vazio(0); S.aulas = vazio(false); S.erros = {};
+  salvar(); somClique(); render();
+}
+window.zerar = zerar;
+
+/* ============================================================
+   TELA INICIAL
+   ============================================================ */
+function telaInicio(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--turbo)">
+      <div style="font-size:66px;line-height:1">🦫</div>
+      <h1 style="background:linear-gradient(90deg,var(--uva),var(--turbo),#a5f3fc);-webkit-background-clip:text;background-clip:text;color:transparent">
+        OI, ${NOME()}!
+      </h1>
+      <p style="font-size:1.12em">Você é ${g("a exploradora","o explorador")} do
+      <b style="color:var(--turbo)">Caminho da Água</b>.</p>
+      <div class="card" style="text-align:left;background:rgba(6,35,51,.85);margin-top:18px">
+        <p><b>🎯 O combinado é este:</b></p>
+        <p>Este jogo não foi inventado no chute: cada missão é <b>um pedaço do conteúdo da sua
+        prova</b>, tirado das páginas do <b>Volume 5</b> e da <b>Atividade Unificada</b> —
+        as suas próprias folhas.</p>
+        <p>São <b>${N_MISSOES-1} paradas</b> no caminho da gota e, no fim, a Prova da Bacia.</p>
+        <p><b>📚 Cada missão começa com uma aula rapidinha</b> do <b>Freático</b>, o castor.
+        Ele explica primeiro; você põe a mão na massa depois.</p>
+        <p class="mini">⭐ Cada missão vale até ${POR_MISSAO} estrelas. Errar faz parte: o jogo mostra o porquê
+        e <b>anota em que assunto você escorregou</b>, para cobrar de novo na prova final.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn" onclick="comecar()">💧 Seguir a gota</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Ver a colinha</button>
+      </div>
+      <p class="mini" style="margin-top:14px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Não sou ${NOME()}, trocar nome</button>
+      </p>
+    </div>`;
+}
+function comecar(){ ac(); somVitoria(); S.cena="mapa"; render(); }
+window.comecar = comecar;
+
+/* ============================================================
+   MAPA
+   ============================================================ */
+function telaMapa(){
+  const feitas = S.missoes.filter(Boolean).length;
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(5);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <h2>💧 O caminho ${g("da","do")} ${NOME()}</h2>
+      <p class="mini">${feitas} de ${N_MISSOES} paradas · ${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas · ${S.pontos} pontos</p>
+      <div class="progresso"><i style="width:${feitas/N_MISSOES*100}%"></i></div>
+      <div class="missoes">
+        ${MISSOES.map((m,i)=>{
+          const trancada = i>0 && !S.missoes[i-1];
+          return `<button class="missao ${trancada?"trancada":""} ${S.missoes[i]?"feita":""}"
+                    onclick="abrirMissao(${i})" ${trancada?"disabled":""}>
+            <span class="num">${S.missoes[i]?"✓":i+1}</span>
+            <div class="ico">${trancada?"🔒":m.ico}</div>
+            <div class="tit">${m.tit}</div>
+            <div class="sub">${trancada?"Passe pela parada anterior":m.sub}</div>
+            ${(!trancada && !S.aulas[i])?`<div class="tags" style="margin-top:8px"><span class="tag" style="border-color:var(--ouro);color:var(--ouro)">📚 começa com uma aula</span></div>`:``}
+            ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
+          </button>`;
+        }).join("")}
+      </div>
+      <p class="mini centro" style="margin-top:16px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Trocar nome</button>
+        <button class="chip" onclick="zerar()" style="cursor:pointer">🔄 Começar tudo de novo</button>
+      </p>
+    </div>
+    ${fracas.length?`<div class="card">
+      <h2>🎯 Onde você está escorregando</h2>
+      <p class="mini">O Freático foi anotando. Estes assuntos aparecem <b>mais vezes</b> na
+      Prova da Bacia — é assim que a gente vira o jogo antes da prova de verdade.</p>
+      <div class="tags">${fracas.map(h=>
+        `<span class="tag" style="border-color:var(--chama);color:var(--chama);font-size:1em">${NOME_HAB[h]||h}</span>`
+      ).join("")}</div>
+    </div>`:``}
+    ${feitas===N_MISSOES?`<div class="card destaque centro">
+      <div style="font-size:56px">🎓</div>
+      <h2>Caminho inteiro percorrido, ${NOME()}!</h2>
+      <button class="btn" onclick="verDiploma()">Ver meu diploma</button>
+    </div>`:``}`;
+}
+function verDiploma(){ somVitoria(); S.cena="diploma"; render(); }
+window.verDiploma = verDiploma;
+/* ============================================================
+   ARTE — desenhos em SVG, feitos aqui dentro.
+   Nenhum arquivo externo, nenhuma rede: o jogo abre por duplo clique.
+   ============================================================ */
+
+/* --- a pizza da água do planeta: 97,5% salgada, 2,5% doce --- */
+function artePizzaAgua(){
+  return `<svg class="arte" viewBox="0 0 300 210" role="img" aria-label="Gráfico: 97,5% de água salgada e 2,5% de água doce">
+    <rect width="300" height="210" fill="#061e2c"/>
+    <circle cx="96" cy="100" r="70" fill="#1d4ed8"/>
+    <path d="M96,100 L96,30 A70,70 0 0,1 106.95,30.86 Z" fill="#86efac"/>
+    <text x="96" y="108" text-anchor="middle" fill="#fff" font-size="17" font-weight="bold" font-family="sans-serif">97,5%</text>
+    <rect x="188" y="52" width="16" height="16" fill="#1d4ed8"/>
+    <text x="212" y="65" fill="#eefaff" font-size="13" font-family="sans-serif">água salgada</text>
+    <rect x="188" y="84" width="16" height="16" fill="#86efac"/>
+    <text x="212" y="97" fill="#eefaff" font-size="13" font-family="sans-serif">água doce (2,5%)</text>
+    <text x="188" y="132" fill="#95bdd2" font-size="11.5" font-family="sans-serif">A fatia verde é</text>
+    <text x="188" y="148" fill="#95bdd2" font-size="11.5" font-family="sans-serif">tudo o que dá</text>
+    <text x="188" y="164" fill="#95bdd2" font-size="11.5" font-family="sans-serif">para beber.</text>
+    <text x="150" y="196" text-anchor="middle" fill="#95bdd2" font-size="11" font-family="sans-serif">Distribuição da água no mundo · Fonte: Brasil Escola</text>
+  </svg>`;
+}
+
+/* --- barras: onde está a água doce --- */
+function arteBarrasDoce(){
+  const dados = [
+    {r:"calotas polares e geleiras", v:69.8, c:"#93c5fd"},
+    {r:"águas subterrâneas",         v:29.0, c:"#38bdf8"},
+    {r:"outros",                     v:0.9,  c:"#a78bfa"},
+    {r:"rios e lagos",               v:0.3,  c:"#4ade80"}
+  ];
+  return `<svg class="arte larga" viewBox="0 0 340 190" role="img" aria-label="Onde está a água doce do planeta">
+    <rect width="340" height="190" fill="#061e2c"/>
+    <text x="170" y="22" text-anchor="middle" fill="#eefaff" font-size="14" font-weight="bold" font-family="sans-serif">Dentro dos 2,5% de água doce</text>
+    ${dados.map((d,i)=>{
+      const y = 40 + i*34, w = Math.max(3, d.v/70*180);
+      return `<text x="8" y="${y+13}" fill="#95bdd2" font-size="11.5" font-family="sans-serif">${d.r}</text>
+        <rect x="8" y="${y+18}" width="${w}" height="12" fill="${d.c}" rx="3"/>
+        <text x="${w+16}" y="${y+29}" fill="#eefaff" font-size="12" font-weight="bold" font-family="sans-serif">${String(d.v).replace(".",",")}%</text>`;
+    }).join("")}
+  </svg>`;
+}
+
+/* --- o rio inteiro, com as partes numeradas e clicáveis --- */
+const PARTES_RIO = [
+  {k:"nascente", n:"Nascente",        x:296, y:44},
+  {k:"afluente", n:"Afluente",        x:186, y:122},
+  {k:"direita",  n:"Margem direita",  x:188, y:208},
+  {k:"esquerda", n:"Margem esquerda", x:260, y:208},
+  {k:"foz",      n:"Foz",             x:204, y:262},
+  {k:"leito",    n:"Leito",           x:243, y:168}
+];
+function arteRio(opts){
+  const o = opts || {};
+  const marca = o.marca || {};      /* k -> "certo" | "errado" */
+  const rotulos = !!o.rotulos;
+  const clicavel = !!o.clicavel;
+  const cor = k => marca[k]==="certo" ? "#4ade80" : (marca[k]==="errado" ? "#ff6b81" : "#fbbf24");
+  return `<svg class="arte larga" viewBox="0 0 420 300" role="img" aria-label="As partes de um rio, da nascente à foz">
+    <rect width="420" height="300" fill="#7fb069"/>
+    <path d="M0,0 H420 V70 Q330,30 250,58 Q160,88 80,52 Q40,34 0,48 Z" fill="#5a8a4d"/>
+    <path d="M244,62 L272,18 L300,62 Z" fill="#6b7f8c"/><path d="M262,40 L272,18 L282,40 Z" fill="#e8f3fa"/>
+    <path d="M292,62 L320,26 L348,62 Z" fill="#5d7280"/><path d="M310,42 L320,26 L330,42 Z" fill="#e8f3fa"/>
+    <path d="M0,246 H420 V300 H0 Z" fill="#1d4ed8"/>
+    <path d="M0,246 H420 V262 H0 Z" fill="#2563eb" opacity=".7"/>
+    <path d="M296,44 C292,92 262,120 250,150 C238,186 216,214 205,252"
+          stroke="#38bdf8" stroke-width="11" fill="none" stroke-linecap="round"/>
+    <path d="M132,104 C168,116 214,124 249,148"
+          stroke="#38bdf8" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <circle cx="296" cy="44" r="9" fill="#bae6fd"/>
+    <path d="M282,52 q14,-16 28,0" stroke="#8a9a6a" stroke-width="4" fill="none"/>
+    <ellipse cx="205" cy="258" rx="30" ry="12" fill="#38bdf8" opacity=".8"/>
+    ${PARTES_RIO.map((p,i)=>`
+      <g class="${clicavel?"hot":""}" ${clicavel?`onclick="cliqueRio('${p.k}')"`:``}>
+        <circle cx="${p.x}" cy="${p.y}" r="15" fill="${cor(p.k)}" stroke="#04141f" stroke-width="2.5"/>
+        <text x="${p.x}" y="${p.y+6}" text-anchor="middle" fill="#04141f" font-size="15"
+              font-weight="bold" font-family="sans-serif" pointer-events="none">${i+1}</text>
+      </g>
+      ${rotulos?`<text x="${p.x + (p.x>210?18:-18)}" y="${p.y+5}" text-anchor="${p.x>210?"start":"end"}"
+        fill="#04141f" font-size="12.5" font-weight="bold" font-family="sans-serif">${p.n}</text>`:``}`).join("")}
+    <text x="14" y="288" fill="#dbeafe" font-size="12" font-weight="bold" font-family="sans-serif">mar · lago · outro rio</text>
+  </svg>`;
+}
+
+/* --- erosão: o verde é DESENHADO EM DOIS PEDAÇOS, com o buraco entre eles.
+       Cunha marrom estreitando para baixo virava pirâmide; aqui o marrom é o chão,
+       e o que falta é a vegetação. --- */
+function arteErosao(){
+  return `<svg class="arte" viewBox="0 0 220 160" role="img" aria-label="Morro com a vegetação rasgada e um barranco de terra aberto do topo até a base">
+    <rect width="220" height="160" fill="#bae6fd"/>
+    <circle cx="192" cy="26" r="13" fill="#fbbf24"/>
+    <path d="M0,160 V88 Q60,54 116,60 Q170,72 220,64 V160 Z" fill="#a1662f"/>
+    <path d="M96,62 L126,60 L120,160 L100,160 Z" fill="#7c4a1e"/>
+    <path d="M0,160 V86 Q40,58 84,64 L96,160 Z" fill="#7fb069"/>
+    <path d="M220,160 V66 Q180,52 136,62 L124,160 Z" fill="#7fb069"/>
+    <path d="M0,160 V104 Q40,80 84,86 L90,160 Z" fill="#6f9c5c"/>
+    <path d="M220,160 V86 Q180,70 136,82 L130,160 Z" fill="#6f9c5c"/>
+    <path d="M92,66 L100,160 M132,64 L124,160" stroke="#5a3414" stroke-width="2.5" fill="none"/>
+    <path d="M110,62 L108,160" stroke="#5a3414" stroke-width="2" fill="none"/>
+    <path d="M118,90 L136,104 L140,124" stroke="#8a5a2b" stroke-width="2.5" fill="none"/>
+    <path d="M100,100 L84,112 L80,132" stroke="#8a5a2b" stroke-width="2.5" fill="none"/>
+    <path d="M78,148 Q110,134 142,148 L152,160 H68 Z" fill="#c9a227"/>
+    <circle cx="118" cy="142" r="4" fill="#8a8a8a"/>
+    <circle cx="96" cy="152" r="3" fill="#9a9a9a"/>
+    <path d="M20,124 q6,-14 12,0" stroke="#4d7c3a" stroke-width="3" fill="none"/>
+    <path d="M188,110 q6,-14 12,0" stroke="#4d7c3a" stroke-width="3" fill="none"/>
+    <text x="110" y="18" text-anchor="middle" fill="#0f2833" font-size="11.5" font-weight="bold" font-family="sans-serif">o morro perde a terra</text>
+  </svg>`;
+}
+/* --- assoreamento: corte do rio. A terra SOBE do leito e a água vira um fiozinho. --- */
+function arteAssoreamento(){
+  return `<svg class="arte" viewBox="0 0 220 160" role="img" aria-label="Corte de um rio raso: sedimento acumulado no leito e pouca água por cima">
+    <rect width="220" height="160" fill="#bae6fd"/>
+    <circle cx="26" cy="26" r="13" fill="#fbbf24"/>
+    <path d="M0,160 V70 Q30,58 58,84 L58,160 Z" fill="#7fb069"/>
+    <path d="M220,160 V70 Q190,58 162,84 L162,160 Z" fill="#7fb069"/>
+    <rect x="58" y="84" width="104" height="76" fill="#1d4ed8"/>
+    <path d="M58,88 q26,-7 52,0 t52,0 v-6 q-26,7 -52,0 t-52,0 z" fill="#7dd3fc"/>
+    <path d="M58,160 V126 Q110,92 162,126 V160 Z" fill="#c9a227"/>
+    <path d="M58,160 V140 Q110,110 162,140 V160 Z" fill="#a1662f"/>
+    <circle cx="92" cy="132" r="7" fill="#8a8a8a"/>
+    <circle cx="124" cy="138" r="9" fill="#6f6f6f"/>
+    <circle cx="108" cy="124" r="5" fill="#9a9a9a"/>
+    <rect x="70" y="140" width="15" height="8" rx="2" fill="#94a3b8"/>
+    <path d="M58,150 H162" stroke="#eefaff" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="110" y="145" text-anchor="middle" fill="#eefaff" font-size="9.5" font-family="sans-serif">fundo antigo do rio</text>
+    <text x="110" y="18" text-anchor="middle" fill="#0f2833" font-size="11.5" font-weight="bold" font-family="sans-serif">o rio ganha terra e fica raso</text>
+  </svg>`;
+}
+/* --- mata ciliar: o rio protegido --- */
+function arteMataCiliar(){
+  return `<svg class="arte" viewBox="0 0 220 160" role="img" aria-label="Rio com mata ciliar nas duas margens">
+    <rect width="220" height="160" fill="#bae6fd"/>
+    <path d="M0,160 V70 Q60,58 110,64 Q170,70 220,60 V160 Z" fill="#7fb069"/>
+    <path d="M84,160 Q92,110 100,64 L124,64 Q130,110 138,160 Z" fill="#2563eb"/>
+    ${[16,40,62,152,176,198].map((x,i)=>`
+      <rect x="${x-3}" y="${96+ (i%2)*6}" width="6" height="${34-(i%2)*4}" fill="#6b4423"/>
+      <circle cx="${x}" cy="${92+(i%2)*6}" r="16" fill="#2f6b34"/>
+      <circle cx="${x-9}" cy="${100+(i%2)*6}" r="11" fill="#3d8140"/>
+      <circle cx="${x+9}" cy="${100+(i%2)*6}" r="11" fill="#3d8140"/>`).join("")}
+    <circle cx="192" cy="26" r="13" fill="#fbbf24"/>
+  </svg>`;
+}
+/* --- lixão sobre o lençol freático: o chorume --- */
+function arteChorume(){
+  return `<svg class="arte" viewBox="0 0 220 160" role="img" aria-label="Aterro sanitário e o chorume descendo até o lençol freático">
+    <rect width="220" height="160" fill="#bae6fd"/>
+    <rect y="72" width="220" height="30" fill="#7fb069"/>
+    <rect y="102" width="220" height="30" fill="#c8a06a"/>
+    <rect y="132" width="220" height="28" fill="#38bdf8"/>
+    <path d="M64,72 Q110,26 156,72 Z" fill="#6b4423"/>
+    <path d="M78,72 Q110,42 142,72 Z" fill="#8a5a2b"/>
+    <path d="M96,74 V128" stroke="#7c4a1e" stroke-width="4" stroke-dasharray="6 5"/>
+    <path d="M126,74 V128" stroke="#7c4a1e" stroke-width="4" stroke-dasharray="6 5"/>
+    <path d="M96,128 l-5,-7 h10 z" fill="#7c4a1e"/>
+    <path d="M126,128 l-5,-7 h10 z" fill="#7c4a1e"/>
+    <text x="110" y="150" text-anchor="middle" fill="#04141f" font-size="12" font-weight="bold" font-family="sans-serif">lençol freático</text>
+    <text x="110" y="22" text-anchor="middle" fill="#0f2833" font-size="12" font-weight="bold" font-family="sans-serif">aterro sanitário</text>
+    <text x="150" y="118" fill="#7c4a1e" font-size="11" font-weight="bold" font-family="sans-serif">chorume</text>
+  </svg>`;
+}
+/* --- impermeabilização: o asfalto e a enchente --- */
+function arteAsfalto(){
+  return `<svg class="arte" viewBox="0 0 220 160" role="img" aria-label="Rua asfaltada alagada pela chuva">
+    <rect width="220" height="160" fill="#7c93a3"/>
+    ${[10,60,110,160].map(x=>`<rect x="${x}" y="34" width="38" height="60" fill="#4b5b66"/>
+      ${[0,1,2].map(r=>[0,1].map(c=>`<rect x="${x+7+c*16}" y="${41+r*18}" width="10" height="11" fill="#93c5fd" opacity=".8"/>`).join("")).join("")}`).join("")}
+    <rect y="94" width="220" height="30" fill="#3f3f46"/>
+    <rect y="124" width="220" height="36" fill="#3b82f6" opacity=".85"/>
+    <path d="M0,124 q22,-7 44,0 t44,0 t44,0 t44,0 t44,0" stroke="#93c5fd" stroke-width="3" fill="none"/>
+    ${[24,72,120,168].map(x=>`<path d="M${x},4 l4,14 M${x+16},10 l4,14 M${x+32},2 l4,14" stroke="#bae6fd" stroke-width="2.5"/>`).join("")}
+    <text x="110" y="150" text-anchor="middle" fill="#eff6ff" font-size="12" font-weight="bold" font-family="sans-serif">a água não entra no asfalto</text>
+  </svg>`;
+}
+
+/* --- o mapa das cinco regiões --- */
+const REGIOES = [
+  /* Contornos projetados de longitude/latitude reais (x = -74°..-34,8°, y = +5,3°..-33,75°),
+     para o mapa ser reconhecível como o Brasil — é nele que ela vai apontar na prova. */
+  {k:"norte",   n:"Norte",        agua:68, pop:8.5,  dens:4.51,
+   d:"M50,50 L113,20 L133,32 L167,26 L189,67 L196,110 L191,150 L150,150 L126,145 L80,147 L20,108 L30,84 Z"},
+  {k:"nordeste",n:"Nordeste",     agua:3,  pop:26.9, dens:35.21,
+   d:"M189,67 L217,74 L255,82 L280,106 L255,147 L249,178 L206,170 L196,140 L196,110 Z"},
+  {k:"centro",  n:"Centro-Oeste", agua:16, pop:8,    dens:10.14,
+   d:"M80,147 L126,145 L150,150 L191,150 L200,178 L173,209 L153,223 L126,209 L106,167 Z"},
+  {k:"sudeste", n:"Sudeste",      agua:6,  pop:41.9, dens:91.76,
+   d:"M206,170 L249,178 L224,215 L204,222 L192,226 L173,209 L200,178 Z"},
+  {k:"sul",     n:"Sul",          agua:7,  pop:14.7, dens:51.91,
+   d:"M153,223 L192,226 L189,247 L157,290 L132,262 L149,233 Z"}
+];
+const COR_REGIAO = {norte:"#facc15", nordeste:"#f472b6", centro:"#a78bfa", sudeste:"#fb7185", sul:"#fb923c"};
+
+function arteBrasil(opts){
+  const o = opts || {};
+  const pintura = o.pintura || {};     /* k -> cor forçada */
+  const rotulos = !!o.rotulos;
+  const numeros = !!o.numeros;
+  const clicavel = !!o.clicavel;
+  const mostraAgua = !!o.mostraAgua;
+  const centro = {norte:[108,86], nordeste:[236,116], centro:[140,178], sudeste:[214,196], sul:[160,250]};
+  return `<svg class="arte" viewBox="0 0 300 310" role="img" aria-label="Mapa do Brasil dividido nas cinco regiões">
+    <rect width="300" height="310" fill="#061e2c"/>
+    ${REGIOES.map((r,i)=>`
+      <g class="${clicavel?"hot":""}" ${clicavel?`onclick="cliqueRegiao('${r.k}')"`:``}>
+        <path d="${r.d}" fill="${pintura[r.k] || COR_REGIAO[r.k]}" stroke="#04141f" stroke-width="2.5"/>
+      </g>`).join("")}
+    ${REGIOES.map((r,i)=>{
+      const c = centro[r.k];
+      if(numeros) return `<circle cx="${c[0]}" cy="${c[1]}" r="14" fill="#04141f" opacity=".8"/>
+        <text x="${c[0]}" y="${c[1]+6}" text-anchor="middle" fill="#fbbf24" font-size="16"
+              font-weight="bold" font-family="sans-serif" pointer-events="none">${i+1}</text>`;
+      if(rotulos) return `<text x="${c[0]}" y="${c[1]}" text-anchor="middle" fill="#04141f" font-size="10.5"
+              font-weight="bold" font-family="sans-serif" pointer-events="none">${r.n}</text>
+        ${mostraAgua?`<text x="${c[0]}" y="${c[1]+13}" text-anchor="middle" fill="#04141f" font-size="11.5"
+              font-weight="bold" font-family="sans-serif" pointer-events="none">${r.agua}%</text>`:``}`;
+      return "";
+    }).join("")}
+    <path d="M276,272 v22 M276,272 l-6,9 h12 z" stroke="#eefaff" stroke-width="2" fill="#eefaff"/>
+    <text x="276" y="268" text-anchor="middle" fill="#eefaff" font-size="12" font-weight="bold" font-family="sans-serif">N</text>
+    ${(rotulos&&mostraAgua)?`<text x="12" y="302" fill="#95bdd2" font-size="10.5" font-family="sans-serif">% = da água doce do país · Fonte: ANA/IBGE</text>`:``}
+  </svg>`;
+}
+
+/* --- a represa: cheia e vazia --- */
+function arteRepresa(vazia){
+  const nivel = vazia ? 118 : 74;
+  return `<svg class="arte" viewBox="0 0 220 160" role="img" aria-label="Represa ${vazia?"em crise hídrica":"em período de cheias"}">
+    <rect width="220" height="160" fill="#bae6fd"/>
+    <path d="M0,160 V54 Q40,34 78,50 L78,160 Z" fill="#5a8a4d"/>
+    <path d="M220,160 V54 Q180,34 142,50 L142,160 Z" fill="#5a8a4d"/>
+    <rect x="78" y="${nivel}" width="64" height="${160-nivel}" fill="${vazia?"#7dd3fc":"#1d4ed8"}"/>
+    ${vazia?`<path d="M78,118 h64 v42 h-64 z" fill="#a1662f"/>
+      <path d="M78,124 q16,-8 32,0 t32,0 v36 h-64 z" fill="#c9a227"/>
+      <path d="M84,140 h10 M100,148 h12 M120,136 h10" stroke="#8a6a3a" stroke-width="3"/>`:``}
+    <rect x="70" y="46" width="80" height="10" fill="#94a3b8"/>
+    <text x="110" y="26" text-anchor="middle" fill="#0f2833" font-size="13" font-weight="bold" font-family="sans-serif">${vazia?"crise hídrica":"período de cheias"}</text>
+  </svg>`;
+}
+
+/* --- o ciclo da água, com as quatro etapas numeradas --- */
+function arteCiclo(marcadas){
+  const m = marcadas || [];
+  const cor = i => m.includes(i) ? "#4ade80" : "#fbbf24";
+  return `<svg class="arte larga" viewBox="0 0 400 250" role="img" aria-label="O ciclo da água">
+    <rect width="400" height="250" fill="#bae6fd"/>
+    <circle cx="352" cy="38" r="24" fill="#fbbf24"/>
+    <path d="M0,250 V150 Q60,110 120,132 Q180,152 240,120 Q300,92 400,124 V250 Z" fill="#7fb069"/>
+    <path d="M0,250 V196 H400 V250 Z" fill="#1d4ed8"/>
+    <ellipse cx="96" cy="58" rx="46" ry="22" fill="#f8fafc"/>
+    <ellipse cx="132" cy="52" rx="30" ry="18" fill="#f1f5f9"/>
+    ${[70,92,114].map(x=>`<path d="M${x},80 v26" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>`).join("")}
+    ${[300,326,352].map(x=>`<path d="M${x},176 v-40 l-6,10 M${x},136 l6,10" stroke="#38bdf8" stroke-width="3.5" fill="none" stroke-linecap="round"/>`).join("")}
+    <path d="M232,60 q-40,-26 -96,-12" stroke="#0ea5e9" stroke-width="5" fill="none" marker-end=""/>
+    <path d="M140,46 l-8,3 l7,6 z" fill="#0ea5e9"/>
+    <ellipse cx="258" cy="62" rx="34" ry="18" fill="#e2e8f0"/>
+    <path d="M120,150 q-40,20 -70,44" stroke="#0ea5e9" stroke-width="4" fill="none"/>
+    <path d="M50,194 l3,-9 l7,5 z" fill="#0ea5e9"/>
+    <g><circle cx="330" cy="150" r="15" fill="${cor(0)}" stroke="#04141f" stroke-width="2.5"/>
+      <text x="330" y="156" text-anchor="middle" fill="#04141f" font-size="15" font-weight="bold" font-family="sans-serif">1</text></g>
+    <g><circle cx="258" cy="62" r="15" fill="${cor(1)}" stroke="#04141f" stroke-width="2.5"/>
+      <text x="258" y="68" text-anchor="middle" fill="#04141f" font-size="15" font-weight="bold" font-family="sans-serif">2</text></g>
+    <g><circle cx="92" cy="104" r="15" fill="${cor(2)}" stroke="#04141f" stroke-width="2.5"/>
+      <text x="92" y="110" text-anchor="middle" fill="#04141f" font-size="15" font-weight="bold" font-family="sans-serif">3</text></g>
+    <g><circle cx="60" cy="196" r="15" fill="${cor(3)}" stroke="#04141f" stroke-width="2.5"/>
+      <text x="60" y="202" text-anchor="middle" fill="#04141f" font-size="15" font-weight="bold" font-family="sans-serif">4</text></g>
+  </svg>`;
+}
+/* ============================================================
+   AULAS — uma antes de cada missão, com o Freático
+   ============================================================ */
+const AULAS = [];
+
+/* ---- 1 · a água do planeta ---- */
+AULAS.push([
+  {ico:"🦫", tit:"Oi, {NOME}. Eu sou o Freático.",
+   txt:`Sou castor, e o meu nome não é apelido: <b>lençol freático</b> é o rio que corre
+     <b>debaixo da terra</b>, e é de lá que eu venho. Guarde esse nome — ele cai na prova.
+     <p>E tem outra coisa que castor faz melhor que ninguém: <b>represa</b>. Também cai.
+     Duas lições só no meu nome, {NOME}.</p>
+     <p>Nas próximas paradas eu vou percorrer com você <b>o caminho inteiro de uma gota</b>:
+     da nuvem ao morro, do morro ao rio, do rio à sua torneira.</p>`,
+   chave:`Nada aqui é matéria nova. É a matéria que você já viu, olhada com calma.`},
+  {ico:"🌏", tit:"Setenta por cento — e mesmo assim falta",
+   txt:`Cerca de <b>70% da superfície da Terra</b> é coberta por água. Olhando de cima,
+     o planeta é quase todo azul. Então por que a gente fala em <b>falta de água</b>?
+     <p>Porque desse tanto todo, <b>97% está nos oceanos e é salgada</b>. Salgada não serve
+     para beber, não serve para os animais e não serve nem para molhar a plantação.</p>`,
+   arte: artePizzaAgua(),
+   chave:`A água doce é só cerca de <b>3%</b> do total. Essa é a resposta da pergunta
+     "por que a água é escassa se o planeta é cheio dela?".`},
+  {ico:"🧊", tit:"E dos 3%, quase tudo está congelado",
+   txt:`Agora olhe só para a fatia verde — os 3% de água doce. Ela também está dividida:
+     <ul class="lista">
+       <li><b>menos de 1%</b> está líquida, em <b>rios, lagos e fontes subterrâneas</b>;</li>
+       <li>os <b>2% restantes</b> são <b>geleiras e calotas polares</b> — gelo.</li>
+     </ul>
+     <p>Ou seja: de toda a água do planeta, a parte que dá para <b>beber hoje</b> é
+     um pedacinho de um pedacinho.</p>`,
+   arte: arteBarrasDoce(),
+   chave:`No gráfico da apostila: <b>97,5% salgada · 2,5% doce</b>. E dentro da doce,
+     <b>69,8% calotas · 29% subterrâneas · 0,9% outros · 0,3% rios e lagos</b>.`},
+  {ico:"⚖️", tit:"A água não vai acabar. A água BOA pode faltar.",
+   txt:`Esta é a frase que confunde muita gente — e a apostila é bem clara:
+     <div class="destaque">A quantidade de água do planeta é a mesma há milênios.<br>
+     A água, como um todo, <span class="certo">não vai acabar</span>.</div>
+     <p>O que está diminuindo é a <b>água disponível para o consumo humano</b> — aquela que a
+     gente usa para beber e cozinhar.</p>
+     <p>E por três motivos: <b>mudanças no clima</b> (secas e enchentes), <b>poluição</b> dos
+     cursos d'água e <b>degradação das áreas de mananciais</b>.</p>`,
+   chave:`Se a prova perguntar "a água vai acabar?", a resposta não é sim nem não:
+     <b>a quantidade é sempre a mesma, mas a água boa para beber está diminuindo</b>.`},
+  {ico:"🦘", tit:"E a Austrália, que abre o volume?",
+   txt:`A Aula 1 do seu volume não é sobre água, mas está lá — então guarde:
+     <ul class="lista">
+       <li>Um dos <b>seis maiores países do mundo</b>: cerca de <b>7 713 364 km²</b>.</li>
+       <li>Fica entre os oceanos <b>Pacífico</b> e <b>Índico</b>.</li>
+       <li><b>Não tem fronteiras terrestres</b> — por isso é classificada como
+       <b>arquipélago</b>. As fronteiras dela são todas <b>marítimas</b>.</li>
+       <li>É chamada de <b>país-continente</b> porque sua extensão territorial
+       <b>abrange quase toda a Oceania</b>.</li>
+     </ul>`,
+   chave:`País-continente = <b>abrange quase toda a Oceania</b>. Arquipélago =
+     <b>não possui fronteiras terrestres</b>. São duas respostas diferentes.`}
+]);
+
+/* ---- 2 · as partes do rio ---- */
+AULAS.push([
+  {ico:"🏔️", tit:"Como nasce um rio",
+   txt:`<b>Geralmente o rio nasce a partir de chuvas em áreas montanhosas.</b> A chuva cai lá em
+     cima, uma parte escorre pela superfície e outra parte <b>infiltra no solo</b>.
+     <p>A água que infiltra forma uma espécie de <b>rio subterrâneo</b> — o <b>lençol freático</b>,
+     que pode estar a <b>dezenas de metros de profundidade</b>. É de onde eu venho.</p>
+     <p>E olhe que bonito: <b>se o lençol freático encontrar uma saída para a superfície, pode
+     nascer um rio novo</b>.</p>`,
+   chave:`O rio nasce <b>a partir de chuvas em áreas montanhosas</b> — não nasce num afluente
+     nem "na represa".`},
+  {ico:"🗺️", tit:"As seis partes que a prova cobra",
+   txt:`Este é o desenho da sua apostila. Guarde as seis:
+     <ul class="lista">
+       <li><b>1 · Nascente</b> — onde o rio começa, nas <b>partes mais elevadas do relevo</b>.</li>
+       <li><b>2 · Afluente</b> — o rio menor que <b>desagua</b> no rio maior.</li>
+       <li><b>3 · Margem direita</b> e <b>4 · margem esquerda</b>.</li>
+       <li><b>5 · Foz</b> — onde o rio <b>lança suas águas</b>: no mar, num lago ou em outro rio.</li>
+       <li><b>6 · Leito</b> — o fundo por onde a água corre.</li>
+     </ul>`,
+   arte: arteRio({rotulos:true}),
+   chave:`<b>Afluente não é nascente.</b> Afluente é rio que chega; nascente é onde começa.
+     Essa troca já reprovou muita gente.`},
+  {ico:"🤚", tit:"Qual margem é a direita?",
+   txt:`Parece pegadinha, mas tem regra:
+     <div class="destaque">Fique <b>de costas para a nascente</b>,<br>olhando para a <b>foz</b>.<br>
+     A sua mão direita aponta a <b>margem direita</b>.</div>
+     <p>No desenho da apostila o rio desce a página, então a margem direita fica do lado
+     <b>esquerdo</b> do papel. Não é erro do livro — é você virando de costas para a nascente.</p>`,
+   chave:`Margem direita e esquerda são <b>de quem desce o rio</b>, não de quem olha o desenho.`},
+  {ico:"💦", tit:"Manancial e lençol — as duas palavras difíceis",
+   txt:`<ul class="lista">
+       <li><b>Área de manancial</b> — a área <b>onde o rio nasce</b>. É essa área que precisa ser
+       protegida, porque é dali que sai a água que abastece as cidades.</li>
+       <li><b>Lençol freático</b> — o <b>rio subterrâneo</b> formado pela água que infiltra.</li>
+     </ul>
+     <p>E dois rios para lembrar: o <b>São Francisco</b>, o "Velho Chico", nasce em
+     <b>Minas Gerais</b> e atravessa Minas Gerais, Bahia, Pernambuco, Sergipe e Alagoas.
+     Os outros da apostila: <b>Amazonas</b>, <b>Tietê</b> e <b>Paraná</b>.</p>`,
+   chave:`Manancial = <b>onde nasce</b>. Freático = <b>debaixo da terra</b>.`}
+]);
+
+/* ---- 3 · mata ciliar, erosão e assoreamento ---- */
+AULAS.push([
+  {ico:"🌳", tit:"Mata ciliar: o cílio do rio",
+   txt:`<b>Mata ciliar</b> é a <b>vegetação que cresce às margens dos rios e lagos</b>.
+     O nome vem de <i>cílio</i> — o pelinho que protege o olho. Ela faz três coisas:
+     <ul class="lista">
+       <li><b>protege o solo</b>;</li>
+       <li><b>evita deslizamentos de terra</b>;</li>
+       <li><b>contribui para manter a água mais limpa</b>.</li>
+     </ul>`,
+   arte: arteMataCiliar(),
+   chave:`Com mata ciliar: <b>água conservada</b> e <b>biodiversidade</b>.
+     Sem mata ciliar: <b>poluição, erosão e clima alterado</b>.`},
+  {ico:"⛏️", tit:"Erosão TIRA a terra do lugar",
+   txt:`<b>Erosão</b> é o processo de <b>desgaste, transporte e sedimentação</b> do solo, dos
+     subsolos e das rochas.
+     <p>Numa foto, erosão é um <b>morro rasgado</b>: barranco aberto, terra à mostra, o verde
+     arrancado. A chuva bate no chão sem vegetação e leva o solo embora.</p>`,
+   arte: arteErosao(),
+   chave:`Erosão = <b>TIRA</b>. O morro perde terra.`},
+  {ico:"🪨", tit:"Assoreamento PÕE a terra no rio",
+   txt:`<b>Assoreamento</b> é o <b>acúmulo de sedimentos</b> — areia, terra, rochas —, lixo e
+     outros materiais <b>no leito</b> dos cursos d'água.
+     <p>Numa foto, assoreamento é um <b>rio raso</b>: cheio de terra e pedra no fundo, com um
+     fiozinho de água por cima.</p>
+     <p>É o assoreamento que <b>diminui a profundidade</b> do rio e prejudica a <b>qualidade</b>
+     e a <b>quantidade</b> da água disponível.</p>`,
+   arte: arteAssoreamento(),
+   chave:`Assoreamento = <b>PÕE</b>. O rio ganha terra e fica raso.`},
+  {ico:"🔗", tit:"Os dois são a mesma terra, {NOME}",
+   txt:`Repare: a terra que a <b>erosão</b> tira do morro é <b>exatamente</b> a terra que o
+     <b>assoreamento</b> despeja no rio.
+     <div class="destaque">tirei a mata ciliar → a chuva carrega a terra (<b>erosão</b>)<br>
+     → a terra para dentro do rio (<b>assoreamento</b>) → o rio fica raso e sujo</div>
+     <p>Por isso a apostila lista as duas coisas juntas nas causas da <b>degradação dos
+     mananciais</b>, junto com: ocupação desordenada do solo, <b>falta de saneamento básico</b>,
+     <b>remoção da cobertura vegetal</b> e <b>uso de agrotóxicos</b>.</p>`,
+   chave:`Na prova com foto: <span class="certo">morro rasgado = erosão</span>;
+     <span class="certo">rio raso e cheio de terra = assoreamento</span>.`},
+  {ico:"🗑️", tit:"O lençol freático também sofre",
+   txt:`O lençol é <b>mais difícil</b> de ser poluído — mas não é impossível. Sofre com:
+     poços irregulares, agrotóxicos, construções subterrâneas, destruição da vegetação,
+     urbanização e <b>depósitos irregulares de lixo</b> (aterros sanitários ou lixões), de onde
+     desce o <b>chorume</b>.
+     <p>E a <b>impermeabilização do solo</b> — o asfalto e o concreto — impede a água de entrar
+     no chão. Isso <b>prejudica o lençol</b> e ainda <b>provoca enchentes</b>.</p>`,
+   arte: arteChorume(),
+   chave:`Os lençóis freáticos são <b>mais difíceis</b> de contaminar, não mais fáceis.
+     Essa é uma frase de Verdadeiro ou Falso que já apareceu na sua folha.`}
+]);
+
+/* ---- 4 · o ciclo da água ---- */
+AULAS.push([
+  {ico:"♻️", tit:"Renovável, mas limitado",
+   txt:`É <b>impossível aumentar</b> a quantidade de água do planeta. O que existe é a
+     <b>reposição</b> da quantidade que já tem — e quem faz essa reposição é o <b>ciclo da água</b>.
+     <p>Por isso a apostila diz que a água é <b>renovável</b>: o ciclo garante a renovação do
+     estoque de água doce. E diz <b>limitada</b>: não dá para fabricar mais.</p>`,
+   chave:`Renovável <b>e</b> limitado ao mesmo tempo — não é contradição.
+     O ciclo <b>repõe</b>, não <b>cria</b>.`},
+  {ico:"☀️", tit:"As quatro etapas, na ordem",
+   txt:`<b>Ciclo da água</b> = <b>ciclo hidrológico</b> = o movimento que a água faz na natureza.
+     <ul class="lista">
+       <li><b>1 · Evaporação</b> — o <b>calor do Sol</b> faz a água da superfície virar
+       <b>gás</b> e subir até as camadas mais altas da atmosfera.</li>
+       <li><b>2 · Condensação</b> — lá em cima, nas <b>baixas temperaturas</b>, o gás volta a ser
+       <b>líquido</b> e forma as <b>nuvens</b>.</li>
+       <li><b>3 · Precipitação</b> — carregadas de gotículas, as nuvens se desfazem em <b>chuva</b>.</li>
+       <li><b>4 · Infiltração</b> — parte da água <b>entra no solo</b> e alimenta o lençol;
+       o resto corre para os rios e para os oceanos. E tudo <b>recomeça</b>.</li>
+     </ul>`,
+   arte: arteCiclo([]),
+   chave:`Sol → sobe (<b>evapora</b>) → esfria e vira nuvem (<b>condensa</b>) →
+     cai (<b>precipita</b>) → entra no chão (<b>infiltra</b>) → recomeça.`},
+  {ico:"🌡️", tit:"Quem manda no ciclo é o clima",
+   txt:`O ciclo da água está <b>diretamente ligado ao clima</b>. Quando o clima muda, o
+     <b>regime de chuvas</b> muda junto — e aparecem os <b>eventos hidrológicos extremos</b>:
+     <ul class="lista">
+       <li><b>inundações</b>, quando chove demais;</li>
+       <li><b>longos períodos de seca</b>, quando não chove.</li>
+     </ul>
+     <p>Os dois afetam a <b>oferta de água</b> e ameaçam o suprimento de recursos hídricos.</p>`,
+   chave:`Mudança climática → muda o regime de chuvas → <b>seca e inundação</b>.`},
+  {ico:"🌽", tit:"Falta água, falta comida",
+   txt:`Além do consumo humano, a escassez de água coloca em risco a <b>produção de alimentos</b>:
+     <p>ela afeta tanto a <b>agricultura</b> (as plantações) quanto a <b>pecuária</b>
+     (a criação de animais).</p>
+     <p>Guarde essas duas palavras juntas, {NOME}: <b>agricultura e pecuária</b>. É assim que
+     a apostila fecha a Aula 5.</p>`,
+   chave:`Sem água não é só sede: é <b>fome</b>. Agricultura e pecuária param.`}
+]);
+/* ---- 5 · a água no Brasil por região ---- */
+AULAS.push([
+  {ico:"🧭", tit:"Antes de tudo: o que é uma REGIÃO?",
+   txt:`{NOME}, esta aula começa diferente. Antes de qualquer número, uma pergunta:
+     <div class="destaque">O Brasil tem <b>cinco</b> regiões.<br>
+     Norte · Nordeste · Centro-Oeste · Sudeste · Sul</div>
+     <p>Só essas cinco. <b>Mais nenhuma.</b></p>
+     <p>Quando a prova pergunta <i>"qual região do país…"</i>, a resposta <b>tem</b> que ser uma
+     dessas cinco palavras. Não pode ser uma cidade, nem um estado, nem um rio, nem uma represa.</p>`,
+   chave:`"Qual região?" → uma das <b>cinco</b>. Se a sua resposta não está nessa lista de
+     cinco, ela está errada antes mesmo de você olhar o gráfico.`},
+  {ico:"🪆", tit:"Uma coisa dentro da outra",
+   txt:`Pense em caixas, uma dentro da outra:
+     <div class="destaque">região → estado → cidade → represa</div>
+     <ul class="lista">
+       <li><b>Nordeste</b> é uma <b>região</b> — tem nove estados dentro.</li>
+       <li><b>Ceará</b> é um <b>estado</b>, que fica dentro do Nordeste.</li>
+       <li><b>Fortaleza</b> é uma <b>cidade</b>, que fica dentro do Ceará.</li>
+       <li><b>Cantareira</b> é uma <b>represa</b> — cabe dentro de uma cidade.</li>
+     </ul>
+     <p>São Paulo é cidade e é estado; região, não. O Amazonas é rio e é estado; região, não.</p>`,
+   chave:`Se cabe dentro de outra coisa maior, <b>não é região</b>.
+     Região é a caixa grande.`},
+  {ico:"🇧🇷", tit:"A água está mal distribuída",
+   txt:`O Brasil tem o <b>maior reservatório de água doce do mundo</b>: cerca de <b>12%</b> da
+     água doce do planeta está aqui, e o país responde por <b>53%</b> dos recursos hídricos da
+     América do Sul. Cada brasileiro dispõe, em média, de <b>42 milhões de litros por ano</b>.
+     <p>Só que essa água é <b>mal distribuída</b> — e é isso que a apostila insiste em mostrar:</p>
+     <div class="destaque">a região com <b>mais água</b> é uma das <b>menos habitadas</b><br>
+     e a região com <b>mais gente</b> tem um dos <b>menores</b> índices hídricos</div>`,
+   arte: arteBrasil({rotulos:true, mostraAgua:true}),
+   chave:`Norte: <b>68% da água</b> e só <b>8,5% da população</b>.
+     Sudeste: <b>6% da água</b> e <b>41,9% da população</b>.`},
+  {ico:"📊", tit:"A tabela inteira",
+   txt:`<table class="mini-tab">
+       <tr><th>Região</th><th>Água</th><th>População</th><th>hab/km²</th></tr>
+       <tr><td><b>Norte</b></td><td><b>68%</b></td><td>8,5%</td><td>4,51</td></tr>
+       <tr><td>Centro-Oeste</td><td>16%</td><td>8%</td><td>10,14</td></tr>
+       <tr><td>Sul</td><td>7%</td><td>14,7%</td><td>51,91</td></tr>
+       <tr><td>Sudeste</td><td>6%</td><td><b>41,9%</b></td><td><b>91,76</b></td></tr>
+       <tr><td><b>Nordeste</b></td><td><b>3%</b></td><td>26,9%</td><td>35,21</td></tr>
+     </table>
+     <p>Três respostas que a prova adora:</p>
+     <ul class="lista">
+       <li>região com <b>mais água</b> → <b>Norte</b>;</li>
+       <li>região <b>menos habitada</b> → <b>Norte</b> (4,51 hab/km², a menor densidade);</li>
+       <li>região com <b>menos água</b> → <b>Nordeste</b> (menos de 3%).</li>
+     </ul>
+     <p>E ainda: <b>Sul + Sudeste</b> juntos têm mais de <b>50% da população</b> e só
+     <b>13%</b> dos recursos hídricos.</p>`,
+   chave:`Norte responde <b>duas</b> perguntas diferentes: mais água <b>e</b> menos gente.
+     Não é coincidência — é o problema que a aula inteira quer mostrar.`},
+  {ico:"🧂", tit:"Densidade e água salobra",
+   txt:`<b>Densidade demográfica</b> é quanta gente cabe em cada quilômetro quadrado.
+     No Brasil inteiro: <b>23,86 hab/km²</b>. Sudeste: <b>91,76</b> — a maior. Norte: <b>4,51</b>
+     — a menor.
+     <p>E o Nordeste tem um problema a mais: <b>grande parte da água é subterrânea, com teor de
+     sal acima do limite</b> aceitável para consumo humano. É a <b>água salobra</b> — tem sal
+     demais para beber, mas não é água do mar.</p>`,
+   chave:`<b>Salgada</b> é o mar. <b>Salobra</b> é o poço do Nordeste: sal demais para beber.`}
+]);
+
+/* ---- 6 · represas e racionamento ---- */
+AULAS.push([
+  {ico:"🦫", tit:"Castor faz represa. Para que serve?",
+   txt:`Eu faço represa por instinto, {NOME} — e a resposta da prova são <b>duas</b> coisas,
+     as duas escritas na sua folha:
+     <ul class="lista">
+       <li><b>1 · Armazenar</b> a água do <b>período chuvoso</b> para ser usada no
+       <b>período seco</b>, garantindo o fornecimento ao longo do ano.</li>
+       <li><b>2 · Controlar as cheias</b> — a represa retém parte do volume que chegaria aos
+       rios, córregos e centros urbanos, <b>evitando o impacto de inundações</b>.</li>
+     </ul>`,
+   arte: arteRepresa(false),
+   chave:`Represa <span class="errado">não trata esgoto</span> e
+     <span class="errado">não contém minérios</span>. Guarda água e segura cheia.`},
+  {ico:"☝️", tit:"“Assinale A alternativa” quer dizer UMA",
+   txt:`Esta parada tem uma regra especial, e ela não é sobre Geografia — é sobre <b>ler o
+     enunciado</b>.
+     <div class="destaque">"Assinale <b>a</b> alternativa correta" → <b>uma</b> resposta<br>
+     "Assinale <b>as</b> alternativas" → <b>mais de uma</b><br>
+     "Pinte <b>a</b> região que concentra a maior quantidade" → <b>uma</b> região</div>
+     <p>Marcar uma resposta certa e uma errada não vale meio ponto. Vale zero.</p>
+     <p>Por isso, aqui no jogo, cada pergunta vai avisar <b>quantas</b> respostas ela quer.
+     Conte antes de tocar.</p>`,
+   chave:`Antes de responder, ache o <b>a</b> ou o <b>as</b> do enunciado.
+     Ele diz quantas respostas cabem.`},
+  {ico:"🚰", tit:"Racionamento",
+   txt:`<b>Racionamento</b> é a <b>distribuição moderada</b> de recursos, bens e serviços.
+     <p>Em racionamento de água, o <b>abastecimento das residências é diminuído</b>, podendo
+     ocorrer em <b>dias alternados</b>, para que dê água para toda a população.</p>
+     <div class="destaque">Pouca água no reservatório<br>= pouca água na torneira.</div>
+     <p>E não basta chover muito: tem que <b>chover onde estão os reservatórios</b>.
+     Chover no <b>"lugar errado"</b> não resolve o abastecimento.</p>`,
+   chave:`Racionamento = <b>diminuir e dividir</b>, não é falta total.`},
+  {ico:"🏞️", tit:"O Sistema Cantareira",
+   txt:`O <b>Sistema Cantareira</b> é o <b>maior</b> dos sistemas de captação e tratamento de água
+     para a <b>Grande São Paulo</b>, e um dos maiores do mundo: abastece
+     <b>8,8 milhões de habitantes</b>.
+     <p>As duas fotos da apostila são do <b>mesmo lugar</b> — uma em <b>período de cheias</b>,
+     outra durante uma <b>crise hídrica</b>.</p>
+     <p>Cuidado, {NOME}: a Cantareira é uma <b>represa</b>. Se a pergunta for "qual região",
+     a Cantareira <b>nunca</b> é a resposta.</p>`,
+   arte: arteRepresa(true),
+   chave:`Cantareira = represa da Grande São Paulo, <b>8,8 milhões</b> de habitantes.`},
+  {ico:"🐄", tit:"A seca no Nordeste",
+   txt:`A <b>seca</b>, causada pela escassez de chuvas, é um dos maiores problemas enfrentados
+     pela região nordestina. A <b>longa estiagem</b> traz uma fila de prejuízos:
+     <ul class="lista">
+       <li><b>perda de plantações</b> e de <b>animais</b>;</li>
+       <li>a falta de produtividade prejudica a <b>reserva e a distribuição de alimentos</b>;</li>
+       <li>e isso <b>provoca fome</b>.</li>
+     </ul>
+     <p>Nos centros urbanos o problema é outro: <b>crescimento da demanda</b>, <b>desperdício</b>
+     e <b>urbanização descontrolada</b> em cima das áreas de manancial.</p>`,
+   chave:`Seca no campo → <b>fome</b>. Cidade grande → <b>demanda, desperdício e urbanização</b>.`}
+]);
+
+/* ---- 7 · enchentes, usos e desperdício ---- */
+AULAS.push([
+  {ico:"🌧️", tit:"Por que a cidade alaga",
+   txt:`As enchentes urbanas têm causas dos <b>dois lados</b> — e às vezes das duas juntas:
+     <ul class="lista">
+       <li><b>fatores naturais</b>: chuvas intensas;</li>
+       <li><b>ações humanas</b>: <b>impermeabilização do solo</b>, destinação incorreta de
+       resíduos, problemas no sistema de drenagem, ocupação irregular do solo.</li>
+     </ul>
+     <p><b>Impermeabilizar</b> é cobrir o chão com asfalto e concreto. A água da chuva não entra
+     no solo — e corre toda de uma vez para a rua.</p>`,
+   arte: arteAsfalto(),
+   chave:`A mesma impermeabilização que <b>provoca enchente</b> também
+     <b>prejudica o lençol freático</b>. Um problema, dois estragos.`},
+  {ico:"🏠", tit:"O que a enchente causa",
+   txt:`As quatro consequências da sua folha:
+     <ul class="lista">
+       <li>moradores podem <b>perder móveis e outros bens</b>;</li>
+       <li>casas podem ser <b>invadidas pela água</b>;</li>
+       <li>as enchentes podem provocar <b>doenças e infecções</b>;</li>
+       <li>comerciantes podem sofrer <b>prejuízos financeiros</b>.</li>
+     </ul>
+     <p>E ainda: danos à <b>infraestrutura urbana</b>, <b>deslizamentos de terra</b> e
+     <b>risco à vida das pessoas</b>.</p>`,
+   chave:`Se a pergunta for "além das perdas materiais, o que mais?", a resposta é
+     <b>doenças e infecções</b> — e o risco de vida.`},
+  {ico:"🌿", tit:"E o que diminui a enchente",
+   txt:`As quatro soluções, também da folha:
+     <ul class="lista">
+       <li><b>ampliar as áreas verdes</b>;</li>
+       <li>implantar <b>telhados verdes</b> e jardins verticais;</li>
+       <li>utilizar <b>pavimentos permeáveis</b> — que <b>permitem a passagem da água</b>;</li>
+       <li><b>não jogar lixo na rua</b>.</li>
+     </ul>
+     <p>Repare que três das quatro são o contrário da impermeabilização: fazer o chão
+     <b>voltar a beber</b>.</p>`,
+   chave:`Permeável = deixa a água passar. É a palavra-chave da resposta.`},
+  {ico:"🚿", tit:"As oito atitudes em casa",
+   txt:`O cartaz da sua Atividade Unificada traz oito, nesta ordem:
+     <ol class="lista">
+       <li>fechar a torneira ao <b>escovar os dentes</b>;</li>
+       <li><b>banhos rápidos</b> — 5 minutos é o suficiente;</li>
+       <li>fechar a torneira ao <b>ensaboar a louça</b>;</li>
+       <li><b>reutilizar a água</b> da máquina de lavar ou da chuva;</li>
+       <li>verificar e <b>consertar vazamentos</b>;</li>
+       <li><b>descarga consciente</b>;</li>
+       <li>lavar roupa com <b>carga cheia</b>;</li>
+       <li><b>vassoura, não mangueira</b>.</li>
+     </ol>`,
+   chave:`E os usos da água: beber, cozinhar, banho, roupa, higiene, <b>habitat</b> de animais,
+     lazer, transporte, <b>energia elétrica</b>, agricultura e indústria.`},
+  {ico:"🛢️", tit:"Dois números para não esquecer",
+   txt:`<div class="destaque"><b>1 litro</b> de óleo de cozinha pode contaminar<br>
+     até <b>20 mil litros</b> de água</div>
+     <div class="destaque">Uma garrafa plástica leva<br><b>no mínimo 100 anos</b> para se decompor</div>
+     <p>Por isso: óleo usado vai para uma <b>garrafa</b> e depois para um <b>ponto de coleta</b> —
+     nunca para a pia. E nada de papel, medicamentos ou cotonetes no vaso.</p>
+     <p>E o <b>derramamento de petróleo no mar</b>: produto <b>altamente poluente</b>, que
+     <b>contamina as águas</b>, <b>prejudica os ecossistemas aquáticos</b> e pode causar a
+     <b>morte de muitos animais marinhos</b>.</p>`,
+   chave:`20 mil litros por 1 litro de óleo · 100 anos por garrafa.
+     Números fáceis de cobrar numa prova.`}
+]);
+
+/* ---- 8 · a prova ---- */
+AULAS.push([
+  {ico:"🏆", tit:"Chegamos ao fim do caminho, {NOME}",
+   txt:`A gota saiu da nuvem, caiu no morro, virou lençol, virou nascente, desceu o rio, passou
+     pela represa, chegou na torneira, foi para o esgoto e voltou a evaporar.
+     <p>Agora é a <b>Prova da Bacia</b> — e ela puxa mais forte justamente
+     <b>onde você escorregou</b> nas paradas anteriores.</p>`,
+   chave:`Se você errou muito num assunto, ele vai aparecer mais vezes aqui. É de propósito.`},
+  {ico:"🎯", tit:"As três armadilhas",
+   txt:`Antes de começar, releia estas três — são as que mais custam ponto:
+     <ol class="lista">
+       <li><b>"Qual região?"</b> → uma das <b>cinco</b>. Nunca uma cidade, nunca uma represa.</li>
+       <li><b>"Assinale a alternativa"</b> → <b>uma</b> resposta. Conte antes de marcar.</li>
+       <li><b>Foto na prova</b> → morro rasgado é <b>erosão</b>; rio raso e cheio de terra é
+       <b>assoreamento</b>. Saber a definição não basta.</li>
+     </ol>`,
+   chave:`Estas três não são conteúdo novo. São <b>o jeito de ler a pergunta</b>.`}
+]);
+
+/* ============================================================
+   MOTOR DAS AULAS
+   ============================================================ */
+let A = {missao:0, slide:0, revendo:false};
+
+function abrirAula(i, revendo){
+  somClique(); pararArcade();
+  A = { missao:i, slide:0, revendo:!!revendo };
+  S.cena = "a"+i;
+  render();
+}
+window.abrirAula = abrirAula;
+function reverAula(i){ abrirAula(i, true); }
+window.reverAula = reverAula;
+
+function telaAula(i){
+  const slides = AULAS[i], s = slides[A.slide], ultimo = A.slide === slides.length-1;
+  const m = MISSOES[i];
+  app.innerHTML = hud() + `
+    <h2 style="text-align:center">${m.ico} Aula ${i+1} · ${m.tit}</h2>
+    <div class="aula">
+      <div class="guia">
+        <span class="robo">🦫</span>
+        <span>Sou o <b>Freático</b>, o castor.
+        ${A.slide===0 ? `Antes de você seguir a gota, ${NOME()}, olha só.`
+                      : `Continuando, ${NOME()}…`}</span>
+      </div>
+      <div class="ico">${s.ico}</div>
+      <h2>${nomear(s.tit)}</h2>
+      ${s.txt.trim().startsWith("<") ? nomear(s.txt) : `<p>${nomear(s.txt)}</p>`}
+      ${s.arte || ``}
+      ${s.chave ? `<div class="chave"><span class="rot">🔑 Grave isso</span>${nomear(s.chave)}</div>` : ``}
+      <div class="pontos">
+        ${slides.map((_,k)=>`<i class="${k===A.slide?"aqui":(k<A.slide?"vista":"")}"></i>`).join("")}
+      </div>
+    </div>
+    <div class="acoes">
+      ${A.slide>0 ? `<button class="btn aula fraco" onclick="aulaVolta()">← Voltar</button>` : ``}
+      ${ultimo
+        ? `<button class="btn" onclick="aulaFim()">🚀 Começar a missão ${i+1}</button>`
+        : `<button class="btn aula" onclick="aulaProx()">Próximo →</button>`}
+    </div>
+    <p class="centro mini" style="margin-top:14px">
+      ${ultimo ? `` : `<button class="chip" onclick="aulaFim()" style="cursor:pointer">Pular a aula e ir direto para a missão →</button>`}
+    </p>`;
+}
+function aulaProx(){ somClique(); A.slide++; telaAula(A.missao); scrollTo(0,0); }
+window.aulaProx = aulaProx;
+function aulaVolta(){ somClique(); A.slide--; telaAula(A.missao); scrollTo(0,0); }
+window.aulaVolta = aulaVolta;
+function aulaFim(){
+  somClique();
+  S.aulas[A.missao] = true; salvar();
+  S.cena = "m"+A.missao; render();
+}
+window.aulaFim = aulaFim;
+/* ============================================================
+   QUIZ GENÉRICO
+   ============================================================ */
+let Q = null;
+function embaralhaOpcoes(perguntas){
+  return perguntas.map(q=>{
+    if(q.fixo) return { ...q };                 /* ordem fixa: escalas e sequências */
+    const ordem = embaralha(q.o.map((_,i)=>i));
+    return { ...q, o: ordem.map(i=>q.o[i]), c: ordem.indexOf(q.c) };
+  });
+}
+function quizGenerico(missaoIdx, titulo, perguntas, acertosIniciais, totalInicial){
+  Q = { i:0, ac:acertosIniciais||0, tot:(totalInicial||0)+perguntas.length,
+        lista:embaralhaOpcoes(perguntas), missao:missaoIdx, titulo:titulo,
+        respondida:false };
+  desenhaQuiz();
+}
+function desenhaQuiz(){
+  const q = Q.lista[Q.i];
+  const classe = q.grade ? "grade" : (q.quatro ? "quatro" : "");
+  app.innerHTML = hud(Q.titulo) + `
+    <div class="card">
+      <p class="mini">Pergunta ${Q.i+1} de ${Q.lista.length}</p>
+      <div class="progresso"><i style="width:${Q.i/Q.lista.length*100}%"></i></div>
+      ${q.arte || ``}
+      ${q.enun ? `<div class="enunciado">${nomear(q.enun)}</div>` : ``}
+      ${q.conta ? `<div class="conta">${q.conta}</div>` : ``}
+      ${q.umaSo ? `<div class="quantas">☝️ Esta pergunta quer <b>UMA</b> resposta só</div>` : ``}
+      ${q.p ? `<div class="pergunta">${nomear(q.p)}</div>` : ``}
+      <div class="opcoes ${classe}" id="ops">
+        ${q.o.map((t,k)=>`<button class="op" onclick="respQuiz(${k})">
+          ${classe?``:`<span class="letra">${"ABCD"[k]}</span>`}<span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fbq"></div>
+      <div class="acoes esconde" id="proxBox">
+        <button class="btn" onclick="proxQuiz()" id="btnProx">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respQuiz(k){
+  if(Q.respondida) return;
+  Q.respondida = true;
+  const q = Q.lista[Q.i];
+  document.querySelectorAll("#ops .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===q.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbq");
+  if(k===q.c){
+    Q.ac++; somAcerto(); ganha(10);
+    marcaAcerto(q.hab);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${nomear(q.e)}`;
+  } else {
+    somErro();
+    marcaErro(q.hab);
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Quase, ${NOME()}! A resposta certa é <b>${q.o[q.c]}</b>.</div>${nomear(q.e)}`;
+  }
+  $("#proxBox").classList.remove("esconde");
+  $("#btnProx").textContent = (Q.i === Q.lista.length-1) ? "Terminar missão 🏁" : "Continuar →";
+  $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respQuiz = respQuiz;
+function proxQuiz(){
+  somClique();
+  Q.i++; Q.respondida = false;
+  if(Q.i >= Q.lista.length){ concluiMissao(Q.missao, Q.ac, Q.tot); return; }
+  desenhaQuiz();
+}
+window.proxQuiz = proxQuiz;
+
+
+/* ============================================================
+   MISSÃO 1 — GOTA RARA
+   ============================================================ */
+function faseGota(){
+  quizGenerico(0, "💧 Gota Rara", [
+    { hab:"planeta", quatro:true, arte: artePizzaAgua(),
+      p:"Quanto da água do planeta é <b>salgada</b>?",
+      o:["97%","3%","70%","50%"], c:0,
+      e:`Cerca de <b>97%</b> está nos oceanos e é salgada — imprópria para o consumo humano e
+         animal e para a agricultura. Os 70% são outra coisa: é quanto da
+         <b>superfície da Terra</b> é coberta por água.` },
+
+    { hab:"planeta", quatro:true,
+      p:"Por que a água é um recurso <b>escasso</b>, se a maior parte da superfície da Terra é coberta por ela?",
+      o:["Porque a água doce, própria para consumo, é só cerca de 3%",
+         "Porque a água está acabando no planeta",
+         "Porque as pessoas bebem água demais",
+         "Porque só chove em algumas regiões"], c:0,
+      e:`É a resposta da questão 1 da sua folha: a <b>quantidade de água doce própria para o
+         consumo é pouca, cerca de 3%</b>. O resto é salgado.` },
+
+    { hab:"planeta", quatro:true, arte: arteBarrasDoce(),
+      p:"Dentro da água doce, onde está a <b>maior parte</b>?",
+      o:["Nas calotas polares e geleiras","Nos rios e lagos",
+         "Nas águas subterrâneas","Nas nuvens"], c:0,
+      e:`<b>69,8%</b> da água doce está congelada nas calotas polares. Rios e lagos são só
+         <b>0,3%</b> — menos de 1% da água doce está líquida na superfície.` },
+
+    { hab:"planeta", quatro:true,
+      p:"Qual afirmação está <b>correta</b>?",
+      o:["A quantidade de água do planeta é a mesma, mas a disponível para consumo está diminuindo",
+         "A água do planeta está acabando e vai desaparecer",
+         "A quantidade de água aumenta a cada ano por causa das chuvas",
+         "Toda a água doce do planeta está em rios e lagos"], c:0,
+      e:`A apostila é bem clara: a quantidade de água <b>é a mesma nos últimos milênios e não
+         deve mudar</b> — a água como um todo <b>não vai acabar</b>. O problema é a
+         <b>água disponível para o consumo humano</b>, que está diminuindo.` },
+
+    { hab:"planeta", quatro:true,
+      p:"Qual destes <b>NÃO</b> diminui a água disponível para consumo?",
+      o:["Plantação de árvores","Poluição dos cursos d'água",
+         "Secas e enchentes","Degradação das áreas de manancial"], c:0,
+      e:`Na questão 2 da sua folha, os fatores marcados foram <b>mudanças climáticas, poluição,
+         secas e enchentes</b>. Plantar árvore e tratar esgoto <b>ajudam</b> — não atrapalham.` },
+
+    { hab:"australia", quatro:true,
+      p:"Por que a Austrália é chamada de <b>país-continente</b>?",
+      o:["Porque sua extensão territorial abrange quase toda a Oceania",
+         "Porque não possui fronteiras terrestres",
+         "Porque fica entre dois oceanos",
+         "Porque é o maior país do mundo"], c:0,
+      e:`Essa foi a sua resposta certa na p. 62: <i>"devido sua extensão territorial que
+         abrange quase toda a Oceania"</i>. Cuidado: "não possui fronteiras terrestres" é a
+         explicação de <b>arquipélago</b>, que é outra pergunta.` },
+
+    { hab:"australia", quatro:true,
+      p:"A Austrália é classificada como <b>arquipélago</b> porque…",
+      o:["não possui fronteiras terrestres","abrange quase toda a Oceania",
+         "tem 7 713 364 km²","é um dos seis maiores países do mundo"], c:0,
+      e:`Ela é banhada pelos oceanos <b>Pacífico</b> e <b>Índico</b> e só tem fronteiras
+         <b>marítimas</b> — com Indonésia, Timor-Leste, Papua-Nova Guiné, Nova Caledônia e
+         Nova Zelândia.` }
+  ], 0, 0);
+}
+
+/* ============================================================
+   MISSÃO 2 — DA NASCENTE À FOZ
+   ============================================================ */
+const PERG_RIO = [
+  {k:"nascente", p:"Toque na <b>nascente</b> — onde o rio começa.",
+   e:`A nascente fica nas <b>partes mais elevadas do relevo</b>. É de lá que o filete de água
+      desce para as partes mais baixas.`},
+  {k:"foz",      p:"Toque na <b>foz</b> — onde o rio termina.",
+   e:`Na foz o rio <b>lança suas águas</b> no mar, num lago ou em outro rio.`},
+  {k:"afluente", p:"Toque num <b>afluente</b> — o rio menor que chega no rio maior.",
+   e:`Afluente é rio que <b>desagua</b> no principal. Cuidado: afluente <b>não</b> é onde o rio
+      nasce. Essa é a frase falsa da sua folha.`},
+  {k:"leito",    p:"Toque no <b>leito</b> do rio.",
+   e:`O leito é o <b>fundo</b> por onde a água corre — e é nele que a terra se acumula quando
+      há assoreamento.`},
+  {k:"direita",  p:"Toque na <b>margem direita</b>.",
+   e:`De costas para a nascente, olhando para a foz: a sua <b>direita</b> é a margem direita.
+      No desenho ela fica do lado esquerdo do papel.`}
+];
+let R = null;
+function faseRio(){
+  R = { i:0, ac:0, marca:{}, respondida:false };
+  desenhaRio();
+}
+function desenhaRio(){
+  const q = PERG_RIO[R.i];
+  app.innerHTML = hud("🏔️ Da Nascente à Foz") + `
+    <div class="card">
+      <p class="mini">Parte ${R.i+1} de ${PERG_RIO.length} · toque no número certo do desenho</p>
+      <div class="progresso"><i style="width:${R.i/PERG_RIO.length*100}%"></i></div>
+      <div class="pergunta">${nomear(q.p)}</div>
+      ${arteRio({clicavel:!R.respondida, marca:R.marca, rotulos:R.respondida})}
+      <div class="feedback" id="fbr"></div>
+      <div class="acoes esconde" id="proxBoxR">
+        <button class="btn" onclick="proxRio()" id="btnProxR">Continuar →</button>
+      </div>
+    </div>`;
+}
+function cliqueRio(k){
+  if(!R || R.respondida) return;
+  R.respondida = true;
+  const q = PERG_RIO[R.i];
+  const nomeParte = kk => (PARTES_RIO.find(p=>p.k===kk)||{}).n || kk;
+  const certo = (k === q.k);
+  R.marca = {};
+  R.marca[q.k] = "certo";
+  if(!certo) R.marca[k] = "errado";
+  if(certo){ R.ac++; somAcerto(); ganha(10); marcaAcerto("rio"); }
+  else { somErro(); marcaErro("rio"); }
+  desenhaRio();                                  /* redesenha com a marca; o feedback vem depois */
+  const fb = $("#fbr");
+  fb.className = "feedback " + (certo ? "bom" : "ruim") + " show";
+  fb.innerHTML = certo
+    ? `<div class="tt">✅ ${elogio()}</div>${nomear(q.e)}`
+    : `<div class="tt">❌ Você tocou em <b>${nomeParte(k)}</b>. A resposta certa é
+       <b>${nomeParte(q.k)}</b>.</div>${nomear(q.e)}`;
+  $("#proxBoxR").classList.remove("esconde");
+  $("#btnProxR").textContent = (R.i === PERG_RIO.length-1) ? "Ir para as perguntas →" : "Continuar →";
+}
+window.cliqueRio = cliqueRio;
+function proxRio(){
+  somClique();
+  R.i++; R.respondida = false; R.marca = {};
+  if(R.i >= PERG_RIO.length){ perguntasRio(); return; }
+  desenhaRio();
+}
+window.proxRio = proxRio;
+
+function perguntasRio(){
+  quizGenerico(1, "🏔️ Da Nascente à Foz", [
+    { hab:"rio", quatro:true,
+      p:"Como nasce um rio, <b>geralmente</b>?",
+      o:["A partir de chuvas em áreas montanhosas","Na área de manancial de uma represa",
+         "Dentro de um afluente","No mar, e depois sobe"], c:0,
+      e:`Essa é a frase da apostila, palavra por palavra — e foi a correção que você mesma
+         escreveu na p. 73.` },
+
+    { hab:"freatico", quatro:true,
+      p:"O que é o <b>lençol freático</b>?",
+      o:["Uma espécie de rio subterrâneo, formado pela água que infiltra no solo",
+         "A vegetação que cresce na margem dos rios",
+         "O fundo do rio, por onde a água corre",
+         "Um lago artificial construído pelo homem"], c:0,
+      e:`Ele pode estar a <b>dezenas de metros de profundidade</b>. E se encontrar uma saída
+         para a superfície, <b>pode nascer um rio novo</b>.` },
+
+    { hab:"freatico", quatro:true,
+      p:"A área onde o rio nasce é conhecida como:",
+      o:["área de manancial","afluente","foz","leito"], c:0,
+      e:`<b>Área de manancial</b>. É ela que precisa ser protegida — porque é dali que sai a
+         água que abastece as cidades.` },
+
+    { hab:"rio", quatro:true,
+      p:"Qual afirmação é <b>FALSA</b>?",
+      o:["As áreas onde os rios nascem são conhecidas como afluentes",
+         "O lençol freático é um rio subterrâneo que pode estar a metros de profundidade",
+         "A nascente dos rios fica nas partes mais elevadas do relevo",
+         "O rio pode lançar suas águas no mar, em lagos ou em outro rio"], c:0,
+      e:`Falsa. As áreas onde os rios nascem são <b>áreas de manancial</b> — e o ponto exato é a
+         <b>nascente</b>. <b>Afluente</b> é o rio menor que desagua no maior.` },
+
+    { hab:"rio", quatro:true,
+      p:"Onde nasce o rio <b>São Francisco</b>, o “Velho Chico”?",
+      o:["Em Minas Gerais","Na Bahia","Em Pernambuco","Em Alagoas"], c:0,
+      e:`A nascente fica em <b>Minas Gerais</b>, e o rio atravessa Minas Gerais, Bahia,
+         Pernambuco, Sergipe e Alagoas.` }
+  ], R.ac, PERG_RIO.length);
+}
+
+/* ============================================================
+   MISSÃO 3 — GUARDIÕES DA MARGEM
+   ============================================================ */
+const FOTOS_MARGEM = [
+  {arte: arteErosao(),        c:"Erosão",
+   e:`Morro rasgado, barranco aberto, terra à mostra: a chuva está <b>tirando</b> o solo do
+      lugar. Isso é <b>erosão</b> — desgaste, transporte e sedimentação do solo.`},
+  {arte: arteAssoreamento(),  c:"Assoreamento",
+   e:`Rio raso, cheio de terra e pedra no fundo: alguém <b>pôs</b> sedimento dentro do rio.
+      Isso é <b>assoreamento</b> — e é ele que diminui a profundidade do rio.`},
+  {arte: arteMataCiliar(),    c:"Mata ciliar",
+   e:`Árvores nas duas margens, água limpa e funda: é a <b>mata ciliar</b> fazendo o trabalho
+      dela — protege o solo, evita deslizamentos e mantém a água limpa.`},
+  {arte: arteChorume(),       c:"Poluição do lençol freático",
+   e:`O <b>chorume</b> do aterro desce pelo solo até o <b>lençol freático</b>. Lençol é mais
+      difícil de poluir — mas depósito irregular de lixo consegue.`}
+];
+const OPS_MARGEM = ["Erosão","Assoreamento","Mata ciliar","Poluição do lençol freático"];
+let M3 = null;
+function faseMargem(){
+  M3 = { i:0, ac:0, ordem: embaralha(FOTOS_MARGEM.map((_,i)=>i)), respondida:false };
+  desenhaMargem();
+}
+function desenhaMargem(){
+  const f = FOTOS_MARGEM[M3.ordem[M3.i]];
+  app.innerHTML = hud("🌳 Guardiões da Margem") + `
+    <div class="card">
+      <p class="mini">Foto ${M3.i+1} de ${FOTOS_MARGEM.length} · na prova vem imagem, não definição</p>
+      <div class="progresso"><i style="width:${M3.i/FOTOS_MARGEM.length*100}%"></i></div>
+      <div class="pergunta">Que fenômeno está nesta imagem?</div>
+      ${f.arte}
+      <div class="opcoes quatro" id="ops">
+        ${OPS_MARGEM.map((t,k)=>`<button class="op" onclick="respMargem(${k})">${t}</button>`).join("")}
+      </div>
+      <div class="feedback" id="fbm"></div>
+      <div class="acoes esconde" id="proxBoxM">
+        <button class="btn" onclick="proxMargem()" id="btnProxM">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respMargem(k){
+  if(!M3 || M3.respondida) return;
+  M3.respondida = true;
+  const f = FOTOS_MARGEM[M3.ordem[M3.i]];
+  const certa = OPS_MARGEM.indexOf(f.c);
+  document.querySelectorAll("#ops .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===certa) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbm");
+  if(k===certa){
+    M3.ac++; somAcerto(); ganha(10); marcaAcerto("erosao");
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${f.e}`;
+  } else {
+    somErro(); marcaErro("erosao");
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Aqui é <b>${f.c}</b>, ${NOME()}.</div>${f.e}
+      <p style="margin:10px 0 0"><b>O truque:</b> erosão <b>TIRA</b> terra do morro;
+      assoreamento <b>PÕE</b> terra no rio.</p>`;
+  }
+  $("#proxBoxM").classList.remove("esconde");
+  $("#btnProxM").textContent = (M3.i === FOTOS_MARGEM.length-1) ? "Ir para as perguntas →" : "Continuar →";
+}
+window.respMargem = respMargem;
+function proxMargem(){
+  somClique();
+  M3.i++; M3.respondida = false;
+  if(M3.i >= FOTOS_MARGEM.length){ perguntasMargem(); return; }
+  desenhaMargem();
+}
+window.proxMargem = proxMargem;
+
+function perguntasMargem(){
+  quizGenerico(2, "🌳 Guardiões da Margem", [
+    { hab:"ciliar", quatro:true,
+      p:"O que é a <b>mata ciliar</b>?",
+      o:["A vegetação que cresce às margens dos rios e lagos",
+         "O fundo do rio, por onde a água corre",
+         "A área onde o rio nasce",
+         "O acúmulo de sedimentos no leito do rio"], c:0,
+      e:`E ela <b>protege o solo</b>, <b>evita deslizamentos de terra</b> e ajuda a
+         <b>manter a água mais limpa</b>.` },
+
+    { hab:"ciliar", quatro:true,
+      p:"O que acontece quando a <b>mata ciliar é retirada</b>?",
+      o:["A chuva carrega a terra para dentro do rio, provocando assoreamento",
+         "O rio fica mais fundo e mais limpo",
+         "A nascente muda de lugar",
+         "O lençol freático desaparece"], c:0,
+      e:`E o assoreamento <b>diminui a profundidade dos rios</b> e prejudica a <b>qualidade</b>
+         e a <b>quantidade</b> da água disponível.` },
+
+    { hab:"erosao", quatro:true,
+      p:"<b>Assoreamento</b> é:",
+      o:["o acúmulo de sedimentos, lixo e outros materiais no leito dos cursos d'água",
+         "o processo de desgaste e transporte do solo e das rochas",
+         "a vegetação das margens dos rios",
+         "a água que infiltra no solo"], c:0,
+      e:`Sedimentos são <b>areia, terra e rochas</b>. E o lugar é o <b>leito</b> — o fundo.` },
+
+    { hab:"erosao", quatro:true,
+      p:"<b>Erosão</b> é:",
+      o:["o processo de desgaste, transporte e sedimentação do solo, dos subsolos e das rochas",
+         "o acúmulo de areia e terra no fundo do rio",
+         "a chuva que cai nas áreas montanhosas",
+         "a construção de represas nos rios"], c:0,
+      e:`Três palavras na definição: <b>desgaste, transporte e sedimentação</b>.` },
+
+    { hab:"degradacao", quatro:true,
+      p:"Qual destes <b>NÃO</b> é causa da degradação das áreas de manancial?",
+      o:["Ampliação das áreas de mata ciliar","Falta de infraestrutura de saneamento básico",
+         "Uso de agrotóxicos nas plantações","Remoção da cobertura vegetal"], c:0,
+      e:`A lista da apostila: ocupação desordenada do solo, falta de saneamento, remoção da
+         cobertura vegetal, agrotóxicos, e erosão e assoreamento. <b>Ampliar</b> a mata ciliar
+         é o contrário — é proteção.` },
+
+    { hab:"degradacao", quatro:true,
+      p:"Sobre os <b>lençóis freáticos</b>, é correto dizer que:",
+      o:["são mais difíceis de serem contaminados pela poluição",
+         "são mais fáceis de serem contaminados pela poluição",
+         "não podem ser contaminados de jeito nenhum",
+         "só existem embaixo dos oceanos"], c:0,
+      e:`Mais <b>difíceis</b> — mas não impossíveis. Poços irregulares, agrotóxicos, urbanização
+         e o <b>chorume</b> dos lixões chegam lá.` },
+
+    { hab:"degradacao", quatro:true,
+      p:"A <b>impermeabilização do solo</b> pelo asfalto e pelo concreto:",
+      o:["prejudica o lençol freático e ainda provoca enchentes",
+         "ajuda a água da chuva a entrar no solo",
+         "melhora a qualidade da água dos rios",
+         "não tem efeito nenhum sobre a água"], c:0,
+      e:`Um problema, dois estragos: a água <b>não entra no chão</b> (o lençol não se repõe) e
+         <b>corre toda de uma vez</b> para a rua (enchente).` }
+  ], M3.ac, FOTOS_MARGEM.length);
+}
+
+/* ============================================================
+   MISSÃO 4 — A RODA DA ÁGUA
+   ============================================================ */
+const ETAPAS_CICLO = [
+  {n:"Evaporação",   d:"o calor do Sol faz a água virar gás e subir"},
+  {n:"Condensação",  d:"lá em cima o gás esfria e vira nuvem"},
+  {n:"Precipitação", d:"as nuvens se desfazem em chuva"},
+  {n:"Infiltração",  d:"parte da água entra no solo e alimenta o lençol"}
+];
+let C4 = null;
+function faseCiclo(){
+  C4 = { postas:[], ac:0, conferido:false, embaralhadas: embaralha(ETAPAS_CICLO.map((_,i)=>i)) };
+  desenhaCiclo();
+}
+function desenhaCiclo(){
+  const restam = C4.embaralhadas.filter(i => !C4.postas.includes(i));
+  app.innerHTML = hud("☀️ A Roda da Água") + `
+    <div class="card">
+      <p class="mini">Ponha as quatro etapas <b>na ordem certa</b> do ciclo da água.</p>
+      ${arteCiclo(C4.conferido ? [0,1,2,3] : C4.postas.map((_,k)=>k))}
+      <div class="trilha">
+        ${[0,1,2,3].map(k=>{
+          const idx = C4.postas[k];
+          let cls = "vagao";
+          if(idx !== undefined) cls += " cheio";
+          if(C4.conferido && idx !== undefined) cls += (idx===k ? " certo" : " errado");
+          return `<div class="${cls}"><span class="ord">${k+1}º</span>
+            ${idx===undefined ? "…" : ETAPAS_CICLO[idx].n}</div>`;
+        }).join("")}
+      </div>
+      ${!C4.conferido ? `
+        <div class="fichas" id="fichasCiclo">
+          ${restam.map(i=>`<button class="ficha" onclick="poeEtapa(${i})">${ETAPAS_CICLO[i].n}
+            <span class="tipo">${ETAPAS_CICLO[i].d}</span></button>`).join("")}
+        </div>
+        <div class="acoes">
+          <button class="btn sec" onclick="refazCiclo()">🔁 Recomeçar</button>
+          <button class="btn" onclick="confereCiclo()" ${C4.postas.length<4?"disabled":""}>✅ Conferir</button>
+        </div>` : ``}
+      <div class="feedback" id="fbc"></div>
+      <div class="acoes esconde" id="proxBoxC">
+        <button class="btn" onclick="perguntasCiclo()">Ir para as perguntas →</button>
+      </div>
+    </div>`;
+}
+function poeEtapa(i){
+  if(!C4 || C4.conferido || C4.postas.length>=4) return;
+  somPop(); C4.postas.push(i); desenhaCiclo();
+}
+window.poeEtapa = poeEtapa;
+function refazCiclo(){ somClique(); C4.postas = []; desenhaCiclo(); }
+window.refazCiclo = refazCiclo;
+function confereCiclo(){
+  if(!C4 || C4.postas.length<4) return;
+  C4.conferido = true;
+  C4.ac = C4.postas.filter((idx,k)=>idx===k).length;
+  desenhaCiclo();
+  const fb = $("#fbc");
+  const tudo = C4.ac === 4;
+  if(tudo){ somVitoria(); ganha(40); marcaAcerto("ciclo"); }
+  else { somErro(); marcaErro("ciclo"); }
+  fb.className = "feedback " + (tudo ? "bom" : "ruim") + " show";
+  fb.innerHTML = tudo
+    ? `<div class="tt">✅ As quatro na ordem, ${NOME()}!</div>
+       Sol → <b>evapora</b> → esfria e vira nuvem (<b>condensa</b>) → cai (<b>precipita</b>) →
+       entra no chão (<b>infiltra</b>) → e recomeça.`
+    : `<div class="tt">❌ Você acertou ${C4.ac} de 4 lugares.</div>
+       A ordem certa é: <b>1 Evaporação · 2 Condensação · 3 Precipitação · 4 Infiltração</b>.
+       <p style="margin:10px 0 0">O truque é seguir a água: ela <b>sobe</b> (evapora),
+       <b>esfria</b> (condensa), <b>cai</b> (precipita) e <b>entra no chão</b> (infiltra).</p>`;
+  $("#proxBoxC").classList.remove("esconde");
+}
+window.confereCiclo = confereCiclo;
+
+function perguntasCiclo(){
+  somClique();
+  quizGenerico(3, "☀️ A Roda da Água", [
+    { hab:"ciclo", quatro:true,
+      p:"O que provoca a <b>evaporação</b> da água?",
+      o:["O calor do Sol","O vento forte","A chuva","O frio das montanhas"], c:0,
+      e:`<b>O calor do Sol</b> provoca a evaporação da água presente na superfície do planeta.` },
+
+    { hab:"ciclo", quatro:true,
+      p:"O que acontece quando o vapor de água chega às camadas mais altas da atmosfera?",
+      o:["Encontra baixas temperaturas, volta ao estado líquido e forma as nuvens",
+         "Some no espaço",
+         "Vira gelo e cai como pedra",
+         "Volta a evaporar de novo"], c:0,
+      e:`Isso é a <b>condensação</b>. Depois, carregadas de gotículas, as nuvens se desfazem em
+         chuva — a <b>precipitação</b>.` },
+
+    { hab:"renovavel", quatro:true,
+      p:"Por que a água é um recurso <b>renovável</b>?",
+      o:["Porque o ciclo da água garante a renovação do estoque de água doce",
+         "Porque a quantidade de água aumenta todo ano",
+         "Porque o homem fabrica água nas represas",
+         "Porque a chuva traz água nova de outros planetas"], c:0,
+      e:`Renovável não é "aumenta": é <b>repõe</b>. É <b>impossível aumentar</b> a quantidade de
+         água do planeta — o que existe é a reposição da que já tem.` },
+
+    { hab:"renovavel", quatro:true, umaSo:true,
+      p:"Por que a água, apesar de renovável, é um recurso <b>limitado</b>?",
+      o:["Porque é impossível aumentar a quantidade de água que existe no planeta",
+         "Porque a água doce é toda salgada",
+         "Porque só existe água nos oceanos",
+         "Porque o ciclo da água acabou"], c:0,
+      e:`O ciclo só repõe o que já existe. Por isso a apostila liga a palavra "limitado" à
+         necessidade de <b>preservar</b> e <b>evitar o desperdício e a contaminação</b>.` },
+
+    { hab:"clima", quatro:true,
+      p:"Assinale a informação <b>INCORRETA</b> sobre mudanças climáticas e o ciclo da água:",
+      o:["O abastecimento de água permanece normal apesar das mudanças climáticas",
+         "A falta de chuvas coloca em risco a produção de alimentos",
+         "O excesso de chuvas aumenta o risco de enchentes e inundações",
+         "Mudanças climáticas alteram o regime de chuvas, podendo causar seca"], c:0,
+      e:`Essa é a questão 8 da sua folha. As três outras estão certas; a incorreta é dizer que o
+         abastecimento <b>permanece normal</b> — ele muda, e para pior.` },
+
+    { hab:"clima", quatro:true,
+      p:"Além do consumo humano, a escassez de água coloca em risco:",
+      o:["a produção de alimentos — a agricultura e a pecuária",
+         "apenas a pesca no mar",
+         "somente a indústria de refrigerantes",
+         "nada além da água de beber"], c:0,
+      e:`<b>Agricultura e pecuária</b>. Sem água não é só sede — é <b>fome</b>.` }
+  ], C4.ac, 4);
+}
+window.perguntasCiclo = perguntasCiclo;
+/* ============================================================
+   MISSÃO 5 — MAPA DAS CINCO REGIÕES
+   A missão que nasceu da medição: três respostas seguidas dela
+   trocaram REGIÃO por um lugar pontual (São Paulo, Cantareira).
+   Por isso a missão começa peneirando escala, e só depois vai ao gráfico.
+   ============================================================ */
+const FICHAS_ESCALA = [
+  {n:"Norte",        t:"região",  regiao:true},
+  {n:"Nordeste",     t:"região",  regiao:true},
+  {n:"Centro-Oeste", t:"região",  regiao:true},
+  {n:"Sudeste",      t:"região",  regiao:true},
+  {n:"Sul",          t:"região",  regiao:true},
+  {n:"São Paulo",    t:"cidade e estado", regiao:false},
+  {n:"Cantareira",   t:"represa", regiao:false},
+  {n:"Ceará",        t:"estado",  regiao:false},
+  {n:"Fortaleza",    t:"cidade",  regiao:false},
+  {n:"Rio Tietê",    t:"rio",     regiao:false},
+  {n:"Minas Gerais", t:"estado",  regiao:false},
+  {n:"Brasil",       t:"país",    regiao:false}
+];
+let E5 = null;
+function faseRegioes(){
+  E5 = { pegas:[], furadas:[], ordem: embaralha(FICHAS_ESCALA.map((_,i)=>i)),
+         acabou:false, ac:0 };
+  desenhaEscala();
+}
+function desenhaEscala(){
+  const total = FICHAS_ESCALA.filter(f=>f.regiao).length;
+  app.innerHTML = hud("🇧🇷 Mapa das Cinco Regiões") + `
+    <div class="card">
+      <h2 style="font-size:1.25em;margin-bottom:6px">Primeiro: o que é uma região?</h2>
+      <p class="mini">O Brasil tem <b>cinco</b> regiões. Toque só nelas.
+      As outras fichas são cidade, estado, rio, represa ou país.</p>
+      <div class="quantas">🧭 Encontradas
+        <span class="bolinhas">${Array.from({length:total},(_,k)=>
+          `<i class="${k < E5.pegas.length ? "cheia":""}"></i>`).join("")}</span>
+        ${E5.pegas.length} de ${total}</div>
+      <div class="fichas">
+        ${E5.ordem.map(i=>{
+          const f = FICHAS_ESCALA[i];
+          const pega = E5.pegas.includes(i), furada = E5.furadas.includes(i);
+          const rev = E5.acabou || pega || furada;
+          return `<button class="ficha ${pega?"pega":""} ${furada?"furada":""} ${E5.acabou&&!pega?"revelada":""}"
+            onclick="pegaFicha(${i})" ${rev?"disabled":""}>${f.n}
+            ${rev?`<span class="tipo">${f.t}</span>`:``}</button>`;
+        }).join("")}
+      </div>
+      <div class="feedback" id="fbe"></div>
+      <div class="acoes esconde" id="proxBoxE">
+        <button class="btn" onclick="mapaRegioes()">Ir para o mapa →</button>
+      </div>
+    </div>`;
+}
+function pegaFicha(i){
+  if(!E5 || E5.acabou) return;
+  const f = FICHAS_ESCALA[i];
+  const fb = $("#fbe");
+  if(f.regiao){
+    if(E5.pegas.includes(i)) return;
+    E5.pegas.push(i); somAcerto(); ganha(10); marcaAcerto("escala");
+  } else {
+    if(E5.furadas.includes(i)) return;
+    E5.furadas.push(i); somErro(); marcaErro("escala");
+  }
+  const total = FICHAS_ESCALA.filter(x=>x.regiao).length;
+  if(E5.pegas.length === total) E5.acabou = true;
+  desenhaEscala();
+  const fb2 = $("#fbe");
+  if(f.regiao){
+    fb2.className = "feedback bom show";
+    fb2.innerHTML = `<div class="tt">✅ <b>${f.n}</b> é região!</div>
+      Faltam ${total - E5.pegas.length}.`;
+  } else {
+    fb2.className = "feedback ruim show";
+    fb2.innerHTML = `<div class="tt">❌ <b>${f.n}</b> não é região — é <b>${f.t}</b>.</div>
+      Região é a caixa grande: <b>região → estado → cidade → represa</b>.
+      Se cabe dentro de outra coisa maior, não é região.`;
+  }
+  if(E5.acabou){
+    E5.ac = Math.max(0, 5 - E5.furadas.length);
+    fb2.className = "feedback bom show";
+    fb2.innerHTML = `<div class="tt">🎉 As cinco, ${NOME()}!</div>
+      <b>Norte · Nordeste · Centro-Oeste · Sudeste · Sul.</b> Só essas cinco.
+      ${E5.furadas.length ? `Você furou ${E5.furadas.length} vez${E5.furadas.length>1?"es":""}
+      — foi em ${E5.furadas.map(k=>`<b>${FICHAS_ESCALA[k].n}</b>`).join(", ")}.`
+      : `E sem furar nenhuma vez.`}`;
+    $("#proxBoxE").classList.remove("esconde");
+  }
+}
+window.pegaFicha = pegaFicha;
+
+/* --- segunda parte: tocar na região certa do mapa --- */
+const PERG_MAPA = [
+  {k:"norte",    p:"Toque na região que <b>concentra a maior quantidade de água</b>.",
+   e:`<b>Norte</b> — <b>68%</b> da água do país. E olhe a armadilha: São Paulo é cidade,
+      Cantareira é represa. A pergunta pede <b>região</b>.`},
+  {k:"norte",    p:"Toque na região <b>menos habitada</b> do país.",
+   e:`<b>Norte</b> de novo — só <b>8,5%</b> da população e a menor densidade do Brasil,
+      <b>4,51 hab/km²</b>. É esse o problema: onde tem mais água, tem menos gente.`},
+  {k:"nordeste", p:"Toque na região que <b>concentra a menor quantidade de água</b>.",
+   e:`<b>Nordeste</b> — menos de <b>3%</b> das reservas hídricas, e grande parte é subterrânea
+      e <b>salobra</b>, com sal acima do limite para consumo.`},
+  {k:"sudeste",  p:"Toque na região com a <b>maior população</b> e a <b>maior densidade demográfica</b>.",
+   e:`<b>Sudeste</b> — <b>41,9%</b> da população e <b>91,76 hab/km²</b>, com apenas
+      <b>6%</b> da água.`}
+];
+let P5 = null;
+function mapaRegioes(){
+  somClique();
+  P5 = { i:0, ac:0, respondida:false, pintura:{} };
+  desenhaMapaReg();
+}
+window.mapaRegioes = mapaRegioes;
+function desenhaMapaReg(){
+  const q = PERG_MAPA[P5.i];
+  app.innerHTML = hud("🇧🇷 Mapa das Cinco Regiões") + `
+    <div class="card">
+      <p class="mini">Mapa ${P5.i+1} de ${PERG_MAPA.length} · toque na região no mapa</p>
+      <div class="progresso"><i style="width:${P5.i/PERG_MAPA.length*100}%"></i></div>
+      <div class="pergunta">${nomear(q.p)}</div>
+      ${arteBrasil({clicavel:!P5.respondida, pintura:P5.pintura, rotulos:P5.respondida})}
+      <div class="feedback" id="fbp"></div>
+      <div class="acoes esconde" id="proxBoxP">
+        <button class="btn" onclick="proxMapaReg()" id="btnProxP">Continuar →</button>
+      </div>
+    </div>`;
+}
+function cliqueRegiao(k){
+  if(!P5 || P5.respondida) return;
+  P5.respondida = true;
+  const q = PERG_MAPA[P5.i];
+  const nomeReg = kk => (REGIOES.find(r=>r.k===kk)||{}).n || kk;
+  P5.pintura = {};
+  P5.pintura[q.k] = "#4ade80";
+  if(k !== q.k) P5.pintura[k] = "#ff6b81";
+  const certo = (k === q.k);
+  if(certo){ P5.ac++; somAcerto(); ganha(10); marcaAcerto("regiao"); }
+  else { somErro(); marcaErro("regiao"); }
+  desenhaMapaReg();
+  const fb = $("#fbp");
+  fb.className = "feedback " + (certo?"bom":"ruim") + " show";
+  fb.innerHTML = certo
+    ? `<div class="tt">✅ ${elogio()}</div>${nomear(q.e)}`
+    : `<div class="tt">❌ Você tocou em <b>${nomeReg(k)}</b>. A resposta certa é
+       <b>${nomeReg(q.k)}</b>.</div>${nomear(q.e)}`;
+  $("#proxBoxP").classList.remove("esconde");
+  $("#btnProxP").textContent = (P5.i === PERG_MAPA.length-1) ? "Ir para as perguntas →" : "Continuar →";
+}
+window.cliqueRegiao = cliqueRegiao;
+function proxMapaReg(){
+  somClique();
+  P5.i++; P5.respondida = false; P5.pintura = {};
+  if(P5.i >= PERG_MAPA.length){ perguntasRegioes(); return; }
+  desenhaMapaReg();
+}
+window.proxMapaReg = proxMapaReg;
+
+function perguntasRegioes(){
+  const acIni = E5.ac + P5.ac;
+  const totIni = 5 + PERG_MAPA.length;
+  quizGenerico(4, "🇧🇷 Mapa das Cinco Regiões", [
+    { hab:"regiao", quatro:true, umaSo:true,
+      p:"Qual <b>região</b> do país concentra a maior quantidade de água?",
+      o:["Região Norte","São Paulo","Represa Cantareira","Rio Amazonas"], c:0,
+      e:`<b>Região Norte</b>, com <b>68%</b>. As outras três nem chegam a ser regiões:
+         São Paulo é cidade e estado, Cantareira é represa, Amazonas é rio.
+         Quando a pergunta diz "qual região", só cabem <b>cinco</b> respostas.` },
+
+    { hab:"regiao", quatro:true, umaSo:true,
+      p:"Qual <b>região</b> do país concentra a menor quantidade de água?",
+      o:["Nordeste","Cantareira","Fortaleza","Sudeste"], c:0,
+      e:`<b>Nordeste</b> — menos de 3% das reservas hídricas do país. Fortaleza é cidade;
+         Cantareira é represa. O Sudeste tem pouca água (6%), mas o Nordeste tem menos.` },
+
+    { hab:"densidade", quatro:true,
+      p:"Qual região tem a <b>maior densidade demográfica</b> (2022)?",
+      o:["Sudeste — 91,76 hab/km²","Sul — 51,91 hab/km²",
+         "Nordeste — 35,21 hab/km²","Norte — 4,51 hab/km²"], c:0,
+      e:`<b>Sudeste</b>. Densidade é quanta gente cabe em cada km². A do Brasil inteiro é
+         <b>23,86</b>.` },
+
+    { hab:"regiao", quatro:true,
+      p:"O Brasil possui cerca de <b>quanto</b> da água doce do planeta?",
+      o:["12%","53%","68%","3%"], c:0,
+      e:`<b>12%</b> da água doce do planeta — o maior reservatório do mundo. Os <b>53%</b> são
+         outra coisa: a parte dos recursos hídricos <b>da América do Sul</b> que está no Brasil.` },
+
+    { hab:"regiao", quatro:true,
+      p:"As regiões <b>Sul e Sudeste</b> juntas abrigam mais de 50% da população e contam com:",
+      o:["13% dos recursos hídricos do país","68% dos recursos hídricos do país",
+         "metade da água do país","nenhuma água doce"], c:0,
+      e:`Mais de metade da gente, e só <b>13%</b> da água. É a frase que fecha a Aula 6.` },
+
+    { hab:"regiao", quatro:true,
+      p:"Por que a água do Nordeste, mesmo a subterrânea, muitas vezes não serve para beber?",
+      o:["Porque tem teor de sal acima do limite aceitável — é salobra",
+         "Porque é água do mar",
+         "Porque é sempre água de chuva",
+         "Porque congela no subsolo"], c:0,
+      e:`<b>Salobra</b>: sal demais para beber, mas não é água do mar (essa é <b>salgada</b>).` },
+
+    { hab:"densidade", quatro:true,
+      p:"Segundo o IBGE de 2022, cada brasileiro dispõe, em média, de quanta água por ano?",
+      o:["42 milhões de litros","42 mil litros","420 litros","4,2 milhões de litros"], c:0,
+      e:`<b>42 milhões de litros por ano</b> — em média. O problema não é a quantidade
+         total: é a <b>má distribuição</b>.` }
+  ], acIni, totIni);
+}
+
+/* ============================================================
+   MISSÃO 6 — REPRESA E RACIONAMENTO
+   A missão do "quantas respostas". Ela marcou duas onde cabia uma.
+   ============================================================ */
+const DUPLAS = [
+  { p:"Para que serve uma <b>represa</b>? Marque as <b>DUAS</b> respostas certas.",
+    quantas:2,
+    o:["Armazenar a água da chuva para garantir o abastecimento",
+       "Controlar as cheias, evitando o impacto de inundações",
+       "Fazer o tratamento de esgoto residencial",
+       "Conter minérios e sólidos"],
+    c:[0,1],
+    e:`As duas funções da folha: <b>armazenar</b> a água do período chuvoso para o período seco
+       e <b>controlar as cheias</b>. Represa <b>não trata esgoto</b> e <b>não contém minérios</b>
+       — essas duas são as pegadinhas da questão 11.` },
+  { p:"Quais destas são <b>consequências da seca</b> no Nordeste? Marque as <b>DUAS</b>.",
+    quantas:2,
+    o:["Perda de plantações e de animais","Fome, pela queda na produção de alimentos",
+       "Aumento do nível dos rios","Melhora da qualidade da água dos poços"],
+    c:[0,1],
+    e:`A longa estiagem causa <b>perda de plantações e de animais</b>; a falta de produtividade
+       prejudica a reserva e a distribuição de alimentos, <b>provocando fome</b>.` }
+];
+let D6 = null;
+function faseRepresa(){
+  D6 = { i:0, ac:0, marcadas:[], conferido:false, lista: DUPLAS.map(d=>{
+    const ordem = embaralha(d.o.map((_,i)=>i));
+    return {...d, o: ordem.map(i=>d.o[i]), c: d.c.map(i=>ordem.indexOf(i)).sort((a,b)=>a-b)};
+  }) };
+  desenhaDupla();
+}
+function desenhaDupla(){
+  const q = D6.lista[D6.i];
+  app.innerHTML = hud("🏞️ Represa e Racionamento") + `
+    <div class="card">
+      <p class="mini">Contagem ${D6.i+1} de ${D6.lista.length} · conte antes de marcar</p>
+      <div class="quantas">✌️ Esta pergunta quer <b>${q.quantas}</b> respostas
+        <span class="bolinhas">${Array.from({length:q.quantas},(_,k)=>
+          `<i class="${k < D6.marcadas.length ? "cheia":""}"></i>`).join("")}</span></div>
+      <div class="pergunta">${nomear(q.p)}</div>
+      <div class="opcoes" id="ops">
+        ${q.o.map((t,k)=>{
+          let cls = "op";
+          if(D6.conferido){
+            if(q.c.includes(k)) cls += " certa";
+            else if(D6.marcadas.includes(k)) cls += " errada";
+          } else if(D6.marcadas.includes(k)) cls += " marcada";
+          return `<button class="${cls}" onclick="marcaDupla(${k})" ${D6.conferido?"disabled":""}>
+            <span class="letra">${"ABCD"[k]}</span><span>${t}</span></button>`;
+        }).join("")}
+      </div>
+      ${!D6.conferido ? `<div class="acoes">
+        <button class="btn sec" onclick="limpaDupla()">🔁 Limpar</button>
+        <button class="btn" onclick="confereDupla()" ${D6.marcadas.length!==q.quantas?"disabled":""}>
+          ✅ Conferir</button>
+      </div>` : ``}
+      <div class="feedback" id="fbd"></div>
+      <div class="acoes esconde" id="proxBoxD">
+        <button class="btn" onclick="proxDupla()" id="btnProxD">Continuar →</button>
+      </div>
+    </div>`;
+}
+function marcaDupla(k){
+  if(!D6 || D6.conferido) return;
+  const q = D6.lista[D6.i];
+  const em = D6.marcadas.indexOf(k);
+  if(em >= 0){ somClique(); D6.marcadas.splice(em,1); desenhaDupla(); return; }
+  if(D6.marcadas.length >= q.quantas){
+    somErro();
+    toast(`Só ${q.quantas} respostas! Desmarque uma antes.`, true);
+    return;
+  }
+  somPop(); D6.marcadas.push(k); D6.marcadas.sort((a,b)=>a-b);
+  desenhaDupla();
+}
+window.marcaDupla = marcaDupla;
+function limpaDupla(){ somClique(); D6.marcadas = []; desenhaDupla(); }
+window.limpaDupla = limpaDupla;
+function confereDupla(){
+  const q = D6.lista[D6.i];
+  if(D6.marcadas.length !== q.quantas) return;
+  D6.conferido = true;
+  const certo = D6.marcadas.length === q.c.length &&
+                D6.marcadas.every((k,i)=>k === q.c[i]);
+  if(certo){ D6.ac++; somAcerto(); ganha(20); marcaAcerto("quantas"); marcaAcerto("represa"); }
+  else { somErro(); marcaErro("quantas"); marcaErro("represa"); }
+  desenhaDupla();
+  const fb = $("#fbd");
+  fb.className = "feedback " + (certo?"bom":"ruim") + " show";
+  fb.innerHTML = (certo ? `<div class="tt">✅ ${elogio()}</div>`
+    : `<div class="tt">❌ As certas eram <b>${q.c.map(k=>q.o[k]).join("</b> e <b>")}</b>.</div>`)
+    + nomear(q.e);
+  $("#proxBoxD").classList.remove("esconde");
+  $("#btnProxD").textContent = (D6.i === D6.lista.length-1) ? "Ir para as perguntas →" : "Continuar →";
+}
+window.confereDupla = confereDupla;
+function proxDupla(){
+  somClique();
+  D6.i++; D6.marcadas = []; D6.conferido = false;
+  if(D6.i >= D6.lista.length){ perguntasRepresa(); return; }
+  desenhaDupla();
+}
+window.proxDupla = proxDupla;
+
+function perguntasRepresa(){
+  quizGenerico(5, "🏞️ Represa e Racionamento", [
+    { hab:"represa", quatro:true, umaSo:true,
+      p:"Assinale a alternativa <b>correta</b> em relação à função das represas:",
+      o:["As represas armazenam água da chuva para garantir o abastecimento",
+         "As represas fazem o tratamento de esgoto residencial",
+         "As represas têm a função de conter minérios e sólidos",
+         "As represas servem para aumentar a quantidade de água do planeta"], c:0,
+      e:`É a questão 11 da sua folha, {NOME} — e o enunciado diz "assinale <b>a</b> alternativa":
+         <b>uma</b> só. Represa guarda água e segura cheia. Não trata esgoto, não contém minério
+         e ninguém consegue aumentar a água do planeta.` },
+
+    { hab:"racionamento", quatro:true,
+      p:"O que é <b>racionamento</b> de água?",
+      o:["A distribuição moderada do recurso — o abastecimento das casas é diminuído",
+         "O corte total da água por tempo indeterminado",
+         "O tratamento da água antes de chegar às casas",
+         "A cobrança de uma taxa extra na conta de água"], c:0,
+      e:`Racionamento é <b>dividir com moderação</b>, e pode ocorrer em <b>dias alternados</b>,
+         para garantir água para toda a população.` },
+
+    { hab:"racionamento", quatro:true,
+      p:"Chover muito no “lugar errado”:",
+      o:["não resolve o problema do abastecimento",
+         "resolve, porque toda chuva vira água de torneira",
+         "enche automaticamente todos os reservatórios do país",
+         "só afeta a agricultura"], c:0,
+      e:`A manutenção dos reservatórios depende de <b>chover na região onde eles estão</b>.` },
+
+    { hab:"racionamento", quatro:true,
+      p:"O <b>Sistema Cantareira</b> é:",
+      o:["o maior sistema de captação e tratamento de água da Grande São Paulo",
+         "uma região do Brasil","um rio que nasce em Minas Gerais",
+         "o nome do lençol freático de São Paulo"], c:0,
+      e:`Abastece <b>8,8 milhões de habitantes</b> e é um dos maiores do mundo.
+         E atenção: é uma <b>represa</b> — nunca a resposta de "qual região".` },
+
+    { hab:"seca", quatro:true,
+      p:"Nos <b>centros urbanos</b>, os problemas de abastecimento estão ligados a:",
+      o:["crescimento da demanda, desperdício e urbanização descontrolada",
+         "excesso de mata ciliar nas margens dos rios",
+         "chuvas em áreas montanhosas",
+         "diminuição da população das cidades"], c:0,
+      e:`E a urbanização descontrolada atinge justamente as <b>regiões de manancial</b>.` },
+
+    { hab:"seca", quatro:true,
+      p:"Um <b>poço de água salobra</b> tem esse nome porque:",
+      o:["tem teor de sal acima do limite aceitável para o consumo humano",
+         "é água do mar que entrou no poço",
+         "está poluído por óleo",
+         "secou completamente"], c:0,
+      e:`É o caso de grande parte da água subterrânea do <b>Nordeste</b>.` }
+  ], D6.ac, D6.lista.length);
+}
+
+/* ============================================================
+   MISSÃO 7 — RUA ALAGADA
+   ============================================================ */
+function faseCidade(){
+  quizGenerico(6, "🌧️ Rua Alagada", [
+    { hab:"enchente", quatro:true, arte: arteAsfalto(),
+      p:"As enchentes urbanas podem ocorrer por causa de:",
+      o:["fatores naturais e ações humanas, ou a combinação dos dois",
+         "somente chuvas intensas","somente lixo jogado na rua",
+         "somente problemas na rede de esgoto"], c:0,
+      e:`Naturais: <b>chuvas intensas</b>. Humanas: <b>impermeabilização do solo</b>, destinação
+         incorreta de resíduos, problemas de drenagem e ocupação irregular do solo — <b>ou a
+         combinação desses dois fatores</b>.` },
+
+    { hab:"enchente", quatro:true,
+      p:"Além das perdas materiais, o que as enchentes também podem causar ao ser humano?",
+      o:["Doenças e infecções","Melhora da qualidade do ar",
+         "Aumento do lençol freático","Redução do preço dos alimentos"], c:0,
+      e:`Foi a sua resposta certa na questão 05: <i>doenças, infecções, desabrigamento e
+         prejuízos financeiros</i>. E ainda há o risco à vida das pessoas e os deslizamentos.` },
+
+    { hab:"enchente", quatro:true,
+      p:"Qual destas atitudes <b>NÃO</b> ajuda a diminuir as enchentes nas cidades?",
+      o:["Cobrir mais ruas e calçadas com asfalto e concreto",
+         "Ampliar as áreas verdes","Implantar telhados verdes e jardins verticais",
+         "Utilizar pavimentos permeáveis"], c:0,
+      e:`Cobrir de asfalto é <b>impermeabilizar</b> — é a causa, não a solução.
+         <b>Permeável</b> é o contrário: deixa a água passar e entrar no solo.` },
+
+    { hab:"enchente", quatro:true,
+      p:"O que são <b>pavimentos permeáveis</b>?",
+      o:["Pisos que permitem a passagem da água para dentro do solo",
+         "Pisos de asfalto muito resistentes",
+         "Telhados cobertos de grama",
+         "Canos grandes de drenagem"], c:0,
+      e:`Telhado com grama é <b>telhado verde</b> — outra solução da lista, mas outra coisa.` },
+
+    { hab:"poluicao", quatro:true,
+      p:"Um litro de <b>óleo de cozinha</b> jogado na pia pode contaminar até:",
+      o:["20 mil litros de água","20 litros de água",
+         "200 litros de água","2 milhões de litros de água"], c:0,
+      e:`<b>20 mil litros</b>. Por isso o óleo usado vai para uma <b>garrafa</b> e depois para um
+         <b>ponto de coleta</b>.` },
+
+    { hab:"poluicao", quatro:true,
+      p:"Uma garrafa plástica leva, no mínimo, quanto tempo para se decompor?",
+      o:["100 anos","10 anos","1 ano","500 anos"], c:0,
+      e:`<b>No mínimo 100 anos</b> — é o número da sua folha. Por isso: reutilizar.` },
+
+    { hab:"poluicao", quatro:true,
+      p:"De que maneira o <b>derramamento de petróleo</b> afeta a qualidade das águas?",
+      o:["Contamina as águas, prejudica os ecossistemas aquáticos e pode matar animais marinhos",
+         "Deixa a água mais doce","Aumenta a quantidade de peixes",
+         "Faz a água evaporar mais rápido"], c:0,
+      e:`Foi a sua resposta certa na questão 03. O petróleo é um produto
+         <b>altamente poluente</b>.` },
+
+    { hab:"economia", quatro:true,
+      p:"Segundo o cartaz da sua folha, um banho deve durar quanto tempo?",
+      o:["5 minutos","30 minutos","15 minutos","1 minuto"], c:0,
+      e:`<i>"Banhos demorados gastam muita água. 5 minutos é o suficiente!"</i>` },
+
+    { hab:"economia", quatro:true,
+      p:"Para limpar o quintal ou a calçada, o certo é usar:",
+      o:["vassoura","mangueira","balde e mangueira juntos","o esguicho da máquina de lavar"], c:0,
+      e:`<b>Vassoura, não mangueira</b> — a mangueira desperdiça muita água.` },
+
+    { hab:"economia", quatro:true,
+      p:"Qual destes <b>NÃO</b> é um uso da água citado na sua folha?",
+      o:["Fabricar plástico biodegradável em casa",
+         "Geração de energia elétrica","Habitat de muitos animais",
+         "Meio de transporte"], c:0,
+      e:`Os usos da folha: beber, preparar alimentos, banho, lavar roupas, higiene, habitat de
+         animais, lazer, transporte, <b>energia elétrica</b>, agricultura e indústria.` },
+
+    { hab:"poluicao", quatro:true,
+      p:"O que a folha manda fazer com papel, óleo, medicamentos e cotonetes?",
+      o:["Nunca descartar no vaso sanitário nem na pia",
+         "Jogar no vaso, que a água leva",
+         "Jogar na pia com bastante água",
+         "Enterrar no quintal"], c:0,
+      e:`Descartar no encanamento <b>polui a água e entope os sistemas de esgoto</b>.` }
+  ], 0, 0);
+}
+/* ============================================================
+   MISSÃO 8 — PROVA DA BACIA (arcade + prova final)
+   ============================================================ */
+const BANCO = [
+  {hab:"planeta", q:"Quanto da água do planeta é <b>salgada</b>?", o:["97%","3%","70%","50%"], c:0},
+  {hab:"planeta", q:"Quanto da água do planeta é <b>doce</b>?", o:["3%","97%","70%","30%"], c:0},
+  {hab:"planeta", q:"Quanto da superfície da Terra é coberta por água?", o:["70%","97%","3%","12%"], c:0},
+  {hab:"planeta", q:"Onde está a maior parte da água doce?", o:["calotas polares","rios","lagos","nuvens"], c:0},
+  {hab:"australia",q:"A Austrália é chamada de país-continente porque…", o:["abrange quase toda a Oceania","não tem fronteiras","é a maior ilha","tem dois oceanos"], c:0},
+  {hab:"australia",q:"A Austrália é um arquipélago porque…", o:["não tem fronteiras terrestres","abrange a Oceania","é grande","tem praias"], c:0},
+  {hab:"rio",     q:"O rio nasce, geralmente, a partir de…", o:["chuvas em áreas montanhosas","um afluente","uma represa","um lago"], c:0},
+  {hab:"rio",     q:"Onde o rio lança suas águas chama-se…", o:["foz","nascente","afluente","leito"], c:0},
+  {hab:"rio",     q:"O rio menor que desagua no maior é o…", o:["afluente","leito","manancial","estuário"], c:0},
+  {hab:"rio",     q:"A nascente fica nas partes…", o:["mais elevadas do relevo","mais baixas","planas","do mar"], c:0},
+  {hab:"freatico",q:"Rio subterrâneo formado pela infiltração:", o:["lençol freático","afluente","foz","manancial"], c:0},
+  {hab:"freatico",q:"A área onde o rio nasce é a área de…", o:["manancial","assoreamento","erosão","drenagem"], c:0},
+  {hab:"ciliar",  q:"Vegetação das margens dos rios e lagos:", o:["mata ciliar","cerrado","caatinga","mangue"], c:0},
+  {hab:"erosao",  q:"Acúmulo de sedimentos no leito do rio:", o:["assoreamento","erosão","infiltração","precipitação"], c:0},
+  {hab:"erosao",  q:"Desgaste e transporte do solo e das rochas:", o:["erosão","assoreamento","condensação","evaporação"], c:0},
+  {hab:"erosao",  q:"Morro rasgado, com terra à mostra, é…", o:["erosão","assoreamento","mata ciliar","nascente"], c:0},
+  {hab:"erosao",  q:"Rio raso, cheio de terra no fundo, é…", o:["assoreamento","erosão","precipitação","nascente"], c:0},
+  {hab:"degradacao",q:"O chorume do lixão desce até o…", o:["lençol freático","mar","afluente","telhado"], c:0},
+  {hab:"degradacao",q:"Os lençóis freáticos são…", o:["mais difíceis de poluir","mais fáceis de poluir","impossíveis de poluir","sempre limpos"], c:0},
+  {hab:"ciclo",   q:"1ª etapa do ciclo da água:", o:["evaporação","condensação","precipitação","infiltração"], c:0},
+  {hab:"ciclo",   q:"Etapa em que a nuvem se forma:", o:["condensação","evaporação","precipitação","infiltração"], c:0},
+  {hab:"ciclo",   q:"Etapa em que a chuva cai:", o:["precipitação","evaporação","condensação","infiltração"], c:0},
+  {hab:"ciclo",   q:"O que provoca a evaporação?", o:["o calor do Sol","o vento","o frio","a chuva"], c:0},
+  {hab:"renovavel",q:"A água é renovável porque…", o:["o ciclo repõe o estoque","a quantidade aumenta","chove sempre","o mar é grande"], c:0},
+  {hab:"clima",   q:"Mudança climática altera o regime de…", o:["chuvas","marés","ventos solares","estações do metrô"], c:0},
+  {hab:"clima",   q:"A escassez de água ameaça a produção de…", o:["alimentos","plástico","energia solar","papel"], c:0},
+  {hab:"escala",  q:"Quantas regiões o Brasil tem?", o:["5","4","7","26"], c:0},
+  {hab:"escala",  q:"Cantareira é uma…", o:["represa","região","estado","nascente"], c:0},
+  {hab:"escala",  q:"São Paulo é…", o:["cidade e estado","uma região","uma represa","um rio"], c:0},
+  {hab:"escala",  q:"Nordeste é uma…", o:["região","cidade","represa","rio"], c:0},
+  {hab:"regiao",  q:"Região com <b>mais água</b>:", o:["Norte","Nordeste","Sudeste","Sul"], c:0},
+  {hab:"regiao",  q:"Região com <b>menos água</b>:", o:["Nordeste","Norte","Centro-Oeste","Sul"], c:0},
+  {hab:"regiao",  q:"Região <b>menos habitada</b>:", o:["Norte","Sudeste","Sul","Nordeste"], c:0},
+  {hab:"regiao",  q:"Quanto da água do país está no Norte?", o:["68%","8,5%","16%","6%"], c:0},
+  {hab:"regiao",  q:"O Brasil tem quanto da água doce do mundo?", o:["12%","53%","68%","3%"], c:0},
+  {hab:"densidade",q:"Região com maior densidade demográfica:", o:["Sudeste","Sul","Norte","Nordeste"], c:0},
+  {hab:"densidade",q:"Densidade demográfica do Brasil (2022):", o:["23,86","91,76","4,51","51,91"], c:0},
+  {hab:"represa", q:"A represa serve para…", o:["armazenar água da chuva","tratar esgoto","conter minérios","criar peixes"], c:0},
+  {hab:"represa", q:"A represa também ajuda a…", o:["controlar as cheias","aumentar a chuva","secar o rio","poluir a água"], c:0},
+  {hab:"racionamento",q:"Racionamento é a distribuição…", o:["moderada","gratuita","total","proibida"], c:0},
+  {hab:"racionamento",q:"O Sistema Cantareira abastece…", o:["8,8 milhões de habitantes","800 pessoas","todo o Brasil","o Nordeste"], c:0},
+  {hab:"seca",    q:"Água com sal demais para beber é…", o:["salobra","salgada","doce","mineral"], c:0},
+  {hab:"seca",    q:"A longa estiagem no Nordeste provoca…", o:["fome","enchente","assoreamento","evaporação"], c:0},
+  {hab:"enchente",q:"Cobrir o solo de asfalto é…", o:["impermeabilizar","drenar","permeabilizar","irrigar"], c:0},
+  {hab:"enchente",q:"Piso que deixa a água passar:", o:["pavimento permeável","asfalto","concreto","cerâmica"], c:0},
+  {hab:"enchente",q:"Enchente pode provocar…", o:["doenças e infecções","água mais limpa","mais mata ciliar","menos lixo"], c:0},
+  {hab:"poluicao",q:"1 litro de óleo contamina até…", o:["20 mil litros","20 litros","200 litros","2 litros"], c:0},
+  {hab:"poluicao",q:"Garrafa plástica leva no mínimo…", o:["100 anos","10 anos","1 ano","1 mês"], c:0},
+  {hab:"economia",q:"Banho de quantos minutos?", o:["5","30","20","15"], c:0},
+  {hab:"economia",q:"Para limpar o quintal, use…", o:["vassoura","mangueira","balde furado","esguicho"], c:0}
+];
+let arc = null, cronoT = null, cronoPausa = false;
+function pararArcade(){ if(cronoT){ clearInterval(cronoT); cronoT = null; } arc = null; }
+function pausaCrono(v){ cronoPausa = !!v; }
+
+function faseFinal(){
+  app.innerHTML = hud("🏆 Prova da Bacia") + `
+    <div class="card centro">
+      <div style="font-size:60px">🏆</div>
+      <h2>Última parada, ${NOME()}</h2>
+      <p>Esta missão tem <b>duas partes</b>, e só a segunda vale estrelas:</p>
+      <div class="enunciado" style="text-align:left">
+        <p><b>1 · Arcade da bacia</b> — 60 segundos de perguntas rápidas de todos os
+        assuntos. Vale <b>pontos</b>, não estrelas. Serve para aquecer.</p>
+        <p style="margin:0"><b>2 · Prova final</b> — sem relógio nenhum. É ela que vale as
+        <b>${POR_MISSAO} estrelas</b>, e ela puxa mais do que você errou.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn chama" onclick="iniciaArcade()">⏱️ Começar o arcade</button>
+        <button class="btn uva" onclick="provaFinal()">🎓 Ir direto para a prova final</button>
+      </div>
+    </div>`;
+}
+function bancoOrdenado(){
+  const lista = [];
+  for(const item of BANCO){
+    lista.push(item);
+    const peso = S.erros[item.hab] || 0;
+    for(let k=0; k<Math.min(peso,3); k++) lista.push(item);   /* o que ela erra aparece mais */
+  }
+  return lista;
+}
+function iniciaArcade(){
+  ac(); somClique();
+  arc = { pontos:0, acertos:0, erros:0, combo:0, tempo:60, usadas:[], banco:bancoOrdenado() };
+  sorteiaArcade();
+  cronoT = setInterval(()=>{
+    if(cronoPausa) return;
+    arc.tempo -= 0.1;
+    const b = document.getElementById("cronoBarra");
+    if(b) b.style.width = Math.max(0, arc.tempo/60*100) + "%";
+    if(arc.tempo <= 0) fimArcade();
+  }, 100);
+}
+window.iniciaArcade = iniciaArcade;
+function sorteiaArcade(){
+  /* trava anti-repetição: nunca repete uma das 6 últimas enquanto houver alternativa */
+  let item = null, voltas = 0;
+  do { item = sorteio(arc.banco); voltas++; }
+  while(arc.usadas.includes(item.q) && voltas < 60);
+  arc.usadas.push(item.q);
+  if(arc.usadas.length > 6) arc.usadas.shift();
+  arc.atual = item;
+  desenhaArcade();
+}
+function desenhaArcade(){
+  const it = arc.atual;
+  const ordem = embaralha(it.o.map((_,i)=>i));
+  const opts  = ordem.map(i=>it.o[i]);
+  arc.certa = ordem.indexOf(it.c);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <div class="placar">
+        <span>⭐ ${arc.pontos}</span>
+        <span>✅ ${arc.acertos}</span>
+        <span class="combo">🔥 ${arc.combo}</span>
+      </div>
+      <div class="cronometro"><i id="cronoBarra" style="width:${Math.max(0,arc.tempo/60*100)}%"></i></div>
+      <p class="mini centro">Responda o máximo que conseguir. Errar não tira estrela nenhuma.</p>
+      <div class="conta">${it.q}</div>
+      <div class="opcoes quatro" id="ops">
+        ${opts.map((t,k)=>`<button class="op" onclick="respArcade(${k})">${t}</button>`).join("")}
+      </div>
+      <div class="acoes"><button class="btn sec" onclick="fimArcade()">Parar e ir para a prova →</button></div>
+    </div>`;
+}
+function respArcade(k){
+  if(!arc) return;
+  if(k === arc.certa){
+    arc.combo++; arc.acertos++;
+    const p = 10 + arc.combo*2;
+    arc.pontos += p; S.pontos += p;
+    marcaAcerto(arc.atual.hab);
+    somAcerto(); toast("+" + p + (arc.combo>2 ? " 🔥 combo " + arc.combo : ""));
+  } else {
+    arc.combo = 0; arc.erros++;
+    marcaErro(arc.atual.hab);
+    somErro(); toast("Era " + arc.atual.o[arc.atual.c], true);
+  }
+  salvar();
+  sorteiaArcade();
+}
+window.respArcade = respArcade;
+function fimArcade(){
+  if(cronoT){ clearInterval(cronoT); cronoT = null; }
+  const r = arc || {pontos:0,acertos:0,erros:0};
+  arc = null;
+  somVitoria(); salvar();
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">⏱️</div>
+      <h2>Arcade encerrado!</h2>
+      <p>Você acertou <b>${r.acertos}</b> e ganhou <b>${r.pontos} pontos</b>.</p>
+      <p class="mini">Agora vem o que vale as estrelas — <b>sem relógio</b>.</p>
+      <div class="acoes">
+        <button class="btn" onclick="provaFinal()">🎓 Fazer a prova final</button>
+        <button class="btn sec" onclick="iniciaArcade()">🔁 Jogar o arcade de novo</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+window.fimArcade = fimArcade;
+
+/* --- prova final: cobre os 7 assuntos, puxando o que ela mais errou --- */
+const FINAL = [
+  { hab:"planeta", quatro:true, arte: artePizzaAgua(),
+    p:"Por que a água é escassa, se 70% da superfície da Terra é coberta por ela?",
+    o:["Porque 97% é salgada e a doce é só cerca de 3%",
+       "Porque a água está acabando","Porque só chove no Norte",
+       "Porque a água doce está toda nos rios"], c:0,
+    e:`A água doce, própria para consumo, é <b>cerca de 3%</b> — e menos de 1% está líquida
+       na superfície.` },
+
+  { hab:"planeta", quatro:true,
+    p:"Sobre a quantidade de água no planeta, é <b>correto</b> dizer:",
+    o:["É a mesma há milênios; o que diminui é a disponível para consumo",
+       "Aumenta a cada chuva","Diminui a cada ano até acabar",
+       "Depende do número de represas construídas"], c:0,
+    e:`A água <b>não vai acabar</b>. A <b>água boa para beber</b> é que está diminuindo.` },
+
+  { hab:"rio", quatro:true, arte: arteRio({rotulos:true}),
+    p:"Qual afirmação é <b>FALSA</b>?",
+    o:["As áreas onde os rios nascem são conhecidas como afluentes",
+       "A nascente fica nas partes mais elevadas do relevo",
+       "O lençol freático é um rio subterrâneo",
+       "A área onde o rio nasce é a área de manancial"], c:0,
+    e:`<b>Afluente</b> é o rio menor que desagua no maior. Onde o rio nasce é a
+       <b>nascente</b>, na <b>área de manancial</b>.` },
+
+  { hab:"freatico", quatro:true,
+    p:"O que pode acontecer se o lençol freático encontrar uma saída para a superfície?",
+    o:["Pode nascer um novo rio","O rio existente seca",
+       "Vira água salgada","Provoca uma erosão"], c:0,
+    e:`É assim que a apostila explica: o lençol pode <b>dar origem a um rio novo</b>.` },
+
+  { hab:"erosao", quatro:true, arte: arteErosao(),
+    p:"Que fenômeno está nesta imagem?",
+    o:["Erosão","Assoreamento","Precipitação","Nascente"], c:0,
+    e:`Morro rasgado, terra à mostra: a chuva está <b>tirando</b> o solo.
+       <b>Erosão</b> = desgaste, transporte e sedimentação.` },
+
+  { hab:"erosao", quatro:true, arte: arteAssoreamento(),
+    p:"E que fenômeno está <b>nesta</b>?",
+    o:["Assoreamento","Erosão","Infiltração","Evaporação"], c:0,
+    e:`Rio raso, cheio de terra e pedra: alguém <b>pôs</b> sedimento no leito.
+       <b>Assoreamento</b>.` },
+
+  { hab:"ciliar", quatro:true,
+    p:"Quais são as consequências da retirada da <b>mata ciliar</b>?",
+    o:["Erosão das margens, assoreamento e perda do habitat de animais",
+       "Água mais limpa e rio mais fundo",
+       "Aumento da biodiversidade","Diminuição das enchentes"], c:0,
+    e:`Foi a sua resposta certa na Atividade Unificada. Sem mata ciliar: poluição, erosão,
+       assoreamento e clima alterado.` },
+
+  { hab:"degradacao", quatro:true,
+    p:"Qual destas <b>NÃO</b> é causa da degradação dos mananciais?",
+    o:["Plantação de árvores nas margens","Falta de saneamento básico",
+       "Uso de agrotóxicos","Remoção da cobertura vegetal"], c:0,
+    e:`Plantar nas margens é <b>refazer a mata ciliar</b> — é proteção, não degradação.` },
+
+  { hab:"ciclo", quatro:true, arte: arteCiclo([0,1,2,3]),
+    p:"Qual é a ordem correta das etapas do ciclo da água?",
+    o:["evaporação → condensação → precipitação → infiltração",
+       "precipitação → evaporação → condensação → infiltração",
+       "condensação → evaporação → infiltração → precipitação",
+       "infiltração → precipitação → condensação → evaporação"], c:0, fixo:true,
+    e:`A água <b>sobe</b> (evapora), <b>esfria</b> (condensa), <b>cai</b> (precipita) e
+       <b>entra no chão</b> (infiltra).` },
+
+  { hab:"renovavel", quatro:true,
+    p:"Por que a água é um recurso <b>renovável, mas limitado</b>?",
+    o:["Porque o ciclo repõe o que existe, mas é impossível aumentar essa quantidade",
+       "Porque só é renovável no inverno",
+       "Porque as represas fabricam água nova",
+       "Porque a água do mar vira doce sozinha"], c:0,
+    e:`Renovável = o ciclo <b>repõe</b>. Limitado = ninguém consegue <b>aumentar</b>.` },
+
+  { hab:"clima", quatro:true,
+    p:"Assinale a informação <b>incorreta</b> sobre mudanças climáticas e o ciclo da água:",
+    o:["O abastecimento de água permanece normal apesar das mudanças climáticas",
+       "A falta de chuvas coloca em risco a produção de alimentos",
+       "O excesso de chuvas aumenta o risco de enchentes",
+       "Mudanças climáticas alteram o regime de chuvas"], c:0,
+    e:`A questão 8 da sua folha. O abastecimento <b>não</b> permanece normal.` },
+
+  { hab:"escala", quatro:true, umaSo:true,
+    p:"Qual <b>região</b> do país concentra a maior quantidade de água?",
+    o:["Região Norte","São Paulo","Represa Cantareira","Estado do Amazonas"], c:0,
+    e:`A resposta de "qual região" só pode ser uma das <b>cinco</b>: Norte, Nordeste,
+       Centro-Oeste, Sudeste, Sul. <b>Norte</b>, com 68% da água.` },
+
+  { hab:"escala", quatro:true, umaSo:true,
+    p:"Qual <b>região</b> do país é a <b>menos habitada</b>?",
+    o:["Região Norte","Na Cantareira","Fortaleza","Minas Gerais"], c:0,
+    e:`<b>Norte</b>: 8,5% da população e a menor densidade, <b>4,51 hab/km²</b>.
+       Cantareira é represa, Fortaleza é cidade, Minas Gerais é estado.` },
+
+  { hab:"regiao", quatro:true, umaSo:true,
+    p:"Qual <b>região</b> concentra a <b>menor</b> quantidade de água?",
+    o:["Nordeste","Represa Cantareira","Sudeste","Sul"], c:0,
+    e:`<b>Nordeste</b>: menos de 3% das reservas. O Sudeste tem pouca (6%), mas não é a menor.` },
+
+  { hab:"densidade", quatro:true, arte: arteBrasil({rotulos:true, mostraAgua:true}),
+    p:"A região com <b>mais gente</b> é a que tem:",
+    o:["um dos menores índices hídricos do país",
+       "a maior quantidade de água do país",
+       "exatamente metade da água do país",
+       "toda a água subterrânea do país"], c:0,
+    e:`Sudeste: <b>41,9%</b> da população e só <b>6%</b> da água. É a frase-chave da Aula 6:
+       a água é <b>mal distribuída</b>.` },
+
+  { hab:"represa", quatro:true, umaSo:true,
+    p:"Assinale a alternativa correta em relação à função das <b>represas</b>:",
+    o:["Armazenam água da chuva para garantir o abastecimento",
+       "Fazem o tratamento de esgoto residencial",
+       "Têm a função de conter minérios e sólidos",
+       "Aumentam a quantidade de água do planeta"], c:0,
+    e:`A questão 11 da sua folha. E o enunciado diz "assinale <b>a</b> alternativa":
+       <b>uma</b> só. As represas guardam água e <b>controlam as cheias</b>.` },
+
+  { hab:"racionamento", quatro:true,
+    p:"Em um <b>racionamento</b> de água, o que acontece?",
+    o:["O abastecimento das casas é diminuído, podendo ocorrer em dias alternados",
+       "A água é cortada para sempre",
+       "A água fica mais barata",
+       "Todos os reservatórios são esvaziados"], c:0,
+    e:`Racionamento = <b>distribuição moderada</b>, para garantir água para toda a população.` },
+
+  { hab:"seca", quatro:true,
+    p:"Por que a seca prolongada no Nordeste provoca <b>fome</b>?",
+    o:["Porque a perda de plantações e rebanhos prejudica a produção de alimentos",
+       "Porque as pessoas não gostam de comer no calor",
+       "Porque a comida evapora",
+       "Porque as cidades ficam alagadas"], c:0,
+    e:`A longa estiagem faz perder plantações e animais; a queda de produtividade prejudica a
+       reserva e a distribuição de alimentos.` },
+
+  { hab:"enchente", quatro:true, arte: arteAsfalto(),
+    p:"Por que a <b>impermeabilização do solo</b> provoca enchentes?",
+    o:["Porque a água da chuva não entra no solo e corre toda para a rua",
+       "Porque o asfalto atrai chuva",
+       "Porque o concreto solta água",
+       "Porque aumenta o lençol freático"], c:0,
+    e:`E o mesmo problema <b>prejudica o lençol freático</b>, que deixa de receber água.` },
+
+  { hab:"enchente", quatro:true,
+    p:"Qual conjunto ajuda a <b>diminuir</b> as enchentes nas cidades?",
+    o:["Áreas verdes, telhados verdes, pavimentos permeáveis e não jogar lixo na rua",
+       "Mais asfalto, mais concreto e mais prédios",
+       "Aterrar os rios e canalizar tudo",
+       "Construir represas dentro das casas"], c:0,
+    e:`As quatro soluções da sua folha, na ordem em que ela apresenta.` },
+
+  { hab:"poluicao", quatro:true,
+    p:"Qual destes números está <b>certo</b>?",
+    o:["1 litro de óleo contamina até 20 mil litros de água",
+       "1 litro de óleo contamina até 20 litros de água",
+       "Uma garrafa plástica se decompõe em 1 ano",
+       "1 litro de óleo não contamina nada"], c:0,
+    e:`<b>20 mil litros</b> por 1 litro de óleo. E a garrafa leva <b>no mínimo 100 anos</b>.` },
+
+  { hab:"economia", quatro:true,
+    p:"Quais destas são atitudes do cartaz “Vamos usar bem e economizar água em casa”?",
+    o:["Banhos de 5 minutos, consertar vazamentos e usar vassoura em vez de mangueira",
+       "Deixar a torneira aberta ao escovar os dentes",
+       "Lavar roupa com a máquina quase vazia",
+       "Lavar a calçada com mangueira todo dia"], c:0,
+    e:`As oito atitudes: torneira fechada ao escovar, banho de 5 min, torneira fechada ao
+       ensaboar a louça, reutilizar a água, consertar vazamentos, descarga consciente, carga
+       cheia e <b>vassoura, não mangueira</b>.` },
+
+  { hab:"australia", quatro:true,
+    p:"A Austrália não possui fronteiras terrestres. Por isso ela é classificada como:",
+    o:["arquipélago","país-continente","península","ilha continental do Pacífico"], c:0,
+    e:`<b>Arquipélago</b>. Ela é chamada de <b>país-continente</b> por outro motivo:
+       sua extensão <b>abrange quase toda a Oceania</b>.` }
+];
+function provaFinal(){
+  pararArcade();
+  const pool = FINAL.map(q => ({q, peso: 1 + Math.min(S.erros[q.hab]||0, 3)}));
+  /* sorteio sem repetir, com peso: quem ela erra mais tem mais chance de ser puxada */
+  const escolhidas = [];
+  const resto = pool.slice();
+  const quantas = Math.min(14, FINAL.length);
+  while(escolhidas.length < quantas && resto.length){
+    const soma = resto.reduce((a,b)=>a+b.peso,0);
+    let r = Math.random()*soma, k = 0;
+    while(k < resto.length-1 && r > resto[k].peso){ r -= resto[k].peso; k++; }
+    escolhidas.push(resto[k].q);
+    resto.splice(k,1);
+  }
+  quizGenerico(N_MISSOES-1, "🎓 Prova Final", embaralha(escolhidas), 0, 0);
+}
+window.provaFinal = provaFinal;
+
+/* ============================================================
+   DIPLOMA
+   ============================================================ */
+function telaDiploma(){
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(3);
+  app.innerHTML = hud() + `
+    <div class="diploma">
+      <div class="selo">🏅</div>
+      <h2>${g("PRONTA","PRONTO")} PARA A PROVA<br>DE GEOGRAFIA</h2>
+      <p>O Caminho da Água certifica que</p>
+      <div class="nome">${NOME()}</div>
+      <p>percorreu as <b>${N_MISSOES-1} paradas</b> do conteúdo da 3ª etapa: a água do planeta,
+      as partes do rio e o lençol freático, mata ciliar, erosão e assoreamento, o ciclo da água,
+      a água por região do Brasil, represas e racionamento, enchentes urbanas e o uso consciente
+      da água.</p>
+      <p class="fila-estrelas">${"⭐".repeat(totalEstrelas)}</p>
+      <p><b>${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas</b> · <b>${S.pontos} pontos</b></p>
+      <p style="margin-top:18px;font-style:italic">Geografia · 3º ano · 3ª etapa · Volume 5</p>
+    </div>
+    <div class="acoes">
+      <button class="btn" onclick="irMapa()">🗺️ Voltar ao caminho</button>
+      <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      <button class="btn uva" onclick="window.print()">🖨️ Imprimir diploma</button>
+    </div>
+    ${fracas.length?`<div class="card centro">
+      <p class="mini">Ainda escorregando em: <b>${fracas.map(h=>NOME_HAB[h]||h).join(" · ")}</b>.
+      Refaça a <b>Prova da Bacia</b> — esses assuntos vão aparecer bastante.</p></div>`:``}
+    ${totalEstrelas<TOTAL_ESTRELAS?`<div class="card centro">
+      <p class="mini">Faltam <b>${TOTAL_ESTRELAS-totalEstrelas}</b> estrelas para a nota máxima, ${NOME()}.
+      Dá para refazer qualquer missão pelo mapa — e as estrelas só sobem!</p></div>`:`
+    <div class="card destaque centro"><div style="font-size:50px">👑</div>
+      <p><b>PERFEIÇÃO, ${NOME()}!</b> Todas as <b>${TOTAL_ESTRELAS} estrelas</b>.
+      Pode ir para a prova de cabeça erguida.</p></div>`}`;
+}
+
+/* ============================================================
+   INÍCIO
+   ============================================================ */
+if(carregar()){
+  S.cena = S.missoes.some(Boolean) ? "mapa" : "inicio";
+} else {
+  S.cena = "nome";
+}
+render();
+
+</script>
+</body>
+</html>

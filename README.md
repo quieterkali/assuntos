@@ -17,6 +17,7 @@ arquivo HTML: sem rede, sem dependências, funciona no celular e no computador.
 | Língua Portuguesa | 3º | Cidade das Palavras — revisão para a prova | roteiro da escola + 86 fotos das atividades | [8 missões](https://quieterkali.github.io/assuntos/lingua-portuguesa/3-ano/revisao-3a-etapa/) |
 | Língua Portuguesa | 6º | Voz da Praça — Direito à cidade e Espaços de direito | caderno SESI Linguagens, 21 fotos (p. 12–102) | [8 paradas](https://quieterkali.github.io/assuntos/lingua-portuguesa/6-ano/direito-a-cidade/) |
 | Língua Inglesa | 3º | Next Station: Mongolia — Unit 7, Lessons 1, 2, 5 e 6 | programação da escola + 10 fotos do *Next Station 2* | [8 estações](https://quieterkali.github.io/assuntos/ingles/3-ano/unit-7-mongolia/) |
+| Geografia | 3º | Caminho da Água — Volume 5 e a Atividade Unificada | programação da escola + 24 fotos (apostila ETAPA p. 62–74 e a unificada corrigida) | [8 paradas](https://quieterkali.github.io/assuntos/geografia/3-ano/agua/) |
 
 > Todos os jogos **perguntam o nome antes de começar** e personalizam tudo com ele — inclusive a
 > concordância de gênero escolhida pela criança e o diploma final. E **cada missão começa com uma
@@ -42,6 +43,8 @@ Como está hoje:
 /historia/6-ano/civilizacoes-antigas/
 /lingua-portuguesa/3-ano/revisao-3a-etapa/
 /lingua-portuguesa/6-ano/direito-a-cidade/
+/ingles/3-ano/unit-7-mongolia/
+/geografia/3-ano/agua/
 ```
 
 **O ano é pasta, não etiqueta.** Em fevereiro o 3º ano vira 4º: com o ano na pasta, o material
