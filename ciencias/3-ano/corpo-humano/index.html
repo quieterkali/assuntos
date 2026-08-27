@@ -56,7 +56,8 @@ button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
 .hud .nome{font-weight:bold;color:var(--ouro)}
 .chip{
   background:#1c0f38;border:2px solid #5b2ea8;border-radius:999px;
-  padding:4px 13px;font-size:.9em;font-weight:bold;white-space:nowrap
+  padding:4px 13px;font-size:.9em;font-weight:bold;white-space:nowrap;
+  min-height:42px;display:inline-flex;align-items:center;justify-content:center
 }
 .chip.pts{color:var(--ouro);border-color:#8a6a13}
 .chip.vida{color:var(--vermelho);border-color:#8a2740}
@@ -516,6 +517,7 @@ function render(){
     case "m3": fasePele();     break;
     case "m4": faseAnexos();   break;
     case "m5": faseFinal();    break;
+    case "treino": treino();   break;
     case "diploma": telaDiploma(); break;
     default:
       if(/^a[0-5]$/.test(S.cena)){ telaAula(+S.cena[1]); }
@@ -951,6 +953,14 @@ function telaMapa(){
         <button class="chip" onclick="zerar()" style="cursor:pointer">🔄 Começar tudo de novo</button>
       </p>
     </div>
+    <div class="card destaque centro">
+      <div style="font-size:44px">⚡</div>
+      <h2>Treino da Prova</h2>
+      <p>Sorteia <b>${TREINO_TAM}</b> perguntas de <b>todas</b> as missões, misturadas.
+      O que você errar volta no fim, até sair certo.</p>
+      <p class="mini">Não vale estrela — vale saber o que ainda falta.</p>
+      <button class="btn" onclick="treino()">Começar o treino ⚡</button>
+    </div>
     ${feitas===6?`<div class="card destaque centro">
       <div style="font-size:56px">🎓</div>
       <h2>Você completou tudo!</h2>
@@ -1074,6 +1084,12 @@ function dicaLugar(id){
 }
 
 const QUIZ_F1 = [
+  {p:"Qual destes é um órgão <b>interno</b>?",
+   o:["A pele","O coração","Os cabelos","As unhas"], c:1,
+   e:"Órgãos <b>internos</b> ficam dentro do corpo: cérebro, coração, pulmões, rins, estômago e intestinos. A <b>pele</b> é o órgão <b>externo</b>."},
+  {p:"Depois que os rins filtram o sangue e formam a urina, onde ela fica <b>guardada</b> antes de sair do corpo?",
+   o:["Na bexiga","No estômago","Nos pulmões","No cérebro"], c:0,
+   e:"A urina fica guardada na <b>bexiga</b> até sair do corpo. Quem a <b>forma</b> são os <b>rins</b>, filtrando o sangue."},
   {p:"Qual órgão <b>coordena o funcionamento</b> dos outros e permite que a gente pense, fale e tenha sentimentos?",
    o:["O coração","O cérebro","O estômago","Os rins"], c:1,
    e:"O <b>cérebro</b> é o chefe do corpo. Ele coordena os outros órgãos e permite pensar, falar, se mover e ter sentimentos."},
@@ -1145,19 +1161,84 @@ function respQuiz(k){
     somErro();
     fb.className = "feedback ruim show";
     fb.innerHTML = `<div class="tt">❌ Quase! A resposta certa é <b>${q.o[q.c]}</b>.</div>${q.e}`;
+    /* No Treino da Prova, o que ela erra volta no fim da rodada até sair certo. */
+    if(Q.treino) Q.repesca.push(q);
   }
   $("#proxBox").classList.remove("esconde");
-  $("#btnProx").textContent = (Q.i === Q.lista.length-1) ? "Terminar missão 🏁" : "Continuar →";
+  $("#btnProx").textContent = (Q.i === Q.lista.length-1)
+    ? (Q.treino ? "Ver resultado 🏁" : "Terminar missão 🏁") : "Continuar →";
   $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
 }
 window.respQuiz = respQuiz;
 function proxQuiz(){
   somClique();
   Q.i++; Q.respondida = false;
-  if(Q.i >= Q.lista.length){ concluiMissao(Q.missao, Q.ac, Q.tot); return; }
+  if(Q.i >= Q.lista.length){
+    if(Q.treino){ proxRodadaTreino(); return; }
+    concluiMissao(Q.missao, Q.ac, Q.tot); return;
+  }
   desenhaQuiz();
 }
 window.proxQuiz = proxQuiz;
+
+/* ============================================================
+   TREINO DA PROVA — revisão de tudo, com repescagem do que errou
+   Não dá estrela (estrela vem de missão), só pontos e um retrato
+   do que ainda precisa de olhada.
+   ============================================================ */
+const TREINO_TAM = 10;
+function poolTreino(){
+  return [].concat(QUIZ_F1, QUIZ_F2, QUIZ_F4, QUIZ_F5, QUIZ_FINAL);
+}
+let T = null;
+function treino(){
+  somClique();
+  S.cena = "treino";
+  const pool = embaralha(poolTreino());
+  const n = Math.min(TREINO_TAM, pool.length);
+  T = { total:n, acertos:0, errados:[], rodada:1 };
+  rodadaTreino(pool.slice(0, n));
+}
+window.treino = treino;
+function rodadaTreino(lista){
+  Q = { i:0, ac:0, tot:lista.length, lista:embaralhaOpcoes(lista), missao:-1,
+        titulo: T.rodada===1 ? "⚡ Treino da Prova" : `🔁 Repescagem · rodada ${T.rodada}`,
+        respondida:false, treino:true, repesca:[] };
+  desenhaQuiz();
+}
+function proxRodadaTreino(){
+  if(T.rodada === 1){ T.acertos = Q.ac; T.errados = Q.repesca.slice(); }
+  const faltam = Q.repesca;
+  if(faltam.length){
+    T.rodada++;
+    somPop();
+    rodadaTreino(faltam);
+    return;
+  }
+  fimTreino();
+}
+function fimTreino(){
+  somVitoria(); salvar();
+  const limpo = T.errados.length === 0;
+  const lista = T.errados.map(q=>`<li style="margin-bottom:10px;text-align:left">
+      ${q.p}<br><span style="color:var(--verde)">→ ${q.e}</span></li>`).join("");
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">${limpo?"🏆":"💪"}</div>
+      <h2>Treino terminado, ${JOGADORA()}!</h2>
+      <p>Você acertou <b>${T.acertos} de ${T.total}</b> de primeira${T.rodada>1?`, e o resto saiu na repescagem`:``}.</p>
+      ${limpo
+        ? `<p><b>Sem nenhum erro.</b> Pode fechar o caderno tranquila... ou apertar de novo, que as perguntas mudam.</p>`
+        : `<p class="mini">Estas aqui pediram uma segunda olhada — leia antes de dormir:</p>
+           <ul style="margin:10px 0 0 18px">${lista}</ul>`}
+      <div class="acoes">
+        <button class="btn" onclick="treino()">⚡ Treinar de novo</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
 
 /* ============================================================
    MISSÃO 2 — ESQUELETO E MÚSCULOS
@@ -1242,6 +1323,12 @@ function agirMusc(acao){
 window.agirMusc = agirMusc;
 
 const QUIZ_F2 = [
+  {p:"Qual parte do esqueleto <b>protege o cérebro</b>?",
+   o:["Os ossos do crânio","As costelas","O fêmur","Os ossos da mão"], c:0,
+   e:"O cérebro fica dentro da cabeça, protegido pelos <b>ossos do crânio</b>. Proteger os órgãos internos é um dos <b>três</b> trabalhos do esqueleto."},
+  {p:"E as <b>costelas</b> — quais órgãos elas protegem?",
+   o:["O coração e os pulmões","O estômago e os intestinos","Os rins e a bexiga","O cérebro"], c:0,
+   e:"As <b>costelas</b> formam uma gaiola de ossos em volta do peito e protegem o <b>coração</b> e os <b>pulmões</b>."},
   {p:"Quantos ossos tem, <b>em geral</b>, o corpo de um adulto?",
    o:["106 ossos","206 ossos","306 ossos","1.000 ossos"], c:1,
    e:"Em geral, o corpo humano de um <b>adulto</b> tem <b>206 ossos</b>. Curiosidade: um bebê nasce com entre 275 e 300 ossos, e vários vão se juntando conforme ele cresce!"},
@@ -1504,6 +1591,12 @@ function quizPele(){ somClique(); quizGenerico(3, "🛡️ Missão 4 · Prova da
 window.quizPele = quizPele;
 
 const QUIZ_F4 = [
+  {p:"A pele tem <b>quatro</b> trabalhos. Qual destes <b>NÃO</b> é um deles?",
+   o:["Bombear o sangue pelo corpo","Ser barreira contra microrganismos","Proteger dos raios ultravioleta","Manter a temperatura do corpo"], c:0,
+   e:"Os quatro trabalhos da pele são: <b>barreira</b> contra microrganismos, <b>proteção</b> contra os raios ultravioleta, <b>manter a temperatura</b> e o sentido do <b>tato</b>. Quem bombeia o sangue é o <b>coração</b>."},
+  {p:"Por que a pele fica <b>bronzeada</b> quando a pessoa toma Sol?",
+   o:["Porque o corpo produz mais melanina","Porque a pele fica suja","Porque o suor escurece a pele","Porque a pele fica mais grossa"], c:0,
+   e:"No Sol, o corpo produz <b>mais melanina</b> e a pele fica bronzeada. <b>Mas</b> quando a exposição é muito intensa a melanina não é suficiente — por isso <b>protetor solar</b> e <b>chapéu ou boné</b>."},
   {p:"Qual é o <b>maior órgão</b> do corpo humano?",
    o:["O cérebro","O coração","A pele","O intestino"], c:2,
    e:"A <b>pele</b> é o maior órgão do corpo humano. E ela é diferente dos outros: é um <b>órgão externo</b>, porque envolve o corpo todo."},
@@ -1531,6 +1624,9 @@ const QUIZ_F4 = [
    MISSÃO 5 — ANEXOS DA PELE
    ============================================================ */
 const QUIZ_F5 = [
+  {p:"Como são os <b>pelos do ser humano</b>, comparados com os de muitos outros mamíferos?",
+   o:["Mais finos e mais curtos","Mais grossos e mais compridos","Exatamente iguais","Só existem no rosto"], c:0,
+   e:"Os pelos do ser humano são <b>mais finos e mais curtos</b> que os de muitos outros mamíferos, e estão em quase todo o corpo — menos nos <b>lábios</b>, nas <b>palmas das mãos</b> e nas <b>plantas dos pés</b>."},
   {p:"Cabelos, pelos e unhas são formados por uma substância que dá resistência a eles. Qual?",
    o:["Melanina","Queratina","Oxigênio","Queratose"], c:1,
    e:"É a <b>queratina</b>! Ela dá <b>resistência</b> a cabelos, pelos e unhas. (Cuidado para não confundir com <b>melanina</b>, que é a da cor da pele.)"},
@@ -1562,6 +1658,9 @@ function faseAnexos(){ quizGenerico(4, "💧 Missão 5 · Segredos da Pele", QUI
    MISSÃO 6 — PROVA DE DOUTORADO
    ============================================================ */
 const QUIZ_FINAL = [
+  {p:"Você se cortou no dedo. Por que isso é um problema <b>para a pele</b>, e o que fazer?",
+   o:["A proteção contra microrganismos fica prejudicada — peça ajuda a um adulto","Nada demais, é só continuar brincando","A pele perde melanina — tome mais Sol","O osso ficou exposto — passe protetor solar"], c:0,
+   e:"Cortes, arranhões e queimaduras <b>prejudicam a barreira</b> que a pele faz contra os microrganismos. Peça ajuda a um <b>adulto</b> para tratar. Corte fundo pode deixar uma <b>cicatriz</b>."},
   {p:"Um <b>órgão externo</b> é aquele que:",
    o:["Fica dentro do corpo","Fica exposto, envolvendo o corpo","Só existe nos animais","Não tem função"], c:1,
    e:"Órgãos <b>externos</b> ficam expostos — o exemplo do livro é a <b>pele</b>. Já cérebro, coração, pulmões, rins, estômago e intestinos são <b>internos</b>."},
