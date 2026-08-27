@@ -9,7 +9,7 @@ arquivo HTML: sem rede, sem dependências, funciona no celular e no computador.
 
 | Matéria | Ano | Assunto | Base do conteúdo | Jogar |
 |---|---|---|---|---|
-| Ciências | 3º | O Corpo Humano | Cap. 9, p. 121–131 (fotos do livro) | [6 missões + Treino da Prova](https://quieterkali.github.io/assuntos/ciencias/3-ano/corpo-humano/) |
+| Ciências | 3º | O Corpo Humano | Cap. 9, p. 121–131 (fotos do livro) | [6 missões + Treino da Prova + Arcade](https://quieterkali.github.io/assuntos/ciencias/3-ano/corpo-humano/) |
 | Matemática | 3º | Fábrica da Tabuada — multiplicação de 0 a 9 | currículo padrão do ano | [6 missões](https://quieterkali.github.io/assuntos/matematica/3-ano/tabuada/) |
 | Matemática | 3º | Festa da Divisão — dividir, o resto e os atalhos | currículo padrão do ano | [6 missões](https://quieterkali.github.io/assuntos/matematica/3-ano/divisao/) |
 | Matemática | 3º | Contagem Regressiva — revisão para a prova | roteiro da escola + livro | [8 missões](https://quieterkali.github.io/assuntos/matematica/3-ano/revisao-3a-etapa/) |

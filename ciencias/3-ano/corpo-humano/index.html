@@ -45,7 +45,18 @@ button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
 .btn:active{transform:translateY(4px);box-shadow:0 2px 0 #7e1d54,0 6px 14px rgba(0,0,0,.35)}
 .btn.sec{background:linear-gradient(135deg,#4b2a80,#35205c);box-shadow:0 6px 0 #241141,0 10px 20px rgba(0,0,0,.3)}
 .btn.ciano{background:linear-gradient(135deg,var(--ciano),#3b82f6);box-shadow:0 6px 0 #155e75,0 12px 24px rgba(0,0,0,.35)}
+.btn.laranja{background:linear-gradient(135deg,var(--ouro),var(--laranja));color:#3a1d05;box-shadow:0 6px 0 #9a3412,0 12px 24px rgba(0,0,0,.35)}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ---------- arcade ---------- */
+.cronometro{
+  height:16px;background:#1c0f38;border-radius:99px;overflow:hidden;margin:10px 0 4px;
+  border:2px solid #5b2ea8
+}
+.cronometro i{display:block;height:100%;background:linear-gradient(90deg,var(--verde),var(--ouro),var(--vermelho));transition:width .2s linear}
+.placar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.placar span{background:#1c0f38;border:2px solid #5b2ea8;border-radius:999px;padding:4px 14px;font-weight:bold}
+.combo{color:var(--laranja)}
 
 /* ---------- HUD ---------- */
 .hud{
@@ -324,6 +335,9 @@ const S = {
   missoes: [false,false,false,false,false,false],
   estrelas: [0,0,0,0,0,0],
   aulas:    [false,false,false,false,false,false],
+  /* erros: id da pergunta -> peso. Alimenta o arcade e o treino, que puxam
+     de propósito o que ela ainda erra. Acertar baixa o peso; zerou, sai da lista. */
+  erros: {},
   cena: "nome"
 };
 
@@ -339,7 +353,7 @@ function salvar(){
   try{
     localStorage.setItem(CHAVE, JSON.stringify({
       nome:S.nome, genero:S.genero, pontos:S.pontos,
-      missoes:S.missoes, estrelas:S.estrelas, aulas:S.aulas
+      missoes:S.missoes, estrelas:S.estrelas, aulas:S.aulas, erros:S.erros
     }));
   }catch(e){/* navegador sem localStorage: o jogo roda igual, só não guarda */}
 }
@@ -352,6 +366,14 @@ function carregar(){
       if(Array.isArray(d.missoes)  && d.missoes.length===6)  S.missoes  = d.missoes.map(Boolean);
       if(Array.isArray(d.estrelas) && d.estrelas.length===6) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(3,n|0)));
       if(Array.isArray(d.aulas)    && d.aulas.length===6)    S.aulas    = d.aulas.map(Boolean);
+      /* save antigo não tem 'erros' — o jogo abre igual, só começa a lista vazia */
+      if(d.erros && typeof d.erros === "object" && !Array.isArray(d.erros)){
+        S.erros = {};
+        for(const k of Object.keys(d.erros)){
+          const v = d.erros[k]|0;
+          if(v > 0) S.erros[k] = Math.min(6, v);
+        }
+      }
       return true;
     }
   }catch(e){}
@@ -472,7 +494,7 @@ const SVG = {
 /* ============================================================
    ROTEADOR
    ============================================================ */
-function irMapa(){ somClique(); S.cena="mapa"; render(); }
+function irMapa(){ somClique(); pararArcade(); AR = null; S.cena="mapa"; render(); }
 window.irMapa = irMapa;
 function abrirMissao(i){
   if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a missão anterior primeiro!", true); return; }
@@ -521,6 +543,7 @@ function render(){
     case "m4": faseAnexos();   break;
     case "m5": faseFinal();    break;
     case "treino": treino();   break;
+    case "arcade": AR ? desenhaArcade() : telaArcade(); break;
     case "diploma": telaDiploma(); break;
     default:
       if(/^a[0-5]$/.test(S.cena)){ telaAula(+S.cena[1]); }
@@ -587,6 +610,7 @@ function zerar(){
   if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
   S.pontos = 0; S.missoes = [false,false,false,false,false,false];
   S.estrelas = [0,0,0,0,0,0]; S.aulas = [false,false,false,false,false,false];
+  S.erros = {};
   salvar(); somClique(); render();
 }
 window.zerar = zerar;
@@ -956,6 +980,14 @@ function telaMapa(){
         <button class="chip" onclick="zerar()" style="cursor:pointer">🔄 Começar tudo de novo</button>
       </p>
     </div>
+    <div class="card destaque centro" style="border-color:var(--laranja)">
+      <div style="font-size:44px">🕹️</div>
+      <h2>Arcade da Academia</h2>
+      <p><b>60 segundos</b> respondendo o máximo que conseguir, com <b>combo 🔥</b>.
+      O que você mais erra volta mais vezes.</p>
+      <p class="mini">Vale pontos, não estrela — e a colinha pausa o cronômetro.</p>
+      <button class="btn laranja" onclick="abrirArcade()">Entrar no arcade 🕹️</button>
+    </div>
     <div class="card destaque centro">
       <div style="font-size:44px">⚡</div>
       <h2>Treino da Prova</h2>
@@ -1158,15 +1190,18 @@ function respQuiz(k){
   const fb = $("#fbq");
   if(k===q.c){
     Q.ac++; somAcerto(); ganha(10);
+    marcaAcerto(q);
     fb.className = "feedback bom show";
     fb.innerHTML = `<div class="tt">✅ Correto!</div>${q.e}`;
   } else {
     somErro();
+    marcaErro(q);
     fb.className = "feedback ruim show";
     fb.innerHTML = `<div class="tt">❌ Quase! A resposta certa é <b>${q.o[q.c]}</b>.</div>${q.e}`;
     /* No Treino da Prova, o que ela erra volta no fim da rodada até sair certo. */
     if(Q.treino) Q.repesca.push(q);
   }
+  salvar();
   $("#proxBox").classList.remove("esconde");
   $("#btnProx").textContent = (Q.i === Q.lista.length-1)
     ? (Q.treino ? "Ver resultado 🏁" : "Terminar missão 🏁") : "Continuar →";
@@ -1193,16 +1228,189 @@ const TREINO_TAM = 10;
 function poolTreino(){
   return [].concat(QUIZ_F1, QUIZ_F2, QUIZ_F4, QUIZ_F5, QUIZ_FINAL);
 }
+
+/* ------------------------------------------------------------
+   LISTA DE ERROS — o que ela erra volta mais vezes
+   O id sai do texto da pergunta (que é único no jogo), e não da posição
+   no array: acrescentar pergunta nova não embaralha o histórico dela.
+   ------------------------------------------------------------ */
+function qid(q){
+  let h = 5381; const s = String(q.p);
+  for(let i=0;i<s.length;i++) h = ((h*33) ^ s.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function marcaErro(q){   const k = qid(q); S.erros[k] = Math.min(6, (S.erros[k]|0) + 2); }
+function marcaAcerto(q){ const k = qid(q); if(S.erros[k]){ if(--S.erros[k] <= 0) delete S.erros[k]; } }
+function dificeis(){ return poolTreino().filter(q => S.erros[qid(q)] > 0); }
+
+/* Sorteia puxando para o que ela erra, MAS sem repetir o que acabou de cair.
+   Sem essa janela, uma lista de erros curta faz o arcade martelar a mesma
+   pergunta — foi exatamente o defeito achado nos jogos de matemática. */
+function sorteiaPergunta(recentes){
+  const pool = poolTreino(), dif = dificeis();
+  for(let t=0; t<40; t++){
+    const fonte = (dif.length && Math.random() < 0.55) ? dif : pool;
+    const q = fonte[Math.floor(Math.random()*fonte.length)];
+    if(!recentes.includes(qid(q))) return q;
+  }
+  const livre = pool.filter(q => !recentes.includes(qid(q)));
+  return (livre.length ? livre : pool)[Math.floor(Math.random()*(livre.length||pool.length))];
+}
+
 let T = null;
 function treino(){
-  somClique();
+  somClique(); pararArcade(); AR = null;
   S.cena = "treino";
-  const pool = embaralha(poolTreino());
-  const n = Math.min(TREINO_TAM, pool.length);
+  const n = Math.min(TREINO_TAM, poolTreino().length);
+  const vistos = [], lista = [];
+  for(let i=0;i<n;i++){
+    const q = sorteiaPergunta(vistos);
+    vistos.push(qid(q)); lista.push(q);
+  }
   T = { total:n, acertos:0, errados:[], rodada:1 };
-  rodadaTreino(pool.slice(0, n));
+  rodadaTreino(lista);
 }
 window.treino = treino;
+
+/* ============================================================
+   ARCADE DA ACADEMIA — 60 segundos, valendo PONTOS, nunca estrela.
+   Estrela continua vindo de missão, sem relógio nenhum.
+   ============================================================ */
+const DUR_ARCADE = 60000;
+let AR = null, rafArcade = null;
+function pararArcade(){ if(rafArcade){ cancelAnimationFrame(rafArcade); rafArcade = null; } }
+
+function abrirArcade(){ somClique(); pararArcade(); AR = null; S.cena = "arcade"; render(); }
+window.abrirArcade = abrirArcade;
+
+function telaArcade(){
+  const dif = dificeis().length;
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">🕹️</div>
+      <h2>Arcade da Academia</h2>
+      <p><b>60 segundos.</b> Responda o máximo que conseguir. Cada acerto seguido aumenta o
+      <b>combo 🔥</b>, e o combo vale pontos extras no fim.</p>
+      <div class="card" style="text-align:left;background:rgba(28,15,56,.8)">
+        <p>⏱️ O relógio corre, mas ele <b>nunca</b> decide a sua nota: o arcade vale
+        <b>pontos</b>, e as <b>⭐ estrelas</b> vêm das missões, sem relógio.</p>
+        <p>🎯 As perguntas que você <b>mais erra</b> aparecem <b>mais vezes</b>, de propósito.
+        ${dif ? `Agora tem <b>${dif}</b> na sua lista.` : `Sua lista está limpa — então cai de tudo.`}</p>
+        <p>📖 Pode abrir a <b>colinha</b> no meio: o cronômetro <b>pausa</b>.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn laranja" onclick="comecaArcade()">⏱️ Começar o arcade</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+      </div>
+    </div>`;
+}
+
+function novaDoArcade(){
+  const lim = Math.max(1, Math.min(5, poolTreino().length - 1));
+  const q = sorteiaPergunta(AR.recentes);
+  AR.recentes.push(qid(q));
+  while(AR.recentes.length > lim) AR.recentes.shift();
+  AR.q = embaralhaOpcoes([q])[0];
+  AR.respondida = false;
+}
+function comecaArcade(){
+  somClique(); ac();
+  S.cena = "arcade";
+  AR = { t:0, ultimo:performance.now(), ac:0, err:0, combo:0, melhor:0,
+         recentes:[], q:null, respondida:false, fim:false, errados:[] };
+  novaDoArcade();
+  desenhaArcade();
+  pararArcade();
+  rafArcade = requestAnimationFrame(tickArcade);
+}
+window.comecaArcade = comecaArcade;
+
+function tickArcade(agora){
+  if(!AR || AR.fim || S.cena !== "arcade"){ pararArcade(); return; }
+  const dt = Math.min(120, agora - AR.ultimo);
+  AR.ultimo = agora;
+  /* colinha aberta = cronômetro parado. Consultar não pode custar tempo. */
+  if($("#colinha").classList.contains("aberta")){ rafArcade = requestAnimationFrame(tickArcade); return; }
+  AR.t += dt;
+  const barra = document.getElementById("barraTempo");
+  if(barra) barra.style.width = Math.max(0, 100 - AR.t/DUR_ARCADE*100) + "%";
+  if(AR.t >= DUR_ARCADE){ fimArcade(); return; }
+  rafArcade = requestAnimationFrame(tickArcade);
+}
+function placarArcadeHTML(){
+  return `<span>✅ ${AR.ac}</span><span>❌ ${AR.err}</span><span class="combo">🔥 ${AR.combo}</span>`;
+}
+function desenhaArcade(){
+  const q = AR.q;
+  app.innerHTML = hud("🕹️ Arcade da Academia") + `
+    <div class="card">
+      <div class="placar" id="placarArc">${placarArcadeHTML()}</div>
+      <div class="cronometro"><i id="barraTempo" style="width:${Math.max(0,100-AR.t/DUR_ARCADE*100)}%"></i></div>
+      <div class="pergunta">${q.p}</div>
+      <div class="opcoes" id="opsArc">
+        ${q.o.map((t,k)=>`<button class="op" onclick="respArcade(${k})">
+          <span class="letra">${"ABCD"[k]}</span><span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fbArc"></div>
+    </div>`;
+}
+function respArcade(k){
+  if(!AR || AR.fim || AR.respondida) return;
+  const q = AR.q;
+  if(k === q.c){
+    AR.ac++; AR.combo++; AR.melhor = Math.max(AR.melhor, AR.combo);
+    marcaAcerto(q); somAcerto(); S.pontos += 5;
+    novaDoArcade(); desenhaArcade();
+  } else {
+    AR.err++; AR.combo = 0; marcaErro(q); somErro();
+    AR.respondida = true; AR.errados.push(q);
+    document.querySelectorAll("#opsArc .op").forEach((b,idx)=>{
+      b.disabled = true;
+      if(idx===q.c) b.classList.add("certa");
+      else if(idx===k) b.classList.add("errada");
+    });
+    const pl = document.getElementById("placarArc");
+    if(pl) pl.innerHTML = placarArcadeHTML();
+    const fb = $("#fbArc");
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ A resposta certa é <b>${q.o[q.c]}</b>.</div>${q.e}
+      <div class="acoes"><button class="btn" onclick="seguirArcade()">Continuar ▶</button></div>`;
+  }
+}
+window.respArcade = respArcade;
+function seguirArcade(){
+  if(!AR || AR.fim) return;
+  somClique(); novaDoArcade(); desenhaArcade();
+}
+window.seguirArcade = seguirArcade;
+function fimArcade(){
+  AR.fim = true; pararArcade();
+  const bonus = AR.ac*5 + AR.melhor*10;
+  S.pontos += bonus; salvar(); somVitoria();
+  const vistos = new Set();
+  const lista = AR.errados.filter(q=>{ const k=qid(q); if(vistos.has(k)) return false; vistos.add(k); return true; });
+  app.innerHTML = hud("🕹️ Arcade da Academia") + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">${AR.ac>=20?"🔥":AR.ac>=10?"🎉":"👏"}</div>
+      <h2>Tempo esgotado, ${JOGADORA()}!</h2>
+      <p>Você acertou <b>${AR.ac}</b> em 60 segundos, com melhor sequência de
+      <b>${AR.melhor}</b> seguidas.</p>
+      <p class="mini">Bônus de <b>${bonus} pontos</b>. O arcade vale <b>pontos</b>, nunca ⭐ —
+      estrela vem de missão, e sem relógio.</p>
+      ${lista.length
+        ? `<p class="mini">Estas escaparam. Vão voltar mais vezes no próximo arcade:</p>
+           <ul style="margin:10px 0 0 18px">${lista.map(q=>`<li style="margin-bottom:10px;text-align:left">
+             ${q.p}<br><span style="color:var(--verde)">→ ${q.e}</span></li>`).join("")}</ul>`
+        : `<p><b>Nenhum erro em 60 segundos.</b> Isso é domínio do capítulo. 🏆</p>`}
+      <div class="acoes">
+        <button class="btn laranja" onclick="comecaArcade()">🔁 Jogar de novo</button>
+        <button class="btn sec" onclick="treino()">⚡ Treino da Prova</button>
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
 function rodadaTreino(lista){
   Q = { i:0, ac:0, tot:lista.length, lista:embaralhaOpcoes(lista), missao:-1,
         titulo: T.rodada===1 ? "⚡ Treino da Prova" : `🔁 Repescagem · rodada ${T.rodada}`,
