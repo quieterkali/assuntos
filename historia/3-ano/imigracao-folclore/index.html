@@ -1,0 +1,3227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Porto das Histórias</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%9A%A2%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0a1420; --bg2:#0f2030; --panel:#132b3d; --panel2:#1a3a50;
+  --ink:#fdf6e8; --muted:#b7a892;
+  --ambar:#f6b73c; --coral:#fb7185; --menta:#4ade80; --mar:#2dd4bf;
+  --vermelho:#f87171; --ouro:#fbbf24;
+  --borda:#2c4658; --borda2:#3e6076; --fundo2:#0e2333; --fundo3:#153247; --fundo4:#1b3d55;
+  --tintaBtn:#2b1c03; --sombraBtn:#b45309;
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  background:
+    radial-gradient(1000px 700px at 88% -10%, #b45309 0%, transparent 52%),
+    radial-gradient(900px 600px at 8% 4%, #155e75 0%, transparent 50%),
+    radial-gradient(1000px 700px at 50% 116%, #0f766e 0%, transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+  font-size:17px; line-height:1.5;
+  overflow-x:hidden;
+}
+#estrelas{position:fixed;inset:0;pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:16px 14px 60px}
+
+h1,h2,h3{margin:0 0 10px;line-height:1.15}
+h1{font-size:clamp(28px,7vw,46px)}
+h2{font-size:clamp(22px,5vw,32px)}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0}
+
+/* ---------- botões ---------- */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;font-weight:bold;
+  background:linear-gradient(135deg,var(--ambar),#d97706);color:var(--tintaBtn);
+  box-shadow:0 6px 0 var(--sombraBtn), 0 12px 24px rgba(0,0,0,.45);
+  transition:transform .08s, box-shadow .08s; font-size:1.05em;
+}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--sombraBtn),0 6px 14px rgba(0,0,0,.35)}
+.btn.sec{background:linear-gradient(135deg,#2c4658,#0e2333);color:var(--ink);box-shadow:0 6px 0 #071620,0 10px 20px rgba(0,0,0,.35)}
+.btn.uva{background:linear-gradient(135deg,var(--mar),#0d9488);color:#04221e;box-shadow:0 6px 0 #0f766e,0 12px 24px rgba(0,0,0,.35)}
+.btn.chama{background:linear-gradient(135deg,var(--coral),#e11d48);color:#fff;box-shadow:0 6px 0 #881337,0 12px 24px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ---------- HUD ---------- */
+.hud{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  background:rgba(19,43,61,.9);border:2px solid var(--borda);border-radius:var(--r);
+  padding:10px 14px;margin-bottom:14px;backdrop-filter:blur(6px);
+}
+.hud .nome{font-weight:bold;color:var(--ambar)}
+.chip{
+  background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;
+  padding:9px 14px;font-size:.9em;font-weight:bold;white-space:nowrap;color:var(--ink);
+  line-height:1.2;min-height:42px;display:inline-flex;align-items:center
+}
+.chip.pts{color:var(--ouro);border-color:#8a6a13}
+.hud .espaco{flex:1}
+
+/* ---------- cartões ---------- */
+.card{
+  background:linear-gradient(160deg,rgba(26,58,80,.92),rgba(10,20,32,.94));
+  border:2px solid var(--borda);border-radius:var(--r);padding:20px;margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45)
+}
+.card.destaque{border-color:var(--ouro);box-shadow:0 0 0 3px rgba(251,191,36,.18),0 10px 30px rgba(0,0,0,.5)}
+
+/* ---------- mapa ---------- */
+.missoes{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.missao{
+  position:relative;text-align:left;width:100%;
+  background:linear-gradient(160deg,var(--fundo4),#0a1a26);
+  border:2px solid var(--borda2);border-radius:var(--r);padding:16px 16px 14px;
+  color:var(--ink);transition:transform .12s,border-color .12s;
+}
+.missao:not(.trancada):hover{transform:translateY(-4px);border-color:var(--ambar)}
+.missao.trancada{opacity:.5;filter:grayscale(.6);cursor:not-allowed}
+.missao.feita{border-color:var(--menta)}
+.missao .num{
+  position:absolute;top:-12px;left:14px;background:var(--ambar);color:var(--tintaBtn);
+  width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  font-weight:bold;box-shadow:0 3px 0 var(--sombraBtn)
+}
+.missao.feita .num{background:var(--menta);color:#04231a;box-shadow:0 3px 0 #0f6b4a}
+.missao .ico{font-size:34px;line-height:1;margin:6px 0 6px}
+.missao .tit{font-weight:bold;font-size:1.08em;margin-bottom:3px}
+.missao .sub{font-size:.85em;color:var(--muted)}
+.missao .estrelas{margin-top:8px;font-size:1.05em;letter-spacing:2px}
+
+/* ---------- quiz ---------- */
+.pergunta{font-size:1.14em;font-weight:bold;margin-bottom:14px}
+.enunciado{
+  background:var(--fundo2);border-left:6px solid var(--ambar);border-radius:12px;
+  padding:14px 16px;margin-bottom:14px;font-size:1.06em;line-height:1.55
+}
+.conta{
+  font-size:clamp(19px,4.8vw,28px);font-weight:bold;text-align:center;
+  margin:6px 0 16px;color:var(--ouro);overflow-wrap:anywhere;line-height:1.35
+}
+.opcoes{display:grid;gap:10px}
+.opcoes.grade{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.opcoes.quatro{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.op{
+  text-align:left;background:var(--fundo3);border:2px solid var(--borda);border-radius:14px;
+  padding:13px 16px;color:var(--ink);transition:border-color .1s,background .1s,transform .1s;
+  display:flex;gap:10px;align-items:center
+}
+.opcoes.grade .op{justify-content:center;font-size:1.15em;font-weight:bold;padding:16px 10px;text-align:center}
+.opcoes.quatro .op{justify-content:center;font-size:1.02em;font-weight:bold;padding:16px 10px;text-align:center}
+.op:not(:disabled):hover{border-color:var(--ambar);transform:translateY(-2px)}
+.op .letra{
+  flex:0 0 26px;height:26px;border-radius:8px;background:var(--borda2);color:#fff;
+  display:grid;place-items:center;font-weight:bold;font-size:.85em
+}
+.op.certa{border-color:var(--menta);background:#0f4a36}
+.op.certa .letra{background:var(--menta);color:#04231a}
+.op.errada{border-color:var(--vermelho);background:#4b1524}
+.op.errada .letra{background:var(--vermelho);color:#3d0a16}
+.op:disabled{cursor:default}
+
+.feedback{margin-top:14px;border-radius:14px;padding:14px 16px;border-left:6px solid;display:none}
+.feedback.show{display:block;animation:sobe .25s}
+.feedback.bom{background:rgba(74,222,128,.15);border-color:var(--menta)}
+.feedback.ruim{background:rgba(248,113,113,.15);border-color:var(--vermelho)}
+.feedback .tt{font-weight:bold;margin-bottom:5px;font-size:1.05em}
+@keyframes sobe{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.progresso{height:9px;background:var(--fundo2);border-radius:99px;overflow:hidden;margin-bottom:16px}
+.progresso i{display:block;height:100%;background:linear-gradient(90deg,var(--mar),var(--ambar));transition:width .3s}
+
+/* ---------- aviso de "uma resposta só" ---------- */
+.quantas{
+  display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;
+  background:var(--fundo2);border:2px dashed var(--ouro);border-radius:14px;
+  padding:10px 14px;margin-bottom:14px;font-weight:bold;color:var(--ouro)
+}
+
+/* ---------- fichas (classificar / peneira) ---------- */
+.fichas{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0}
+.ficha{
+  background:var(--fundo3);border:2px solid var(--borda2);border-radius:14px;
+  padding:14px 10px;color:var(--ink);font-weight:bold;text-align:center;font-size:1em;
+  transition:transform .1s,border-color .1s,background .1s;line-height:1.25
+}
+.ficha .tipo{display:block;font-size:.74em;font-weight:normal;color:var(--muted);margin-top:4px}
+.ficha:not(:disabled):hover{transform:translateY(-2px);border-color:var(--ambar)}
+.ficha.pega{border-color:var(--menta);background:#0f4a36}
+.ficha.furada{border-color:var(--vermelho);background:#4b1524}
+.ficha.revelada{opacity:.55}
+
+/* ---------- linha do tempo (ordenar) ---------- */
+.trilha{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0 6px}
+.vagao{
+  background:var(--fundo2);border:2px dashed var(--borda2);border-radius:14px;
+  min-width:96px;min-height:66px;display:grid;place-items:center;padding:8px 10px;
+  font-weight:bold;font-size:.9em;text-align:center;color:var(--muted)
+}
+.vagao.cheio{border-style:solid;border-color:var(--ambar);color:var(--ink);background:var(--fundo4)}
+.vagao.certo{border-color:var(--menta);background:#0f4a36;color:#eafff5}
+.vagao.errado{border-color:var(--vermelho);background:#4b1524}
+.vagao .ord{display:block;font-size:.72em;color:var(--ouro);font-weight:bold}
+
+/* ---------- arte ---------- */
+.arte{display:block;margin:4px auto 14px;max-width:440px;width:100%;height:auto;
+  border-radius:14px;border:2px solid var(--borda2);background:#0a1e2c}
+.arte.larga{max-width:520px}
+.artes2{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:6px 0 14px}
+.artes2 figure{margin:0}
+.artes2 figcaption{text-align:center;font-weight:bold;margin-top:6px;font-size:.92em}
+.hot{cursor:pointer}
+.hot path,.hot circle{transition:fill .12s}
+.hot:hover path,.hot:hover circle{fill:var(--ouro)}
+
+/* ---------- arcade ---------- */
+.cronometro{
+  height:16px;background:var(--fundo2);border-radius:99px;overflow:hidden;margin:10px 0 4px;
+  border:2px solid var(--borda)
+}
+.cronometro i{display:block;height:100%;background:linear-gradient(90deg,var(--menta),var(--ouro),var(--vermelho));transition:width .2s linear}
+.placar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:6px}
+.placar span{background:var(--fundo2);border:2px solid var(--borda);border-radius:999px;padding:4px 14px;font-weight:bold}
+.combo{color:var(--coral)}
+
+/* ---------- aula ---------- */
+.aula{
+  background:#fdf8ef;
+  background-image:linear-gradient(rgba(180,83,9,.08) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(180,83,9,.08) 1px, transparent 1px);
+  background-size:22px 22px;
+  color:#2b1f13;border:3px solid var(--ambar);border-radius:var(--r);
+  padding:24px 22px 20px;margin-bottom:14px;box-shadow:0 14px 40px rgba(0,0,0,.55)
+}
+.aula b{color:#a45209}
+.aula .guia{
+  display:flex;gap:10px;align-items:center;font-size:.86em;color:#6b5641;
+  border-bottom:2px dashed #e5d3ba;padding-bottom:10px;margin-bottom:16px
+}
+.aula .guia .robo{font-size:30px;line-height:1}
+.aula .ico{font-size:60px;line-height:1;text-align:center;margin-bottom:6px}
+.aula h2{color:#a45209;text-align:center;font-size:clamp(21px,5.2vw,30px)}
+.aula p{font-size:1.06em;margin:0 0 12px}
+.aula .chave{
+  background:#fff;border-left:6px solid #d97706;border-radius:10px;
+  padding:12px 14px;margin-top:14px;font-size:1.03em
+}
+.aula .chave .rot{display:block;font-weight:bold;color:#a45209;font-size:.82em;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.aula .lista{margin:10px 0 0;padding-left:20px}
+.aula .lista li{margin-bottom:6px}
+.aula .destaque{
+  text-align:center;font-size:clamp(18px,4.6vw,26px);font-weight:bold;color:#a45209;
+  background:#fff;border-radius:12px;padding:12px 10px;margin:12px 0;
+  overflow-wrap:anywhere;line-height:1.35
+}
+.aula .errado{color:#b91c1c;text-decoration:line-through}
+.aula .certo{color:#15803d}
+.aula table.mini-tab{border-collapse:collapse;margin:10px auto;font-size:.92em}
+.aula table.mini-tab th,.aula table.mini-tab td{border:1px solid #e5d3ba;padding:6px 10px;text-align:center}
+.aula table.mini-tab th{background:#fdeccd;color:#a45209}
+.aula .arte{border-color:#e5d3ba;background:#fbf1e2}
+.pontos{display:flex;gap:7px;justify-content:center;margin:18px 0 4px;flex-wrap:wrap}
+.pontos i{width:9px;height:9px;border-radius:50%;background:#e5d3ba;display:block}
+.pontos i.aqui{background:#d97706;transform:scale(1.35)}
+.pontos i.vista{background:#d97706;opacity:.45}
+.btn.aula{background:linear-gradient(135deg,#0d9488,#2dd4bf);color:#04221e;box-shadow:0 6px 0 #0f766e,0 10px 20px rgba(0,0,0,.35)}
+.btn.aula.fraco{background:linear-gradient(135deg,#9b8a76,#6d5f4e);box-shadow:0 6px 0 #45392c,0 10px 20px rgba(0,0,0,.3)}
+
+/* ---------- diversos ---------- */
+.centro{text-align:center}
+.mini{font-size:.88em;color:var(--muted)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag{background:var(--fundo2);border:1px solid var(--borda);border-radius:999px;padding:3px 11px;font-size:.8em;color:var(--muted)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.esconde{display:none!important}
+.campo{
+  width:100%;max-width:340px;padding:14px 18px;border-radius:14px;border:3px solid var(--ambar);
+  background:var(--fundo2);color:var(--ink);font-size:1.15em;font-family:inherit;text-align:center;margin:6px 0 4px
+}
+.campo:focus{outline:none;border-color:var(--mar);box-shadow:0 0 0 4px rgba(246,183,60,.2)}
+.rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:10px 0}
+table.grade2{border-collapse:collapse;margin:0 auto;font-size:.93em}
+table.grade2 th,table.grade2 td{border:2px solid var(--borda2);padding:8px 11px;text-align:center}
+table.grade2 th{background:var(--fundo4);color:var(--ambar);font-size:.82em}
+table.grade2 th.linha{background:var(--fundo3);color:var(--ink);text-align:left;font-weight:normal}
+table.grade2 td{background:var(--fundo2)}
+table.grade2 td.marca{color:var(--menta);font-weight:bold}
+
+/* colinha */
+.colinha{position:fixed;inset:0;background:rgba(6,14,22,.98);z-index:50;overflow-y:auto;padding:20px 14px 60px;display:none}
+.colinha.aberta{display:block}
+.colinha .in{max-width:760px;margin:0 auto}
+.colinha h3{color:var(--ouro);margin-top:26px;border-bottom:2px solid var(--borda);padding-bottom:6px}
+.colinha ul,.colinha ol{padding-left:20px}
+.colinha li{margin-bottom:7px}
+.colinha b{color:var(--ambar)}
+.colinha .ex{background:var(--fundo2);border-left:5px solid var(--mar);border-radius:10px;padding:10px 14px;margin:10px 0}
+.fechar{position:sticky;top:0;float:right;background:var(--ambar);color:var(--tintaBtn);border-radius:999px;
+  width:44px;height:44px;font-size:22px;font-weight:bold;box-shadow:0 4px 0 var(--sombraBtn);z-index:2}
+
+/* diploma */
+.diploma{
+  background:linear-gradient(160deg,#fffaf1,#fdeeda);color:#2b1f13;border-radius:20px;
+  padding:28px 22px;text-align:center;border:8px double var(--ambar);box-shadow:0 20px 50px rgba(0,0,0,.6)
+}
+.diploma h2{color:#a45209;font-size:clamp(24px,6vw,36px)}
+.diploma .nome{
+  font-size:clamp(24px,6.4vw,40px);font-weight:bold;color:#0f766e;
+  border-bottom:3px solid var(--mar);display:inline-block;padding:4px 22px;margin:10px 0 14px;
+  overflow-wrap:anywhere;max-width:100%
+}
+.diploma .selo{font-size:56px}
+.fila-estrelas{font-size:clamp(15px,4.4vw,24px);line-height:1.7;letter-spacing:1px;
+  overflow-wrap:anywhere;word-break:break-word;max-width:100%;margin:12px 0}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;top:80px;transform:translateX(-50%);
+  background:var(--menta);color:#04231a;font-weight:bold;padding:10px 22px;border-radius:999px;
+  z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;transition:opacity .25s,top .25s;
+  pointer-events:none;max-width:90vw;text-align:center
+}
+.toast.show{opacity:1;top:100px}
+.toast.mau{background:var(--vermelho);color:#3d0a16}
+
+@media(max-width:520px){
+  body{font-size:16px}
+  .card{padding:16px 14px}
+  .wrap{padding:12px 10px 50px}
+}
+/* foco de teclado visível — o anel padrão some contra o fundo escuro em alguns navegadores */
+:focus-visible{outline:3px solid var(--ouro);outline-offset:3px;border-radius:8px}
+.missao:focus-visible,.op:focus-visible,.ficha:focus-visible,.chip:focus-visible{outline-offset:2px}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{ body{background:#fff} #estrelas,.hud,.acoes,.card:not(.diploma){display:none!important} }
+</style>
+</head>
+<body>
+<canvas id="estrelas"></canvas>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast"></div>
+<div class="colinha" id="colinha">
+  <div class="in">
+    <button class="fechar" onclick="fecharColinha()">×</button>
+    <h2 style="color:var(--ouro)">📖 Colinha da Prova</h2>
+    <p class="mini">História · 3º ano · prova de <b>31/08/2026</b> · Volume 5 + as duas
+    Atividades Unificadas. Consultar não é trapaça.</p>
+
+    <h3>🚢 As palavras que a prova cobra</h3>
+    <ul>
+      <li><b>Imigração</b> — deslocamento de uma pessoa ou grupo de um território para outro
+      <b>com o objetivo de se estabelecer em um novo país</b>.</li>
+      <li><b>Imigrante</b> — pessoa que <b>decide</b> mudar para outro país, em busca de
+      melhores condições de vida, trabalho, estudo ou para reunir-se à família.</li>
+      <li><b>Refugiado</b> — pessoa <b>obrigada</b> a deixar o país por guerras, perseguições,
+      conflitos, violência ou graves crises humanitárias.</li>
+      <li><b>Miscigenação</b> — combinação de <b>etnias diferentes</b>. No Brasil, três grupos
+      de base: <b>indígena, europeu e negro</b>.</li>
+      <li><b>Legado</b> — conhecimento ou herança transmitida às futuras gerações.</li>
+      <li><b>Declínio</b> — diminuição gradual.</li>
+      <li><b>Imigração espontânea</b> = a pessoa escolhe. <b>Imigração forçada</b> = guerra,
+      perseguição, risco. Os <b>africanos escravizados</b> vieram por imigração forçada.</li>
+    </ul>
+    <div class="ex"><b>Nunca troque:</b> imigrante <b>quer</b> · refugiado <b>é obrigado</b>.</div>
+
+    <h3>📅 A linha do tempo (decore esta lista)</h3>
+    <ul>
+      <li><b>1500</b> — os portugueses chegam com as <b>caravelas</b>.</li>
+      <li><b>1530</b> — começa a imigração no Brasil: cana-de-açúcar e povoamento.</li>
+      <li><b>1696</b> — encontram <b>ouro</b>; milhares de portugueses vêm atrás.</li>
+      <li><b>1748</b> — chegam famílias portuguesas da <b>Madeira e dos Açores</b>.</li>
+      <li><b>29/11/1807</b> — <b>D. João VI</b>, a família real e a Corte fogem de
+      <b>Napoleão</b>; cerca de <b>15 000</b> portugueses desembarcam.</li>
+      <li><b>1824</b> — chegam os <b>alemães</b>, e vão para o <b>Sul</b>.</li>
+      <li><b>1847–1857</b> — <b>Senador Vergueiro</b> e o <b>sistema de parceria</b>.</li>
+      <li><b>1870</b> — começa a <b>"grande migração"</b> italiana (auge <b>1890–1910</b>).</li>
+      <li><b>1886</b> — começa a construção da <b>Hospedaria de Imigrantes</b>, no Brás.</li>
+      <li><b>1888</b> — <b>Lei Áurea</b>: abolição da escravidão.</li>
+      <li><b>18/06/1908</b> — o navio <b>Kasato Maru</b> chega ao porto de <b>Santos</b>.</li>
+      <li><b>1930</b> — começa o <b>declínio</b> da imigração.</li>
+    </ul>
+
+    <h3>🇵🇹 Portugueses</h3>
+    <ul>
+      <li><b>Maior contingente</b> de imigrantes do Brasil e a imigração <b>mais expressiva</b>
+      da nossa história.</li>
+      <li>Nos séculos <b>XVI e XVII</b> quase não vinham: não havia atrativos na Colônia.</li>
+      <li><b>Legado principal: o idioma.</b> Também música, festas e o <b>catolicismo</b>.</li>
+      <li>Festas e danças: <b>Cavalhada, fandango, Carnaval, Festas Juninas, Farra do Boi</b>.
+      A dança típica de Portugal é o <b>vira</b>.</li>
+      <li>Culinária: <b>cozidos, embutidos, frutos do mar e peixes</b> — a <b>bacalhoada</b>.</li>
+    </ul>
+
+    <h3>🇪🇸 Espanhóis</h3>
+    <ul>
+      <li>Estão na América desde o <b>século XVI</b>, pelas <b>Grandes Navegações</b>.</li>
+      <li>Nos primeiros séculos eram de origem <b>castelhana</b>, na <b>região Sul</b> do Brasil.</li>
+      <li>No <b>final do século XIX</b> vieram os <b>galegos</b>, da região da <b>Galícia</b> —
+      influência dos <b>celtas</b> e semelhanças com os vizinhos <b>portugueses</b>.</li>
+      <li>Trouxeram conhecimentos de <b>agricultura e pecuária</b>, o <b>azeite de oliva</b> e o
+      <b>flamenco</b>.</li>
+    </ul>
+
+    <h3>🇮🇹 Italianos</h3>
+    <ul>
+      <li><b>Segundo maior grupo</b>, depois dos portugueses.</li>
+      <li>A <b>"grande migração"</b> começou em <b>1870</b> e teve auge entre <b>1890 e 1910</b>.</li>
+      <li>Motivo: <b>crise de desemprego na Itália</b>, por causa da <b>industrialização</b>.</li>
+      <li><b>No campo:</b> fazendas de café. <b>Na cidade:</b> as indústrias.</li>
+      <li>Estados: <b>São Paulo, Rio Grande do Sul e Minas Gerais</b> — maior concentração em
+      <b>São Paulo</b>.</li>
+      <li>Bairros operários: <b>Mooca, Bixiga, Barra Funda e Brás</b>.</li>
+      <li>Comida: <b>pães, massas, berinjela, fubá para a polenta e embutidos</b>.</li>
+    </ul>
+
+    <h3>🇩🇪 Alemães</h3>
+    <ul>
+      <li>Chegaram em <b>1824</b>, no <b>século XIX</b>, fugindo dos <b>conflitos e perseguições
+      políticas do processo de unificação da Alemanha</b>.</li>
+      <li>Foram os que <b>mais preservaram a própria cultura</b>.</li>
+      <li><b>São Leopoldo (RS)</b> — a <b>primeira</b> experiência de povoamento do Sul do Brasil.</li>
+      <li>Estados: <b>Paraná, Santa Catarina e Rio Grande do Sul</b>.</li>
+      <li>Religião: <b>PROTESTANTE</b> (⚠️ não católica).</li>
+      <li>Trouxeram <b>agricultura familiar, trigo e criação de suínos</b>; influenciaram a
+      <b>arquitetura</b> das cidades.</li>
+      <li><b>Oktoberfest</b>: em <b>outubro</b>, em <b>Blumenau (SC)</b>. No Brasil foi
+      celebrada pela primeira vez em <b>1978</b>, em <b>Itapiranga (SC)</b>.</li>
+    </ul>
+
+    <h3>🇯🇵 Japoneses</h3>
+    <ul>
+      <li><b>18 de junho de 1908</b>, porto de <b>Santos</b>, navio <b>Kasato Maru</b>. Saiu do
+      porto de <b>Kobe</b> e levou <b>52 dias</b>.</li>
+      <li><b>165 famílias · 781 pessoas</b>, para os <b>cafezais do Oeste Paulista</b>.</li>
+      <li>Bairro da <b>Liberdade</b>, em São Paulo — hoje é <b>oriental</b>, não só japonês.</li>
+      <li>Mas <b>a maioria foi para a agricultura</b>: <b>algodão, verduras, legumes e arroz</b>
+      (⚠️ não indústria, ⚠️ não mineração).</li>
+      <li><b>Língua, costumes, religião, clima e alimentação</b> foram <b>barreiras</b>; por isso
+      se organizaram em <b>colônias</b>, com <b>escolas</b> de idioma e cultura japoneses.</li>
+      <li>Comida: <b>shoyu, chá-verde, rabanete, cabotiá</b> (abóbora japonesa), sushi, tempurá,
+      ramen.</li>
+    </ul>
+
+    <h3>🏛️ A porta de entrada e as três leis</h3>
+    <ul>
+      <li><b>Hospedaria de Imigrantes</b> — obras em <b>junho de 1886</b>, no bairro do
+      <b>Brás</b>. Abrigou os recém-chegados entre <b>1887 e 1978</b>. Hoje é o
+      <b>Museu da Imigração</b> (reforma concluída em <b>2014</b>). Passaram por lá imigrantes de
+      <b>mais de 70 países</b>.</li>
+      <li><b>Constituição Federal de 1988</b> — direitos fundamentais a <b>todos</b> que vivem no
+      Brasil, independentemente da nacionalidade: vida, liberdade, igualdade, segurança e
+      propriedade.</li>
+      <li><b>Lei de Migração</b> — direitos e deveres; acesso à <b>saúde, educação, trabalho e
+      assistência social</b>.</li>
+      <li><b>Estatuto dos Refugiados</b> — <b>permanência no país</b>, acesso à <b>justiça</b> e
+      assistência social.</li>
+    </ul>
+    <div class="ex"><b>Contribuições dos imigrantes:</b> povoados que viraram cidades ·
+    comércio e serviços · novas técnicas agrícolas · desenvolvimento da indústria ·
+    enriquecimento da cultura (culinária, festas, música, arquitetura, língua e tradições).</div>
+
+    <h3>🪄 O que é folclore</h3>
+    <ul>
+      <li>Conjunto de <b>tradições e manifestações culturais populares</b>: histórias, lendas,
+      músicas, danças, festas, brincadeiras, comidas típicas, adivinhas, parlendas, crendices e
+      costumes.</li>
+      <li><b>Passado de geração em geração</b> — dos avós para os pais, dos pais para os filhos.</li>
+      <li><b>Dia do Folclore: 22 de agosto.</b></li>
+      <li>Para <b>ser</b> folclore: praticado e transmitido de <b>geração em geração por muitas
+      pessoas</b> + <b>origem popular e, geralmente, ANÔNIMA</b>.</li>
+      <li>Valorizar o folclore é entender a <b>história, a diversidade cultural e a identidade</b>
+      de um povo.</li>
+    </ul>
+
+    <h3>🌳 As lendas</h3>
+    <ul>
+      <li><b>Curupira</b> — protetor das matas e dos animais; <b>pés virados para trás</b>.</li>
+      <li><b>Iara</b> — foi uma bela indiazinha; vive nas <b>profundezas do rio</b> e
+      <b>gosta de cantar</b>.</li>
+      <li><b>Mula sem Cabeça</b> — <b>relincho forte</b>, noite escura de luar, corpo de cavalo,
+      <b>solta fogo pelo pescoço</b>.</li>
+      <li>Também: <b>Saci-Pererê, Boitatá, Lobisomem, Vitória-Régia, Mãe d'Água, Caipora</b>.</li>
+      <li>As lendas <b>variam conforme a região</b> do país.</li>
+    </ul>
+
+    <h3>💃 As cinco danças</h3>
+    <ul>
+      <li><b>Frevo</b> — de <b>Pernambuco</b>; músicas <b>instrumentais</b> e pequenos
+      <b>guarda-chuvas coloridos</b>.</li>
+      <li><b>Baião</b> — do <b>Nordeste</b>, dançado <b>em pares</b>; influência do <b>forró</b>.</li>
+      <li><b>Quadrilha</b> — das <b>festas juninas</b>, em <b>junho</b>.</li>
+      <li><b>Samba de roda</b> — raízes <b>africanas e portuguesas</b>; poesia + música + dança.</li>
+      <li><b>Maracatu</b> — <b>pernambucano</b>; elementos <b>africanos, indígenas e
+      portugueses</b>.</li>
+    </ul>
+
+    <h3>🗣️ Tradições orais</h3>
+    <ul>
+      <li><b>Provérbios</b> (ditados populares) — frases curtas que transmitem
+      <b>ensinamentos</b>; <b>sabedoria popular</b>.</li>
+      <li><b>Parlendas</b> — <b>versos</b> que, mesmo <b>sem música</b>, têm <b>ritmo</b>.</li>
+      <li><b>Adivinhações</b> — <b>desafios em forma de perguntas</b>: "O que é, o que é?".</li>
+      <li><b>Literatura de cordel</b> — versos <b>ritmados</b> em <b>folhetos</b>; o nome vem de
+      <b>pendurar os folhetos em cordas</b> nas feiras.</li>
+    </ul>
+
+    <h3>🪁 Brincadeiras, artesanato e comida</h3>
+    <ul>
+      <li>As brincadeiras chegam até hoje <b>graças à ORALIDADE</b>.</li>
+      <li>Brinquedos <b>artesanais</b>: <b>pião, bila</b> (bolinha de gude), <b>papagaio</b>
+      (pipa, raia) e <b>peteca</b>. Ajudam no desenvolvimento <b>intelectual e motor</b>.</li>
+      <li><b>Amarelinha</b> também se chama <b>macaca</b> em algumas regiões.</li>
+      <li>Artesanato: <b>cerâmica, palha, couro, rendas, bordados e garrafas com areia
+      colorida</b>.</li>
+      <li>Comidas por região: <b>Norte</b> pato no tucupi · <b>Nordeste</b> acarajé e carne de
+      sol · <b>Centro-Oeste</b> galinhada e arroz com pequi · <b>Sudeste</b> feijoada ·
+      <b>Sul</b> pinhão assado e churrasco.</li>
+    </ul>
+
+    <h3>⚠️ As dez armadilhas</h3>
+    <ol>
+      <li>Alemães = <b>protestantes</b>, não católicos.</li>
+      <li>Japoneses = <b>plantações</b>, não indústrias e não mineração.</li>
+      <li>Alemães: <b>SC, PR, RS</b>. Italianos: <b>SP, RS, MG</b>. Não troque.</li>
+      <li>Espanhóis: <b>castelhanos</b> primeiro, <b>galegos</b> no fim do século XIX — e os
+      galegos parecem com os <b>portugueses</b>.</li>
+      <li>1500 chegada · 1530 imigração · 1696 ouro · 1807 D. João VI · 1824 alemães ·
+      1870 italianos · 1888 Lei Áurea · 1908 Kasato Maru · 1930 declínio.</li>
+      <li>Imigrante <b>quer</b> × refugiado <b>é obrigado</b>.</li>
+      <li>Folclore é <b>popular e anônimo</b>. Música de cantor famoso não é folclore.</li>
+      <li><b>22 de agosto</b> — Dia do Folclore.</li>
+      <li>Frevo e maracatu = <b>Pernambuco</b>. Quadrilha = <b>junho</b>. Baião = <b>em pares</b>,
+      pai do <b>forró</b>.</li>
+      <li>As brincadeiras se preservam pela <b>oralidade</b>.</li>
+    </ol>
+  </div>
+</div>
+<script>
+"use strict";
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const CHAVE = "portoDasHistorias.v1";
+
+/* A lista de missões é a única fonte da verdade. Nenhum número de missão
+   ou de estrela aparece cravado no código — tudo sai de MISSOES.length. */
+const MISSOES = [
+  {ico:"⚓", tit:"O Porto de Todos",       sub:"Quem chega, por quê e o que protege", hab:"porto"},
+  {ico:"⛵", tit:"Caravelas e Castelhanos",sub:"Portugueses e espanhóis",             hab:"ibericos"},
+  {ico:"🍝", tit:"A Grande Migração",     sub:"Os italianos, do café à fábrica",     hab:"italianos"},
+  {ico:"🍺", tit:"Colônias do Sul",       sub:"Os alemães e o Sul do Brasil",        hab:"alemaes"},
+  {ico:"🚢", tit:"O Kasato Maru",         sub:"Os japoneses, de Kobe a Santos",      hab:"japoneses"},
+  {ico:"🌳", tit:"O Que o Povo Conta",    sub:"O que é folclore e as lendas",        hab:"lendas"},
+  {ico:"💃", tit:"Roda, Verso e Panela",  sub:"Danças, versos, brincadeiras e comida",hab:"cultura"},
+  {ico:"🎓", tit:"Prova do Porto",        sub:"Arcade + prova final",                hab:"final"}
+];
+const N_MISSOES  = MISSOES.length;
+const POR_MISSAO = 3;                        /* estrelas por missão */
+const TOTAL_ESTRELAS = N_MISSOES * POR_MISSAO;
+const vazio = v => Array.from({length:N_MISSOES}, () => v);
+
+const S = {
+  nome: "",
+  genero: "f",
+  pontos: 0,
+  missoes:  vazio(false),
+  estrelas: vazio(0),
+  aulas:    vazio(false),
+  erros: {},          /* habilidade -> quantas vezes escorregou. Alimenta a prova final. */
+  cena: "nome"
+};
+
+function esc(x){
+  return String(x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function g(fem, masc){ return S.genero === "f" ? fem : masc; }
+const NOME = () => esc(S.nome);
+
+function salvar(){
+  try{
+    localStorage.setItem(CHAVE, JSON.stringify({
+      nome:S.nome, genero:S.genero, pontos:S.pontos,
+      missoes:S.missoes, estrelas:S.estrelas, aulas:S.aulas, erros:S.erros
+    }));
+  }catch(e){/* sem localStorage o jogo roda igual, só não guarda */}
+}
+function carregar(){
+  try{
+    const d = JSON.parse(localStorage.getItem(CHAVE) || "null");
+    if(d && d.nome){
+      S.nome = d.nome; S.genero = d.genero === "m" ? "m" : "f";
+      S.pontos = d.pontos|0;
+      if(Array.isArray(d.missoes)  && d.missoes.length===N_MISSOES)  S.missoes  = d.missoes.map(Boolean);
+      if(Array.isArray(d.estrelas) && d.estrelas.length===N_MISSOES) S.estrelas = d.estrelas.map(n=>Math.max(0,Math.min(POR_MISSAO,n|0)));
+      if(Array.isArray(d.aulas)    && d.aulas.length===N_MISSOES)    S.aulas    = d.aulas.map(Boolean);
+      if(d.erros && typeof d.erros === "object") S.erros = d.erros;
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+/* registro por HABILIDADE, não por pergunta: numa revisão o que importa é
+   qual assunto escorrega, não qual exemplo apareceu. */
+const NOME_HAB = {
+  oquee:"o que é imigrar",              refugiado:"imigrante × refugiado",
+  forcada:"imigração espontânea × forçada", miscigenacao:"os três grupos do povo brasileiro",
+  porque:"por que vinham para o Brasil", hospedaria:"a Hospedaria e o Museu da Imigração",
+  leis:"as leis que protegem o imigrante", linha:"as datas da imigração",
+  portugues:"os portugueses",           espanhol:"os espanhóis",
+  italiano:"os italianos",              bairros:"os bairros italianos de São Paulo",
+  alemao:"os alemães",                  estados:"quem foi para qual estado",
+  japones:"os japoneses",               kasato:"a viagem do Kasato Maru",
+  folclore:"o que é folclore",          lenda:"as lendas",
+  danca:"as cinco danças",              oral:"provérbios, parlendas e cordel",
+  brincadeira:"brinquedos e brincadeiras", comida:"as comidas típicas por região"
+};
+function marcaErro(hab){ if(!hab) return; S.erros[hab] = (S.erros[hab]||0) + 1; salvar(); }
+function marcaAcerto(hab){
+  if(!hab || !S.erros[hab]) return;
+  S.erros[hab]--; if(S.erros[hab] <= 0) delete S.erros[hab];
+  salvar();
+}
+function listaFracas(n){
+  return Object.entries(S.erros).sort((x,y)=>y[1]-x[1]).slice(0, n||4).map(e=>e[0]);
+}
+
+/* ============================================================
+   SOM
+   ============================================================ */
+let AC = null;
+function ac(){ if(!AC){ try{AC = new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } return AC; }
+function bip(freq, dur, tipo, vol){
+  const c = ac(); if(!c) return;
+  if(c.state === "suspended") c.resume();
+  const o = c.createOscillator(), gn = c.createGain();
+  o.type = tipo || "sine"; o.frequency.value = freq;
+  gn.gain.setValueAtTime(vol||0.13, c.currentTime);
+  gn.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  o.connect(gn); gn.connect(c.destination);
+  o.start(); o.stop(c.currentTime + dur);
+}
+const somAcerto = ()=>{ bip(660,.09,"triangle"); setTimeout(()=>bip(880,.14,"triangle"),90); };
+const somErro   = ()=>{ bip(200,.18,"sawtooth",.09); };
+const somClique = ()=>{ bip(520,.05,"square",.05); };
+const somVitoria= ()=>{ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>bip(f,.2,"triangle"),i*110)); };
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+function embaralha(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function sorteio(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+let toastT = null;
+function toast(txt, mau){
+  const t = $("#toast");
+  t.innerHTML = txt;
+  t.className = "toast show" + (mau ? " mau" : "");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>{ t.className = "toast" + (mau?" mau":""); }, 1500);
+}
+function ganha(p){ S.pontos += p; toast("+" + p + " pontos!"); }
+
+function estrelasTxt(n){ return "⭐".repeat(n) + "☆".repeat(POR_MISSAO-n); }
+function estrelasPor(acertos, total){
+  const pct = total ? acertos/total : 0;
+  if(pct >= 0.99) return 3;
+  if(pct >= 0.7)  return 2;
+  if(pct >= 0.4)  return 1;
+  return 0;
+}
+const ELOGIOS = ["Isso, {n}!","Boa, {n}!","Mandou bem, {n}!","{n} arrasou!","Exatamente, {n}!","Perfeito, {n}!","Show, {n}!"];
+function elogio(){ return sorteio(ELOGIOS).replace("{n}", NOME()); }
+function nomear(txt){
+  return String(txt)
+    .replace(/\{NOME\}/g, NOME())
+    .replace(/\{A\}/g, g("a","o"))
+    .replace(/\{ELA\}/g, g("ela","ele"));
+}
+
+function hud(titulo){
+  const emMissao = /^m\d+$/.test(S.cena);
+  return `<div class="hud">
+    <span class="nome">🕊️ ${NOME()}</span>
+    <span class="chip pts">⭐ ${S.pontos} pts</span>
+    <span class="espaco"></span>
+    ${emMissao ? `<button class="chip" onclick="reverAula(${S.cena.slice(1)})" style="cursor:pointer">📚 Aula</button>` : ``}
+    <button class="chip" onclick="abrirColinha()" style="cursor:pointer">📖 Colinha</button>
+    <button class="chip" onclick="irMapa()" style="cursor:pointer">🗺️ Mapa</button>
+  </div>` + (titulo ? `<h2>${titulo}</h2>` : "");
+}
+
+function abrirColinha(){ somClique(); pausaCrono(true); $("#colinha").classList.add("aberta"); }
+function fecharColinha(){ somClique(); $("#colinha").classList.remove("aberta"); pausaCrono(false); }
+window.abrirColinha = abrirColinha; window.fecharColinha = fecharColinha;
+
+/* ============================================================
+   FUNDO — luzes do porto atravessando devagar, como navio passando
+   ============================================================ */
+(function fundo(){
+  const cv = $("#estrelas"), cx = cv.getContext("2d");
+  let pcs = [];
+  function dim(){
+    cv.width = innerWidth; cv.height = innerHeight;
+    pcs = [];
+    const n = Math.min(100, Math.floor(innerWidth*innerHeight/13000));
+    for(let i=0;i<n;i++) pcs.push({
+      x:Math.random()*cv.width, y:Math.random()*cv.height,
+      r:Math.random()*1.6+.4, vx:Math.random()*.22+.04,
+      alfa:Math.random()*.5+.18, fase:Math.random()*6.28,
+      cor: Math.random()<.4 ? "#fcd34d" : "#99f6e4"
+    });
+  }
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    const t = Date.now()/900;
+    for(const p of pcs){
+      p.x += p.vx;                          /* as luzes ATRAVESSAM: é o navio chegando */
+      if(p.x > cv.width+4){ p.x = -4; p.y = Math.random()*cv.height; }
+      cx.globalAlpha = p.alfa * (0.6 + 0.4*Math.sin(t + p.fase));
+      cx.fillStyle = p.cor;
+      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.2832); cx.fill();
+    }
+    cx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  addEventListener("resize", dim); dim(); loop();
+})();
+
+/* ============================================================
+   ROTEADOR
+   ============================================================ */
+function irMapa(){ somClique(); pararArcade(); S.cena="mapa"; render(); }
+window.irMapa = irMapa;
+
+function abrirMissao(i){
+  if(i>0 && !S.missoes[i-1]){ somErro(); toast("Termine a missão anterior primeiro, " + NOME() + "!", true); return; }
+  pararArcade();
+  if(!S.aulas[i]){ abrirAula(i); return; }   /* a aula vem antes, na estreia da missão */
+  somClique(); S.cena = "m"+i; render();
+}
+window.abrirMissao = abrirMissao;
+
+function concluiMissao(i, acertos, total, bonus){
+  S.missoes[i] = true;
+  const est = estrelasPor(acertos, total);
+  S.estrelas[i] = Math.max(S.estrelas[i], est);
+  const pts = acertos*10 + est*25 + (bonus||0);
+  S.pontos += pts;
+  salvar();
+  somVitoria();
+  const tudoFeito = S.missoes.every(Boolean);
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:64px">${est===3?"🏆":est===2?"🎉":"👏"}</div>
+      <h2>Missão ${i+1} concluída, ${NOME()}!</h2>
+      <div style="font-size:34px;letter-spacing:4px;margin:8px 0">${estrelasTxt(est)}</div>
+      <p>Você acertou <b>${acertos} de ${total}</b> e ganhou <b>${pts} pontos</b>.</p>
+      ${est<POR_MISSAO?`<p class="mini">Dá para refazer e buscar as ${POR_MISSAO} estrelas — elas só sobem, nunca descem.</p>`:``}
+      <div class="acoes">
+        ${tudoFeito
+          ? `<button class="btn" onclick="verDiploma()">🎓 Ver meu diploma!</button>`
+          : (i < N_MISSOES-1 ? `<button class="btn uva" onclick="abrirMissao(${i+1})">Próxima missão →</button>` : ``)}
+        <button class="btn sec" onclick="irMapa()">🗺️ Mapa</button>
+        <button class="btn sec" onclick="abrirMissao(${i})">🔁 Refazer</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+
+const FASES = [fasePorto, faseIbericos, faseItalianos, faseAlemaes,
+               faseJaponeses, faseLendas, faseCultura, faseFinal];
+
+function render(){
+  scrollTo(0,0);
+  if(S.cena === "nome")    return telaNome();
+  if(S.cena === "inicio")  return telaInicio();
+  if(S.cena === "mapa")    return telaMapa();
+  if(S.cena === "diploma") return telaDiploma();
+  let m = /^m(\d+)$/.exec(S.cena);
+  if(m && FASES[+m[1]]) return FASES[+m[1]]();
+  m = /^a(\d+)$/.exec(S.cena);
+  if(m) return telaAula(+m[1]);
+}
+
+/* ============================================================
+   TELA DO NOME
+   ============================================================ */
+function telaNome(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--ambar)">
+      <div style="font-size:70px;line-height:1">⚓</div>
+      <h1 style="background:linear-gradient(90deg,var(--mar),var(--ambar),#fde68a);-webkit-background-clip:text;background-clip:text;color:transparent">
+        PORTO DAS HISTÓRIAS
+      </h1>
+      <p style="font-size:1.1em">Revisão para a <b>prova de História</b> de <b>31 de agosto</b></p>
+      <p class="mini">3º ano · 3ª etapa · Volume 5 e as Atividades Unificadas — Imigração e Folclore</p>
+      <div class="card" style="text-align:left;background:rgba(14,35,51,.85);margin-top:18px">
+        <p><b>⚓ Um navio encosta no porto de Santos e desce gente que não fala a sua língua.</b></p>
+        <p>Eles trazem uma mala, uma receita, uma festa e uma música. Cem anos depois, a
+        festa virou a nossa festa e a receita virou o nosso almoço. Essa história toda é a
+        matéria da sua prova.</p>
+        <p style="margin:0">Só falta uma coisa: <b>como você se chama?</b></p>
+      </div>
+      <input class="campo" id="nomeInput" type="text" maxlength="18" autocomplete="off"
+             placeholder="Digite seu nome" onkeydown="if(event.key==='Enter')pedeGenero()">
+      <p class="mini" id="avisoNome" style="min-height:20px"></p>
+      <p style="margin-top:6px"><b>E como você quer ser ${g("chamada","chamado")} no porto?</b></p>
+      <div class="acoes">
+        <button class="btn" onclick="definir('f')">🧭 Sou a viajante</button>
+        <button class="btn uva" onclick="definir('m')">🧭 Sou o viajante</button>
+      </div>
+    </div>`;
+  const inp = $("#nomeInput");
+  if(inp){ inp.value = S.nome; setTimeout(()=>inp.focus(), 120); }
+}
+function definir(gen){
+  const inp = $("#nomeInput");
+  let v = (inp ? inp.value : "").trim().replace(/\s+/g," ");
+  if(v.length < 2){
+    somErro();
+    $("#avisoNome").innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`;
+    if(inp) inp.focus();
+    return;
+  }
+  v = v.split(" ").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" ");
+  S.nome = v;
+  if(gen === "f" || gen === "m") S.genero = gen;
+  ac(); somVitoria(); salvar();
+  S.cena = "inicio"; render();
+}
+window.definir = definir;
+function pedeGenero(){
+  const inp = $("#nomeInput"), aviso = $("#avisoNome");
+  if((inp ? inp.value : "").trim().length < 2){
+    somErro(); aviso.innerHTML = `<span style="color:var(--vermelho)">Escreva seu nome primeiro 🙂</span>`; return;
+  }
+  somClique();
+  aviso.innerHTML = `<span style="color:var(--ouro)">Agora toque num dos dois botões aí embaixo 👇</span>`;
+}
+window.pedeGenero = pedeGenero;
+function trocarNome(){ somClique(); S.cena = "nome"; render(); }
+window.trocarNome = trocarNome;
+function zerar(){
+  if(!confirm("Isso apaga as estrelas e os pontos de " + S.nome + ". Começar tudo de novo?")) return;
+  S.pontos = 0; S.missoes = vazio(false); S.estrelas = vazio(0); S.aulas = vazio(false); S.erros = {};
+  salvar(); somClique(); render();
+}
+window.zerar = zerar;
+
+/* ============================================================
+   TELA INICIAL
+   ============================================================ */
+function telaInicio(){
+  app.innerHTML = `
+    <div class="card centro" style="border-color:var(--ambar)">
+      <div style="font-size:66px;line-height:1">🕊️</div>
+      <h1 style="background:linear-gradient(90deg,var(--mar),var(--ambar),#fde68a);-webkit-background-clip:text;background-clip:text;color:transparent">
+        OI, ${NOME()}!
+      </h1>
+      <p style="font-size:1.12em">Você é ${g("a viajante","o viajante")} do
+      <b style="color:var(--ambar)">Porto das Histórias</b>.</p>
+      <div class="card" style="text-align:left;background:rgba(14,35,51,.85);margin-top:18px">
+        <p><b>🎯 O combinado é este:</b></p>
+        <p>Este jogo não foi inventado no chute: cada missão é <b>um pedaço do conteúdo da sua
+        prova</b>, tirado das páginas do <b>Volume 5</b> e das duas <b>Atividades Unificadas</b> —
+        as suas próprias folhas.</p>
+        <p>São <b>${N_MISSOES-1} paradas</b> no porto e, no fim, a Prova do Porto.</p>
+        <p><b>📚 Cada missão começa com uma aula rapidinha</b> da <b>Maru</b>, a gaivota.
+        Ela explica primeiro; você põe a mão na massa depois.</p>
+        <p class="mini">⭐ Cada missão vale até ${POR_MISSAO} estrelas. Errar faz parte: o jogo mostra o porquê
+        e <b>anota em que assunto você escorregou</b>, para cobrar de novo na prova final.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn" onclick="comecar()">⚓ Descer no porto</button>
+        <button class="btn sec" onclick="abrirColinha()">📖 Ver a colinha</button>
+      </div>
+      <p class="mini" style="margin-top:14px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Não sou ${NOME()}, trocar nome</button>
+      </p>
+    </div>`;
+}
+function comecar(){ ac(); somVitoria(); S.cena="mapa"; render(); }
+window.comecar = comecar;
+
+/* ============================================================
+   MAPA
+   ============================================================ */
+function telaMapa(){
+  const feitas = S.missoes.filter(Boolean).length;
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(5);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <h2>⚓ O porto ${g("da","do")} ${NOME()}</h2>
+      <p class="mini">${feitas} de ${N_MISSOES} paradas · ${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas · ${S.pontos} pontos</p>
+      <div class="progresso"><i style="width:${feitas/N_MISSOES*100}%"></i></div>
+      <div class="missoes">
+        ${MISSOES.map((m,i)=>{
+          const trancada = i>0 && !S.missoes[i-1];
+          return `<button class="missao ${trancada?"trancada":""} ${S.missoes[i]?"feita":""}"
+                    onclick="abrirMissao(${i})" ${trancada?"disabled":""}>
+            <span class="num">${S.missoes[i]?"✓":i+1}</span>
+            <div class="ico">${trancada?"🔒":m.ico}</div>
+            <div class="tit">${m.tit}</div>
+            <div class="sub">${trancada?"Passe pela parada anterior":m.sub}</div>
+            ${(!trancada && !S.aulas[i])?`<div class="tags" style="margin-top:8px"><span class="tag" style="border-color:var(--ouro);color:var(--ouro)">📚 começa com uma aula</span></div>`:``}
+            ${S.missoes[i]?`<div class="estrelas">${estrelasTxt(S.estrelas[i])}</div>`:``}
+          </button>`;
+        }).join("")}
+      </div>
+      <p class="mini centro" style="margin-top:16px">
+        <button class="chip" onclick="trocarNome()" style="cursor:pointer">✏️ Trocar nome</button>
+        <button class="chip" onclick="zerar()" style="cursor:pointer">🔄 Começar tudo de novo</button>
+      </p>
+    </div>
+    ${fracas.length?`<div class="card">
+      <h2>🎯 Onde você está escorregando</h2>
+      <p class="mini">A Maru foi anotando. Estes assuntos aparecem <b>mais vezes</b> na
+      Prova do Porto — é assim que a gente vira o jogo antes da prova de verdade.</p>
+      <div class="tags">${fracas.map(h=>
+        `<span class="tag" style="border-color:var(--coral);color:var(--coral);font-size:1em">${NOME_HAB[h]||h}</span>`
+      ).join("")}</div>
+    </div>`:``}
+    ${feitas===N_MISSOES?`<div class="card destaque centro">
+      <div style="font-size:56px">🎓</div>
+      <h2>Porto inteiro percorrido, ${NOME()}!</h2>
+      <button class="btn" onclick="verDiploma()">Ver meu diploma</button>
+    </div>`:``}`;
+}
+function verDiploma(){ somVitoria(); S.cena="diploma"; render(); }
+window.verDiploma = verDiploma;
+
+/* ============================================================
+   MOTOR DAS AULAS
+   ============================================================ */
+let A = {missao:0, slide:0, revendo:false};
+
+function abrirAula(i, revendo){
+  somClique(); pararArcade();
+  A = { missao:i, slide:0, revendo:!!revendo };
+  S.cena = "a"+i;
+  render();
+}
+window.abrirAula = abrirAula;
+function reverAula(i){ abrirAula(i, true); }
+window.reverAula = reverAula;
+
+function telaAula(i){
+  const slides = AULAS[i], s = slides[A.slide], ultimo = A.slide === slides.length-1;
+  const m = MISSOES[i];
+  app.innerHTML = hud() + `
+    <h2 style="text-align:center">${m.ico} Aula ${i+1} · ${m.tit}</h2>
+    <div class="aula">
+      <div class="guia">
+        <span class="robo">🕊️</span>
+        <span>Sou a <b>Maru</b>, a gaivota do porto.
+        ${A.slide===0 ? `Antes de você descer do navio, ${NOME()}, olha só.`
+                      : `Continuando, ${NOME()}…`}</span>
+      </div>
+      <div class="ico">${s.ico}</div>
+      <h2>${nomear(s.tit)}</h2>
+      ${s.txt.trim().startsWith("<") ? nomear(s.txt) : `<p>${nomear(s.txt)}</p>`}
+      ${s.arte || ``}
+      ${s.chave ? `<div class="chave"><span class="rot">🔑 Grave isso</span>${nomear(s.chave)}</div>` : ``}
+      <div class="pontos">
+        ${slides.map((_,k)=>`<i class="${k===A.slide?"aqui":(k<A.slide?"vista":"")}"></i>`).join("")}
+      </div>
+    </div>
+    <div class="acoes">
+      ${A.slide>0 ? `<button class="btn aula fraco" onclick="aulaVolta()">← Voltar</button>` : ``}
+      ${ultimo
+        ? `<button class="btn" onclick="aulaFim()">🚀 Começar a missão ${i+1}</button>`
+        : `<button class="btn aula" onclick="aulaProx()">Próximo →</button>`}
+    </div>
+    <p class="centro mini" style="margin-top:14px">
+      ${ultimo ? `` : `<button class="chip" onclick="aulaFim()" style="cursor:pointer">Pular a aula e ir direto para a missão →</button>`}
+    </p>`;
+}
+function aulaProx(){ somClique(); A.slide++; telaAula(A.missao); scrollTo(0,0); }
+window.aulaProx = aulaProx;
+function aulaVolta(){ somClique(); A.slide--; telaAula(A.missao); scrollTo(0,0); }
+window.aulaVolta = aulaVolta;
+function aulaFim(){
+  somClique();
+  S.aulas[A.missao] = true; salvar();
+  S.cena = "m"+A.missao; render();
+}
+window.aulaFim = aulaFim;
+
+/* ============================================================
+   QUIZ GENÉRICO
+   ============================================================ */
+let Q = null;
+function embaralhaOpcoes(perguntas){
+  return perguntas.map(q=>{
+    if(q.fixo) return { ...q };                 /* ordem fixa: linhas do tempo e sequências */
+    const ordem = embaralha(q.o.map((_,i)=>i));
+    return { ...q, o: ordem.map(i=>q.o[i]), c: ordem.indexOf(q.c) };
+  });
+}
+function quizGenerico(missaoIdx, titulo, perguntas, acertosIniciais, totalInicial){
+  Q = { i:0, ac:acertosIniciais||0, tot:(totalInicial||0)+perguntas.length,
+        lista:embaralhaOpcoes(perguntas), missao:missaoIdx, titulo:titulo,
+        respondida:false };
+  desenhaQuiz();
+}
+function desenhaQuiz(){
+  const q = Q.lista[Q.i];
+  const classe = q.grade ? "grade" : (q.quatro ? "quatro" : "");
+  app.innerHTML = hud(Q.titulo) + `
+    <div class="card">
+      <p class="mini">Pergunta ${Q.i+1} de ${Q.lista.length}</p>
+      <div class="progresso"><i style="width:${Q.i/Q.lista.length*100}%"></i></div>
+      ${q.arte || ``}
+      ${q.enun ? `<div class="enunciado">${nomear(q.enun)}</div>` : ``}
+      ${q.conta ? `<div class="conta">${q.conta}</div>` : ``}
+      ${q.umaSo ? `<div class="quantas">☝️ Esta pergunta quer <b>UMA</b> resposta só</div>` : ``}
+      ${q.p ? `<div class="pergunta">${nomear(q.p)}</div>` : ``}
+      <div class="opcoes ${classe}" id="ops">
+        ${q.o.map((t,k)=>`<button class="op" onclick="respQuiz(${k})">
+          ${classe?``:`<span class="letra">${"ABCD"[k]}</span>`}<span>${t}</span></button>`).join("")}
+      </div>
+      <div class="feedback" id="fbq"></div>
+      <div class="acoes esconde" id="proxBox">
+        <button class="btn" onclick="proxQuiz()" id="btnProx">Continuar →</button>
+      </div>
+    </div>`;
+}
+function respQuiz(k){
+  if(Q.respondida) return;
+  Q.respondida = true;
+  const q = Q.lista[Q.i];
+  document.querySelectorAll("#ops .op").forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx===q.c) b.classList.add("certa");
+    else if(idx===k) b.classList.add("errada");
+  });
+  const fb = $("#fbq");
+  if(k===q.c){
+    Q.ac++; somAcerto(); ganha(10);
+    marcaAcerto(q.hab);
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${nomear(q.e)}`;
+  } else {
+    somErro();
+    marcaErro(q.hab);
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ Quase, ${NOME()}! A resposta certa é <b>${q.o[q.c]}</b>.</div>${nomear(q.e)}`;
+  }
+  $("#proxBox").classList.remove("esconde");
+  $("#btnProx").textContent = (Q.i === Q.lista.length-1) ? "Terminar missão 🏁" : "Continuar →";
+  $("#btnProx").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+window.respQuiz = respQuiz;
+function proxQuiz(){
+  somClique();
+  Q.i++; Q.respondida = false;
+  if(Q.i >= Q.lista.length){ concluiMissao(Q.missao, Q.ac, Q.tot); return; }
+  desenhaQuiz();
+}
+window.proxQuiz = proxQuiz;
+
+/* ============================================================
+   ARTE — desenhos em SVG, feitos aqui dentro.
+   Nenhum arquivo externo, nenhuma rede: o jogo abre por duplo clique.
+   ============================================================ */
+
+/* --- o Brasil, com os cinco estados que a prova cobra separados ---
+   O contorno vem dos mesmos polígonos de longitude/latitude usados no jogo de
+   Geografia, para o mapa ser RECONHECÍVEL como o Brasil. Sudeste e Sul foram
+   recortados em estados, porque é neles que estão as respostas. */
+const RESTO_BR = [
+  "M50,50 L113,20 L133,32 L167,26 L189,67 L196,110 L191,150 L150,150 L126,145 L80,147 L20,108 L30,84 Z",
+  "M189,67 L217,74 L255,82 L280,106 L255,147 L249,178 L240,181 L206,156 L196,140 L196,110 Z",
+  "M80,147 L126,145 L150,150 L191,150 L200,178 L179,196 L147,214 L126,209 L106,167 Z"
+];
+const ESTADOS = [
+  {k:"mg", n:"MG", nome:"Minas Gerais",         x:213, y:186, d:"M179,196 L206,156 L246,161 L240,181 L237,203 L212,215 Z"},
+  {k:"rj", n:"RJ", nome:"Rio e Espírito Santo", x:241, y:197, d:"M246,161 L249,192 L239,217 L218,219 L212,215 L237,203 L240,181 Z"},
+  {k:"sp", n:"SP", nome:"São Paulo",            x:186, y:215, d:"M147,214 L179,196 L203,209 L218,219 L193,232 Z"},
+  {k:"pr", n:"PR", nome:"Paraná",               x:170, y:228, d:"M147,214 L193,232 L189,240 L154,236 Z"},
+  {k:"sc", n:"SC", nome:"Santa Catarina",       x:170, y:248, d:"M154,236 L189,240 L185,254 L152,259 Z"},
+  {k:"rs", n:"RS", nome:"Rio Grande do Sul",    x:157, y:271, d:"M152,259 L185,254 L181,268 L157,290 L132,272 Z"}
+];
+function arteMapaEstados(opts){
+  const o = opts || {};
+  const marca = o.marca || [];          /* chaves a destacar */
+  const cor   = o.cor || "#f6b73c";
+  const clicavel = !!o.clicavel;
+  const rotulos = o.rotulos !== false;
+  return `<svg class="arte${clicavel?" larga":""}" viewBox="0 0 300 310" role="img"
+      aria-label="Mapa do Brasil com os estados de Minas Gerais, São Paulo, Paraná, Santa Catarina e Rio Grande do Sul destacados">
+    <rect width="300" height="310" fill="#0a1e2c"/>
+    ${RESTO_BR.map(d=>`<path d="${d}" fill="#33506a" stroke="#0a1420" stroke-width="2.5"/>`).join("")}
+    ${ESTADOS.map(e=>{
+      const on = marca.includes(e.k);
+      return `<g class="${clicavel?"hot":""}" ${clicavel?`onclick="cliqueEstado('${e.k}')"`:``}>
+        <path d="${e.d}" fill="${on?cor:"#47657f"}" stroke="#0a1420" stroke-width="2"/>
+      </g>`;
+    }).join("")}
+    ${rotulos ? ESTADOS.map(e=>`<text x="${e.x}" y="${e.y}" text-anchor="middle"
+        fill="${marca.includes(e.k)?"#2b1c03":"#dbeafe"}" font-size="10.5" font-weight="bold"
+        font-family="sans-serif" pointer-events="none">${e.n}</text>`).join("") : ``}
+    <path d="M276,272 v22 M276,272 l-6,9 h12 z" stroke="#fdf6e8" stroke-width="2" fill="#fdf6e8"/>
+    <text x="276" y="268" text-anchor="middle" fill="#fdf6e8" font-size="12" font-weight="bold" font-family="sans-serif">N</text>
+  </svg>`;
+}
+
+/* --- a viagem do Kasato Maru: Kobe → Santos, 52 dias --- */
+function arteNavio(){
+  return `<svg class="arte larga" viewBox="0 0 400 190" role="img"
+      aria-label="O navio Kasato Maru saindo do porto de Kobe, no Japão, e chegando ao porto de Santos, no Brasil, em 52 dias">
+    <rect width="400" height="190" fill="#0a1e2c"/>
+    <rect y="118" width="400" height="72" fill="#12507a"/>
+    <path d="M0,118 q30,-7 60,0 t60,0 t60,0 t60,0 t60,0 t60,0" stroke="#2dd4bf" stroke-width="2.5" fill="none" opacity=".55"/>
+    <circle cx="352" cy="34" r="18" fill="#f6b73c"/>
+    <!-- casco -->
+    <path d="M118,118 h150 l-16,26 h-118 z" fill="#1f2937"/>
+    <rect x="150" y="94" width="86" height="24" fill="#e5e7eb"/>
+    <rect x="176" y="76" width="34" height="18" fill="#e5e7eb"/>
+    <rect x="216" y="64" width="15" height="30" fill="#b91c1c"/>
+    <rect x="216" y="64" width="15" height="8" fill="#111827"/>
+    ${[158,172,186,200,214].map(x=>`<rect x="${x}" y="102" width="8" height="8" fill="#0a1e2c"/>`).join("")}
+    <path d="M240,60 v34" stroke="#e5e7eb" stroke-width="3"/>
+    <path d="M118,110 v-38" stroke="#e5e7eb" stroke-width="3"/>
+    <!-- fumaça -->
+    <circle cx="224" cy="52" r="7" fill="#94a3b8" opacity=".7"/>
+    <circle cx="234" cy="42" r="9" fill="#94a3b8" opacity=".5"/>
+    <circle cx="248" cy="34" r="11" fill="#94a3b8" opacity=".35"/>
+    <!-- rótulos dos portos -->
+    <text x="34" y="150" text-anchor="middle" fill="#fdf6e8" font-size="13" font-weight="bold" font-family="sans-serif">KOBE</text>
+    <text x="34" y="166" text-anchor="middle" fill="#b7a892" font-size="11" font-family="sans-serif">Japão</text>
+    <text x="366" y="150" text-anchor="middle" fill="#fdf6e8" font-size="13" font-weight="bold" font-family="sans-serif">SANTOS</text>
+    <text x="366" y="166" text-anchor="middle" fill="#b7a892" font-size="11" font-family="sans-serif">Brasil</text>
+    <path d="M64,140 h250" stroke="#f6b73c" stroke-width="2.5" stroke-dasharray="7 6"/>
+    <path d="M314,140 l-10,-5 v10 z" fill="#f6b73c"/>
+    <text x="190" y="180" text-anchor="middle" fill="#f6b73c" font-size="13" font-weight="bold" font-family="sans-serif">52 dias · chegou em 18/06/1908</text>
+    <text x="190" y="24" text-anchor="middle" fill="#fdf6e8" font-size="15" font-weight="bold" font-family="sans-serif">KASATO MARU</text>
+  </svg>`;
+}
+
+/* --- por que se chama CORDEL: os folhetos pendurados na corda da feira --- */
+function arteCordel(){
+  const titulos = ["O CANTADOR","A MOÇA E O BOI","O CANGACEIRO","A SECA DE 1915"];
+  return `<svg class="arte larga" viewBox="0 0 400 180" role="img"
+      aria-label="Folhetos de cordel pendurados numa corda, como eram vendidos nas feiras">
+    <rect width="400" height="180" fill="#0a1e2c"/>
+    <path d="M12,44 q188,26 376,0" stroke="#d6c39c" stroke-width="3" fill="none"/>
+    ${titulos.map((t,i)=>{
+      const x = 40 + i*92, y = 52 + Math.round(Math.sin((i+1)/5*Math.PI)*12);
+      return `<g>
+        <path d="M${x+30},${y-10} v-10" stroke="#d6c39c" stroke-width="2"/>
+        <rect x="${x}" y="${y}" width="60" height="80" rx="3" fill="#f5ecd7" stroke="#b7a892" stroke-width="1.5"/>
+        <rect x="${x+6}" y="${y+8}" width="48" height="30" fill="#cbbda0"/>
+        <text x="${x+30}" y="${y+50}" text-anchor="middle" fill="#2b1f13" font-size="7.5" font-weight="bold" font-family="sans-serif">${t}</text>
+        <path d="M${x+8},${y+58} h44 M${x+8},${y+64} h44 M${x+8},${y+70} h30" stroke="#9c8f78" stroke-width="1.5"/>
+      </g>`;
+    }).join("")}
+    <text x="200" y="164" text-anchor="middle" fill="#f6b73c" font-size="13" font-weight="bold" font-family="sans-serif">
+      cordel = folheto pendurado na CORDA da feira</text>
+  </svg>`;
+}
+
+/* --- a linha do tempo da imigração --- */
+function arteLinha(destaques){
+  const d = destaques || [];
+  const marcos = [
+    {a:"1500", t:"caravelas"},
+    {a:"1530", t:"cana"},
+    {a:"1696", t:"ouro"},
+    {a:"1807", t:"D. João VI"},
+    {a:"1824", t:"alemães"},
+    {a:"1870", t:"italianos"},
+    {a:"1888", t:"Lei Áurea"},
+    {a:"1908", t:"Kasato Maru"},
+    {a:"1930", t:"declínio"}
+  ];
+  return `<svg class="arte larga" viewBox="0 0 400 130" role="img"
+      aria-label="Linha do tempo da imigração no Brasil, de 1500 a 1930">
+    <rect width="400" height="130" fill="#0a1e2c"/>
+    <path d="M18,64 H382" stroke="#3e6076" stroke-width="3"/>
+    ${marcos.map((m,i)=>{
+      const x = 26 + i*(348/(marcos.length-1));
+      const on = d.includes(m.a);
+      return `<g>
+        <circle cx="${x}" cy="64" r="${on?7:4.5}" fill="${on?"#f6b73c":"#7d97ab"}"/>
+        <text x="${x}" y="46" text-anchor="middle" fill="${on?"#f6b73c":"#dbeafe"}" font-size="11"
+              font-weight="bold" font-family="sans-serif">${m.a}</text>
+        <text x="${x}" y="${i%2?98:86}" text-anchor="middle" fill="#b7a892" font-size="8.5"
+              font-family="sans-serif">${m.t}</text>
+        ${i%2?`<path d="M${x},70 v20" stroke="#3e6076" stroke-width="1.2"/>`:``}
+      </g>`;
+    }).join("")}
+    <text x="200" y="20" text-anchor="middle" fill="#fdf6e8" font-size="13" font-weight="bold" font-family="sans-serif">
+      A imigração no Brasil</text>
+  </svg>`;
+}
+
+/* --- imigrante × refugiado, lado a lado --- */
+function arteDuasPortas(){
+  return `<svg class="arte larga" viewBox="0 0 400 170" role="img"
+      aria-label="Comparação: refugiado sai por guerra ou perseguição; imigrante sai em busca de melhores condições de vida">
+    <rect width="400" height="170" fill="#0a1e2c"/>
+    <rect x="14" y="20" width="176" height="132" rx="14" fill="#3f1d2b" stroke="#fb7185" stroke-width="2.5"/>
+    <rect x="210" y="20" width="176" height="132" rx="14" fill="#123a33" stroke="#2dd4bf" stroke-width="2.5"/>
+    <text x="102" y="46" text-anchor="middle" fill="#fb7185" font-size="15" font-weight="bold" font-family="sans-serif">REFUGIADO</text>
+    <text x="298" y="46" text-anchor="middle" fill="#2dd4bf" font-size="15" font-weight="bold" font-family="sans-serif">IMIGRANTE</text>
+    <text x="102" y="76" text-anchor="middle" fill="#fdf6e8" font-size="13" font-family="sans-serif">é OBRIGADO a sair</text>
+    <text x="298" y="76" text-anchor="middle" fill="#fdf6e8" font-size="13" font-family="sans-serif">ESCOLHE sair</text>
+    <text x="102" y="102" text-anchor="middle" fill="#e8c7cf" font-size="11.5" font-family="sans-serif">guerra · perseguição</text>
+    <text x="102" y="120" text-anchor="middle" fill="#e8c7cf" font-size="11.5" font-family="sans-serif">conflito · violência</text>
+    <text x="102" y="138" text-anchor="middle" fill="#e8c7cf" font-size="11.5" font-family="sans-serif">crise humanitária</text>
+    <text x="298" y="102" text-anchor="middle" fill="#bdf0e6" font-size="11.5" font-family="sans-serif">melhores condições</text>
+    <text x="298" y="120" text-anchor="middle" fill="#bdf0e6" font-size="11.5" font-family="sans-serif">trabalho · estudo</text>
+    <text x="298" y="138" text-anchor="middle" fill="#bdf0e6" font-size="11.5" font-family="sans-serif">reunir-se à família</text>
+  </svg>`;
+}
+
+/* ============================================================
+   AULAS — uma antes de cada missão, com a Maru
+   ============================================================ */
+const AULAS = [];
+
+/* ---- 1 · o porto de todos ---- */
+AULAS.push([
+  {ico:"🕊️", tit:"Oi, {NOME}. Eu sou a Maru.",
+   txt:`Sou gaivota, e moro no <b>porto de Santos</b>. O meu nome não é apelido:
+     <b>Maru</b> é o final do nome do navio <b>Kasato Maru</b> — o que trouxe os
+     <b>primeiros japoneses</b> ao Brasil, em <b>18 de junho de 1908</b>.
+     <p>Guarde esse nome, {NOME}: ele <b>cai na prova</b>. Uma lição só no meu nome.</p>
+     <p>Daqui de cima eu vi tudo chegar: caravela portuguesa, navio italiano, navio alemão,
+     navio japonês. E vi as histórias que essa gente trouxe virarem <b>o nosso folclore</b>.</p>`,
+   chave:`Nada aqui é matéria nova. É a matéria das suas folhas, olhada com calma.`},
+
+  {ico:"🧳", tit:"Imigrar é mudar de país para ficar",
+   txt:`<b>Imigração</b> é o deslocamento de uma pessoa ou de um grupo de um território para
+     outro <b>com o objetivo de se estabelecer em um novo país</b>.
+     <p><b>Imigrantes</b> são as pessoas que deixaram o país em que nasceram para se fixar em
+     outro. O motivo mais comum, diz a sua apostila, são as <b>dificuldades de ordem econômica
+     e financeira</b> no país de origem.</p>
+     <p>E o povo brasileiro nasceu de uma mistura: a <b>miscigenação</b> — a combinação de
+     <b>etnias diferentes</b>. No Brasil ela teve <b>três grupos de base</b>:</p>
+     <div class="destaque">indígena · europeu · negro</div>`,
+   chave:`<b>Miscigenação = mistura de etnias.</b> Três grupos: <b>indígena, europeu e negro</b>.
+     Essa é a resposta da questão 1 da página 79 — a que ficou em branco no seu livro.`},
+
+  {ico:"🚪", tit:"Quem quer sair e quem é obrigado a sair",
+   txt:`Esta é a diferença que a sua Atividade Unificada cobra, e é fácil de trocar:
+     <ul class="lista">
+       <li><b>Imigrante</b> — <b>decide</b> mudar para outro país em busca de melhores
+       condições de vida, trabalho, estudo ou para reunir-se à família.</li>
+       <li><b>Refugiado</b> — é <b>obrigado</b> a deixar o país por <b>guerras, perseguições,
+       conflitos, violência ou graves crises humanitárias</b>.</li>
+     </ul>
+     <p>Tem ainda outro par: a imigração <b>espontânea</b> (a pessoa escolhe) e a
+     <b>forçada</b> (guerra, perseguição, risco). Os <b>africanos escravizados</b> vieram
+     por <b>imigração forçada</b> — cerca de <b>4 milhões</b> de pessoas, diz o IBGE.</p>`,
+   arte: arteDuasPortas(),
+   chave:`Imigrante <span class="certo">quer</span>. Refugiado <span class="certo">é obrigado</span>.
+     Hoje o Brasil recebe muitos refugiados <b>venezuelanos, sírios, haitianos e afegãos</b>.`},
+
+  {ico:"☕", tit:"Por que o Brasil quis tanta gente?",
+   txt:`Duas coisas aconteceram ao mesmo tempo, {NOME}:
+     <ul class="lista">
+       <li>Na Europa havia <b>guerras</b> e crises; o Brasil era visto como um país de
+       <b>muitas oportunidades</b>.</li>
+       <li>Aqui, com a <b>Abolição da Escravatura</b>, as fazendas de <b>café</b> ficaram sem
+       trabalhadores. O dinheiro que era usado para comprar escravizados passou a
+       <b>financiar a vinda de europeus</b>.</li>
+     </ul>
+     <p>O governo brasileiro <b>incentivou e criou campanhas</b> para atrair imigrantes. E o
+     <b>Senador Vergueiro</b> (Nicolau Pereira de Campos Vergueiro) conseguiu o financiamento:
+     entre <b>1847 e 1857</b> trouxe famílias no <b>sistema de parceria</b> — o fazendeiro pagava
+     a viagem, e o imigrante trabalhava até pagar a dívida. Foi <b>condenado</b>, porque os
+     colonos nunca conseguiam pagar e ficavam presos à fazenda.</p>`,
+   arte: arteLinha(["1500","1888","1908"]),
+   chave:`A conta é esta: <b>fim da escravidão + café precisando de gente = imigração europeia
+     paga com o dinheiro do tráfico</b>.`},
+
+  {ico:"🏛️", tit:"A porta de entrada e as três leis",
+   txt:`Quem descia do navio ia para a <b>Hospedaria de Imigrantes</b>, no bairro do
+     <b>Brás</b>, em São Paulo. As obras começaram em <b>junho de 1886</b>, e ela abrigou os
+     recém-chegados entre <b>1887 e 1978</b>. Hoje é o <b>Museu da Imigração</b> — a reforma
+     terminou em <b>2014</b>. Passou gente de <b>mais de 70 países</b> por ali.
+     <p>E quem chega hoje tem <b>três documentos</b> que garantem os seus direitos:</p>
+     <ul class="lista">
+       <li><b>Constituição Federal de 1988</b> — direitos fundamentais a <b>todos</b> que vivem
+       no Brasil, <b>independentemente da nacionalidade</b>: vida, liberdade, igualdade,
+       segurança e propriedade.</li>
+       <li><b>Lei de Migração</b> — direitos e deveres; acesso à <b>saúde, educação, trabalho e
+       assistência social</b>.</li>
+       <li><b>Estatuto dos Refugiados</b> — <b>permanência no país</b>, acesso à <b>justiça</b> e
+       assistência social.</li>
+     </ul>`,
+   chave:`As três leis, na ordem da sua folha: <b>Constituição de 1988 · Lei de Migração ·
+     Estatuto dos Refugiados</b>. E o <b>declínio</b> da imigração começou <b>a partir de 1930</b>.`}
+]);
+
+/* ---- 2 · portugueses e espanhóis ---- */
+AULAS.push([
+  {ico:"⛵", tit:"Os primeiros a chegar — e os que mais ficaram",
+   txt:`Os portugueses chegaram com as <b>caravelas em 1500</b> e, algum tempo depois, se
+     estabeleceram no território, colonizando.
+     <p>Eles são o <b>maior contingente de imigrantes do Brasil</b>. Mas atenção: <b>nem sempre
+     foi assim</b>. Entre os séculos <b>XVI e XVII</b> quase não vinha ninguém — não havia
+     atrativos nas terras da Colônia.</p>
+     <p>Três datas mudaram isso:</p>
+     <ul class="lista">
+       <li><b>1530</b> — começa a imigração: <b>cana-de-açúcar</b> e povoamento.</li>
+       <li><b>1696</b> — encontram <b>OURO</b> no Brasil. Milhares vêm atrás do metal.</li>
+       <li><b>29 de novembro de 1807</b> — <b>D. João VI</b>, a família real e a Corte fogem de
+       <b>Napoleão Bonaparte</b>. Cerca de <b>15 000</b> portugueses desembarcam, e o Brasil
+       vira o <b>centro administrativo do Império Português</b>.</li>
+     </ul>`,
+   arte: arteLinha(["1500","1696","1807"]),
+   chave:`<b>1500</b> chegaram · <b>1696</b> o ouro · <b>1807</b> a família real.
+     Trocar o ouro pela família real é o erro mais comum dessa página.`},
+
+  {ico:"🗣️", tit:"O legado: a palavra que você está lendo",
+   txt:`<b>Legado</b> é o conhecimento ou a herança transmitida às futuras gerações. E o maior
+     legado português, diz a apostila com todas as letras, é <b>o idioma</b>.
+     <p>Depois dele vêm outros três:</p>
+     <ul class="lista">
+       <li><b>Religião</b> — o <b>catolicismo</b>.</li>
+       <li><b>Festas e danças</b> — <b>Cavalhada, fandango, Carnaval, Festas Juninas e Farra do
+       Boi</b> entraram no folclore brasileiro. Em Portugal, a dança típica é o <b>vira</b>.</li>
+       <li><b>Culinária</b> — <b>cozidos, embutidos e pratos com frutos do mar e peixes</b>.
+       A famosa <b>bacalhoada</b>.</li>
+     </ul>
+     <p>Aquela tabela da página 81 que ficou em branco pede exatamente isto:</p>
+     <table class="mini-tab"><tr><th>LÍNGUA</th><th>RELIGIÃO</th><th>CULINÁRIA</th></tr>
+     <tr><td>português</td><td>catolicismo</td><td>bacalhoada,<br>cozidos, embutidos</td></tr></table>`,
+   chave:`Se a prova pedir <b>um</b> legado português, responda <b>o idioma</b>.
+     Se pedir três, use a tabela: <b>língua · religião · culinária</b>.`},
+
+  {ico:"💃", tit:"Espanhóis: primeiro castelhanos, depois galegos",
+   txt:`Os espanhóis participaram das <b>Grandes Navegações</b> desde o início, e estão na
+     América desde o <b>século XVI</b>. Aqui a história tem <b>duas partes</b>, e a prova adora
+     trocar as duas:
+     <ul class="lista">
+       <li><b>Nos primeiros séculos</b> da colonização portuguesa, os espanhóis que se
+       estabeleceram aqui eram <b>de origem castelhana</b>, com presença mais forte na
+       <b>região SUL do Brasil</b>.</li>
+       <li><b>No final do século XIX</b>, na grande migração europeia, grande parte deles eram
+       <b>galegos</b> — da região da <b>Galícia</b>. Têm influência dos <b>celtas</b> e, segundo
+       alguns estudiosos, muitas <b>semelhanças com os vizinhos portugueses</b>.</li>
+     </ul>
+     <p>Trouxeram conhecimentos de <b>agricultura e pecuária</b>, o <b>azeite de oliva</b> e o
+     <b>flamenco</b>.</p>`,
+   chave:`<b>Castelhanos</b> primeiro, no <b>Sul</b>. <b>Galegos</b> no fim do século XIX — e os
+     galegos parecem com os <span class="certo">portugueses</span>, <span class="errado">não com
+     os franceses</span>. Essa é a alternativa certa da questão 5 da página 81.`},
+
+  {ico:"🤝", tit:"Por que os dois na mesma aula?",
+   txt:`Porque foi o seu próprio livro que juntou: a <b>Aula 3</b> se chama, literalmente,
+     <i>"Os imigrantes no Brasil: portugueses e espanhóis"</i>.
+     <p>E faz sentido — os dois vieram da mesma península, os dois navegaram nas Grandes
+     Navegações, e os galegos são quase parentes dos portugueses.</p>
+     <div class="destaque">Portugal e Espanha: dois vizinhos,<br>uma aula só.</div>`,
+   chave:`Se a pergunta for "quem foi o <b>maior</b> grupo de imigrantes?" → <b>portugueses</b>.
+     Se for "quem exerceu a <b>maior influência</b> na cultura brasileira?" → <b>Portugal</b>.`}
+]);
+
+/* ---- 3 · italianos ---- */
+AULAS.push([
+  {ico:"🍝", tit:"Os segundos em número, os primeiros na mesa",
+   txt:`Os italianos chegaram ao Brasil <b>desde o início do século XIX</b>. E, <b>depois dos
+     portugueses</b>, formam o grupo de imigrantes com o <b>maior número de pessoas</b>
+     estabelecidas aqui.
+     <p>A chamada <b>"grande migração"</b> teve início <b>a partir de 1870</b> e chegou ao
+     <b>auge entre 1890 e 1910</b>.</p>
+     <p>A maior parte vinha de <b>origem humilde</b> e de <b>regiões rurais</b> da Itália. E o
+     motivo está sublinhado na sua apostila:</p>
+     <div class="destaque">uma <b>crise de desemprego</b> na Itália,<br>
+     em razão da <b>industrialização</b> do país</div>`,
+   chave:`<b>1870</b> começa · <b>1890–1910</b> o auge. E o motivo é a
+     <b>crise de desemprego causada pela industrialização</b> — não é guerra, não é seca.`},
+
+  {ico:"🏭", tit:"No campo o café, na cidade a fábrica",
+   txt:`Esta é a resposta da questão 6, aquela que você já acertou:
+     <table class="mini-tab">
+       <tr><th>no campo</th><th>na cidade</th></tr>
+       <tr><td>nas fazendas de café</td><td>nas indústrias</td></tr>
+     </table>
+     <p>Repare no caminho: <b>inicialmente</b> os italianos vieram <b>substituir a mão de obra
+     escrava nas fazendas de café</b>. <b>Com o passar do tempo</b>, a maioria
+     <b>migrou para as cidades — o lugar das indústrias</b>.</p>
+     <p>No início do século XX, São Paulo virou um grande <b>centro fabril</b>. Os italianos que
+     trabalhavam ali formaram <b>bairros operários</b>, onde moravam em condições precárias.</p>`,
+   chave:`Do <b>café</b> para a <b>fábrica</b>. Nessa ordem — primeiro o campo, depois a cidade.`},
+
+  {ico:"🗺️", tit:"Três estados e quatro bairros",
+   txt:`Os estados que mais receberam italianos foram <b>São Paulo, Rio Grande do Sul e Minas
+     Gerais</b>, com a <b>maior concentração em São Paulo</b>.
+     <p>E os quatro bairros operários que ainda trazem as marcas desse passado — os mesmos do
+     caça-palavras que você resolveu:</p>
+     <div class="destaque">Mooca · Bixiga · Barra Funda · Brás</div>
+     <p>São Paulo abriga hoje <b>uma das maiores comunidades de descendentes de italianos fora
+     da Itália</b>.</p>`,
+   arte: arteMapaEstados({marca:["sp","rs","mg"]}),
+   chave:`Italianos: <b>SP · RS · MG</b>. Guarde pela boca: <b>S</b>ão Paulo,
+     <b>R</b>io Grande do Sul, <b>M</b>inas Gerais. Não confunda com o Sul dos alemães.`},
+
+  {ico:"🍞", tit:"O que eles deixaram na sua cozinha",
+   txt:`Alguns hábitos alimentares que temos <b>até hoje</b> foram trazidos pelos italianos:
+     <ul class="lista">
+       <li>o consumo de <b>pães</b>;</li>
+       <li>as <b>massas</b>;</li>
+       <li>legumes como a <b>berinjela</b>;</li>
+       <li>o uso do <b>fubá</b> para fazer <b>polenta</b>;</li>
+       <li>os <b>embutidos</b>.</li>
+     </ul>
+     <p>Foi por isso que, na questão 7, o <b>espaguete</b> e a <b>polenta</b> estavam certos —
+     e a <b>paella</b> (espanhola) e o <b>yakisoba</b> (japonês) não.</p>`,
+   chave:`Comida italiana na prova: <b>massa, pão, polenta, berinjela e embutidos</b>.
+     Festa italiana: a <b>festa da polenta</b>.`}
+]);
+
+/* ---- 4 · alemães ---- */
+AULAS.push([
+  {ico:"🧭", tit:"Fugindo da unificação da Alemanha",
+   txt:`Os alemães imigraram durante o <b>século XIX</b> e chegaram em <b>1824</b>. E o motivo
+     está sublinhado na sua página:
+     <div class="destaque">conflitos e perseguições políticas<br>
+     no processo de <b>unificação da Alemanha</b></div>
+     <p>Havia mais: um <b>impulso industrial</b> provocou o <b>êxodo rural</b> para os centros
+     urbanos, e as oportunidades de trabalho ficaram escassas. Some a isso os
+     <b>problemas sociais</b> frequentes na Europa e a <b>fartura de terras</b> no Brasil.</p>`,
+   chave:`Motivo alemão = <b>conflitos e perseguições políticas na unificação da Alemanha</b>.
+     Motivo italiano = <b>crise de desemprego pela industrialização</b>. São diferentes.`},
+
+  {ico:"🏘️", tit:"São Leopoldo e o Sul do Brasil",
+   txt:`A colônia de <b>São Leopoldo</b>, no <b>Rio Grande do Sul</b>, foi a <b>primeira
+     experiência de povoamento do Sul do Brasil</b>.
+     <p>Os alemães foram para os estados do Sul porque ali <b>o clima era parecido com o da
+     terra deles</b> — é o que diz a tirinha da sua Atividade Unificada.</p>
+     <p>Os estados que mais receberam alemães:</p>
+     <div class="destaque">Paraná · Santa Catarina · Rio Grande do Sul</div>
+     <p>E eles foram a nacionalidade que <b>mais conseguiu preservar a própria cultura</b>:
+     adaptaram-se ao país <b>sem abrir mão</b> do seu modo de vida.</p>`,
+   arte: arteMapaEstados({marca:["pr","sc","rs"], cor:"#2dd4bf"}),
+   chave:`Alemães: <b>PR · SC · RS</b> — os <b>três estados do Sul</b>.
+     Italianos: <b>SP · RS · MG</b>. Só o <b>Rio Grande do Sul</b> aparece nas duas listas.`},
+
+  {ico:"⛪", tit:"A pegadinha oficial: PROTESTANTE",
+   txt:`Esta é a alternativa incorreta da questão 9, e você acertou:
+     <div class="destaque"><span class="errado">Os imigrantes alemães difundiram a religião
+     católica no Brasil.</span><br><span class="certo">Eles difundiram a religião
+     PROTESTANTE.</span></div>
+     <p>O católico veio com o <b>português</b>. O protestante veio com o <b>alemão</b>.</p>
+     <p>E a imigração alemã teve papel importante na <b>diversificação da agricultura</b> e no
+     processo de <b>urbanização e industrialização</b>, influenciando em grande parte a
+     <b>arquitetura das cidades</b>. Depois deles começaram no Brasil a <b>agricultura
+     familiar</b>, o <b>cultivo do trigo</b> e a <b>criação de suínos</b>.</p>`,
+   chave:`Português → <b>catolicismo</b>. Alemão → <b>protestantismo</b>.
+     Alemão também trouxe: <b>trigo, suínos, agricultura familiar e arquitetura</b>.`},
+
+  {ico:"🍺", tit:"Oktoberfest: outubro, Blumenau, cerveja",
+   txt:`O exemplo característico de herança alemã é a <b>Oktoberfest</b>, festa típica realizada
+     <b>todos os anos no mês de outubro</b>, na cidade de <b>Blumenau</b>, em
+     <b>Santa Catarina</b>. Nela aparecem a <b>culinária, a música e a língua alemãs</b>, e a
+     bebida típica: a <b>cerveja</b>.
+     <p>Uma pegadinha fina: no Brasil, a Oktoberfest foi celebrada <b>pela primeira vez em
+     1978</b>, na cidade de <b>Itapiranga</b>, também em Santa Catarina — <b>mas se popularizou
+     em Blumenau</b>.</p>
+     <p>E a arquitetura de Blumenau lembra a cidade de <b>Bremen</b>, na Alemanha.</p>`,
+   chave:`<b>Outubro · Blumenau (SC) · cerveja.</b> Primeira vez no Brasil:
+     <b>1978, em Itapiranga (SC)</b>.`}
+]);
+
+/* ---- 5 · japoneses ---- */
+AULAS.push([
+  {ico:"🚢", tit:"A viagem que dá nome a mim",
+   txt:`Aqui está o meu nome, {NOME}. Em <b>18 de junho de 1908</b>, no <b>porto de Santos</b>,
+     desembarcou o <b>primeiro grupo oficial</b> de imigrantes japoneses, trazido pelo navio
+     <b>Kasato Maru</b>. A viagem começou no <b>porto de Kobe</b> e terminou <b>52 dias</b>
+     depois.
+     <p>Por que os dois países combinaram isso? Porque cada um tinha um problema:</p>
+     <ul class="lista">
+       <li>o <b>Brasil</b> precisava de <b>mão de obra para as lavouras de café</b>;</li>
+       <li>o <b>Japão</b> sofria com a <b>pouca oferta de empregos</b>.</li>
+     </ul>
+     <p>Foi selado um <b>acordo imigratório</b> entre os dois governos. Vieram
+     <b>165 famílias — 781 pessoas</b> — para os <b>cafezais do Oeste Paulista</b>.</p>`,
+   arte: arteNavio(),
+   chave:`<b>Kobe → 52 dias → Santos, 18/06/1908.</b>
+     <b>165 famílias, 781 pessoas</b>, para o café do <b>Oeste Paulista</b>.`},
+
+  {ico:"🌾", tit:"A maioria foi para a roça, não para a fábrica",
+   txt:`Muitos japoneses encontraram no <b>comércio urbano</b> sua fonte de renda, e em São
+     Paulo se concentraram no <b>bairro da Liberdade</b>, na região central — que virou o
+     <b>símbolo da comunidade nipônica</b> na cidade.
+     <p><b>No entanto</b> — e isto está sublinhado na sua apostila —</p>
+     <div class="destaque">a <b>maioria</b> foi direcionada para a <b>produção agrícola</b>:<br>
+     algodão · verduras · legumes · arroz</div>
+     <p>Por isso, na questão 11, <i>"a maior parte dos imigrantes japoneses trabalhava em
+     indústrias"</i> é <b>FALSO</b>; e na questão 5, <i>"os japoneses imigraram para trabalhar
+     na mineração"</i> também é <b>FALSO</b>.</p>`,
+   chave:`Japoneses = <span class="certo">plantações</span>,
+     <span class="errado">não indústrias</span>, <span class="errado">não mineração</span>.`},
+
+  {ico:"🏮", tit:"As barreiras e as colônias",
+   txt:`O que marcou a presença do imigrante japonês no Brasil foram seus <b>traços físicos e
+     culturais</b>, especialmente quando comparados aos imigrantes europeus.
+     <p>Nos primeiros anos, cinco coisas viraram <b>barreiras à integração</b>:</p>
+     <div class="destaque">a língua · os costumes · a religião<br>o clima · a alimentação</div>
+     <p>Diante dessas diferenças, eles buscavam <b>preservar suas tradições</b>. E foi por isso
+     que, aos poucos, foram se organizando em <b>colônias</b>, onde criaram <b>escolas</b> para
+     que as crianças fossem educadas <b>com o idioma e com a cultura japoneses</b>.</p>
+     <p>Hoje moram na Liberdade muitos <b>chineses e coreanos</b> também — o bairro deixou de
+     ser exclusivamente japonês para se tornar <b>oriental</b>.</p>`,
+   chave:`As cinco barreiras: <b>língua, costumes, religião, clima e alimentação</b>.
+     A saída foi a <b>colônia</b>, com <b>escola própria</b>.`},
+
+  {ico:"🍜", tit:"O que eles puseram no seu prato",
+   txt:`Os japoneses introduziram novos alimentos na culinária brasileira:
+     <ul class="lista">
+       <li><b>shoyu</b> (o molho escuro de soja);</li>
+       <li><b>chá-verde</b>;</li>
+       <li><b>rabanete</b>;</li>
+       <li><b>cabotiá</b> — mais conhecida como <b>abóbora japonesa</b>.</li>
+     </ul>
+     <p>E também o <b>sushi</b>, o <b>tempurá</b> e o <b>ramen</b>, além de técnicas de cultivo
+     que ajudaram a produção de <b>hortaliças, frutas e chás</b>.</p>`,
+   chave:`Os quatro da apostila: <b>shoyu · chá-verde · rabanete · cabotiá</b>.
+     Cabotiá = <b>abóbora japonesa</b>.`}
+]);
+
+/* ---- 6 · o que é folclore e as lendas ---- */
+AULAS.push([
+  {ico:"🪄", tit:"Tudo aquilo que vem do povo",
+   txt:`Agora a segunda metade da sua prova, {NOME} — e ela começa com uma definição que a sua
+     folha pede inteira:
+     <div class="destaque">O folclore brasileiro é um conjunto de<br>
+     <b>tradições e manifestações culturais populares</b></div>
+     <p>Quais? <b>Histórias, lendas, músicas, danças, festas, brincadeiras, comidas típicas,
+     adivinhas, parlendas, crendices e costumes</b> que fazem parte da nossa cultura.</p>
+     <p>E a paródia de <i>Asa Branca</i> da sua folha resume em duas linhas:
+     <i>"é tudo aquilo que vem do povo e nasce livre do coração"</i>.</p>`,
+   chave:`<b>No dia 22 de agosto comemoramos o folclore brasileiro.</b>
+     Essa data cai. Decore: <b>22 de agosto</b>.`},
+
+  {ico:"👵", tit:"Os dois carimbos do folclore",
+   txt:`Nem toda música, nem toda festa é folclore. Segundo os estudiosos, para um costume
+     <b>ser considerado folclore</b> ele precisa passar por <b>dois carimbos</b>:
+     <ul class="lista">
+       <li>ser <b>praticado e transmitido de geração em geração</b> por <b>muitas pessoas</b> —
+       dos avós para os pais, dos pais para os filhos;</li>
+       <li>ter <b>origem popular</b> e, geralmente, <b>ANÔNIMA</b>.</li>
+     </ul>
+     <p>É por isso que uma música que tem <b>autor conhecido</b>, com nome e sobrenome,
+     <b>não é folclore</b> — mesmo que todo mundo cante.</p>
+     <p>E por que valorizar? Porque o folclore é uma forma de <b>expressar a cultura, os
+     costumes e as tradições de um povo</b>. Conhecendo o folclore de um país, compreendemos
+     melhor sua <b>história</b>, sua <b>diversidade cultural</b> e a <b>identidade</b> da sua
+     população.</p>`,
+   chave:`Os dois carimbos: <b>geração em geração</b> + <b>origem popular e anônima</b>.
+     Faltou um dos dois? Não é folclore.`},
+
+  {ico:"📋", tit:"As seis gavetas do folclore",
+   txt:`A tabela da sua folha — aquela que está circulada na margem — separa o folclore
+     brasileiro em <b>seis categorias</b>:
+     <ul class="lista">
+       <li><b>Mitos e lendas</b> — Mula sem Cabeça, Saci-Pererê, Boitatá, Iara, Vitória-Régia.</li>
+       <li><b>Cantigas de roda</b> — A Canoa Virou, Ciranda Cirandinha, Boi da Cara Preta,
+       Roda Pião, Marcha Soldado, Caranguejo, Escravos de Jó.</li>
+       <li><b>Danças</b> — Quadrilha, fandango, batuque, lundu, maculelê, frevo, pastoril.</li>
+       <li><b>Tradições orais</b> — trava-línguas, adivinhações, anedotas, provérbios,
+       literatura de cordel.</li>
+       <li><b>Jogos e brincadeiras</b> — pião, bola de gude, esconde-esconde, pipa, cabra-cega,
+       passa anel, cata-vento, amarelinha, queimada, adedonha.</li>
+       <li><b>Comidas típicas</b> — pé de moleque, canjica, pamonha, feijão tropeiro, pipoca,
+       paçoca.</li>
+     </ul>`,
+   chave:`Se a prova der um exemplo e pedir a categoria, use as seis gavetas:
+     <b>lenda · cantiga · dança · tradição oral · brincadeira · comida</b>.`},
+
+  {ico:"🌳", tit:"Quem é quem nas lendas",
+   txt:`As <b>lendas folclóricas</b> são <b>histórias e contos transmitidos de geração em
+     geração pelo povo</b> — e elas <b>variam conforme a região</b> do país.
+     <p>As três que a sua folha cobrou, e que você acertou:</p>
+     <ul class="lista">
+       <li><b>Curupira</b> — <i>"sou protetor das matas e de todos os animais; despisto os
+       caçadores com os <b>pés virados para trás</b>"</i>.</li>
+       <li><b>Iara</b> — <i>"já fui uma bela <b>indiazinha</b> e hoje vivo nas <b>profundezas
+       do rio</b>; sempre gosto de <b>cantar</b>"</i>.</li>
+       <li><b>Mula sem Cabeça</b> — <i>"assusto todo mundo com meu forte <b>relincho</b>;
+       apareço na <b>noite escura de luar</b>; tenho corpo de <b>cavalo</b> e solto
+       <b>fogo pelo pescoço</b>"</i>.</li>
+     </ul>
+     <p>E ainda: <b>Saci-Pererê, Boitatá, Lobisomem, Vitória-Régia, Mãe d'Água</b> e
+     <b>Caipora</b>.</p>`,
+   chave:`Pés virados = <b>Curupira</b>. Canta no rio = <b>Iara</b>.
+     Fogo pelo pescoço = <b>Mula sem Cabeça</b>.`}
+]);
+
+/* ---- 7 · danças, versos, brincadeiras e comida ---- */
+AULAS.push([
+  {ico:"💃", tit:"As cinco danças, uma a uma",
+   txt:`No Brasil existem diversas danças folclóricas, <b>cada uma contando a história de sua
+     região</b>. A sua folha destaca <b>cinco</b> — e sublinhou todas:
+     <ul class="lista">
+       <li><b>Frevo</b> — típica de <b>Pernambuco</b>, no Nordeste; <b>músicas instrumentais</b>
+       e o uso de <b>pequenos guarda-chuvas coloridos</b>. ☂️</li>
+       <li><b>Baião</b> — típica do <b>Nordeste</b>, dançada <b>em pares</b>; uma das principais
+       <b>influências do forró</b>.</li>
+       <li><b>Quadrilha</b> — típica das <b>comemorações juninas</b>, celebradas no <b>mês de
+       junho</b>.</li>
+       <li><b>Samba de roda</b> — raízes <b>africanas e portuguesas</b>; combina <b>poesia,
+       música e dança</b>.</li>
+       <li><b>Maracatu</b> — dança <b>pernambucana</b> com elementos <b>africanos, indígenas e
+       portugueses</b>.</li>
+     </ul>`,
+   chave:`Duas são de <b>Pernambuco</b>: <b>frevo</b> e <b>maracatu</b>.
+     A do <b>guarda-chuva</b> é o frevo; a de <b>três povos</b> é o maracatu.`},
+
+  {ico:"🎶", tit:"A música do povo",
+   txt:`A música é uma <b>parte fundamental</b> do folclore brasileiro. Os estilos populares que
+     a sua folha lista:
+     <div class="destaque">cantoria de viola · baião · embolada<br>forró · cantigas de roda</div>
+     <p>E as <b>cantigas de roda</b> são as músicas que você já cantou sem saber que eram
+     matéria de prova: <b>A Canoa Virou</b>, <b>Ciranda Cirandinha</b>, <b>Boi da Cara Preta</b>,
+     <b>Roda Pião</b>, <b>Marcha Soldado</b>, <b>Caranguejo</b>, <b>Escravos de Jó</b>,
+     <b>A Cobra</b> e <b>O Meu Chapéu Tem Três Pontas</b>.</p>
+     <p>Repare: nenhuma delas tem autor. É <b>domínio público</b> — aquele segundo carimbo do
+     folclore, o da <b>origem anônima</b>.</p>`,
+   chave:`<b>Baião</b> aparece nas duas listas: é <b>dança</b> e é <b>música</b>.
+     Não é erro do livro — é a mesma coisa vista de dois jeitos.`},
+
+  {ico:"🗣️", tit:"Provérbio, parlenda, adivinhação",
+   txt:`Três palavras que a prova troca com facilidade. Vá pela definição:
+     <ul class="lista">
+       <li><b>Provérbios</b>, também chamados de <b>ditados populares</b>: <b>frases curtas</b>
+       que <b>transmitem ensinamentos</b> e fazem parte da <b>sabedoria popular</b>.
+       Ex.: <i>"Água mole em pedra dura, tanto bate até que fura"</i>.</li>
+       <li><b>Parlendas</b>: <b>versos</b> que, <b>mesmo sem música</b>, possuem <b>ritmo</b> e
+       proporcionam <b>divertimento e aprendizagem</b>.
+       Ex.: <i>"Galinha choca, comeu minhoca, saiu pulando, que nem pipoca"</i>.</li>
+       <li><b>Adivinhações</b> (ou adivinhas): <b>desafios apresentados em forma de perguntas</b>,
+       conhecidas como <b>"O que é, o que é?"</b>.</li>
+     </ul>`,
+   chave:`Ensina → <b>provérbio</b>. Tem ritmo mas não tem música → <b>parlenda</b>.
+     Vira pergunta → <b>adivinhação</b>.`},
+
+  {ico:"📜", tit:"Cordel: o nome vem da corda",
+   txt:`O <b>cordel</b> é uma forma de <b>literatura popular</b> composta por <b>versos
+     ritmados</b>, impressos em <b>folhetos</b> que narram histórias do cotidiano: <b>secas,
+     inundações, eleições</b> e histórias sobre <b>políticos, celebridades e santos</b>.
+     <p>E o nome? Vem do <b>costume antigo de pendurar esses folhetos em cordas nas feiras</b>,
+     para serem vendidos. <i>Cordel</i> é corda pequena.</p>`,
+   arte: arteCordel(),
+   chave:`<b>Cordel = folheto de versos pendurado numa CORDA</b>, na feira.
+     Se você lembrar da corda, lembra do nome.`},
+
+  {ico:"🪁", tit:"Brincadeira, artesanato e panela",
+   txt:`<b>Como as brincadeiras populares chegaram até hoje?</b> A resposta da questão 5 é uma
+     palavra só:
+     <div class="destaque">graças à <b>ORALIDADE</b></div>
+     <p>Ninguém escreveu as regras da amarelinha num livro: uma criança contou para a outra.</p>
+     <ul class="lista">
+       <li><b>Brinquedos populares</b>, feitos <b>artesanalmente</b>, ajudam no desenvolvimento
+       <b>intelectual e motor</b>: <b>pião</b>, <b>bila</b> (bolinha de gude), <b>papagaio</b>
+       (pipa, raia) e <b>peteca</b>.</li>
+       <li><b>Brincadeiras</b>: <b>amarelinha</b> — também chamada de <b>macaca</b> em algumas
+       regiões —, <b>bandeira</b>, <b>cabra-cega</b> e <b>passa-anel</b>.</li>
+       <li><b>Artesanato</b>: retrata <b>lendas, brincadeiras e elementos regionais</b>, com
+       <b>cerâmica, palha, couro, rendas, bordados</b> e <b>garrafas com areia colorida</b>.</li>
+     </ul>
+     <p>E as <b>comidas típicas variam conforme a região</b>:</p>
+     <table class="mini-tab">
+       <tr><th>Norte</th><td>pato no tucupi</td></tr>
+       <tr><th>Nordeste</th><td>acarajé · carne de sol</td></tr>
+       <tr><th>Centro-Oeste</th><td>galinhada · arroz com pequi</td></tr>
+       <tr><th>Sudeste</th><td>feijoada</td></tr>
+       <tr><th>Sul</th><td>pinhão assado · churrasco</td></tr>
+     </table>`,
+   chave:`A palavra da questão 5 é <b>oralidade</b>. E a tabela das comidas cai inteira:
+     <b>tucupi no Norte, acarajé no Nordeste, pequi no Centro-Oeste, feijoada no Sudeste,
+     churrasco no Sul</b>.`}
+]);
+
+/* ---- 8 · a aula das armadilhas (não tem matéria nova) ---- */
+AULAS.push([
+  {ico:"🎯", tit:"Esta aula não tem matéria nova, {NOME}",
+   txt:`Você já passou pelas <b>${N_MISSOES-1} paradas</b> do porto. Esta última aula é só a
+     lista das <b>trocas</b> que a prova costuma fazer — as que derrubam quem estudou.
+     <p>Leia devagar. Cada linha é uma pergunta que já apareceu numa folha sua.</p>`,
+   chave:`Quem erra na prova quase nunca <b>não sabe</b>. Quase sempre <b>trocou duas coisas
+     parecidas</b>.`},
+
+  {ico:"🔀", tit:"As seis trocas da imigração",
+   txt:`<ul class="lista">
+       <li>Alemães difundiram a religião <span class="certo">protestante</span>,
+       <span class="errado">não a católica</span>.</li>
+       <li>Japoneses trabalhavam em <span class="certo">plantações</span>,
+       <span class="errado">não em indústrias</span> e
+       <span class="errado">não na mineração</span>.</li>
+       <li>Alemães: <span class="certo">SC, PR e RS</span>.
+       Italianos: <span class="certo">SP, RS e MG</span>.</li>
+       <li>Espanhóis: <span class="certo">castelhanos</span> primeiro, <span class="certo">galegos</span>
+       no fim do século XIX — e os galegos parecem com os
+       <span class="certo">portugueses</span>.</li>
+       <li>Motivo italiano = <span class="certo">desemprego pela industrialização</span>.
+       Motivo alemão = <span class="certo">unificação da Alemanha</span>.</li>
+       <li><span class="certo">Imigrante quer</span> sair;
+       <span class="certo">refugiado é obrigado</span> a sair.</li>
+     </ul>`,
+   arte: arteLinha(["1500","1696","1807","1824","1870","1908","1930"]),
+   chave:`E as datas: <b>1500</b> chegada · <b>1530</b> imigração · <b>1696</b> ouro ·
+     <b>1807</b> D. João VI · <b>1824</b> alemães · <b>1870</b> italianos · <b>1888</b> Lei
+     Áurea · <b>1908</b> Kasato Maru · <b>1930</b> declínio.`},
+
+  {ico:"🎪", tit:"As quatro trocas do folclore",
+   txt:`<ul class="lista">
+       <li>Folclore precisa dos <b>dois carimbos</b>: <span class="certo">geração em geração</span>
+       e <span class="certo">origem popular e anônima</span>. Música com autor famoso
+       <span class="errado">não é folclore</span>.</li>
+       <li><b>22 de agosto</b> é o Dia do Folclore — <span class="errado">não é 22 de junho</span>,
+       que é mês de quadrilha.</li>
+       <li><b>Frevo</b> e <b>maracatu</b> são de <span class="certo">Pernambuco</span>.
+       O do <b>guarda-chuva</b> é o frevo.</li>
+       <li>As brincadeiras se preservam pela <span class="certo">oralidade</span> —
+       <span class="errado">não porque estão escritas num livro</span>.</li>
+     </ul>
+     <p>Agora vá, {NOME}. A prova é sua.</p>`,
+   chave:`A Prova do Porto tem <b>duas partes</b>: um <b>arcade</b> de 60 segundos, que vale
+     pontos, e a <b>prova final</b>, sem relógio, que vale as ${POR_MISSAO} estrelas.`}
+]);
+
+/* ============================================================
+   MINIGAMES — três mecânicas reaproveitadas pelas missões.
+   Todas terminam chamando cfg.fim(acertos, total), e é o quiz
+   que continua a missão a partir daí.
+   ============================================================ */
+let MG = null;
+
+/* ---- 1 · ESCOLHER: clicar todas as fichas que satisfazem uma regra ---- */
+function minigameEscolher(cfg){
+  MG = { cfg, resolvidas: cfg.itens.map(()=>false), erros: 0 };
+  desenhaEscolher();
+}
+function desenhaEscolher(){
+  const c = MG.cfg;
+  const faltam = c.itens.filter((it,i)=>it.ok && !MG.resolvidas[i]).length;
+  app.innerHTML = hud(c.titulo) + `
+    <div class="card">
+      ${c.enun ? `<div class="enunciado">${nomear(c.enun)}</div>` : ``}
+      <div class="quantas">🎯 Faltam <b>${faltam}</b> ${faltam===1?"para achar":"para achar"}</div>
+      <div class="fichas" id="fichas">
+        ${c.itens.map((it,i)=>{
+          const cls = MG.resolvidas[i] ? (it.ok ? "pega" : "furada revelada") : "";
+          return `<button class="ficha ${cls}" onclick="cliqueFicha(${i})" ${MG.resolvidas[i]?"disabled":""}>
+            ${it.t}${it.tipo?`<span class="tipo">${it.tipo}</span>`:``}</button>`;
+        }).join("")}
+      </div>
+      <div class="feedback" id="fbm"></div>
+    </div>`;
+}
+function cliqueFicha(i){
+  const c = MG.cfg, it = c.itens[i];
+  if(MG.resolvidas[i]) return;
+  MG.resolvidas[i] = true;
+  const fb = $("#fbm");
+  if(it.ok){
+    somAcerto(); ganha(10); marcaAcerto(c.hab);
+  } else {
+    somErro(); MG.erros++; marcaErro(c.hab);
+  }
+  const faltam = c.itens.filter((x,k)=>x.ok && !MG.resolvidas[k]).length;
+  desenhaEscolher();
+  const fb2 = $("#fbm");
+  fb2.className = "feedback " + (it.ok ? "bom" : "ruim") + " show";
+  fb2.innerHTML = (it.ok
+    ? `<div class="tt">✅ ${elogio()}</div>`
+    : `<div class="tt">❌ <b>${it.t}</b> não entra aqui, ${NOME()}.</div>`) + (it.e || "");
+  if(faltam === 0) setTimeout(fimEscolher, 900);
+}
+window.cliqueFicha = cliqueFicha;
+function fimEscolher(){
+  const c = MG.cfg;
+  const total = c.itens.filter(x=>x.ok).length;
+  const acertos = Math.max(0, total - MG.erros);
+  somVitoria();
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:56px">${MG.erros===0?"🏆":"👏"}</div>
+      <h2>${MG.erros===0 ? `Sem nenhum erro, ${NOME()}!` : `Achou todas, ${NOME()}!`}</h2>
+      <p>Você achou as <b>${total}</b> certas${MG.erros?` e clicou em <b>${MG.erros}</b> que não entravam`:``}.</p>
+      ${c.fecho ? `<div class="enunciado" style="text-align:left">${nomear(c.fecho)}</div>` : ``}
+      <div class="acoes"><button class="btn" onclick="segueMissao()">Continuar a missão →</button></div>
+    </div>`;
+  MG.saida = {acertos, total};
+  scrollTo(0,0);
+}
+function segueMissao(){ somClique(); MG.cfg.fim(MG.saida.acertos, MG.saida.total); }
+window.segueMissao = segueMissao;
+
+/* ---- 2 · ORDENAR: clicar os itens na ordem certa ---- */
+function minigameOrdenar(cfg){
+  MG = { cfg, postos: [], sobra: embaralha(cfg.itens.map((_,i)=>i)) };
+  desenhaOrdenar();
+}
+function desenhaOrdenar(){
+  const c = MG.cfg;
+  app.innerHTML = hud(c.titulo) + `
+    <div class="card">
+      ${c.enun ? `<div class="enunciado">${nomear(c.enun)}</div>` : ``}
+      <div class="trilha">
+        ${c.itens.map((_,pos)=>{
+          const idx = MG.postos[pos];
+          if(idx === undefined) return `<div class="vagao"><span class="ord">${pos+1}º</span>?</div>`;
+          return `<div class="vagao cheio"><span class="ord">${pos+1}º</span>${c.itens[idx].t}</div>`;
+        }).join("")}
+      </div>
+      <p class="mini centro">Toque nas fichas na <b>ordem certa</b>, da mais antiga para a mais nova.</p>
+      <div class="fichas" id="fichas">
+        ${MG.sobra.map(idx=>`<button class="ficha" onclick="cliqueOrdem(${idx})">
+          ${c.itens[idx].t}${c.itens[idx].tipo?`<span class="tipo">${c.itens[idx].tipo}</span>`:``}</button>`).join("")}
+      </div>
+      ${MG.postos.length ? `<div class="acoes"><button class="btn sec" onclick="desfazOrdem()">↩️ Tirar o último</button></div>` : ``}
+      <div class="feedback" id="fbm"></div>
+    </div>`;
+}
+function cliqueOrdem(idx){
+  somClique();
+  MG.postos.push(idx);
+  MG.sobra = MG.sobra.filter(k=>k!==idx);
+  if(MG.postos.length === MG.cfg.itens.length){ confereOrdem(); return; }
+  desenhaOrdenar();
+}
+window.cliqueOrdem = cliqueOrdem;
+function desfazOrdem(){
+  somClique();
+  const idx = MG.postos.pop();
+  if(idx !== undefined) MG.sobra.push(idx);
+  desenhaOrdenar();
+}
+window.desfazOrdem = desfazOrdem;
+function confereOrdem(){
+  const c = MG.cfg;
+  let acertos = 0;
+  MG.postos.forEach((idx,pos)=>{ if(idx === pos) acertos++; });
+  if(acertos === c.itens.length){ somVitoria(); marcaAcerto(c.hab); ganha(30); }
+  else { somErro(); marcaErro(c.hab); }
+  app.innerHTML = hud(c.titulo) + `
+    <div class="card ${acertos===c.itens.length?"destaque":""} centro">
+      <div style="font-size:56px">${acertos===c.itens.length?"🏆":"👀"}</div>
+      <h2>${acertos===c.itens.length ? `Ordem perfeita, ${NOME()}!` : `Você acertou ${acertos} de ${c.itens.length} lugares`}</h2>
+      <div class="trilha">
+        ${c.itens.map((it,pos)=>{
+          const idx = MG.postos[pos];
+          const certo = idx === pos;
+          return `<div class="vagao ${certo?"certo":"errado"}"><span class="ord">${pos+1}º</span>${c.itens[idx].t}</div>`;
+        }).join("")}
+      </div>
+      <div class="enunciado" style="text-align:left"><b>A ordem certa é:</b><br>
+        ${c.itens.map((it,i)=>`${i+1}. <b>${it.t}</b> — ${it.e}`).join("<br>")}</div>
+      <div class="acoes">
+        <button class="btn" onclick="segueOrdem()">Continuar a missão →</button>
+        <button class="btn sec" onclick="refazOrdem()">🔁 Tentar de novo</button>
+      </div>
+    </div>`;
+  MG.saida = {acertos, total:c.itens.length};
+  scrollTo(0,0);
+}
+function refazOrdem(){ somClique(); minigameOrdenar(MG.cfg); }
+window.refazOrdem = refazOrdem;
+function segueOrdem(){ somClique(); MG.cfg.fim(MG.saida.acertos, MG.saida.total); }
+window.segueOrdem = segueOrdem;
+
+/* ---- 3 · MAPA: clicar os estados certos ---- */
+function minigameMapa(cfg){
+  MG = { cfg, achados: [], erros: 0 };
+  desenhaMapa();
+}
+function desenhaMapa(){
+  const c = MG.cfg;
+  const faltam = c.alvos.filter(k=>!MG.achados.includes(k)).length;
+  app.innerHTML = hud(c.titulo) + `
+    <div class="card">
+      ${c.enun ? `<div class="enunciado">${nomear(c.enun)}</div>` : ``}
+      <div class="quantas">🎯 Faltam <b>${faltam}</b> ${faltam===1?"estado":"estados"}</div>
+      ${arteMapaEstados({marca:MG.achados, cor:c.cor||"#f6b73c", clicavel:true})}
+      <div class="feedback" id="fbm"></div>
+    </div>`;
+}
+function cliqueEstado(k){
+  if(!MG || !MG.cfg || !MG.cfg.alvos) return;
+  const c = MG.cfg;
+  if(MG.achados.includes(k)) return;
+  const est = ESTADOS.find(e=>e.k===k);
+  if(c.alvos.includes(k)){
+    MG.achados.push(k);
+    somAcerto(); ganha(10); marcaAcerto(c.hab);
+    const faltam = c.alvos.filter(x=>!MG.achados.includes(x)).length;
+    desenhaMapa();
+    const fb = $("#fbm");
+    fb.className = "feedback bom show";
+    fb.innerHTML = `<div class="tt">✅ ${elogio()}</div>${est.nome} está certo.`;
+    if(faltam === 0) setTimeout(fimMapa, 900);
+  } else {
+    MG.erros++;
+    somErro(); marcaErro(c.hab);
+    desenhaMapa();
+    const fb = $("#fbm");
+    fb.className = "feedback ruim show";
+    fb.innerHTML = `<div class="tt">❌ ${est.nome} não, ${NOME()}.</div>${c.dica||""}`;
+  }
+}
+window.cliqueEstado = cliqueEstado;
+function fimMapa(){
+  const c = MG.cfg;
+  const total = c.alvos.length;
+  const acertos = Math.max(0, total - MG.erros);
+  somVitoria();
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:56px">${MG.erros===0?"🏆":"👏"}</div>
+      <h2>${MG.erros===0 ? `Mapa perfeito, ${NOME()}!` : `Achou os ${total}, ${NOME()}!`}</h2>
+      ${arteMapaEstados({marca:c.alvos, cor:c.cor||"#f6b73c"})}
+      ${c.fecho ? `<div class="enunciado" style="text-align:left">${nomear(c.fecho)}</div>` : ``}
+      <div class="acoes"><button class="btn" onclick="segueMapa()">Continuar a missão →</button></div>
+    </div>`;
+  MG.saida = {acertos, total};
+  scrollTo(0,0);
+}
+function segueMapa(){ somClique(); MG.cfg.fim(MG.saida.acertos, MG.saida.total); }
+window.segueMapa = segueMapa;
+
+/* ============================================================
+   MISSÃO 1 — O PORTO DE TODOS
+   ============================================================ */
+function fasePorto(){
+  minigameEscolher({
+    titulo:"⚓ O Porto de Todos", hab:"leis",
+    enun:`Chegou um navio, {NOME}. Antes de descer, é preciso saber <b>o que protege</b> quem
+      chega. <b>Clique nas TRÊS leis</b> que garantem os direitos dos imigrantes e dos
+      refugiados no Brasil — e deixe as outras de lado.`,
+    itens:[
+      {t:"Constituição Federal de 1988", tipo:"lei", ok:true,
+       e:`Garante os direitos fundamentais a <b>todos</b> que vivem no Brasil,
+          independentemente da nacionalidade: vida, liberdade, igualdade, segurança e propriedade.`},
+      {t:"Lei de Migração", tipo:"lei", ok:true,
+       e:`Estabelece direitos e deveres dos imigrantes e garante acesso à <b>saúde, educação,
+          trabalho e assistência social</b>.`},
+      {t:"Estatuto dos Refugiados", tipo:"lei", ok:true,
+       e:`Regulamenta a proteção de quem é reconhecido como refugiado: <b>permanência no país,
+          acesso à justiça e assistência social</b>.`},
+      {t:"Lei Áurea", tipo:"1888", ok:false,
+       e:`A Lei Áurea <b>aboliu a escravidão</b>, em 1888. É importante — mas não é uma lei
+          sobre os direitos do imigrante.`},
+      {t:"Lei Eusébio de Queirós", tipo:"século XIX", ok:false,
+       e:`Ela <b>proibiu o tráfico</b> de pessoas escravizadas. Também não é uma lei do imigrante.`},
+      {t:"Sistema de parceria", tipo:"1847–1857", ok:false,
+       e:`Era o acordo do <b>Senador Vergueiro</b> — e foi <b>condenado</b>, por se aproximar do
+          trabalho escravo. Longe de proteger o imigrante.`}
+    ],
+    fecho:`As três, na ordem da sua folha: <b>Constituição Federal de 1988 · Lei de Migração ·
+      Estatuto dos Refugiados</b>.`,
+    fim:(ac,tot)=>quizPorto(ac,tot)
+  });
+}
+function quizPorto(ac, tot){
+  quizGenerico(0, "⚓ O Porto de Todos", [
+    { hab:"oquee", quatro:true,
+      p:"O que é <b>imigração</b>?",
+      o:["O deslocamento de pessoas de um território para outro, para se estabelecer em um novo país",
+         "Uma viagem de férias para outro país",
+         "A saída de brasileiros para passear na Europa",
+         "A mudança de uma cidade para outra dentro do Brasil"], c:0,
+      e:`É a definição exata da sua folha: deslocamento <b>com o objetivo de se estabelecer em
+         um novo país</b>. Mudar de cidade dentro do Brasil não é imigração.` },
+
+    { hab:"miscigenacao", quatro:true,
+      p:"Quais são os <b>três grupos</b> que deram origem ao povo brasileiro?",
+      o:["Indígena, europeu e negro","Português, italiano e japonês",
+         "Indígena, alemão e espanhol","Europeu, asiático e africano do norte"], c:0,
+      e:`<b>Miscigenação</b> é a combinação de etnias diferentes, e no Brasil ela teve
+         <b>três grupos de base: indígena, europeu e negro</b>. Era a questão 1 da página 79.` },
+
+    { hab:"refugiado", quatro:true, arte: arteDuasPortas(),
+      p:"Qual é a diferença entre <b>imigrante</b> e <b>refugiado</b>?",
+      o:["O imigrante decide mudar; o refugiado é obrigado a sair do país",
+         "O imigrante é obrigado a sair; o refugiado escolhe sair",
+         "Os dois são a mesma coisa",
+         "O imigrante vem de navio e o refugiado vem de avião"], c:0,
+      e:`<b>Imigrante</b> muda em busca de melhores condições de vida, trabalho, estudo ou para
+         reunir-se à família. <b>Refugiado</b> é obrigado a sair por guerras, perseguições,
+         conflitos, violência ou graves crises humanitárias.` },
+
+    { hab:"forcada", quatro:true,
+      p:"Os <b>africanos</b> trazidos ao Brasil durante a escravidão são exemplo de qual tipo de imigração?",
+      o:["Imigração forçada","Imigração espontânea","Refúgio humanitário","Turismo"], c:0,
+      e:`<b>Forçada</b>: eles foram <b>retirados de suas terras</b> e trazidos à força. Segundo o
+         IBGE, cerca de <b>4 milhões</b> de africanos entre o século XVI e meados do XIX.` },
+
+    { hab:"porque", quatro:true,
+      p:"Por que os fazendeiros de <b>café</b> passaram a trazer imigrantes europeus?",
+      o:["Para substituir a mão de obra escrava depois da Abolição da Escravatura",
+         "Porque os europeus trabalhavam de graça",
+         "Porque o café só nascia com europeus por perto",
+         "Porque o governo proibiu brasileiros de trabalhar na lavoura"], c:0,
+      e:`Com a <b>Abolição</b>, o dinheiro que era usado na compra de escravizados passou a
+         <b>financiar a imigração europeia</b> para as fazendas de café.` },
+
+    { hab:"porque", quatro:true,
+      p:"Qual era o motivo <b>mais comum</b> para alguém deixar seu país e vir para o Brasil?",
+      o:["Dificuldades de ordem econômica e financeira no país de origem",
+         "Vontade de aprender português","Falta de praias na Europa",
+         "Curiosidade sobre o carnaval"], c:0,
+      e:`A sua apostila é direta: <i>"a mais comum relaciona-se a dificuldades de ordem econômica
+         e financeira no país de origem"</i>. E muitos vinham <b>fugindo das guerras</b> da Europa.` },
+
+    { hab:"linha", quatro:true, arte: arteLinha(["1530"]),
+      p:"Em que ano <b>teve início</b> a imigração no Brasil, segundo a sua apostila?",
+      o:["1530, com os portugueses, para plantar cana-de-açúcar",
+         "1888, com a Lei Áurea","1908, com o navio Kasato Maru",
+         "1930, quando começou o declínio"], c:0,
+      e:`<b>1530</b>: os portugueses vieram trabalhar no <b>plantio de cana-de-açúcar</b> e
+         <b>povoar</b> o território. Eles já tinham chegado em <b>1500</b>, mas a imigração
+         começa em 1530.` },
+
+    { hab:"hospedaria", quatro:true,
+      p:"Onde ficavam abrigados os imigrantes recém-chegados a São Paulo?",
+      o:["Na Hospedaria de Imigrantes, no bairro do Brás",
+         "No bairro da Liberdade","Na colônia de São Leopoldo",
+         "Na cidade de Blumenau"], c:0,
+      e:`A <b>Hospedaria de Imigrantes</b>, cuja construção começou em <b>junho de 1886</b> no
+         <b>Brás</b>, foi o principal abrigo entre <b>1887 e 1978</b>. Hoje é o
+         <b>Museu da Imigração</b>.` },
+
+    { hab:"hospedaria", quatro:true,
+      p:"O prédio da antiga Hospedaria de Imigrantes é hoje…",
+      o:["o Museu da Imigração","um hotel","a Estação da Luz","uma fábrica de café"], c:0,
+      e:`Virou <b>Memorial do Imigrante</b> entre 1998 e 2010 e, com a reforma concluída em
+         <b>2014</b>, passou a se chamar <b>Museu da Imigração</b>. Por ali passaram imigrantes
+         de <b>mais de 70 países</b>.` },
+
+    { hab:"linha", quatro:true,
+      p:"A partir de que ano começou o <b>declínio</b> da imigração no Brasil?",
+      o:["1930, quando foram adotadas medidas que restringiam a entrada de estrangeiros",
+         "1888, com a Lei Áurea","1908, com a chegada dos japoneses",
+         "1500, com a chegada dos portugueses"], c:0,
+      e:`<b>Declínio</b> quer dizer <b>diminuição gradual</b>. A maior entrada de imigrantes
+         espontâneos foi entre <b>meados do século XIX e a década de 1930</b>.` },
+
+    { hab:"refugiado", quatro:true,
+      p:"<b>Desde 2011</b>, aumentou no Brasil a chegada de pessoas de quais países, muitas delas pedindo refúgio?",
+      o:["Haitianos, venezuelanos e sírios","Italianos, alemães e japoneses",
+         "Portugueses, espanhóis e galegos","Chineses, filipinos e coreanos"], c:0,
+      e:`A sua folha diz: <b>desde 2011</b>, haitianos, venezuelanos e sírios. Antes deles, no
+         <b>final do século XX</b>, vieram muitos <b>chineses e filipinos</b>.` },
+
+    { hab:"leis", quatro:true,
+      p:"Quais foram <b>contribuições dos imigrantes</b> para o desenvolvimento do Brasil?",
+      o:["Povoados que viraram cidades, comércio, novas técnicas agrícolas e a indústria",
+         "Apenas a construção de igrejas",
+         "Apenas o aumento da população",
+         "A criação das cinco regiões do país"], c:0,
+      e:`A lista da sua folha: crescimento de <b>povoados que viraram cidades</b>, atividades
+         <b>comerciais e de serviços</b>, <b>novas técnicas agrícolas</b>, desenvolvimento da
+         <b>indústria</b> e o enriquecimento da <b>cultura</b>.` }
+  ], ac, tot);
+}
+
+/* ============================================================
+   MISSÃO 2 — CARAVELAS E CASTELHANOS
+   ============================================================ */
+function faseIbericos(){
+  minigameOrdenar({
+    titulo:"⛵ Caravelas e Castelhanos", hab:"linha",
+    enun:`Quatro momentos da chegada dos <b>portugueses</b> se embaralharam, {NOME}.
+      Ponha na <b>ordem do tempo</b>, do mais antigo para o mais novo.`,
+    itens:[
+      {t:"1500", tipo:"as caravelas", e:`os portugueses chegam com as <b>caravelas</b>.`},
+      {t:"1696", tipo:"o ouro",       e:`encontram <b>ouro</b> no Brasil, e milhares de portugueses vêm atrás do metal.`},
+      {t:"1748", tipo:"Madeira e Açores", e:`chegam muitas famílias das <b>ilhas da Madeira e dos Açores</b>.`},
+      {t:"1807", tipo:"a família real",  e:`<b>D. João VI</b>, a família real e a Corte fogem de <b>Napoleão</b>; cerca de <b>15 000</b> portugueses desembarcam.`}
+    ],
+    fim:(ac,tot)=>quizIbericos(ac,tot)
+  });
+}
+function quizIbericos(ac, tot){
+  quizGenerico(1, "⛵ Caravelas e Castelhanos", [
+    { hab:"portugues", quatro:true,
+      p:"Em que ano os portugueses chegaram ao Brasil com suas <b>caravelas</b>?",
+      o:["1500","1530","1696","1807"], c:0,
+      e:`<b>1500</b> é a chegada. <b>1530</b> é quando começa a imigração, com a cana-de-açúcar.` },
+
+    { hab:"portugues", quatro:true,
+      p:"Os portugueses representam, no Brasil…",
+      o:["o maior contingente de imigrantes","o menor grupo de imigrantes",
+         "o segundo grupo, depois dos italianos","um grupo que nunca ficou no país"], c:0,
+      e:`São o <b>maior contingente</b>, e a imigração portuguesa foi a <b>mais expressiva</b> da
+         história do Brasil. Os <b>italianos</b> vêm em segundo lugar.` },
+
+    { hab:"portugues", quatro:true,
+      p:"Por que quase não vieram portugueses entre os séculos <b>XVI e XVII</b>?",
+      o:["Porque não havia muitos atrativos nas terras da Colônia",
+         "Porque a viagem era proibida","Porque o Brasil ainda não tinha sido descoberto",
+         "Porque preferiam a África"], c:0,
+      e:`A apostila diz: <i>"nas primeiras décadas da colonização os portugueses não tinham
+         interesse em viver aqui"</i>. Isso mudou em <b>1696</b>, quando acharam <b>ouro</b>.` },
+
+    { hab:"linha", quatro:true, arte: arteLinha(["1807"]),
+      p:"Por que <b>D. João VI</b>, a família real e a Corte vieram para o Brasil em 1807?",
+      o:["Para salvar o Império Português da invasão de Napoleão Bonaparte",
+         "Para procurar ouro em Minas Gerais",
+         "Para trabalhar nas fazendas de café",
+         "Para fugir de uma epidemia"], c:0,
+      e:`Em <b>29 de novembro de 1807</b>. Com a mudança, o Brasil passou a ser o
+         <b>centro administrativo</b> de todo o Império Português, e desembarcaram cerca de
+         <b>15 000</b> portugueses.` },
+
+    { hab:"portugues", quatro:true, umaSo:true,
+      p:"Qual é o <b>legado</b> mais importante deixado pelos portugueses, segundo a apostila?",
+      o:["O idioma","O carnaval","A bacalhoada","O flamenco"], c:0,
+      e:`<b>Legado</b> = herança transmitida às futuras gerações. O livro diz que
+         <i>"o idioma, com certeza, é um dos mais importantes"</i>. O <b>flamenco</b> nem é
+         português — é <b>espanhol</b>.` },
+
+    { hab:"portugues", quatro:true,
+      p:"Quais destas festas e danças <b>portuguesas</b> foram incorporadas ao folclore brasileiro?",
+      o:["Cavalhada, fandango, Carnaval, Festas Juninas e Farra do Boi",
+         "Frevo, maracatu e baião",
+         "Oktoberfest, festa da polenta e Ano-Novo Chinês",
+         "Samba de roda, quadrilha e maculelê"], c:0,
+      e:`São as cinco da página 80. E o <b>catolicismo</b> também veio com eles.` },
+
+    { hab:"portugues", quatro:true,
+      p:"Quais pratos da cozinha brasileira têm influência <b>portuguesa</b>?",
+      o:["Os cozidos, os embutidos e os pratos com frutos do mar e peixes",
+         "O sushi e o tempurá","A polenta e o espaguete",
+         "O arroz com pequi e a galinhada"], c:0,
+      e:`A famosa <b>bacalhoada</b> é o exemplo da foto. E a dança típica de Portugal é o
+         <b>vira</b>.` },
+
+    { hab:"espanhol", quatro:true, umaSo:true,
+      p:"Assinale a alternativa <b>correta</b> em relação à imigração espanhola no Brasil:",
+      o:["Os primeiros espanhóis a se estabelecerem no Brasil eram de origem castelhana",
+         "Os imigrantes espanhóis se estabeleceram, principalmente, na região Sudeste",
+         "Os espanhóis não fizeram parte da grande migração europeia para o Brasil",
+         "Os povos galegos apresentam muitas semelhanças com os vizinhos franceses"], c:0,
+      e:`É a questão 5 da página 81 — a que ficou em branco no seu livro. Os primeiros eram
+         <b>castelhanos</b>, com presença mais forte na região <b>SUL</b>. E os
+         <b>galegos</b> se parecem com os <b>portugueses</b>, não com os franceses.` },
+
+    { hab:"espanhol", quatro:true,
+      p:"No <b>final do século XIX</b>, grande parte dos imigrantes espanhóis vinha de que região?",
+      o:["Da Galícia — eram os galegos","De Castela","Da Andaluzia","Das Ilhas Canárias"], c:0,
+      e:`Os <b>galegos</b>, da região da <b>Galícia</b>. Têm influência dos <b>celtas</b> e
+         muitas semelhanças com os vizinhos <b>portugueses</b>.` },
+
+    { hab:"espanhol", quatro:true,
+      p:"Que conhecimentos os espanhóis trouxeram para o Brasil?",
+      o:["Conhecimentos sobre agricultura e pecuária",
+         "Técnicas de cultivo do arroz e do algodão",
+         "A criação de suínos e o cultivo do trigo",
+         "A construção de bairros operários"], c:0,
+      e:`<b>Agricultura e pecuária</b> — está na página 5 da sua Atividade Unificada. O
+         <b>trigo e os suínos</b> vieram com os <b>alemães</b>; o <b>arroz e o algodão</b>, com
+         os <b>japoneses</b>.` },
+
+    { hab:"espanhol", quatro:true,
+      p:"Qual destas coisas os <b>espanhóis</b> trouxeram para a cultura brasileira?",
+      o:["O flamenco e o azeite de oliva","A polenta e a berinjela",
+         "O shoyu e o chá-verde","A cerveja e a Oktoberfest"], c:0,
+      e:`<b>Flamenco</b> é o estilo de dança e música característico dos espanhóis, e o
+         <b>azeite de oliva</b> foi a sua resposta na Atividade Unificada.` }
+  ], ac, tot);
+}
+
+/* ============================================================
+   MISSÃO 3 — A GRANDE MIGRAÇÃO (italianos)
+   ============================================================ */
+function faseItalianos(){
+  minigameEscolher({
+    titulo:"🍝 A Grande Migração", hab:"bairros",
+    enun:`São Paulo virou um <b>centro fabril</b> no início do século XX, e os italianos que
+      trabalhavam nas fábricas formaram <b>bairros operários</b>. <b>Clique nos QUATRO
+      bairros</b> da sua página 83 — cuidado com os intrusos, {NOME}.`,
+    itens:[
+      {t:"Mooca", tipo:"São Paulo", ok:true, e:`Um dos quatro grandes núcleos operários italianos.`},
+      {t:"Bixiga", tipo:"São Paulo", ok:true, e:`Outro bairro operário italiano de São Paulo.`},
+      {t:"Barra Funda", tipo:"São Paulo", ok:true, e:`Também estava no caça-palavras da sua folha.`},
+      {t:"Brás", tipo:"São Paulo", ok:true, e:`Bairro operário italiano — e é lá que ficava a <b>Hospedaria de Imigrantes</b>.`},
+      {t:"Liberdade", tipo:"São Paulo", ok:false, e:`A Liberdade é o bairro <b>japonês</b> (hoje oriental), não italiano.`},
+      {t:"Blumenau", tipo:"Santa Catarina", ok:false, e:`Blumenau é <b>alemã</b>, em Santa Catarina — é a cidade da Oktoberfest.`},
+      {t:"São Leopoldo", tipo:"Rio Grande do Sul", ok:false, e:`São Leopoldo é a primeira colônia <b>alemã</b> do Sul do Brasil.`},
+      {t:"Itapiranga", tipo:"Santa Catarina", ok:false, e:`Itapiranga é onde a <b>Oktoberfest</b> foi celebrada pela primeira vez no Brasil, em 1978.`}
+    ],
+    fecho:`Os quatro: <b>Mooca · Bixiga · Barra Funda · Brás</b>.`,
+    fim:(ac,tot)=>quizItalianos(ac,tot)
+  });
+}
+function quizItalianos(ac, tot){
+  quizGenerico(2, "🍝 A Grande Migração", [
+    { hab:"italiano", quatro:true,
+      p:"Depois dos portugueses, qual é o grupo de imigrantes com o <b>maior número</b> de pessoas no Brasil?",
+      o:["Os italianos","Os japoneses","Os alemães","Os espanhóis"], c:0,
+      e:`<b>Italianos</b>. Eles chegaram desde o <b>início do século XIX</b> e formam o segundo
+         maior grupo.` },
+
+    { hab:"italiano", quatro:true, arte: arteLinha(["1870"]),
+      p:"Quando começou a chamada <b>“grande migração”</b> italiana, e quando foi o auge?",
+      o:["Começou em 1870 e teve auge entre 1890 e 1910",
+         "Começou em 1824 e teve auge em 1850",
+         "Começou em 1908 e teve auge em 1930",
+         "Começou em 1500 e teve auge em 1696"], c:0,
+      e:`<b>1870</b> o início, <b>1890–1910</b> o auge. <b>1824</b> é a chegada dos alemães e
+         <b>1908</b> a dos japoneses.` },
+
+    { hab:"italiano", quatro:true,
+      p:"Qual foi o motivo que fez tantos italianos virem para o Brasil?",
+      o:["Uma crise de desemprego na Itália, em razão da industrialização do país",
+         "Conflitos e perseguições políticas na unificação do país",
+         "Uma longa seca nas plantações italianas",
+         "A proibição de falar italiano na Itália"], c:0,
+      e:`Está sublinhado na sua página 82. Cuidado: <b>conflitos e perseguições políticas na
+         unificação</b> é o motivo dos <b>alemães</b>, não dos italianos.` },
+
+    { hab:"italiano", quatro:true,
+      p:"Quais eram as principais atividades dos imigrantes italianos <b>no campo</b> e <b>na cidade</b>?",
+      o:["No campo, as fazendas de café; na cidade, as indústrias",
+         "No campo, o cultivo do trigo; na cidade, o comércio",
+         "No campo, as plantações de arroz; na cidade, as escolas",
+         "No campo, a mineração; na cidade, os portos"], c:0,
+      e:`É a questão 6 da página 83, que você acertou. Primeiro o <b>café</b>, depois a
+         <b>fábrica</b> — <i>"a maioria migrou para as cidades: o lugar das indústrias"</i>.` },
+
+    { hab:"estados", quatro:true, arte: arteMapaEstados({marca:["sp","rs","mg"]}),
+      p:"Quais estados <b>mais receberam</b> imigrantes italianos?",
+      o:["São Paulo, Rio Grande do Sul e Minas Gerais",
+         "Santa Catarina, Paraná e Rio Grande do Sul",
+         "Bahia, Sergipe e Rio Grande do Norte",
+         "Pará, Roraima e Rondônia"], c:0,
+      e:`<b>SP · RS · MG</b>, com a <b>maior concentração em São Paulo</b>.
+         <b>SC · PR · RS</b> é a lista dos <b>alemães</b> — não troque as duas.` },
+
+    { hab:"bairros", quatro:true,
+      p:"Quais bairros de São Paulo foram grandes <b>núcleos operários italianos</b>?",
+      o:["Mooca, Bixiga, Barra Funda e Brás",
+         "Liberdade, Brás, Bixiga e Blumenau",
+         "Mooca, Liberdade, Itapiranga e Santos",
+         "Barra Funda, São Leopoldo, Mooca e Brás"], c:0,
+      e:`Os quatro do caça-palavras: <b>Mooca, Bixiga, Barra Funda e Brás</b>. A
+         <b>Liberdade</b> é japonesa.` },
+
+    { hab:"italiano", quatro:true,
+      p:"Quais hábitos alimentares os <b>italianos</b> trouxeram para o Brasil?",
+      o:["Pães, massas, berinjela, fubá para a polenta e embutidos",
+         "Shoyu, chá-verde, rabanete e cabotiá",
+         "Acarajé, carne de sol e vatapá",
+         "Cerveja, salsicha e chucrute"], c:0,
+      e:`Foi por isso que, na questão 7, a <b>polenta</b> e o <b>espaguete</b> eram as respostas
+         certas — a <b>paella</b> é espanhola e o <b>yakisoba</b>, japonês.` },
+
+    { hab:"italiano", quatro:true,
+      p:"A cidade de São Paulo abriga…",
+      o:["uma das maiores comunidades de descendentes de italianos fora da Itália",
+         "a maior comunidade alemã do mundo",
+         "a primeira colônia japonesa do Brasil",
+         "a maior comunidade galega da América"], c:0,
+      e:`Está na página 4 da sua Atividade Unificada. Festas típicas, associações culturais e a
+         <b>gastronomia italiana</b> continuam presentes no dia a dia de muitas cidades
+         brasileiras.` },
+
+    { hab:"italiano", quatro:true,
+      p:"De onde vinha a maior parte dos <b>primeiros</b> imigrantes italianos?",
+      o:["De origem humilde e de regiões rurais da Itália",
+         "Das famílias mais ricas de Roma",
+         "Das grandes fábricas do norte da Itália",
+         "Das ilhas da Madeira e dos Açores"], c:0,
+      e:`<b>Origem humilde e regiões rurais</b>. As <b>ilhas da Madeira e dos Açores</b> são
+         <b>portuguesas</b> — de lá vieram famílias em <b>1748</b>.` }
+  ], ac, tot);
+}
+
+/* ============================================================
+   MISSÃO 4 — COLÔNIAS DO SUL (alemães)
+   ============================================================ */
+function faseAlemaes(){
+  minigameMapa({
+    titulo:"🍺 Colônias do Sul", hab:"estados", cor:"#2dd4bf",
+    alvos:["pr","sc","rs"],
+    enun:`Os alemães foram para os estados onde o <b>clima era parecido com o da terra deles</b>.
+      <b>Clique nos TRÊS estados</b> que mais receberam imigrantes alemães, {NOME}.`,
+    dica:`Pense na <b>região Sul</b> do Brasil — a de baixo do mapa.`,
+    fecho:`<b>Paraná · Santa Catarina · Rio Grande do Sul</b>. E lembre da outra lista, a dos
+      <b>italianos</b>: SP, RS e MG. Só o <b>Rio Grande do Sul</b> está nas duas.`,
+    fim:(ac,tot)=>quizAlemaes(ac,tot)
+  });
+}
+function quizAlemaes(ac, tot){
+  quizGenerico(3, "🍺 Colônias do Sul", [
+    { hab:"alemao", quatro:true,
+      p:"Quais foram os principais <b>motivos</b> da imigração alemã para o Brasil?",
+      o:["Conflitos e perseguições políticas no processo de unificação da Alemanha",
+         "Uma crise de desemprego causada pela industrialização do país",
+         "A falta de terras férteis na Alemanha e o excesso de chuvas",
+         "Um acordo entre os governos alemão e brasileiro"], c:0,
+      e:`Está sublinhado na sua página 84. Cuidado: a <b>crise de desemprego pela
+         industrialização</b> é o motivo dos <b>italianos</b>, e o <b>acordo entre governos</b>
+         é dos <b>japoneses</b>.` },
+
+    { hab:"alemao", quatro:true, arte: arteLinha(["1824"]),
+      p:"Em que ano os alemães chegaram ao Brasil?",
+      o:["1824","1870","1908","1748"], c:0,
+      e:`<b>1824</b>, durante o <b>período do Império</b>. E foram para os <b>estados do Sul</b>,
+         onde sentiram o clima parecido com o da terra deles.` },
+
+    { hab:"alemao", quatro:true, umaSo:true,
+      p:"Assinale a alternativa <b>INCORRETA</b> sobre a imigração alemã:",
+      o:["Os imigrantes alemães difundiram a religião católica no Brasil",
+         "Muitos alemães vieram para o Brasil para fugir de conflitos e perseguições políticas",
+         "Por conta do êxodo rural, a oferta de trabalho para a população alemã diminuiu",
+         "A imigração alemã influenciou a arquitetura de Blumenau"], c:0,
+      e:`É a questão 9 da página 85, e você acertou. Os alemães difundiram a religião
+         <b>PROTESTANTE</b>. O <b>catolicismo</b> veio com os <b>portugueses</b>.` },
+
+    { hab:"alemao", quatro:true,
+      p:"Qual colônia foi a <b>primeira experiência de povoamento do Sul do Brasil</b>?",
+      o:["São Leopoldo, no Rio Grande do Sul","Blumenau, em Santa Catarina",
+         "Itapiranga, em Santa Catarina","Bremen, no Paraná"], c:0,
+      e:`<b>São Leopoldo (RS)</b>. <b>Blumenau</b> é a cidade da Oktoberfest e <b>Bremen</b> fica
+         na <b>Alemanha</b> — é a cidade cuja arquitetura lembra a de Blumenau.` },
+
+    { hab:"estados", quatro:true, arte: arteMapaEstados({marca:["pr","sc","rs"], cor:"#2dd4bf"}),
+      p:"Quais estados do Brasil <b>mais receberam</b> imigrantes alemães?",
+      o:["Santa Catarina, Paraná e Rio Grande do Sul",
+         "São Paulo, Rio de Janeiro e Minas Gerais",
+         "Bahia, Sergipe e Rio Grande do Norte",
+         "Pará, Roraima e Rondônia"], c:0,
+      e:`É a questão 10 da página 85. <b>SC · PR · RS</b> — os três estados do <b>Sul</b>.` },
+
+    { hab:"alemao", quatro:true,
+      p:"O que começou no Brasil <b>depois</b> da chegada dos imigrantes alemães?",
+      o:["A agricultura familiar, o cultivo do trigo e a criação de suínos",
+         "O cultivo do café e da cana-de-açúcar",
+         "A produção de arroz, algodão e verduras",
+         "A criação de gado no Nordeste"], c:0,
+      e:`Está sublinhado na sua página. E o <b>arroz, o algodão e as verduras</b> vieram com os
+         <b>japoneses</b>.` },
+
+    { hab:"alemao", quatro:true,
+      p:"Por que se diz que os alemães foram a nacionalidade que <b>mais preservou sua cultura</b>?",
+      o:["Porque se adaptaram ao país sem abrir mão do próprio modo de vida",
+         "Porque não aprenderam nada do Brasil",
+         "Porque voltaram todos para a Alemanha",
+         "Porque não construíram cidades"], c:0,
+      e:`A apostila diz que eles <b>construíram um novo espaço</b>, onde mantiveram o próprio
+         estilo de vida, <b>integrando a ele traços da cultura brasileira</b>.` },
+
+    { hab:"alemao", quatro:true,
+      p:"O que é a <b>Oktoberfest</b>?",
+      o:["Uma festa típica alemã realizada todo ano em outubro, em Blumenau (SC)",
+         "Uma festa italiana realizada em São Paulo",
+         "Uma festa japonesa do bairro da Liberdade",
+         "Uma festa portuguesa realizada no Carnaval"], c:0,
+      e:`Nela aparecem a <b>culinária, a música e a língua alemãs</b>, e a bebida típica: a
+         <b>cerveja</b>. No Brasil, foi celebrada pela <b>primeira vez em 1978, em Itapiranga
+         (SC)</b>, mas se popularizou em <b>Blumenau</b>.` },
+
+    { hab:"alemao", quatro:true,
+      p:"Em que a imigração alemã teve papel importante?",
+      o:["Na diversificação da agricultura, na urbanização, na industrialização e na arquitetura",
+         "Apenas na produção de café",
+         "Apenas na criação de escolas de idiomas",
+         "Na construção dos portos brasileiros"], c:0,
+      e:`É a frase sublinhada na sua página 84. E alguns imigrantes alemães ainda foram
+         <b>recrutados para integrar o Exército brasileiro</b>.` }
+  ], ac, tot);
+}
+
+/* ============================================================
+   MISSÃO 5 — O KASATO MARU (japoneses)
+   ============================================================ */
+function faseJaponeses(){
+  minigameEscolher({
+    titulo:"🚢 O Kasato Maru", hab:"japones",
+    enun:`Os japoneses desembarcaram com sementes na bagagem, {NOME}. <b>Clique nos QUATRO
+      alimentos</b> que a sua apostila diz que eles <b>introduziram</b> na culinária brasileira.`,
+    itens:[
+      {t:"shoyu", tipo:"molho de soja", ok:true, e:`Um dos quatro da página 87.`},
+      {t:"chá-verde", tipo:"bebida", ok:true, e:`Também está na lista da apostila.`},
+      {t:"rabanete", tipo:"legume", ok:true, e:`Está na foto da sua página, ao lado da cabotiá.`},
+      {t:"cabotiá", tipo:"abóbora japonesa", ok:true, e:`<b>Cabotiá</b> é o nome que a apostila usa para a <b>abóbora japonesa</b>.`},
+      {t:"polenta", tipo:"fubá", ok:false, e:`A polenta é <b>italiana</b> — feita com o fubá que eles trouxeram.`},
+      {t:"bacalhoada", tipo:"peixe", ok:false, e:`A bacalhoada é <b>portuguesa</b>.`},
+      {t:"azeite de oliva", tipo:"tempero", ok:false, e:`O azeite de oliva veio com os <b>espanhóis</b>.`},
+      {t:"cerveja", tipo:"bebida", ok:false, e:`A cerveja é a bebida típica da <b>Oktoberfest</b> — alemã.`}
+    ],
+    fecho:`Os quatro: <b>shoyu · chá-verde · rabanete · cabotiá</b>. E ainda o <b>sushi</b>, o
+      <b>tempurá</b> e o <b>ramen</b>.`,
+    fim:(ac,tot)=>quizJaponeses(ac,tot)
+  });
+}
+function quizJaponeses(ac, tot){
+  quizGenerico(4, "🚢 O Kasato Maru", [
+    { hab:"kasato", quatro:true, arte: arteNavio(),
+      p:"Qual navio trouxe o <b>primeiro grupo oficial</b> de imigrantes japoneses ao Brasil?",
+      o:["Kasato Maru","Santa Maria","Bremen","Cantareira"], c:0,
+      e:`O <b>Kasato Maru</b> — e é dele que vem o meu nome, {NOME}. Ele desembarcou no
+         <b>porto de Santos</b> em <b>18 de junho de 1908</b>.` },
+
+    { hab:"kasato", quatro:true,
+      p:"A viagem do Kasato Maru começou em que porto, e quanto tempo durou?",
+      o:["Começou no porto de Kobe e durou 52 dias",
+         "Começou no porto de Santos e durou 52 dias",
+         "Começou no porto de Kobe e durou 5 dias",
+         "Começou no porto de Lisboa e durou 52 dias"], c:0,
+      e:`<b>Kobe</b>, no Japão → <b>52 dias</b> de mar → <b>Santos</b>, no Brasil,
+         em <b>18/06/1908</b>.` },
+
+    { hab:"kasato", quatro:true,
+      p:"Quantas famílias e quantas pessoas vieram no primeiro grupo?",
+      o:["165 famílias, 781 pessoas","781 famílias, 165 pessoas",
+         "70 famílias, 400 pessoas","15 000 pessoas"], c:0,
+      e:`<b>165 famílias — 781 pessoas</b>, que foram trabalhar nos <b>cafezais do Oeste
+         Paulista</b>. As <b>15 000</b> pessoas foram os <b>portugueses</b> que vieram com
+         D. João VI em 1807.` },
+
+    { hab:"japones", quatro:true,
+      p:"Por que Brasil e Japão fizeram um <b>acordo imigratório</b>?",
+      o:["O Brasil precisava de mão de obra para o café e o Japão tinha pouca oferta de empregos",
+         "O Japão queria aprender português",
+         "O Brasil queria comprar navios japoneses",
+         "Os dois países estavam em guerra"], c:0,
+      e:`Cada um tinha um problema, e o acordo resolvia os dois ao mesmo tempo.` },
+
+    { hab:"japones", quatro:true,
+      p:"Onde trabalhava a <b>maior parte</b> dos imigrantes japoneses no Brasil?",
+      o:["Em plantações: algodão, verduras, legumes e arroz",
+         "Nas indústrias das grandes cidades",
+         "Na mineração de ouro",
+         "Nos portos e nas ferrovias"], c:0,
+      e:`Está sublinhado na sua página 86: <i>"a maioria foi direcionada para a produção
+         agrícola"</i>. <b>Indústria</b> e <b>mineração</b> são as duas pegadinhas das questões
+         11 e 5 — as duas são <b>FALSAS</b>.` },
+
+    { hab:"japones", quatro:true,
+      p:"Qual bairro de São Paulo virou <b>símbolo da comunidade nipônica</b>?",
+      o:["Liberdade","Mooca","Brás","Bixiga"], c:0,
+      e:`A <b>Liberdade</b>, na região central. Hoje moram lá também <b>chineses e coreanos</b>,
+         e o bairro deixou de ser exclusivamente japonês para se tornar <b>oriental</b>.` },
+
+    { hab:"japones", quatro:true,
+      p:"Quais foram as <b>barreiras</b> que dificultaram a integração dos japoneses no Brasil?",
+      o:["A língua, os costumes, a religião, o clima e a alimentação",
+         "A falta de navios e de estradas",
+         "A proibição de trabalhar no campo",
+         "A distância entre Santos e São Paulo"], c:0,
+      e:`São as cinco da sua página. Por causa dessas diferenças, eles buscavam
+         <b>preservar suas tradições</b>.` },
+
+    { hab:"japones", quatro:true,
+      p:"Por que os japoneses se organizaram em <b>colônias</b> com escolas próprias?",
+      o:["Para que as crianças fossem educadas com o idioma e a cultura japoneses",
+         "Porque o governo brasileiro proibiu que estudassem em escolas comuns",
+         "Porque não existiam escolas no Brasil",
+         "Para aprender a falar italiano"], c:0,
+      e:`Foi a sua própria resposta na questão 12 da apostila: <i>"assim eles mantiveram sua
+         cultura"</i>.` },
+
+    { hab:"japones", quatro:true,
+      p:"O que os japoneses trouxeram para a <b>agricultura</b> brasileira?",
+      o:["Técnicas de cultivo que ajudaram a produção de hortaliças, frutas e chás",
+         "O cultivo do trigo e a criação de suínos",
+         "As primeiras plantações de café",
+         "A criação de gado leiteiro"], c:0,
+      e:`<b>Trigo e suínos</b> vieram com os <b>alemães</b>. O <b>café</b> já existia — foi ele
+         que trouxe os japoneses para cá.` }
+  ], ac, tot);
+}
+
+/* ============================================================
+   MISSÃO 6 — O QUE O POVO CONTA (folclore e lendas)
+   ============================================================ */
+function faseLendas(){
+  minigameEscolher({
+    titulo:"🌳 O Que o Povo Conta", hab:"folclore",
+    enun:`Para ser <b>folclore</b>, uma coisa precisa de <b>dois carimbos</b>: passar de
+      <b>geração em geração</b> e ter <b>origem popular e anônima</b>. <b>Clique nas QUATRO
+      fichas que SÃO folclore</b>, {NOME} — e deixe passar o que tem dono.`,
+    itens:[
+      {t:"O Saci-Pererê", tipo:"lenda", ok:true, e:`Ninguém sabe quem inventou, e todo mundo conta. É folclore.`},
+      {t:"“Ciranda Cirandinha”", tipo:"cantiga de roda", ok:true, e:`Cantiga de <b>domínio público</b>: sem autor, passada de criança para criança.`},
+      {t:"“Água mole em pedra dura…”", tipo:"provérbio", ok:true, e:`Provérbio = ditado popular. Sabedoria do povo, sem dono.`},
+      {t:"A amarelinha", tipo:"brincadeira", ok:true, e:`Chega até hoje <b>graças à oralidade</b> — e em algumas regiões se chama <b>macaca</b>.`},
+      {t:"A música nova do cantor famoso", tipo:"tem autor", ok:false, e:`Tem <b>autor conhecido</b>, com nome e sobrenome. Falta o carimbo da <b>origem anônima</b>.`},
+      {t:"O filme que estreou no cinema", tipo:"tem diretor", ok:false, e:`Tem autor, tem data e tem dono. Não passou de geração em geração.`},
+      {t:"O livro que a professora escreveu", tipo:"tem autor", ok:false, e:`Livro com autor conhecido não é folclore, por mais bonito que seja.`},
+      {t:"A propaganda da televisão", tipo:"tem empresa", ok:false, e:`Foi criada por uma empresa, para vender. Não vem do povo.`}
+    ],
+    fecho:`Os dois carimbos: <b>geração em geração</b> + <b>origem popular e, geralmente,
+      anônima</b>. Faltou um dos dois? Não é folclore.`,
+    fim:(ac,tot)=>quizLendas(ac,tot)
+  });
+}
+function quizLendas(ac, tot){
+  quizGenerico(5, "🌳 O Que o Povo Conta", [
+    { hab:"folclore", quatro:true,
+      p:"O que é o <b>folclore brasileiro</b>?",
+      o:["Um conjunto de tradições e manifestações culturais populares",
+         "Um conjunto de leis que protegem a cultura",
+         "O nome dado às festas oficiais do governo",
+         "Um estilo de música criado no século XX"], c:0,
+      e:`São <b>histórias, lendas, músicas, danças, festas, brincadeiras, comidas típicas,
+         adivinhas, parlendas, crendices e costumes</b> que fazem parte da nossa cultura.` },
+
+    { hab:"folclore", quatro:true, umaSo:true,
+      p:"Em que dia comemoramos o <b>folclore brasileiro</b>?",
+      o:["22 de agosto","22 de junho","18 de junho","31 de agosto"], c:0,
+      e:`<b>22 de agosto</b>. Cuidado: <b>junho</b> é o mês da <b>quadrilha</b>, e
+         <b>18 de junho</b> é a chegada do <b>Kasato Maru</b>.` },
+
+    { hab:"folclore", quatro:true,
+      p:"Como o folclore é transmitido de uma pessoa para outra?",
+      o:["De geração em geração — dos avós para os pais, dos pais para os filhos",
+         "Por livros escritos por especialistas",
+         "Por leis criadas pelo governo",
+         "Pela televisão e pelo rádio"], c:0,
+      e:`E essa é a primeira condição para algo <b>ser</b> folclore: ser praticado e transmitido
+         de <b>geração em geração por muitas pessoas</b>.` },
+
+    { hab:"folclore", quatro:true,
+      p:"Além de passar de geração em geração, o que mais um costume precisa para ser considerado <b>folclore</b>?",
+      o:["Ter origem popular e, geralmente, anônima",
+         "Ter sido criado por um artista famoso",
+         "Estar escrito num livro didático",
+         "Ser aprovado por uma lei"], c:0,
+      e:`Os <b>dois carimbos</b>. É por isso que uma música com <b>autor conhecido</b> não é
+         folclore, mesmo que todo mundo cante.` },
+
+    { hab:"folclore", quatro:true,
+      p:"Por que devemos <b>valorizar</b> o folclore de um povo?",
+      o:["Porque ele expressa a cultura, os costumes e as tradições, e ajuda a entender a história e a identidade do povo",
+         "Porque assim ganhamos dinheiro com turismo",
+         "Porque é obrigatório por lei",
+         "Porque as outras culturas são menos importantes"], c:0,
+      e:`Está na sua folha: conhecendo o folclore de um país, compreendemos melhor sua
+         <b>história</b>, sua <b>diversidade cultural</b> e a <b>identidade</b> da sua população.` },
+
+    { hab:"lenda", quatro:true,
+      enun:`<i>“Eu sou protetor das matas e de todos os animais. Não gosto de quem destrói.
+        Quem poluir, vou atrás. Eu despisto os caçadores com os <b>pés virados para trás</b>.”</i>`,
+      p:"Quem sou eu?",
+      o:["O Curupira","O Saci-Pererê","O Boitatá","O Lobisomem"], c:0,
+      e:`<b>Curupira</b> — foi a sua resposta certa na questão 4 da Atividade Unificada.
+         Os <b>pés virados para trás</b> são a marca dele.` },
+
+    { hab:"lenda", quatro:true,
+      enun:`<i>“Já fui uma bela indiazinha e, hoje, vivo a andar nas <b>profundezas do rio</b>.
+        Sempre gosto de <b>cantar</b>.”</i>`,
+      p:"Quem sou eu?",
+      o:["A Iara","A Mãe d'Água","A Vitória-Régia","A Caipora"], c:0,
+      e:`<b>Iara</b>. Ela também aparece na sua folha como <b>Mãe d'Água</b> na paródia de
+         Asa Branca — mas o nome que a questão 4 cobra é <b>Iara</b>.` },
+
+    { hab:"lenda", quatro:true,
+      enun:`<i>“Eu assusto todo mundo com meu forte <b>relincho</b>. Apareço quando é noite bem
+        escura, de luar. Tenho o corpo de <b>cavalo</b> e solto <b>fogo pelo pescoço</b>.”</i>`,
+      p:"Quem sou eu?",
+      o:["A Mula sem Cabeça","O Boitatá","O Lobisomem","O Saci-Pererê"], c:0,
+      e:`<b>Mula sem Cabeça</b>. Corpo de cavalo + fogo pelo pescoço = só ela.` },
+
+    { hab:"lenda", quatro:true,
+      p:"O que são as <b>lendas folclóricas</b>?",
+      o:["Histórias e contos transmitidos de geração em geração pelo povo",
+         "Notícias verdadeiras publicadas em jornais",
+         "Textos escritos por historiadores",
+         "Músicas gravadas por cantores famosos"], c:0,
+      e:`E existem <b>inúmeras</b> lendas, que <b>variam conforme a região do país</b>.` },
+
+    { hab:"lenda", quatro:true,
+      p:"Quais destes são <b>mitos e lendas</b> do folclore brasileiro?",
+      o:["Mula sem Cabeça, Saci-Pererê, Boitatá, Iara e Vitória-Régia",
+         "A Canoa Virou, Ciranda Cirandinha e Escravos de Jó",
+         "Quadrilha, fandango, batuque e maculelê",
+         "Pé de moleque, canjica e pamonha"], c:0,
+      e:`É a primeira linha da tabela da sua folha. A segunda linha são as <b>cantigas de
+         roda</b>, a terceira as <b>danças</b> e a última as <b>comidas típicas</b>.` }
+  ], ac, tot);
+}
+
+/* ============================================================
+   MISSÃO 7 — RODA, VERSO E PANELA
+   ============================================================ */
+function faseCultura(){
+  minigameEscolher({
+    titulo:"💃 Roda, Verso e Panela", hab:"danca",
+    enun:`A sua folha destaca <b>cinco danças folclóricas brasileiras</b>. <b>Clique nas
+      CINCO</b>, {NOME} — as outras são danças, sim, mas vieram de fora com os imigrantes.`,
+    itens:[
+      {t:"Frevo", tipo:"Pernambuco", ok:true, e:`Músicas <b>instrumentais</b> e <b>pequenos guarda-chuvas coloridos</b>.`},
+      {t:"Baião", tipo:"Nordeste", ok:true, e:`Dançado <b>em pares</b>; uma das principais influências do <b>forró</b>.`},
+      {t:"Quadrilha", tipo:"festas juninas", ok:true, e:`Das <b>comemorações juninas</b>, celebradas no mês de <b>junho</b>.`},
+      {t:"Samba de roda", tipo:"raízes africanas", ok:true, e:`Raízes <b>africanas e portuguesas</b>; combina <b>poesia, música e dança</b>.`},
+      {t:"Maracatu", tipo:"Pernambuco", ok:true, e:`Elementos <b>africanos, indígenas e portugueses</b>.`},
+      {t:"Vira", tipo:"Portugal", ok:false, e:`O <b>vira</b> é a dança típica de <b>Portugal</b> — veio com os portugueses.`},
+      {t:"Flamenco", tipo:"Espanha", ok:false, e:`O <b>flamenco</b> é o estilo característico dos <b>espanhóis</b>.`},
+      {t:"Valsa", tipo:"Europa", ok:false, e:`A valsa é europeia e não está na lista de danças folclóricas brasileiras da sua folha.`}
+    ],
+    fecho:`As cinco: <b>frevo · baião · quadrilha · samba de roda · maracatu</b>.
+      Duas delas são de <b>Pernambuco</b>: o frevo e o maracatu.`,
+    fim:(ac,tot)=>quizCultura(ac,tot)
+  });
+}
+function quizCultura(ac, tot){
+  quizGenerico(6, "💃 Roda, Verso e Panela", [
+    { hab:"danca", quatro:true,
+      p:"Qual dança é típica de <b>Pernambuco</b> e usa <b>pequenos guarda-chuvas coloridos</b>?",
+      o:["O frevo","O maracatu","O baião","A quadrilha"], c:0,
+      e:`<b>Frevo</b>: de Pernambuco, no Nordeste, com <b>músicas instrumentais</b> e os
+         guarda-chuvas. O <b>maracatu</b> também é pernambucano, mas é o dos <b>três povos</b>.` },
+
+    { hab:"danca", quatro:true,
+      p:"Qual dança é dançada <b>em pares</b> e é uma das principais influências do <b>forró</b>?",
+      o:["O baião","O frevo","O maracatu","O samba de roda"], c:0,
+      e:`<b>Baião</b>, típico do <b>Nordeste brasileiro</b>. Ele aparece nas duas listas da sua
+         folha: é <b>dança</b> e é <b>música</b>.` },
+
+    { hab:"danca", quatro:true,
+      p:"A <b>quadrilha</b> é típica de quais comemorações?",
+      o:["Das comemorações juninas, no mês de junho",
+         "Do Carnaval, em fevereiro","Da Oktoberfest, em outubro",
+         "Do Ano-Novo, em janeiro"], c:0,
+      e:`<b>Junho</b>. Cuidado para não confundir com o <b>Dia do Folclore</b>, que é
+         <b>22 de agosto</b>.` },
+
+    { hab:"danca", quatro:true,
+      p:"Qual dança tem <b>raízes africanas e portuguesas</b> e combina poesia, música e dança?",
+      o:["O samba de roda","O frevo","A quadrilha","O baião"], c:0,
+      e:`<b>Samba de roda</b>. Já o <b>maracatu</b> é pernambucano e reúne elementos
+         <b>africanos, indígenas e portugueses</b> — três povos, não dois.` },
+
+    { hab:"oral", quatro:true,
+      p:"O que são os <b>provérbios</b>, também chamados de ditados populares?",
+      o:["Frases curtas que transmitem ensinamentos e fazem parte da sabedoria popular",
+         "Versos com ritmo, mas sem música",
+         "Desafios apresentados em forma de perguntas",
+         "Folhetos de versos vendidos nas feiras"], c:0,
+      e:`Como <i>“Água mole em pedra dura, tanto bate até que fura”</i>. As outras três
+         alternativas são a <b>parlenda</b>, a <b>adivinhação</b> e o <b>cordel</b>.` },
+
+    { hab:"oral", quatro:true,
+      enun:`<i>“Galinha choca, comeu minhoca, saiu pulando, que nem pipoca.”</i>`,
+      p:"Esse texto, que tem <b>ritmo mas não tem música</b>, é uma…",
+      o:["parlenda","provérbio","adivinhação","cantiga de roda"], c:0,
+      e:`<b>Parlendas</b> são <b>versos</b> que, mesmo <b>sem música</b>, possuem <b>ritmo</b> e
+         proporcionam divertimento e aprendizagem.` },
+
+    { hab:"oral", quatro:true,
+      p:"Os desafios apresentados em <b>forma de perguntas</b>, conhecidos como “O que é, o que é?”, são as…",
+      o:["adivinhações","parlendas","anedotas","cantigas"], c:0,
+      e:`<b>Adivinhas</b> ou <b>adivinhações</b>. Elas fazem parte das <b>tradições orais</b>,
+         junto com trava-línguas, anedotas, provérbios e a literatura de cordel.` },
+
+    { hab:"oral", quatro:true, arte: arteCordel(),
+      p:"De onde vem o nome <b>“cordel”</b>?",
+      o:["Do costume de pendurar os folhetos em cordas nas feiras, para vender",
+         "Do nome do primeiro poeta que escreveu um","Da corda do violão que acompanha os versos",
+         "De uma cidade do Nordeste chamada Cordel"], c:0,
+      e:`<b>Cordel</b> é corda pequena. Os folhetos narram histórias do cotidiano: <b>secas,
+         inundações, eleições</b> e histórias sobre <b>políticos, celebridades e santos</b>.` },
+
+    { hab:"brincadeira", quatro:true, umaSo:true,
+      p:"Como as <b>brincadeiras populares</b> são preservadas e transmitidas até os dias atuais?",
+      o:["Através da oralidade","Através de livros escolares",
+         "Através de leis municipais","Através da televisão"], c:0,
+      e:`É a questão 5 da sua Atividade Unificada, e você acertou: <b>através da oralidade</b>.
+         Uma criança conta para a outra.` },
+
+    { hab:"brincadeira", quatro:true,
+      p:"Quais são exemplos de <b>brinquedos populares</b>, feitos artesanalmente?",
+      o:["O pião, a bila (bolinha de gude), o papagaio (pipa) e a peteca",
+         "O videogame, o tablet e o celular",
+         "A boneca de fábrica e o carrinho de controle remoto",
+         "A cerâmica, a palha e o couro"], c:0,
+      e:`Eles são importantes para o desenvolvimento <b>intelectual e motor</b> das crianças.
+         <b>Cerâmica, palha e couro</b> são materiais do <b>artesanato</b>, não brinquedos.` },
+
+    { hab:"brincadeira", quatro:true,
+      p:"A <b>amarelinha</b> também é chamada, em algumas regiões, de…",
+      o:["macaca","adedonha","cabra-cega","passa-anel"], c:0,
+      e:`<b>Macaca</b>. As outras três são brincadeiras diferentes, todas na lista da sua folha.` },
+
+    { hab:"brincadeira", quatro:true,
+      p:"O <b>artesanato</b> brasileiro se destaca por retratar lendas, brincadeiras e elementos regionais. Que materiais ele usa?",
+      o:["Cerâmica, palha, couro, rendas, bordados e garrafas com areia colorida",
+         "Plástico, alumínio e vidro reciclado",
+         "Apenas madeira e pedra",
+         "Papel, cola e tinta industrial"], c:0,
+      e:`É a lista exata da página 9 da sua Atividade Unificada.` },
+
+    { hab:"comida", quatro:true,
+      p:"Qual prato típico é do <b>Norte</b> do Brasil?",
+      o:["O pato no tucupi","O acarajé","A feijoada","O churrasco"], c:0,
+      e:`<b>Norte</b> → pato no tucupi. <b>Nordeste</b> → acarajé e carne de sol.
+         <b>Sudeste</b> → feijoada. <b>Sul</b> → pinhão assado e churrasco.` },
+
+    { hab:"comida", quatro:true,
+      p:"O <b>acarajé</b> e a <b>carne de sol</b> são pratos muito apreciados em qual região?",
+      o:["No Nordeste","No Norte","No Centro-Oeste","No Sul"], c:0,
+      e:`<b>Nordeste</b>. No <b>Centro-Oeste</b> estão a <b>galinhada</b> e o <b>arroz com
+         pequi</b>.` },
+
+    { hab:"comida", quatro:true,
+      p:"O <b>pinhão assado</b> e o <b>churrasco</b> são populares em qual região?",
+      o:["No Sul","No Sudeste","No Norte","No Nordeste"], c:0,
+      e:`<b>Sul</b>. No <b>Sudeste</b>, o prato tradicional é a <b>feijoada</b>.` },
+
+    { hab:"comida", quatro:true,
+      p:"Quais destas são <b>comidas típicas</b> listadas na tabela do folclore brasileiro?",
+      o:["Pé de moleque, canjica, pamonha, feijão tropeiro, pipoca e paçoca",
+         "Sushi, tempurá e ramen",
+         "Polenta, espaguete e berinjela",
+         "Bacalhoada, cozidos e embutidos"], c:0,
+      e:`A última linha da tabela da sua folha. As outras três são as comidas que os
+         <b>imigrantes</b> trouxeram — japonesa, italiana e portuguesa.` }
+  ], ac, tot);
+}
+
+/* ============================================================
+   MISSÃO 8 — PROVA DO PORTO (arcade + prova final)
+   ============================================================ */
+const BANCO = [
+  {hab:"oquee", q:"Imigração é o deslocamento para outro país com o objetivo de…", o:["se estabelecer","passear","estudar um mês","fazer compras"], c:0},
+  {hab:"oquee", q:"Quem deixa o país onde nasceu para se fixar em outro é…", o:["imigrante","turista","refugiado apenas","emigrante interno"], c:0},
+  {hab:"refugiado", q:"Quem é <b>obrigado</b> a deixar o país por guerra é…", o:["refugiado","imigrante","colono","viajante"], c:0},
+  {hab:"refugiado", q:"Quem <b>escolhe</b> mudar de país buscando vida melhor é…", o:["imigrante","refugiado","exilado","turista"], c:0},
+  {hab:"refugiado", q:"Desde 2011 aumentou no Brasil a chegada de…", o:["haitianos, venezuelanos e sírios","italianos e alemães","galegos e castelhanos","chineses apenas"], c:0},
+  {hab:"forcada", q:"A vinda dos africanos escravizados foi imigração…", o:["forçada","espontânea","voluntária","planejada"], c:0},
+  {hab:"forcada", q:"Segundo o IBGE, quantos africanos foram trazidos à força?", o:["cerca de 4 milhões","cerca de 781","cerca de 15 mil","cerca de 70 mil"], c:0},
+  {hab:"miscigenacao", q:"Combinação de etnias diferentes chama-se…", o:["miscigenação","imigração","colonização","urbanização"], c:0},
+  {hab:"miscigenacao", q:"Os três grupos que formaram o povo brasileiro:", o:["indígena, europeu e negro","italiano, alemão e japonês","português, espanhol e galego","asiático, árabe e africano"], c:0},
+  {hab:"porque", q:"Depois da Abolição, os imigrantes vieram substituir…", o:["a mão de obra escrava","os donos das fazendas","os indígenas","os portugueses"], c:0},
+  {hab:"porque", q:"Em que lavoura a maioria dos imigrantes foi trabalhar?", o:["café","cana-de-açúcar","arroz","algodão"], c:0},
+  {hab:"porque", q:"Quem conseguiu financiamento para trazer os primeiros imigrantes do café?", o:["Senador Vergueiro","D. João VI","Napoleão","Eusébio de Queirós"], c:0},
+  {hab:"porque", q:"O sistema de parceria foi condenado por se aproximar do…", o:["trabalho escravo","trabalho voluntário","serviço militar","trabalho infantil"], c:0},
+  {hab:"leis", q:"Qual lei garante direitos a todos que vivem no Brasil?", o:["Constituição Federal de 1988","Lei Áurea","Lei Eusébio de Queirós","Estatuto da Cidade"], c:0},
+  {hab:"leis", q:"Qual lei garante ao imigrante saúde, educação e trabalho?", o:["Lei de Migração","Lei Áurea","Constituição de 1824","Lei do Ventre Livre"], c:0},
+  {hab:"leis", q:"Qual documento protege quem é reconhecido como refugiado?", o:["Estatuto dos Refugiados","Lei de Migração","Lei Áurea","Constituição de 1891"], c:0},
+  {hab:"hospedaria", q:"Em que bairro ficava a Hospedaria de Imigrantes?", o:["Brás","Liberdade","Mooca","Bixiga"], c:0},
+  {hab:"hospedaria", q:"A antiga Hospedaria de Imigrantes é hoje o…", o:["Museu da Imigração","Museu do Café","Museu da Língua","Museu do Ipiranga"], c:0},
+  {hab:"hospedaria", q:"Imigrantes de quantos países passaram pela Hospedaria?", o:["mais de 70","mais de 7","exatamente 5","exatamente 12"], c:0},
+  {hab:"linha", q:"Ano da chegada dos portugueses com as caravelas:", o:["1500","1530","1696","1807"], c:0},
+  {hab:"linha", q:"Ano em que teve início a imigração no Brasil:", o:["1530","1500","1824","1908"], c:0},
+  {hab:"linha", q:"Ano em que encontraram ouro no Brasil:", o:["1696","1500","1748","1888"], c:0},
+  {hab:"linha", q:"Ano da vinda de D. João VI e da família real:", o:["1807","1824","1888","1870"], c:0},
+  {hab:"linha", q:"Ano da chegada dos alemães:", o:["1824","1870","1908","1748"], c:0},
+  {hab:"linha", q:"Ano do início da grande migração italiana:", o:["1870","1824","1908","1890"], c:0},
+  {hab:"linha", q:"Ano da Lei Áurea:", o:["1888","1878","1908","1930"], c:0},
+  {hab:"linha", q:"Ano da chegada do Kasato Maru:", o:["1908","1918","1888","1930"], c:0},
+  {hab:"linha", q:"A partir de que ano começou o declínio da imigração?", o:["1930","1900","1888","1950"], c:0},
+  {hab:"portugues", q:"Qual grupo é o maior contingente de imigrantes do Brasil?", o:["portugueses","italianos","alemães","japoneses"], c:0},
+  {hab:"portugues", q:"Qual é o principal legado deixado pelos portugueses?", o:["o idioma","o café","o trigo","o flamenco"], c:0},
+  {hab:"portugues", q:"Qual religião os portugueses trouxeram?", o:["catolicismo","protestantismo","budismo","xintoísmo"], c:0},
+  {hab:"portugues", q:"Qual é a dança típica de Portugal?", o:["o vira","o flamenco","o frevo","a quadrilha"], c:0},
+  {hab:"portugues", q:"Prato português famoso na cozinha brasileira:", o:["bacalhoada","polenta","sushi","acarajé"], c:0},
+  {hab:"espanhol", q:"Os primeiros espanhóis no Brasil eram de origem…", o:["castelhana","galega","catalã","basca"], c:0},
+  {hab:"espanhol", q:"No fim do século XIX, os espanhóis vinham da região da…", o:["Galícia","Andaluzia","Catalunha","Sicília"], c:0},
+  {hab:"espanhol", q:"Os galegos se parecem com os vizinhos…", o:["portugueses","franceses","italianos","alemães"], c:0},
+  {hab:"espanhol", q:"Estilo de dança e música característico dos espanhóis:", o:["flamenco","vira","frevo","baião"], c:0},
+  {hab:"italiano", q:"Depois dos portugueses, o maior grupo de imigrantes foi o dos…", o:["italianos","alemães","japoneses","espanhóis"], c:0},
+  {hab:"italiano", q:"A grande migração italiana teve auge entre…", o:["1890 e 1910","1820 e 1840","1930 e 1950","1500 e 1600"], c:0},
+  {hab:"italiano", q:"O motivo da vinda dos italianos foi a crise de…", o:["desemprego pela industrialização","seca","guerra civil","perseguição religiosa"], c:0},
+  {hab:"italiano", q:"Os italianos trabalhavam, no campo, nas…", o:["fazendas de café","minas de ouro","plantações de arroz","criações de suínos"], c:0},
+  {hab:"italiano", q:"E, na cidade, nas…", o:["indústrias","escolas","fazendas","hospedarias"], c:0},
+  {hab:"italiano", q:"Alimento trazido pelos italianos:", o:["a polenta","o shoyu","o azeite de oliva","a cerveja"], c:0},
+  {hab:"bairros", q:"Qual destes é bairro operário italiano de São Paulo?", o:["Mooca","Liberdade","Blumenau","São Leopoldo"], c:0},
+  {hab:"bairros", q:"Qual bairro NÃO é italiano?", o:["Liberdade","Bixiga","Barra Funda","Brás"], c:0},
+  {hab:"estados", q:"Estados que mais receberam italianos:", o:["SP, RS e MG","SC, PR e RS","BA, SE e RN","PA, RR e RO"], c:0},
+  {hab:"estados", q:"Estados que mais receberam alemães:", o:["SC, PR e RS","SP, RJ e MG","BA, SE e RN","PA, RR e RO"], c:0},
+  {hab:"estados", q:"Qual estado aparece nas DUAS listas, italiana e alemã?", o:["Rio Grande do Sul","São Paulo","Santa Catarina","Minas Gerais"], c:0},
+  {hab:"alemao", q:"Os alemães vieram fugindo de conflitos na…", o:["unificação da Alemanha","Segunda Guerra","Revolução Francesa","unificação da Itália"], c:0},
+  {hab:"alemao", q:"Qual religião os alemães difundiram no Brasil?", o:["protestante","católica","ortodoxa","budista"], c:0},
+  {hab:"alemao", q:"Primeira colônia de povoamento do Sul do Brasil:", o:["São Leopoldo","Blumenau","Itapiranga","Bremen"], c:0},
+  {hab:"alemao", q:"A Oktoberfest acontece em que mês?", o:["outubro","junho","agosto","dezembro"], c:0},
+  {hab:"alemao", q:"Em que cidade a Oktoberfest ficou famosa?", o:["Blumenau","Itapiranga","São Leopoldo","Bremen"], c:0},
+  {hab:"alemao", q:"Os alemães trouxeram o cultivo do…", o:["trigo","arroz","café","algodão"], c:0},
+  {hab:"kasato", q:"Nome do navio que trouxe os primeiros japoneses:", o:["Kasato Maru","Santa Maria","Bremen","Liberdade"], c:0},
+  {hab:"kasato", q:"De qual porto japonês o navio saiu?", o:["Kobe","Tóquio","Osaka","Nagasaki"], c:0},
+  {hab:"kasato", q:"Quantos dias durou a viagem?", o:["52","15","120","5"], c:0},
+  {hab:"kasato", q:"Em que porto brasileiro eles desembarcaram?", o:["Santos","Rio de Janeiro","Salvador","Recife"], c:0},
+  {hab:"kasato", q:"Quantas famílias vieram no primeiro grupo?", o:["165","781","15 000","70"], c:0},
+  {hab:"japones", q:"A maioria dos japoneses foi trabalhar em…", o:["plantações","indústrias","minas","portos"], c:0},
+  {hab:"japones", q:"Qual bairro de São Paulo virou símbolo da comunidade nipônica?", o:["Liberdade","Brás","Mooca","Bixiga"], c:0},
+  {hab:"japones", q:"Alimento introduzido pelos japoneses:", o:["shoyu","polenta","azeite de oliva","bacalhau"], c:0},
+  {hab:"japones", q:"Cabotiá é o nome da…", o:["abóbora japonesa","batata doce","berinjela","mandioca"], c:0},
+  {hab:"folclore", q:"Dia do Folclore brasileiro:", o:["22 de agosto","22 de junho","18 de junho","31 de agosto"], c:0},
+  {hab:"folclore", q:"O folclore é passado…", o:["de geração em geração","por lei","pela televisão","por livros didáticos"], c:0},
+  {hab:"folclore", q:"A origem do folclore é popular e, geralmente…", o:["anônima","assinada","estrangeira","recente"], c:0},
+  {hab:"lenda", q:"Quem tem os pés virados para trás?", o:["o Curupira","o Saci","o Boitatá","o Lobisomem"], c:0},
+  {hab:"lenda", q:"Quem foi indiazinha e canta no fundo do rio?", o:["a Iara","a Caipora","a Mula sem Cabeça","a Vitória-Régia"], c:0},
+  {hab:"lenda", q:"Quem tem corpo de cavalo e solta fogo pelo pescoço?", o:["a Mula sem Cabeça","o Boitatá","a Iara","o Lobisomem"], c:0},
+  {hab:"danca", q:"Dança de Pernambuco com guarda-chuvas coloridos:", o:["frevo","maracatu","baião","quadrilha"], c:0},
+  {hab:"danca", q:"Dança do Nordeste, em pares, que influenciou o forró:", o:["baião","frevo","maracatu","samba de roda"], c:0},
+  {hab:"danca", q:"Dança típica das festas juninas:", o:["quadrilha","frevo","maracatu","baião"], c:0},
+  {hab:"danca", q:"Dança pernambucana com elementos africanos, indígenas e portugueses:", o:["maracatu","frevo","quadrilha","samba de roda"], c:0},
+  {hab:"danca", q:"Dança de raízes africanas e portuguesas, com poesia e música:", o:["samba de roda","maracatu","frevo","baião"], c:0},
+  {hab:"oral", q:"Frases curtas que ensinam, da sabedoria popular:", o:["provérbios","parlendas","adivinhações","cordéis"], c:0},
+  {hab:"oral", q:"Versos com ritmo, mas sem música:", o:["parlendas","provérbios","anedotas","cantigas"], c:0},
+  {hab:"oral", q:"Desafios em forma de pergunta, o “O que é, o que é?”:", o:["adivinhações","parlendas","provérbios","trava-línguas"], c:0},
+  {hab:"oral", q:"Literatura popular em versos impressos em folhetos:", o:["cordel","romance","crônica","anedota"], c:0},
+  {hab:"oral", q:"O nome “cordel” vem de pendurar os folhetos em…", o:["cordas nas feiras","estantes","varais de roupa","vitrines"], c:0},
+  {hab:"brincadeira", q:"As brincadeiras chegam até hoje graças à…", o:["oralidade","escrita","televisão","internet"], c:0},
+  {hab:"brincadeira", q:"Outro nome da amarelinha em algumas regiões:", o:["macaca","adedonha","peteca","bila"], c:0},
+  {hab:"brincadeira", q:"Bila é o mesmo que…", o:["bolinha de gude","pipa","pião","peteca"], c:0},
+  {hab:"brincadeira", q:"Papagaio e raia são outros nomes da…", o:["pipa","peteca","bila","amarelinha"], c:0},
+  {hab:"comida", q:"Prato típico do Norte:", o:["pato no tucupi","acarajé","feijoada","churrasco"], c:0},
+  {hab:"comida", q:"Prato típico do Nordeste:", o:["acarajé","feijoada","galinhada","pinhão assado"], c:0},
+  {hab:"comida", q:"Prato típico do Centro-Oeste:", o:["arroz com pequi","feijoada","acarajé","churrasco"], c:0},
+  {hab:"comida", q:"Prato típico do Sudeste:", o:["feijoada","churrasco","acarajé","pato no tucupi"], c:0},
+  {hab:"comida", q:"Prato típico do Sul:", o:["churrasco","feijoada","acarajé","galinhada"], c:0}
+];
+let arc = null, cronoT = null, cronoPausa = false;
+function pararArcade(){ if(cronoT){ clearInterval(cronoT); cronoT = null; } arc = null; }
+function pausaCrono(v){ cronoPausa = !!v; }
+
+function faseFinal(){
+  app.innerHTML = hud("🎓 Prova do Porto") + `
+    <div class="card centro">
+      <div style="font-size:60px">🎓</div>
+      <h2>Última parada, ${NOME()}</h2>
+      <p>Esta missão tem <b>duas partes</b>, e só a segunda vale estrelas:</p>
+      <div class="enunciado" style="text-align:left">
+        <p><b>1 · Arcade do porto</b> — 60 segundos de perguntas rápidas de todos os
+        assuntos. Vale <b>pontos</b>, não estrelas. Serve para aquecer.</p>
+        <p style="margin:0"><b>2 · Prova final</b> — sem relógio nenhum. É ela que vale as
+        <b>${POR_MISSAO} estrelas</b>, e ela puxa mais do que você errou.</p>
+      </div>
+      <div class="acoes">
+        <button class="btn chama" onclick="iniciaArcade()">⏱️ Começar o arcade</button>
+        <button class="btn uva" onclick="provaFinal()">🎓 Ir direto para a prova final</button>
+      </div>
+    </div>`;
+}
+function bancoOrdenado(){
+  const lista = [];
+  for(const item of BANCO){
+    lista.push(item);
+    const peso = S.erros[item.hab] || 0;
+    for(let k=0; k<Math.min(peso,3); k++) lista.push(item);   /* o que ela erra aparece mais */
+  }
+  return lista;
+}
+function iniciaArcade(){
+  ac(); somClique();
+  arc = { pontos:0, acertos:0, erros:0, combo:0, tempo:60, usadas:[], banco:bancoOrdenado() };
+  sorteiaArcade();
+  cronoT = setInterval(()=>{
+    if(cronoPausa) return;
+    arc.tempo -= 0.1;
+    const b = document.getElementById("cronoBarra");
+    if(b) b.style.width = Math.max(0, arc.tempo/60*100) + "%";
+    if(arc.tempo <= 0) fimArcade();
+  }, 100);
+}
+window.iniciaArcade = iniciaArcade;
+function sorteiaArcade(){
+  /* trava anti-repetição: nunca repete uma das 6 últimas enquanto houver alternativa */
+  let item = null, voltas = 0;
+  do { item = sorteio(arc.banco); voltas++; }
+  while(arc.usadas.includes(item.q) && voltas < 60);
+  arc.usadas.push(item.q);
+  if(arc.usadas.length > 6) arc.usadas.shift();
+  arc.atual = item;
+  desenhaArcade();
+}
+function desenhaArcade(){
+  const it = arc.atual;
+  const ordem = embaralha(it.o.map((_,i)=>i));
+  const opts  = ordem.map(i=>it.o[i]);
+  arc.certa = ordem.indexOf(it.c);
+  app.innerHTML = hud() + `
+    <div class="card">
+      <div class="placar">
+        <span>⭐ ${arc.pontos}</span>
+        <span>✅ ${arc.acertos}</span>
+        <span class="combo">🔥 ${arc.combo}</span>
+      </div>
+      <div class="cronometro"><i id="cronoBarra" style="width:${Math.max(0,arc.tempo/60*100)}%"></i></div>
+      <p class="mini centro">Responda o máximo que conseguir. Errar não tira estrela nenhuma.</p>
+      <div class="conta">${it.q}</div>
+      <div class="opcoes quatro" id="ops">
+        ${opts.map((t,k)=>`<button class="op" onclick="respArcade(${k})">${t}</button>`).join("")}
+      </div>
+      <div class="acoes"><button class="btn sec" onclick="fimArcade()">Parar e ir para a prova →</button></div>
+    </div>`;
+}
+function respArcade(k){
+  if(!arc) return;
+  if(k === arc.certa){
+    arc.combo++; arc.acertos++;
+    const p = 10 + arc.combo*2;
+    arc.pontos += p; S.pontos += p;
+    marcaAcerto(arc.atual.hab);
+    somAcerto(); toast("+" + p + (arc.combo>2 ? " 🔥 combo " + arc.combo : ""));
+  } else {
+    arc.combo = 0; arc.erros++;
+    marcaErro(arc.atual.hab);
+    somErro(); toast("Era " + arc.atual.o[arc.atual.c], true);
+  }
+  salvar();
+  sorteiaArcade();
+}
+window.respArcade = respArcade;
+function fimArcade(){
+  if(cronoT){ clearInterval(cronoT); cronoT = null; }
+  const r = arc || {pontos:0,acertos:0,erros:0};
+  arc = null;
+  somVitoria(); salvar();
+  app.innerHTML = hud() + `
+    <div class="card destaque centro">
+      <div style="font-size:60px">⏱️</div>
+      <h2>Arcade encerrado!</h2>
+      <p>Você acertou <b>${r.acertos}</b> e ganhou <b>${r.pontos} pontos</b>.</p>
+      <p class="mini">Agora vem o que vale as estrelas — <b>sem relógio</b>.</p>
+      <div class="acoes">
+        <button class="btn" onclick="provaFinal()">🎓 Fazer a prova final</button>
+        <button class="btn sec" onclick="iniciaArcade()">🔁 Jogar o arcade de novo</button>
+      </div>
+    </div>`;
+  scrollTo(0,0);
+}
+window.fimArcade = fimArcade;
+
+/* --- prova final: cobre os 7 assuntos, puxando o que ela mais errou --- */
+const FINAL = [
+  { hab:"oquee", quatro:true,
+    p:"Qual destas frases define corretamente a <b>imigração</b>?",
+    o:["O deslocamento de pessoas de um território para outro, com o objetivo de se estabelecer em um novo país",
+       "A viagem de brasileiros para conhecer outros países",
+       "A mudança de uma cidade para outra dentro do mesmo país",
+       "O retorno de um povo ao seu país de origem"], c:0,
+    e:`É a definição da página 3 da sua Atividade Unificada. A palavra-chave é
+       <b>estabelecer-se</b>: quem vai e volta não é imigrante.` },
+
+  { hab:"refugiado", quatro:true, arte: arteDuasPortas(),
+    p:"Assinale a alternativa <b>correta</b> sobre imigrantes e refugiados:",
+    o:["O imigrante decide mudar de país; o refugiado é obrigado a sair por guerras ou perseguições",
+       "Os dois saem do país pelo mesmo motivo",
+       "O refugiado escolhe sair em busca de trabalho",
+       "O imigrante sempre sai por causa de guerras"], c:0,
+    e:`<b>Imigrante quer. Refugiado é obrigado.</b> O refugiado busca <b>proteção e segurança</b>
+       em outro país e muitas vezes precisa da ajuda de <b>organizações internacionais</b>.` },
+
+  { hab:"miscigenacao", quatro:true,
+    p:"Quais são os <b>três grupos</b> que formaram a base do povo brasileiro?",
+    o:["Indígena, europeu e negro","Italiano, alemão e japonês",
+       "Português, espanhol e galego","Africano, asiático e árabe"], c:0,
+    e:`<b>Miscigenação</b> é a combinação de etnias diferentes — e no Brasil ela teve esses três
+       grupos. Era a questão 1 da página 79.` },
+
+  { hab:"forcada", quatro:true,
+    p:"Qual afirmação sobre a <b>imigração forçada</b> está correta?",
+    o:["Fazem parte dela os africanos trazidos ao Brasil durante o período da escravidão",
+       "É quando a pessoa escolhe mudar em busca de melhores condições de vida",
+       "Aconteceu só depois de 1930",
+       "É outro nome para a viagem do Kasato Maru"], c:0,
+    e:`<b>Espontânea</b> = a pessoa escolhe. <b>Forçada</b> = guerras, perseguições ou situações
+       de risco. Cerca de <b>4 milhões</b> de africanos vieram à força.` },
+
+  { hab:"porque", quatro:true,
+    p:"Por que o governo e os fazendeiros brasileiros incentivaram a vinda de imigrantes europeus?",
+    o:["Para substituir a mão de obra escrava nas fazendas de café depois da Abolição",
+       "Para aumentar o número de moradores das cidades do Norte",
+       "Para ensinar português aos indígenas",
+       "Porque faltavam professores no Brasil"], c:0,
+    e:`Com o fim do tráfico, o dinheiro da compra de escravizados passou a
+       <b>financiar a imigração europeia</b>. Os programas começaram com os
+       <b>produtores de café</b> e depois ganharam o apoio do <b>governo</b>.` },
+
+  { hab:"hospedaria", quatro:true,
+    p:"Onde os imigrantes recém-chegados ficavam abrigados em São Paulo, entre 1887 e 1978?",
+    o:["Na Hospedaria de Imigrantes, no bairro do Brás",
+       "No bairro da Liberdade","Na colônia de São Leopoldo","Em Blumenau"], c:0,
+    e:`A construção começou em <b>junho de 1886</b>. O prédio virou <b>Memorial do Imigrante</b>
+       e, depois da reforma de <b>2014</b>, o <b>Museu da Imigração</b>.` },
+
+  { hab:"leis", quatro:true,
+    p:"Quais <b>três documentos</b> garantem os direitos dos imigrantes e refugiados no Brasil?",
+    o:["Constituição Federal de 1988, Lei de Migração e Estatuto dos Refugiados",
+       "Lei Áurea, Lei Eusébio de Queirós e Constituição de 1988",
+       "Estatuto dos Refugiados, Lei Áurea e sistema de parceria",
+       "Lei de Migração, Lei Áurea e Código Civil"], c:0,
+    e:`É a questão 4 da sua Atividade Unificada, e você acertou. A <b>Lei Áurea</b> aboliu a
+       escravidão e a <b>Lei Eusébio de Queirós</b> proibiu o tráfico — nenhuma das duas é lei
+       do imigrante.` },
+
+  { hab:"linha", quatro:true, arte: arteLinha(["1500","1530","1696","1807"]),
+    p:"Qual sequência está na <b>ordem certa</b> do tempo?",
+    o:["1500 caravelas → 1530 cana-de-açúcar → 1696 ouro → 1807 D. João VI",
+       "1530 cana-de-açúcar → 1500 caravelas → 1807 D. João VI → 1696 ouro",
+       "1696 ouro → 1500 caravelas → 1530 cana-de-açúcar → 1807 D. João VI",
+       "1807 D. João VI → 1696 ouro → 1530 cana-de-açúcar → 1500 caravelas"], c:0, fixo:true,
+    e:`<b>1500</b> chegaram · <b>1530</b> começou a imigração · <b>1696</b> o ouro ·
+       <b>1807</b> a família real fugindo de <b>Napoleão</b>.` },
+
+  { hab:"portugues", quatro:true, umaSo:true,
+    p:"Qual é o <b>legado</b> mais importante deixado pelos portugueses ao Brasil?",
+    o:["O idioma","O flamenco","A Oktoberfest","O cultivo do arroz"], c:0,
+    e:`<b>Legado</b> = herança transmitida às futuras gerações. O <b>flamenco</b> é espanhol, a
+       <b>Oktoberfest</b> é alemã e o <b>arroz</b> veio com os japoneses.` },
+
+  { hab:"portugues", quatro:true,
+    p:"Por que a imigração portuguesa foi a <b>mais expressiva</b> da história do Brasil?",
+    o:["Porque foram os primeiros europeus a chegar e Brasil e Portugal mantiveram fortes relações",
+       "Porque vieram todos no mesmo navio",
+       "Porque foram os únicos a trazer suas famílias",
+       "Porque chegaram só no século XX"], c:0,
+    e:`E por isso grande parte da cultura brasileira recebeu influência portuguesa: a
+       <b>língua, a religião, as tradições</b> e diversos outros costumes.` },
+
+  { hab:"espanhol", quatro:true, umaSo:true,
+    p:"Assinale a alternativa <b>correta</b> em relação à imigração espanhola no Brasil:",
+    o:["Os primeiros espanhóis a se estabelecerem no Brasil eram de origem castelhana",
+       "Os imigrantes espanhóis se estabeleceram, principalmente, na região Sudeste do Brasil",
+       "Os espanhóis não fizeram parte da grande migração europeia para o Brasil",
+       "Os povos galegos apresentam muitas semelhanças com os vizinhos franceses"], c:0,
+    e:`É a questão 5 da página 81 — a que ficou <b>em branco</b> no seu livro. Os primeiros eram
+       <b>castelhanos</b>, na região <b>Sul</b>; os <b>galegos</b> vieram no fim do século XIX e
+       se parecem com os <b>portugueses</b>.` },
+
+  { hab:"italiano", quatro:true,
+    p:"O que fez tantos italianos virem para o Brasil a partir de 1870?",
+    o:["Uma crise de desemprego na Itália, em razão da industrialização do país",
+       "Conflitos e perseguições políticas na unificação do país",
+       "Um acordo imigratório entre os governos",
+       "A descoberta de ouro no Brasil"], c:0,
+    e:`Cuidado com as trocas: <b>unificação</b> é o motivo <b>alemão</b>, <b>acordo entre
+       governos</b> é o <b>japonês</b> e o <b>ouro</b> trouxe os <b>portugueses</b>, em 1696.` },
+
+  { hab:"italiano", quatro:true,
+    p:"Cite as principais atividades dos imigrantes italianos <b>no campo</b> e <b>na cidade</b>:",
+    o:["No campo, as fazendas de café; na cidade, as indústrias",
+       "No campo, a criação de suínos; na cidade, o comércio",
+       "No campo, o algodão e o arroz; na cidade, as escolas",
+       "No campo, a mineração; na cidade, os portos"], c:0,
+    e:`Era a questão 6 da página 83. <b>Primeiro o café, depois a fábrica</b> — a maioria migrou
+       para as cidades, <i>o lugar das indústrias</i>.` },
+
+  { hab:"estados", quatro:true, arte: arteMapaEstados({marca:["sp","rs","mg"]}),
+    p:"Quais estados <b>mais receberam</b> imigrantes <b>italianos</b>?",
+    o:["São Paulo, Rio Grande do Sul e Minas Gerais",
+       "Santa Catarina, Paraná e Rio Grande do Sul",
+       "São Paulo, Rio de Janeiro e Minas Gerais",
+       "Bahia, Sergipe e Rio Grande do Norte"], c:0,
+    e:`<b>SP · RS · MG</b>, com maior concentração em São Paulo. <b>SC · PR · RS</b> é a lista
+       dos <b>alemães</b> — é a página 89 do seu livro, aquela dos dois mapas para pintar.` },
+
+  { hab:"bairros", quatro:true,
+    p:"Quais bairros de São Paulo foram formados por <b>operários italianos</b>?",
+    o:["Mooca, Bixiga, Barra Funda e Brás",
+       "Liberdade, Mooca, Bixiga e Blumenau",
+       "Brás, Liberdade, Itapiranga e Santos",
+       "Bixiga, São Leopoldo, Mooca e Barra Funda"], c:0,
+    e:`Os quatro do caça-palavras da página 83. A <b>Liberdade</b> é o bairro <b>japonês</b>.` },
+
+  { hab:"alemao", quatro:true, umaSo:true,
+    p:"Assinale a alternativa <b>INCORRETA</b> em relação à imigração alemã no Brasil:",
+    o:["Os imigrantes alemães difundiram a religião católica no Brasil",
+       "Muitos alemães vieram para o Brasil para fugir de conflitos e perseguições políticas",
+       "Por conta do êxodo rural, a oferta de trabalho para a população alemã diminuiu",
+       "A imigração alemã influenciou a arquitetura de Blumenau"], c:0,
+    e:`É a questão 9 da página 85. Os alemães difundiram o <b>protestantismo</b>; o
+       <b>catolicismo</b> veio com os portugueses.` },
+
+  { hab:"estados", quatro:true, arte: arteMapaEstados({marca:["pr","sc","rs"], cor:"#2dd4bf"}),
+    p:"Quais estados do Brasil mais receberam imigrantes <b>alemães</b>?",
+    o:["Santa Catarina, Paraná e Rio Grande do Sul",
+       "São Paulo, Rio de Janeiro e Minas Gerais",
+       "Bahia, Sergipe e Rio Grande do Norte",
+       "Pará, Roraima e Rondônia"], c:0,
+    e:`É a questão 10 da página 85, e você acertou. Os <b>três estados do Sul</b> — onde o clima
+       era parecido com o da terra deles.` },
+
+  { hab:"alemao", quatro:true,
+    p:"O que a imigração alemã trouxe para o Brasil?",
+    o:["A agricultura familiar, o cultivo do trigo, a criação de suínos e a arquitetura das cidades",
+       "As plantações de café e de cana-de-açúcar",
+       "O cultivo do arroz, do algodão e das verduras",
+       "A criação de bairros operários em São Paulo"], c:0,
+    e:`Está sublinhado na sua página 84. <b>Arroz, algodão e verduras</b> vieram com os
+       <b>japoneses</b>; os <b>bairros operários</b>, com os <b>italianos</b>.` },
+
+  { hab:"kasato", quatro:true, arte: arteNavio(),
+    p:"Complete: o primeiro grupo oficial de japoneses veio no navio ____, saiu do porto de ____ e chegou a ____ em ____.",
+    o:["Kasato Maru · Kobe · Santos · 18 de junho de 1908",
+       "Kasato Maru · Santos · Kobe · 18 de junho de 1908",
+       "Santa Maria · Kobe · Santos · 18 de junho de 1908",
+       "Kasato Maru · Kobe · Santos · 22 de agosto de 1908"], c:0, fixo:true,
+    e:`A viagem durou <b>52 dias</b> e trouxe <b>165 famílias — 781 pessoas</b> para os
+       <b>cafezais do Oeste Paulista</b>.` },
+
+  { hab:"japones", quatro:true,
+    p:"Qual afirmação sobre os imigrantes japoneses é <b>VERDADEIRA</b>?",
+    o:["A maior parte deles trabalhava em plantações",
+       "A maior parte deles trabalhava em indústrias",
+       "Eles imigraram para o Brasil para trabalhar na mineração",
+       "Eles vieram para o Brasil para fugir de guerras e perseguições políticas"], c:0,
+    e:`As três erradas são exatamente as afirmações <b>falsas</b> das questões 11 e 5 das suas
+       folhas. A maioria foi para a <b>produção agrícola</b>: algodão, verduras, legumes e arroz.` },
+
+  { hab:"japones", quatro:true,
+    p:"Por que os japoneses se organizaram em <b>colônias</b> com escolas próprias?",
+    o:["Porque a língua, os costumes, a religião, o clima e a alimentação eram barreiras, e eles queriam preservar suas tradições",
+       "Porque o governo brasileiro os obrigou a morar separados",
+       "Porque não queriam trabalhar nas fazendas",
+       "Porque pretendiam voltar ao Japão em poucos meses"], c:0,
+    e:`E nas colônias criaram <b>escolas</b> para que as crianças fossem educadas com o
+       <b>idioma e a cultura japoneses</b> — foi a sua resposta na questão 12.` },
+
+  { hab:"folclore", quatro:true,
+    p:"O que é necessário para um costume ser considerado <b>folclore</b>?",
+    o:["Ser praticado e transmitido de geração em geração por muitas pessoas e ter origem popular e anônima",
+       "Ter sido criado por um artista famoso e ser muito conhecido",
+       "Estar registrado em um livro didático",
+       "Ter sido aprovado por uma lei do governo"], c:0,
+    e:`Os <b>dois carimbos</b>. É por isso que uma música com <b>autor conhecido</b> não é
+       folclore, por mais que todo mundo cante.` },
+
+  { hab:"folclore", quatro:true, umaSo:true,
+    p:"Em que dia comemoramos o <b>folclore brasileiro</b>?",
+    o:["22 de agosto","22 de junho","18 de junho","29 de novembro"], c:0,
+    e:`<b>22 de agosto</b>. <b>Junho</b> é o mês da quadrilha, <b>18 de junho</b> é a chegada do
+       Kasato Maru e <b>29 de novembro</b> é a partida de D. João VI, em 1807.` },
+
+  { hab:"lenda", quatro:true,
+    enun:`<i>“Eu sou protetor das matas e de todos os animais. Eu despisto os caçadores com os
+      <b>pés virados para trás</b>.”</i>`,
+    p:"Que personagem do folclore brasileiro está falando?",
+    o:["O Curupira","O Saci-Pererê","O Boitatá","A Mula sem Cabeça"], c:0,
+    e:`<b>Curupira</b> — questão 4 da sua Atividade Unificada. A <b>Iara</b> canta no rio e a
+       <b>Mula sem Cabeça</b> solta fogo pelo pescoço.` },
+
+  { hab:"danca", quatro:true,
+    p:"Qual é a dança típica de <b>Pernambuco</b> caracterizada por músicas instrumentais e pelo uso de pequenos guarda-chuvas coloridos?",
+    o:["O frevo","O maracatu","O baião","A quadrilha"], c:0,
+    e:`<b>Frevo</b>. O <b>maracatu</b> também é pernambucano, mas é o que reúne elementos
+       <b>africanos, indígenas e portugueses</b>.` },
+
+  { hab:"danca", quatro:true,
+    p:"Ligue certo: qual alternativa descreve corretamente <b>duas</b> danças folclóricas?",
+    o:["Baião: dançado em pares, influenciou o forró · Quadrilha: das festas juninas, em junho",
+       "Baião: das festas juninas · Quadrilha: dançada em pares no Nordeste",
+       "Frevo: raízes africanas e portuguesas · Samba de roda: guarda-chuvas coloridos",
+       "Maracatu: dança do Sul do Brasil · Frevo: dança do Centro-Oeste"], c:0,
+    e:`<b>Baião</b> = pares + forró. <b>Quadrilha</b> = junho. <b>Frevo</b> = guarda-chuva.
+       <b>Samba de roda</b> = africanas e portuguesas. <b>Maracatu</b> = Pernambuco.` },
+
+  { hab:"oral", quatro:true, arte: arteCordel(),
+    p:"O que é a <b>literatura de cordel</b>?",
+    o:["Literatura popular em versos ritmados, impressa em folhetos pendurados em cordas nas feiras",
+       "Frases curtas que transmitem ensinamentos",
+       "Versos com ritmo, mas sem música",
+       "Desafios apresentados em forma de perguntas"], c:0,
+    e:`As outras três são o <b>provérbio</b>, a <b>parlenda</b> e a <b>adivinhação</b>.
+       O cordel narra <b>secas, inundações, eleições</b> e histórias de políticos, celebridades
+       e santos.` },
+
+  { hab:"brincadeira", quatro:true, umaSo:true,
+    p:"Como as <b>brincadeiras populares</b> são preservadas e transmitidas até os dias atuais?",
+    o:["Através da oralidade","Através dos livros didáticos",
+       "Através de leis de proteção cultural","Através da internet"], c:0,
+    e:`É a questão 5 da sua Atividade Unificada de Folclore. Ninguém escreveu as regras da
+       <b>amarelinha</b> num livro: uma criança contou para a outra.` },
+
+  { hab:"comida", quatro:true,
+    p:"Qual linha relaciona <b>corretamente</b> a região e o seu prato típico?",
+    o:["Norte: pato no tucupi · Nordeste: acarajé · Sudeste: feijoada · Sul: churrasco",
+       "Norte: feijoada · Nordeste: churrasco · Sudeste: acarajé · Sul: pato no tucupi",
+       "Norte: acarajé · Nordeste: pato no tucupi · Sudeste: churrasco · Sul: feijoada",
+       "Norte: churrasco · Nordeste: feijoada · Sudeste: pato no tucupi · Sul: acarajé"], c:0, fixo:true,
+    e:`E falta o <b>Centro-Oeste</b>: <b>galinhada</b> e <b>arroz com pequi</b>.` },
+
+  { hab:"comida", quatro:true,
+    p:"Quais destes alimentos foram trazidos pelos <b>japoneses</b>?",
+    o:["Shoyu, chá-verde, rabanete e cabotiá",
+       "Pães, massas, berinjela e polenta",
+       "Cozidos, embutidos e frutos do mar",
+       "Azeite de oliva e paella"], c:0,
+    e:`<b>Cabotiá</b> é a <b>abóbora japonesa</b>. As outras três listas são a <b>italiana</b>,
+       a <b>portuguesa</b> e a <b>espanhola</b>.` }
+];
+function provaFinal(){
+  pararArcade();
+  const pool = FINAL.map(q => ({q, peso: 1 + Math.min(S.erros[q.hab]||0, 3)}));
+  /* sorteio sem repetir, com peso: quem ela erra mais tem mais chance de ser puxada */
+  const escolhidas = [];
+  const resto = pool.slice();
+  const quantas = Math.min(16, FINAL.length);
+  while(escolhidas.length < quantas && resto.length){
+    const soma = resto.reduce((a,b)=>a+b.peso,0);
+    let r = Math.random()*soma, k = 0;
+    while(k < resto.length-1 && r > resto[k].peso){ r -= resto[k].peso; k++; }
+    escolhidas.push(resto[k].q);
+    resto.splice(k,1);
+  }
+  quizGenerico(N_MISSOES-1, "🎓 Prova Final", embaralha(escolhidas), 0, 0);
+}
+window.provaFinal = provaFinal;
+
+/* ============================================================
+   DIPLOMA
+   ============================================================ */
+function telaDiploma(){
+  const totalEstrelas = S.estrelas.reduce((a,b)=>a+b,0);
+  const fracas = listaFracas(3);
+  app.innerHTML = hud() + `
+    <div class="diploma">
+      <div class="selo">🏅</div>
+      <h2>${g("PRONTA","PRONTO")} PARA A PROVA<br>DE HISTÓRIA</h2>
+      <p>O Porto das Histórias certifica que</p>
+      <div class="nome">${NOME()}</div>
+      <p>percorreu as <b>${N_MISSOES-1} paradas</b> do conteúdo da 3ª etapa: o que é imigrar e as
+      leis que protegem, os portugueses e os espanhóis, os italianos, os alemães, os japoneses,
+      o que é folclore e as lendas, e as danças, os versos, as brincadeiras e as comidas do
+      povo brasileiro.</p>
+      <p class="fila-estrelas">${"⭐".repeat(totalEstrelas)}</p>
+      <p><b>${totalEstrelas} de ${TOTAL_ESTRELAS} estrelas</b> · <b>${S.pontos} pontos</b></p>
+      <p style="margin-top:18px;font-style:italic">História · 3º ano · 3ª etapa · Volume 5 e as
+      Atividades Unificadas · prova de 31/08/2026</p>
+    </div>
+    <div class="acoes">
+      <button class="btn" onclick="irMapa()">🗺️ Voltar ao porto</button>
+      <button class="btn sec" onclick="abrirColinha()">📖 Colinha</button>
+      <button class="btn uva" onclick="window.print()">🖨️ Imprimir diploma</button>
+    </div>
+    ${fracas.length?`<div class="card centro">
+      <p class="mini">Ainda escorregando em: <b>${fracas.map(h=>NOME_HAB[h]||h).join(" · ")}</b>.
+      Refaça a <b>Prova do Porto</b> — esses assuntos vão aparecer bastante.</p></div>`:``}
+    ${totalEstrelas<TOTAL_ESTRELAS?`<div class="card centro">
+      <p class="mini">Faltam <b>${TOTAL_ESTRELAS-totalEstrelas}</b> estrelas para a nota máxima, ${NOME()}.
+      Dá para refazer qualquer missão pelo mapa — e as estrelas só sobem!</p></div>`:`
+    <div class="card destaque centro"><div style="font-size:50px">👑</div>
+      <p><b>PERFEIÇÃO, ${NOME()}!</b> Todas as <b>${TOTAL_ESTRELAS} estrelas</b>.
+      Pode ir para a prova de cabeça erguida.</p></div>`}`;
+}
+
+/* ============================================================
+   INÍCIO
+   ============================================================ */
+if(carregar()){
+  S.cena = S.missoes.some(Boolean) ? "mapa" : "inicio";
+} else {
+  S.cena = "nome";
+}
+render();
+
+</script>
+</body>
+</html>

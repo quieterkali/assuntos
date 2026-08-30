@@ -18,6 +18,7 @@ arquivo HTML: sem rede, sem dependências, funciona no celular e no computador.
 | Língua Portuguesa | 6º | Voz da Praça — Direito à cidade e Espaços de direito | caderno SESI Linguagens, 21 fotos (p. 12–102) | [8 paradas](https://quieterkali.github.io/assuntos/lingua-portuguesa/6-ano/direito-a-cidade/) |
 | Língua Inglesa | 3º | Next Station: Mongolia — Unit 7, Lessons 1, 2, 5 e 6 | programação da escola + 10 fotos do *Next Station 2* | [8 estações](https://quieterkali.github.io/assuntos/ingles/3-ano/unit-7-mongolia/) |
 | Geografia | 3º | Caminho da Água — Volume 5 e a Atividade Unificada | programação da escola + 24 fotos (apostila ETAPA p. 62–74 e a unificada corrigida) | [8 paradas](https://quieterkali.github.io/assuntos/geografia/3-ano/agua/) |
+| História | 3º | Porto das Histórias — Volume 5 e as duas Atividades Unificadas | prova de 31/08/2026 + 39 fotos (apostila ETAPA p. 76–90 e as unificadas de Folclore e Imigração, corrigidas) | [8 paradas](https://quieterkali.github.io/assuntos/historia/3-ano/imigracao-folclore/) |
 
 > Todos os jogos **perguntam o nome antes de começar** e personalizam tudo com ele — inclusive a
 > concordância de gênero escolhida pela criança e o diploma final. E **cada missão começa com uma
